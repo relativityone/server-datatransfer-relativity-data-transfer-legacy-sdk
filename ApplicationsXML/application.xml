@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ArtifactViewFields />
+  <Assemblies>
+	  <Assembly>
+      <ArtifactId>1020018</ArtifactId>
+      <Keywords />
+      <Name>RAPTemplate.dll</Name>
+      <Notes />
+    </Assembly>
+  </Assemblies>
+  <ResourceFiles />
+  <ExternalTabs />
+  <ExtractionDate>2019-05-06T15:32:28.6965752Z</ExtractionDate>
+  <Guid>9F9D45FF-5DCD-462D-996D-B9033EA8CFCE</Guid>
+  <Name>Relativity.DataTransfer.Legacy</Name>
+  <Objects />
+  <ParentTabs />
+  <RelativityVersion>11.0.158.1</RelativityVersion>
+  <Version>1.0.0.4</Version>
+  <TabDisplay>false</TabDisplay>
+  <OriginSignature>4f050142-2091-416f-9411-a023e105be75</OriginSignature>
+  <MasterScripts />
+  <ApplicationScripts />
+  <CustomPages />
+  <AgentTypes />
+  <IsRelativityApplication>true</IsRelativityApplication>
+  <InstallEventHandlers />
+  <SavedSearches />
+  <SearchContainers />
+  <SearchProviders />
+  <EnvironmentVariables>
+    <SearchAsConditionCriteriaID>1000471</SearchAsConditionCriteriaID>
+    <FullTextAll>1000182</FullTextAll>
+  </EnvironmentVariables>
+  <GlobalApplication>true</GlobalApplication>
+  <RelativityScriptIds />
+  <ViewIds />
+  <DashboardIds />
+  <LayoutIds />
+  <FieldIds />
+  <ChoiceIds />
+  <ObjectTypeIds />
+  <TabIds />
+  <CustomPageIds />
+  <Locked>true</Locked>
+</Application>
