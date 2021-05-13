@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net462</TargetFrameworks>
+    <OutputType>Library</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>    
+    <RootNamespace>Relativity.DataTransfer.Legacy.Services.Tests</RootNamespace>
+    <AssemblyName>Relativity.DataMigration.CloudMigrationTool.Agents.UnitTests</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".\WebAPIContract\kCura.EDDS.WebAPI.dll" Link="kCura.EDDS.WebAPI.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoBogus" Version="2.13.0" />
+    <PackageReference Include="CompareNETObjects" Version="4.73.0" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
+    <PackageReference Include="Mono.Cecil" Version="0.11.3" />
+    <PackageReference Include="NUnit" Version="3.12.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
+    <PackageReference Include="NunitXml.TestLogger" Version="3.0.91" />
+    <PackageReference Include="Relativity.Core" Version="36.1.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.Services\DataTransfer.Legacy.Services.csproj" />
+  </ItemGroup>
+
+</Project>

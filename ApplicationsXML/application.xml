@@ -3,9 +3,53 @@
   <ArtifactViewFields />
   <Assemblies>
 	  <Assembly>
-      <ArtifactId>1020018</ArtifactId>
       <Keywords />
-      <Name>RAPTemplate.dll</Name>
+      <Name>Relativity.DataTransfer.Legacy.SDK.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.DataTransfer.Legacy.Services.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>AutoMapper.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>BCrypt.Net-Core.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>dtSearchNetApi4.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>FreeImageNET.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>kCura.Assembly.Analysis.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>kCura.LongPath.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.DistributedJobs.Contracts.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.DistributedJobs.Data.dll</Name>
       <Notes />
     </Assembly>
   </Assemblies>
@@ -13,7 +57,7 @@
   <ExternalTabs />
   <ExtractionDate>2019-05-06T15:32:28.6965752Z</ExtractionDate>
   <Guid>9F9D45FF-5DCD-462D-996D-B9033EA8CFCE</Guid>
-  <Name>Relativity.DataTransfer.Legacy</Name>
+  <Name>DataTransfer.Legacy</Name>
   <Objects />
   <ParentTabs />
   <RelativityVersion>11.0.158.1</RelativityVersion>

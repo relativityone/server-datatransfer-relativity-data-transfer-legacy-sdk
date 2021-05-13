@@ -12,5 +12,5 @@ FunctionalTest.runsettings
 *.exe
 *.bin
 !vendor/*
-Source/RAPTemplate.FunctionalTests/Files/
-Source/RAPTemplate.FunctionalTests/oi/
+Source/DataTransfer.Legacy.FunctionalTests/Files/
+Source/DataTransfer.Legacy.FunctionalTests/oi/

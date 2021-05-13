@@ -1,12 +1,21 @@
 <BuildTools>
   <RAPBuilder>
     <Applications>
-      <Application name="RAPTemplate" generatenuspec="true">
-        <Destination>Artifacts\RAPTemplate.rap</Destination>
+      <Application name="DataTransfer.Legacy" generatenuspec="true">
+        <Destination>Artifacts\DataTransfer.Legacy.rap</Destination>
         <ApplicationSchema>ApplicationsXML/application.xml</ApplicationSchema>
-        <TestDirectory>Source\RAPTemplate.FunctionalTests\bin\</TestDirectory>
+        <TestDirectory>Source\DataTransfer.Legacy.FunctionalTests\bin\</TestDirectory>
         <Assemblies>
-          <Assembly>Source\RAPTemplate\bin\RAPTemplate.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataTransfer.Legacy.SDK.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataTransfer.Legacy.Services.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\AutoMapper.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\BCrypt.Net-Core.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\dtSearchNetApi4.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\FreeImageNET.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\kCura.Assembly.Analysis.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\kCura.LongPath.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Contracts.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Data.dll</Assembly>
         </Assemblies>
         <ResourceFiles />
         <CustomPages />
