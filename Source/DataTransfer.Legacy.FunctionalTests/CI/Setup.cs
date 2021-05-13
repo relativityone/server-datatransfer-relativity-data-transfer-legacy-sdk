@@ -17,15 +17,12 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 		[OneTimeSetUp]
 		public void SetupTests()
 		{
-			ILibraryApplicationService applicationService;
-			string myRAP;
-
-			Dictionary<string, string> additionalSettings = new Dictionary<string, string>()
+			var additionalSettings = new Dictionary<string, string>()
 			{
 				["PerformRelativityVersionCheck"] = "false"
 			};
 
-			IConfigurationRoot configurationRoot = new ConfigurationBuilder().
+			var configurationRoot = new ConfigurationBuilder().
 				AddNUnitParameters().
 				AddEnvironmentVariables().
 				AddInMemoryCollection(additionalSettings).
@@ -34,11 +31,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 			RelativityFacade.Instance.RelyOn(new CoreComponent { ConfigurationRoot = configurationRoot });
 			RelativityFacade.Instance.RelyOn<ApiComponent>();
 
-			myRAP = Path.Combine(RelativityFacade.Instance.Config.RelativityInstance.RapDirectory, "RAPTemplate.rap");
+			var myRap = Path.Combine(RelativityFacade.Instance.Config.RelativityInstance.RapDirectory, "DataTransfer.Legacy.rap");
 
-			applicationService = RelativityFacade.Instance.Resolve<ILibraryApplicationService>();
-			int applicationArtifactID = applicationService.InstallToLibrary(myRAP);
-			applicationService.InstallToWorkspace(RELATIVITY_STARTER_TEMPLATE_ARTIFACT_ID, applicationArtifactID);
+			var applicationService = RelativityFacade.Instance.Resolve<ILibraryApplicationService>();
+			var applicationArtifactId = applicationService.InstallToLibrary(myRap);
+			applicationService.InstallToWorkspace(RELATIVITY_STARTER_TEMPLATE_ARTIFACT_ID, applicationArtifactId);
 		}
 	}
 }

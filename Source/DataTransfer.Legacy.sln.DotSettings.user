@@ -1,4 +1,7 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2016bac6_002D960b_002D4a82_002Dbf77_002D9279c129c115/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;DataTransfer.Legacy.Services.Tests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
-  &lt;Project Location="S:\repo\IapiSquat\relativity-data-transfer-legacy-sdk\Source\DataTransfer.Legacy.Services.Tests" Presentation="&amp;lt;DataTransfer.Legacy.Services.Tests&amp;gt;" /&gt;&#xD;
+  &lt;Or&gt;&#xD;
+    &lt;Project Location="S:\repo\IapiSquat\relativity-data-transfer-legacy-sdk\Source\DataTransfer.Legacy.Tests" Presentation="&amp;lt;DataTransfer.Legacy.Tests&amp;gt;" /&gt;&#xD;
+    &lt;Project Location="S:\repo\IapiSquat\relativity-data-transfer-legacy-sdk\Source\TestProject1" Presentation="&amp;lt;TestProject1&amp;gt;" /&gt;&#xD;
+  &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

@@ -7,9 +7,9 @@ using FluentAssertions;
 using KellermanSoftware.CompareNetObjects;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
-using Relativity.DataTransfer.Legacy.Services.Tests.Helpers;
+using Relativity.DataTransfer.Legacy.Tests.Helpers;
 
-namespace Relativity.DataTransfer.Legacy.Services.Tests
+namespace Relativity.DataTransfer.Legacy.Tests
 {
 	[TestFixture]
 	public class ModelComparisonTests
@@ -21,7 +21,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		public void OneTimeSetUp()
 		{
 			_randomObjectGenerator = new RandomObjectGenerator();
-			_compareLogic = new CompareLogic {Config = {IgnoreObjectTypes = true}};
+			_compareLogic = new CompareLogic { Config = { IgnoreObjectTypes = true } };
 			_compareLogic.Config.CustomComparers.Add(new EnumComparerIgnoringType(RootComparerFactory.GetRootComparer()));
 		}
 
@@ -41,7 +41,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			//which return values from different properties based on some conditions - no need to rewrite them
 			int modifier = 0;
 			if (typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.ObjectLoadInfo).FullName
-			    || typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.NativeLoadInfo).FullName)
+				|| typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.NativeLoadInfo).FullName)
 			{
 				modifier = -3;
 			}

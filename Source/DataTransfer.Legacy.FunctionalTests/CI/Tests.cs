@@ -2,7 +2,6 @@
 using NUnit.Framework;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api.ObjectManagement;
-using Relativity.Testing.Framework.Api.Services;
 using Relativity.Testing.Framework.Models;
 using Relativity.Testing.Identification;
 
@@ -15,41 +14,38 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
         [Test]
         public void ApiTest()
         {
-            IWorkspaceService _workspaceService = RelativityFacade.Instance.Resolve<IWorkspaceService>();
-            IObjectService _objectService = RelativityFacade.Instance.Resolve<IObjectService>();
-            ILibraryApplicationService applicationService = RelativityFacade.Instance.Resolve<ILibraryApplicationService>();
+            var objectService = RelativityFacade.Instance.Resolve<IObjectService>();
 
-            LibraryApplication rapTemplate = _objectService.GetAll<LibraryApplication>().Where(application => application.Name == "RAPTemplate").FirstOrDefault();
+            var rapTemplate = objectService.GetAll<LibraryApplication>()
+	            .FirstOrDefault(application => application.Name == "DataTransfer.Legacy");
 
-            int relativityStarterTemplateArtifactID = 1015024;
-
-            Assert.IsTrue(applicationService.IsInstalledInWorkspace(relativityStarterTemplateArtifactID, rapTemplate.ArtifactID));
+            Assert.That(rapTemplate, Is.Not.Null);
             Assert.That(rapTemplate.Version, Is.Not.Null.Or.Empty);
         }
 
         [Test]
         public void SqlTest()
         {
-            string libraryVersion = string.Empty;
-            int? workspaceArtifactID = 0;
+            string libraryVersion;
+            int? workspaceArtifactId;
 
-            string sqlServer = RelativityFacade.Instance.Config.RelativityInstance.SqlServer;
-            string sqlUserName = RelativityFacade.Instance.Config.RelativityInstance.SqlUsername;
-            string sqlPassword = RelativityFacade.Instance.Config.RelativityInstance.SqlPassword;
+            var sqlServer = RelativityFacade.Instance.Config.RelativityInstance.SqlServer;
+            var sqlUserName = RelativityFacade.Instance.Config.RelativityInstance.SqlUsername;
+            var sqlPassword = RelativityFacade.Instance.Config.RelativityInstance.SqlPassword;
 
-            using (System.Data.SqlClient.SqlConnection connection = new System.Data.SqlClient.SqlConnection())
+            using (var connection = new System.Data.SqlClient.SqlConnection())
             {
                 connection.ConnectionString = $"Data Source={sqlServer};Initial Catalog=EDDS;Persist Security Info=False;Packet Size=4096;Workstation ID=localhost;User Id={sqlUserName};Password={sqlPassword}";
                 connection.Open();
-                System.Data.SqlClient.SqlCommand command = connection.CreateCommand();
-                command.CommandText = "SELECT [Version] FROM [LibraryApplication] WHERE [Name] = 'RAPTemplate'";
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT [Version] FROM [LibraryApplication] WHERE [Name] = 'DataTransfer.Legacy.rap'";
                 libraryVersion = (string)command.ExecuteScalar();
                 command.CommandText = "SELECT TOP 1 [ArtifactID] FROM [EDDS1015024].[EDDSDBO].[RelativityApplication] WHERE [Name] = 'RAPTemplate'";
-                workspaceArtifactID = (int?)command.ExecuteScalar();
+                workspaceArtifactId = (int?)command.ExecuteScalar();
             }
 
             Assert.That(libraryVersion, Is.Not.Empty);
-            Assert.That(workspaceArtifactID, Is.Not.Null);
+            Assert.That(workspaceArtifactId, Is.Not.Null);
         }
     }
 }

@@ -9,7 +9,7 @@ using Folder = Relativity.Core.DTO.Folder;
 using ProductionInfo = Relativity.Production.ProductionInfo;
 using RelationalFieldPane = Relativity.Core.DTO.RelationalFieldPane;
 
-namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
+namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 {
 	public class RandomObjectGenerator
 	{

@@ -2,7 +2,7 @@
 using KellermanSoftware.CompareNetObjects;
 using KellermanSoftware.CompareNetObjects.TypeComparers;
 
-namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
+namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 {
 	public class EnumComparerIgnoringType : EnumComparer
 	{

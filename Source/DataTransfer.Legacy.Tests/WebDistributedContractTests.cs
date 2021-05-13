@@ -4,7 +4,7 @@ using FluentAssertions;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 
-namespace Relativity.DataTransfer.Legacy.Services.Tests
+namespace Relativity.DataTransfer.Legacy.Tests
 {
 	[TestFixture]
 	public class WebDistributedContractTests

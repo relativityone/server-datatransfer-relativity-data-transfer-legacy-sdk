@@ -11,7 +11,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.Kepler.Services;
 
-namespace Relativity.DataTransfer.Legacy.Services.Tests
+namespace Relativity.DataTransfer.Legacy.Tests
 {
 	/// <summary>
 	/// Makes sure WebAPI contracts (excluding Web Distributed) match Kepler ones
@@ -170,7 +170,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			return typeMaps.Any(x => x.Types.SourceType.FullName == source && x.Types.DestinationType.FullName == destination);
 		}
 
-		private List<string> GetAllKeplerServicesNames()
+		private static List<string> GetAllKeplerServicesNames()
 		{
 			return GetAllKeplerServices().Select(x => x.Name).ToList();
 		}
@@ -190,7 +190,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 
 		private static IEnumerable<TypeDefinition> GetAllWebApiServices()
 		{
-			var assembly = AssemblyDefinition.ReadAssembly("./WebAPIContract/kCura.EDDS.WebAPI.dll");
+			var assembly = AssemblyDefinition.ReadAssembly(GetWebApiContractDll());
 			foreach (var type in assembly.MainModule.Types)
 			{
 				if (type.CustomAttributes.Any(x => x.AttributeType.Name == "WebServiceAttribute"))
@@ -200,10 +200,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			}
 		}
 
+		private static string GetWebApiContractDll()
+		{
+			return System.IO.File.Exists("WebAPIContract/kCura.EDDS.WebAPI.dll") ? 
+				"WebAPIContract/kCura.EDDS.WebAPI.dll" : 
+				"Source/DataTransfer.Legacy.Tests/WebAPIContract/kCura.EDDS.WebAPI.dll";
+		}
+
 		private static IEnumerable<TypeDefinition> GetAllKeplerServices()
 		{
-			string assemblyFullName = typeof(IWebApiReplacementModule).Assembly.GetName().Name;
-			var assembly = AssemblyDefinition.ReadAssembly($"{assemblyFullName}.dll");
+			var assembly = AssemblyDefinition.ReadAssembly(GetWebApiKeplerContractDll());
 			foreach (var type in assembly.MainModule.Types.Where(x => x.Name != nameof(IWebDistributedService)))
 			{
 				if (type.CustomAttributes.Any(x => x.AttributeType.Name == nameof(WebServiceAttribute)))
@@ -211,6 +217,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 					yield return type;
 				}
 			}
+		}
+
+		private static string GetWebApiKeplerContractDll()
+		{
+			var assemblyFullName = typeof(IWebApiReplacementModule).Assembly.GetName().Name;
+			return System.IO.File.Exists($"{assemblyFullName}.dll") ?
+				$"{assemblyFullName}.dll" :
+				$"Source/DataTransfer.Legacy.SDK/bin/{assemblyFullName}.dll";
 		}
 
 		private static IEnumerable<MethodDefinition> GetAllKeplerEndpoints()
@@ -225,7 +239,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			}
 		}
 
-		private string MapKeplerToWebApiServiceName(string keplerName)
+		private static string MapKeplerToWebApiServiceName(string keplerName)
 		{
 			if (keplerName == "IFileIOService")
 			{
@@ -236,7 +250,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			return keplerName.TrimStart('I').Replace("Service", "Manager");
 		}
 
-		private string MapKeplerToWebApiEndpointName(string keplerEndpointName)
+		private static string MapKeplerToWebApiEndpointName(string keplerEndpointName)
 		{
 			if (keplerEndpointName == "RetrieveInitialChunkAsync")
 			{
