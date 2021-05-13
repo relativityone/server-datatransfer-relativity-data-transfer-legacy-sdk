@@ -12,6 +12,6 @@ FunctionalTest.runsettings
 *.exe
 *.bin
 !vendor/*
-!Source/DataTransfer.Legacy.Services.Tests/WebAPIContract/*
+!Source/DataTransfer.Legacy.Tests/WebAPIContract/*
 Source/DataTransfer.Legacy.FunctionalTests/Files/
 Source/DataTransfer.Legacy.FunctionalTests/oi/
