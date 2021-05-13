@@ -190,7 +190,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 
 		private static IEnumerable<TypeDefinition> GetAllWebApiServices()
 		{
-			var assembly = AssemblyDefinition.ReadAssembly("kCura.EDDS.WebAPI.dll");
+			var assembly = AssemblyDefinition.ReadAssembly("./WebAPIContract/kCura.EDDS.WebAPI.dll");
 			foreach (var type in assembly.MainModule.Types)
 			{
 				if (type.CustomAttributes.Any(x => x.AttributeType.Name == "WebServiceAttribute"))

@@ -15,12 +15,6 @@
     <OutputPath>bin</OutputPath>
   </PropertyGroup>
 
-  <ItemGroup>
-    <None Include=".\WebAPIContract\kCura.EDDS.WebAPI.dll" Link="kCura.EDDS.WebAPI.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -40,6 +34,12 @@
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
     <ProjectReference Include="..\DataTransfer.Legacy.Services\DataTransfer.Legacy.Services.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="WebAPIContract\kCura.EDDS.WebAPI.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
