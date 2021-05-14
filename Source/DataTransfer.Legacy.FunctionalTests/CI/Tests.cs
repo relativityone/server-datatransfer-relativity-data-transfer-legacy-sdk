@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using NUnit.Framework;
+using Relativity.Services.Interfaces.LibraryApplication;
 using Relativity.Testing.Framework;
-using Relativity.Testing.Framework.Api.ObjectManagement;
-using Relativity.Testing.Framework.Models;
+using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Identification;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
@@ -13,17 +14,22 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
     [TestLevel.L3]
     public class Tests
     {
-	    [IdentifiedTest("A8096C19-D0E6-405A-BC64-1D286AA91AEB")]
+	    private const string ApplicationName = "DataTransfer.Legacy";
+
+        [IdentifiedTest("A8096C19-D0E6-405A-BC64-1D286AA91AEB")]
 	    [Description("Check that DataTransfer.Legacy is installed")]
 	    public void ShouldGetApplicationAfterInstallation()
         {
-            var objectService = RelativityFacade.Instance.Resolve<IObjectService>();
+	        var keplerServiceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
+	        using (var applicationManager = keplerServiceFactory.GetServiceProxy<ILibraryApplicationManager>())
+	        {
+		        var apps = applicationManager.ReadAllAsync(-1).GetAwaiter().GetResult();
 
-            var rap = objectService.GetAll<LibraryApplication>()
-	            .FirstOrDefault(application => application.Name == "DataTransfer.Legacy");
-
-            Assert.That(rap, Is.Not.Null);
-            Assert.That(rap.Version, Is.Not.Null.Or.Empty);
+			    var rap = apps.FirstOrDefault(x => x.Name.Equals(ApplicationName, StringComparison.Ordinal));
+		        
+			    Assert.NotNull(rap, $"{ApplicationName} is null");
+		        Assert.AreNotEqual(string.Empty, rap.Version, $"{ApplicationName} version in library should be not be empty");
+            }
         }
 
         [IdentifiedTest("A55B8078-9F57-4AAB-A3F9-B91BC91B7E8F")]
