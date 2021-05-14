@@ -9,6 +9,7 @@
     <OutputType>Library</OutputType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <LangVersion>7</LangVersion>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -30,4 +31,8 @@
   <ItemGroup>
     <PackageReference Include="Relativity.Kepler" Version="2.15.0" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="COPY /Y $(ProjectDir)DataTransfer.Legacy.SDK.nuspec $(SolutionDir)..\Artifacts" />
+  </Target>
 </Project>

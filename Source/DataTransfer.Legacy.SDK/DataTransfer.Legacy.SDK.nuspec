@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Relativity.DataTransfer.Legacy.SDK</id>
+    <version>$version$</version>
+    <authors>Relativity ODA LLC</authors>
+    <owners>Relativity ODA LLC</owners>
+    <license type="file">LICENSE.txt</license>
+    <projectUrl>https://einstein.kcura.com/display/DTV/IAPI+2.0</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Models for communication in migrated WebAPI</description>
+    <releaseNotes>https://git.kcura.com/projects/DTX/repos/relativity-data-transfer-legacy-sdk/browse/CHANGELOG.md</releaseNotes>
+    <copyright>(c) Relativity</copyright>
+  </metadata>
+  <files>
+    <file src="..\LICENSE.txt" target="" />
+    <file src="..\Source\DataTransfer.Legacy.SDK\bin\Relativity.DataTransfer.Legacy.SDK.dll" target="lib\net462" />
+  </files>
+</package>
