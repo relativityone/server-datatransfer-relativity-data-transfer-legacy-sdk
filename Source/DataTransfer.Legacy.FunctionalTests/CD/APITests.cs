@@ -1,31 +1,31 @@
-﻿//using NUnit.Framework;
-//using RAPTemplate.Services;
-//using Relativity.Testing.Framework;
-//using Relativity.Testing.Framework.Api;
-//using Relativity.Testing.Framework.Api.Kepler;
-//using Relativity.Testing.Framework.RingSetup;
-//using Relativity.Testing.Identification;
+﻿using NUnit.Framework;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
+using Relativity.Testing.Framework;
+using Relativity.Testing.Framework.Api;
+using Relativity.Testing.Framework.RingSetup;
+using Relativity.Testing.Identification;
 
-//namespace RAPTemplate.FunctionalTests.CD
-//{
-//	[IdentifiedTestFixture("92CB4376-51A2-46C1-8E1F-C635CF444321", Author = "The Authors", Description = "RapTemplate Functional Verification Tests.")]
-//	public class APITests : TestSetup
-//	{
-//		public APITests() : base("RapTemplate", 10)
-//		{ }
+namespace Relativity.DataTransfer.Legacy.FunctionalTests.CD
+{
+	[IdentifiedTestFixture("1068299A-A7E9-469E-BD28-0F2AFDD9CE65")]
+	public class APITests : TestSetup
+	{
+		public APITests() 
+			: base("DataTransfer.Legacy")
+		{ }
 
-//		[IdentifiedTest("cb338a07-6d68-44b5-a70c-abcd99991234")]
-//		[TestExecutionCategory.RAPCD.Verification.Functional]
-//		public void RAPTemplateApiTest()
-//		{
-//			IKeplerServiceFactory serviceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
+		[IdentifiedTest("94CE4420-EF1F-47C2-87BC-907468D66CE3")]
+		[TestExecutionCategory.RAPCD.Verification.Functional]
+		public void DataTransferLegacyApiTest()
+		{
+			var serviceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
 
-//			bool result = false;
-//			using (IRAPTemplateService RAPTemplateService = serviceFactory.GetServiceProxy<IRAPTemplateService>())
-//			{
-//				result = RAPTemplateService.IsAlive().GetAwaiter().GetResult();
-//			}
-//			Assert.IsTrue(result, "RAPTemplate's services are all running!.");
-//		}
-//	}
-//}
+			using (var pingService = serviceFactory.GetServiceProxy<IPingService>())
+			{
+				var result = pingService.PingAsync().GetAwaiter().GetResult();
+
+				Assert.AreEqual(result, "Pong");
+			}
+		}
+	}
+}
