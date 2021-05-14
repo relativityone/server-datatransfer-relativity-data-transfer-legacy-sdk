@@ -212,7 +212,8 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			var assembly = AssemblyDefinition.ReadAssembly(GetWebApiKeplerContractDll());
 			foreach (var type in assembly.MainModule.Types.Where(x => x.Name != nameof(IWebDistributedService)))
 			{
-				if (type.CustomAttributes.Any(x => x.AttributeType.Name == nameof(WebServiceAttribute)))
+				if (type.CustomAttributes.Any(x => x.AttributeType.Name == nameof(WebServiceAttribute)) 
+				    && type.Name != nameof(IPingService))
 				{
 					yield return type;
 				}
