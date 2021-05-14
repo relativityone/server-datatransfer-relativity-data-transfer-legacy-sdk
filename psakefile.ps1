@@ -124,18 +124,18 @@ function Invoke-Tests
     $settings = if($TestSettings) { "@$TestSettings" }
     Initialize-Folder $ArtifactsDir -Safe
     Initialize-Folder $LogsDir -Safe
-    # if($WithCoverage)
-    # {
-    #     $OpenCover = Join-Path $BuildToolsDir "opencover.*\tools\OpenCover.Console.exe"
-    #     $ReportGenerator = Join-Path $BuildToolsDir "reportgenerator.*\tools\net47\ReportGenerator.exe"
-    #     $CoveragePath = Join-Path $LogsDir "Coverage.xml"
+    if($WithCoverage)
+    {
+        $OpenCover = Join-Path $BuildToolsDir "opencover.*\tools\OpenCover.Console.exe"
+        $ReportGenerator = Join-Path $BuildToolsDir "reportgenerator.*\tools\net47\ReportGenerator.exe"
+        $CoveragePath = Join-Path $LogsDir "Coverage.xml"
 
-    #     exec { & $OpenCover -target:$NUnit -targetargs:"$Solution --where=\`"$WhereClause\`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[DataTransfer.Legacy*]* -[*Tests*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode }
-    #     exec { & $ReportGenerator -reports:"$LogsDir\OpenCover.xml" -targetdir:$LogsDir -reporttypes:Cobertura }
-    #     Move-Item (Join-Path $LogsDir Cobertura.xml) $CoveragePath -Force
-    # }
-    # else
-    # {
+        exec { & $OpenCover -target:$NUnit -targetargs:"$Solution --where=\`"$WhereClause\`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[DataTransfer.Legacy*]* -[*Tests*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode }
+        exec { & $ReportGenerator -reports:"$LogsDir\OpenCover.xml" -targetdir:$LogsDir -reporttypes:Cobertura }
+        Move-Item (Join-Path $LogsDir Cobertura.xml) $CoveragePath -Force
+    }
+    else
+    {
         exec { & $NUnit $Solution `
             "--where=`"$WhereClause`"" `
             "--noheader" `
@@ -145,5 +145,5 @@ function Invoke-Tests
             "--result=Artifacts\Logs\testexecutionparser.log;format=testexecutionparser" `
             $settings
         }
-    # }
+    }
 }
