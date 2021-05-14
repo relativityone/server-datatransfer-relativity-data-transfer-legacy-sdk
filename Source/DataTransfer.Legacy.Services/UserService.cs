@@ -14,13 +14,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 		}
 
-		public async Task<DataSetWrapper> RetrieveAllAssignableInCaseAsync(int workspaceID, string correlationID)
+		public Task<DataSetWrapper> RetrieveAllAssignableInCaseAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				UserManager manager = new UserManager();
 				return manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
 		public Task LogoutAsync(string correlationID)

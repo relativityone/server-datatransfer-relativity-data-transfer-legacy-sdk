@@ -42,9 +42,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			throw new NotSupportedException();
 		}
 
-		public async Task<IKeplerStream> DownloadFieldFileAsync(int workspaceID, int objectArtifactID, int fileID, int fileFieldArtifactId, string correlationID)
+		public Task<IKeplerStream> DownloadFieldFileAsync(int workspaceID, int objectArtifactID, int fileID, int fileFieldArtifactId, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 				int artifactTypeID = _artifactManager.Read(workspaceServiceContext, objectArtifactID).ArtifactTypeID;
@@ -65,12 +65,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 				AuditDownload(workspaceServiceContext, file.Filename);
 
 				return GetKeplerStream(file.Location);
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
-		public async Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int artifactID, Guid remoteGuid, string correlationID)
+		public Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int artifactID, Guid remoteGuid, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 
@@ -95,12 +95,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 				AuditDownload(workspaceServiceContext, file.Filename);
 
 				return GetKeplerStream(filePath);
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
-		public async Task<IKeplerStream> DownloadTempFileAsync(int workspaceID, Guid remoteGuid, string correlationID)
+		public Task<IKeplerStream> DownloadTempFileAsync(int workspaceID, Guid remoteGuid, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 				var instanceServiceContext = GetBaseServiceContext(AdminWorkspace);
@@ -124,7 +124,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 				AuditDownload(workspaceServiceContext, remoteGuid.ToString());
 
 				return GetKeplerStream(filePath);
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
 		private IKeplerStream GetKeplerStream(string filePath)

@@ -17,48 +17,48 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_productionManager = new ProductionManager();
 		}
 
-		public async Task<object[][]> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs, int[] documentIDs, string correlationID)
+		public Task<object[][]> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs, int[] documentIDs, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				var result = ProductionQuery.RetrieveBatesByProductionAndDocument(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), productionIDs, documentIDs);
 				return result.Table.Select().Select(dr => dr.ItemArray).ToArray();
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveProducedByContextArtifactIDAsync(int workspaceID, string correlationID)
+		public Task<DataSetWrapper> RetrieveProducedByContextArtifactIDAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _productionManager.ExternalRetrieveProduced(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID)),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveImportEligibleByContextArtifactIDAsync(int workspaceID, string correlationID)
+		public Task<DataSetWrapper> RetrieveImportEligibleByContextArtifactIDAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _productionManager.ExternalRetrieveImportEligible(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task DoPostImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)
+		public Task DoPostImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
-			await ExecuteAsync(
+			return ExecuteAsync(
 				() => _productionManager.ExternalDoPostImportProcessing(GetBaseServiceContext(workspaceID), productionArtifactID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task DoPreImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)
+		public Task DoPreImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
-			await ExecuteAsync(
+			return ExecuteAsync(
 				() => _productionManager.ExternalDoPreImportProcessing(GetBaseServiceContext(workspaceID), productionArtifactID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<ProductionInfo> ReadAsync(int workspaceID, int productionArtifactID, string correlationID)
+		public Task<ProductionInfo> ReadAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _productionManager.ReadInfo(GetBaseServiceContext(workspaceID), productionArtifactID).Map<ProductionInfo>(),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 	}
 }

@@ -18,14 +18,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Runners
 			_serviceContextFactory = serviceContextFactory;
 		}
 
-		public async Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, [CallerMemberName] string callerMemberName = "")
+		public Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, [CallerMemberName] string callerMemberName = "")
 		{
 			if (workspaceId.HasValue)
 			{
 				EnsureUserHasPermissionsToUseWebApiReplacement(workspaceId.Value);
 			}
 
-			return await _methodRunner.ExecuteAsync(func, workspaceId, correlationId).ConfigureAwait(false);
+			return _methodRunner.ExecuteAsync(func, workspaceId, correlationId);
 		}
 
 		private void EnsureUserHasPermissionsToUseWebApiReplacement(int workspaceID)

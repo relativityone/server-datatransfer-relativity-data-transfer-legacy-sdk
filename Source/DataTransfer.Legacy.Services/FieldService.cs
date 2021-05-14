@@ -16,32 +16,32 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_fieldManager = new FieldManager();
 		}
 
-		public async Task<Field> ReadAsync(int workspaceID, int fieldArtifactID, string correlationID)
+		public Task<Field> ReadAsync(int workspaceID, int fieldArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _fieldManager.Read(GetBaseServiceContext(workspaceID), fieldArtifactID).Map<Field>(),
 				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveAllMappableAsync(int workspaceID, int artifactTypeID, string correlationID)
+		public Task<DataSetWrapper> RetrieveAllMappableAsync(int workspaceID, int artifactTypeID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FieldManagerFoundation.Query.RetrieveAllMappable(GetBaseServiceContext(workspaceID), artifactTypeID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrievePotentialBeginBatesFieldsAsync(int workspaceID, string correlationID)
+		public Task<DataSetWrapper> RetrievePotentialBeginBatesFieldsAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FieldQuery.RetrievePotentialBeginBatesFields(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<bool> IsFieldIndexedAsync(int workspaceID, int fieldArtifactID, string correlationID)
+		public Task<bool> IsFieldIndexedAsync(int workspaceID, int fieldArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _fieldManager.IsFieldIndexed(GetBaseServiceContext(workspaceID), fieldArtifactID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 	}
 }

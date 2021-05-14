@@ -12,10 +12,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Runners
 			_methodRunner = methodRunner;
 		}
 
-		public async Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, string callerMemberName = "")
+		public Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, string callerMemberName = "")
 		{
 			//TODO check for toggle value
-			return await _methodRunner.ExecuteAsync(func, workspaceId, correlationId).ConfigureAwait(false);
+			return _methodRunner.ExecuteAsync(func, workspaceId, correlationId);
 		}
 	}
 }

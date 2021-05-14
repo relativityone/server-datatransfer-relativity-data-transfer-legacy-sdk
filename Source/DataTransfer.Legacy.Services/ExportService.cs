@@ -18,45 +18,45 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 		}
 
-		public async Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
+		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => { return InitializeExport(workspaceID, (int) ArtifactType.Document, e => { return e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>(); }); },
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<InitializationResults> InitializeFolderExportAsync(int workspaceID, int viewArtifactID, int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID, string correlationID)
+		public Task<InitializationResults> InitializeFolderExportAsync(int workspaceID, int viewArtifactID, int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() =>
 				{
 					return InitializeExport(workspaceID, artifactTypeID, e => { return e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders, DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>(); });
 				},
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID, int[] avfIds, int startAtRecord, string correlationID)
+		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID, int[] avfIds, int startAtRecord, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => { return InitializeExport(workspaceID, (int) ArtifactType.Document, e => { return e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds, startAtRecord).Map<InitializationResults>(); }); },
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<ExportDataWrapper> RetrieveResultsBlockForProductionStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter,
+		public Task<ExportDataWrapper> RetrieveResultsBlockForProductionStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter,
 			char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int productionId, int index, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => { return RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested, multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index); },
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<ExportDataWrapper> RetrieveResultsBlockStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter, char nestedValueDelimiter,
+		public Task<ExportDataWrapper> RetrieveResultsBlockStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter, char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int index, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => { return RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested, multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index); },
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
 		private InitializationResults InitializeExport(int workspaceID, int artifactTypeID, Func<Core.Export, InitializationResults> initialization)
@@ -93,11 +93,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return new ExportDataWrapper(result);
 		}
 
-		public async Task<bool> HasExportPermissionsAsync(int workspaceID, string correlationID)
+		public Task<bool> HasExportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientExport),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 	}
 }
