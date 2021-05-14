@@ -9,25 +9,28 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 {
     [TestFixture]
     [TestExecutionCategory.CI]
+    [TestType.Installation]
+    [TestLevel.L3]
     public class Tests
     {
-        [Test]
-        public void ApiTest()
+	    [IdentifiedTest("A8096C19-D0E6-405A-BC64-1D286AA91AEB")]
+	    [Description("Check that DataTransfer.Legacy is installed")]
+	    public void ShouldGetApplicationAfterInstallation()
         {
             var objectService = RelativityFacade.Instance.Resolve<IObjectService>();
 
-            var rapTemplate = objectService.GetAll<LibraryApplication>()
+            var rap = objectService.GetAll<LibraryApplication>()
 	            .FirstOrDefault(application => application.Name == "DataTransfer.Legacy");
 
-            Assert.That(rapTemplate, Is.Not.Null);
-            Assert.That(rapTemplate.Version, Is.Not.Null.Or.Empty);
+            Assert.That(rap, Is.Not.Null);
+            Assert.That(rap.Version, Is.Not.Null.Or.Empty);
         }
 
-        [Test]
-        public void SqlTest()
+        [IdentifiedTest("A55B8078-9F57-4AAB-A3F9-B91BC91B7E8F")]
+        [Description("Check that DataTransfer.Legacy is visible in database as application")]
+        public void ShouldGetApplicationDataFromDatabase()
         {
             string libraryVersion;
-            int? workspaceArtifactId;
 
             var sqlServer = RelativityFacade.Instance.Config.RelativityInstance.SqlServer;
             var sqlUserName = RelativityFacade.Instance.Config.RelativityInstance.SqlUsername;
@@ -40,12 +43,9 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
                 var command = connection.CreateCommand();
                 command.CommandText = "SELECT [Version] FROM [LibraryApplication] WHERE [Name] = 'DataTransfer.Legacy.rap'";
                 libraryVersion = (string)command.ExecuteScalar();
-                command.CommandText = "SELECT TOP 1 [ArtifactID] FROM [EDDS1015024].[EDDSDBO].[RelativityApplication] WHERE [Name] = 'RAPTemplate'";
-                workspaceArtifactId = (int?)command.ExecuteScalar();
             }
 
             Assert.That(libraryVersion, Is.Not.Empty);
-            Assert.That(workspaceArtifactId, Is.Not.Null);
         }
     }
 }
