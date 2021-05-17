@@ -17,57 +17,57 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_folderManager = new FolderManager();
 		}
 
-		public async Task<DataSetWrapper> RetrieveFolderAndDescendantsAsync(int workspaceID, int folderID, string correlationID)
+		public Task<DataSetWrapper> RetrieveFolderAndDescendantsAsync(int workspaceID, int folderID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _folderManager.ExtenernalRetrieveFolderAndDescendants(GetBaseServiceContext(workspaceID), folderID),
 				workspaceID, correlationID);
 		}
 
-		public async Task<Folder> ReadAsync(int workspaceID, int folderArtifactID, string correlationID)
+		public Task<Folder> ReadAsync(int workspaceID, int folderArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				Core.DTO.Folder folder = FolderManager.Read(GetBaseServiceContext(workspaceID), folderArtifactID);
 				folder.Name = XmlHelper.StripIllegalXmlCharacters(folder.Name);
 				folder.TextIdentifier = XmlHelper.StripIllegalXmlCharacters(folder.TextIdentifier);
 				return folder.Map<Folder>();
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
-		public async Task<int> ReadIDAsync(int workspaceID, int parentArtifactID, string name, string correlationID)
+		public Task<int> ReadIDAsync(int workspaceID, int parentArtifactID, string name, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _folderManager.Read(GetBaseServiceContext(workspaceID), parentArtifactID, name),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<int> CreateAsync(int workspaceID, int parentArtifactID, string folderName, string correlationID)
+		public Task<int> CreateAsync(int workspaceID, int parentArtifactID, string folderName, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _folderManager.CheckFolderExistenceThenCreateWithoutDuplicates(GetBaseServiceContext(workspaceID), parentArtifactID, folderName),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<bool> ExistsAsync(int workspaceID, int folderArtifactID, string correlationID)
+		public Task<bool> ExistsAsync(int workspaceID, int folderArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _folderManager.Exists(GetBaseServiceContext(workspaceID), folderArtifactID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveInitialChunkAsync(int workspaceID, string correlationID)
+		public Task<DataSetWrapper> RetrieveInitialChunkAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveNextChunkAsync(int workspaceID, int lastFolderID, string correlationID)
+		public Task<DataSetWrapper> RetrieveNextChunkAsync(int workspaceID, int lastFolderID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID), lastFolderID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 	}
 }

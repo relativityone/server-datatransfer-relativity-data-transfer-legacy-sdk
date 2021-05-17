@@ -22,9 +22,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_serviceContextFactory = serviceContextFactory;
 		}
 
-		public async Task ExecuteAsync(Action func, int? workspaceId, string correlationId)
+		public Task ExecuteAsync(Action func, int? workspaceId, string correlationId)
 		{
-			await _methodRunner.ExecuteAsync(async () =>
+			return _methodRunner.ExecuteAsync(async () =>
 			{
 				await Task.Yield();
 				func();
@@ -32,9 +32,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}, workspaceId, correlationId);
 		}
 
-		public async Task<T> ExecuteAsync<T>(Func<T> func, int? workspaceId, string correlationId)
+		public Task<T> ExecuteAsync<T>(Func<T> func, int? workspaceId, string correlationId)
 		{
-			return await _methodRunner.ExecuteAsync(async () =>
+			return _methodRunner.ExecuteAsync(async () =>
 			{
 				await Task.Yield();
 				return func();

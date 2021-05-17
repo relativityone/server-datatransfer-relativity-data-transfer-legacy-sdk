@@ -13,14 +13,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 		}
 
-		public async Task<int[]> RetrieveAllUnsupportedOiFileIdsAsync(string correlationID)
+		public Task<int[]> RetrieveAllUnsupportedOiFileIdsAsync(string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				OIUnsupportedQuery unsupportedQuery = new OIUnsupportedQuery();
 				var dataViewBase = unsupportedQuery.RetrieveAll(GetBaseServiceContext(AdminWorkspace));
 				return DataViewBaseHelper.DataViewBaseToInt32Array(dataViewBase, "FileID");
-			}, null, correlationID).ConfigureAwait(false);
+			}, null, correlationID);
 		}
 	}
 }
