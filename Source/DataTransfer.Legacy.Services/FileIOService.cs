@@ -18,30 +18,30 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_externalIo = new ExternalIO();
 		}
 
-		public async Task<IoResponse> BeginFillAsync(int workspaceID, byte[] b, string documentDirectory, string fileGuid, string correlationID)
+		public Task<IoResponse> BeginFillAsync(int workspaceID, byte[] b, string documentDirectory, string fileGuid, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _externalIo.ExternalBeginFill(GetBaseServiceContext(workspaceID), b, documentDirectory, workspaceID, fileGuid).Map<IoResponse>(),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<IoResponse> FileFillAsync(int workspaceID, string documentDirectory, string fileGuid, byte[] b, string correlationID)
+		public Task<IoResponse> FileFillAsync(int workspaceID, string documentDirectory, string fileGuid, byte[] b, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _externalIo.ExternalFileFill(GetBaseServiceContext(workspaceID), documentDirectory, fileGuid, b, workspaceID).Map<IoResponse>(),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task RemoveFillAsync(int workspaceID, string documentDirectory, string fileGuid, string correlationID)
+		public Task RemoveFillAsync(int workspaceID, string documentDirectory, string fileGuid, string correlationID)
 		{
-			await ExecuteAsync(
+			return ExecuteAsync(
 				() => _externalIo.ExternalRemoveFill(GetBaseServiceContext(workspaceID), documentDirectory, fileGuid, workspaceID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task RemoveTempFileAsync(int workspaceID, string fileName, string correlationID)
+		public Task RemoveTempFileAsync(int workspaceID, string fileName, string correlationID)
 		{
-			await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 				{
 					var serviceContext = GetBaseServiceContext(AdminWorkspace);
 					string documentDirectory = GetDefaultDocumentDirectory(serviceContext, workspaceID);
@@ -50,36 +50,36 @@ namespace Relativity.DataTransfer.Legacy.Services
 				workspaceID, correlationID);
 		}
 
-		public async Task<string[][]> GetDefaultRepositorySpaceReportAsync(int workspaceID, string correlationID)
+		public Task<string[][]> GetDefaultRepositorySpaceReportAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				var serviceContext = GetBaseServiceContext(AdminWorkspace);
 				string documentDirectory = GetDefaultDocumentDirectory(serviceContext, workspaceID);
 				return _externalIo.GetRepositoryReport(documentDirectory);
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
-		public async Task<string[][]> GetBcpShareSpaceReportAsync(int workspaceID, string correlationID)
+		public Task<string[][]> GetBcpShareSpaceReportAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _externalIo.GetRepositoryReport(GetBaseServiceContext(workspaceID).ChicagoContext.GetBcpSharePath()),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<string> GetBcpSharePathAsync(int workspaceID, string correlationID)
+		public Task<string> GetBcpSharePathAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(() => GetBaseServiceContext(workspaceID).ChicagoContext.GetBcpSharePath(), workspaceID, correlationID).ConfigureAwait(false);
+			return ExecuteAsync(() => GetBaseServiceContext(workspaceID).ChicagoContext.GetBcpSharePath(), workspaceID, correlationID);
 		}
 
-		public async Task<bool> ValidateBcpShareAsync(int workspaceID, string correlationID)
+		public Task<bool> ValidateBcpShareAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(() => GetBaseServiceContext(workspaceID).ChicagoContext.ValidateBcpShare(), workspaceID, correlationID).ConfigureAwait(false);
+			return ExecuteAsync(() => GetBaseServiceContext(workspaceID).ChicagoContext.ValidateBcpShare(), workspaceID, correlationID);
 		}
 
-		public async Task<int> RepositoryVolumeMaxAsync(string correlationID)
+		public Task<int> RepositoryVolumeMaxAsync(string correlationID)
 		{
-			return await ExecuteAsync(() => Config.RepositoryVolumeMax, null, correlationID).ConfigureAwait(false);
+			return ExecuteAsync(() => Config.RepositoryVolumeMax, null, correlationID);
 		}
 
 		private string GetDefaultDocumentDirectory(BaseServiceContext serviceContext, int workspaceID)

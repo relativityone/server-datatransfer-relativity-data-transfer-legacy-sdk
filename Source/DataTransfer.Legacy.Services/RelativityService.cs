@@ -16,11 +16,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 		}
 
-		public async Task<string> RetrieveCurrencySymbolAsync(string correlationID)
+		public Task<string> RetrieveCurrencySymbolAsync(string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol,
-				null, correlationID).ConfigureAwait(false);
+				null, correlationID);
 		}
 
 		public Task<string> GetImportExportWebApiVersionAsync(string correlationID)
@@ -33,18 +33,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 			throw new NotSupportedException("This should not be used when using Kepler endpoints");
 		}
 
-		public async Task<bool> IsImportEmailNotificationEnabledAsync(string correlationID)
+		public Task<bool> IsImportEmailNotificationEnabledAsync(string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => Config.SendNotificationOnImportCompletion,
-				null, correlationID).ConfigureAwait(false);
+				null, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
+		public Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace)),
-				null, correlationID).ConfigureAwait(false);
+				null, correlationID);
 		}
 
 		public Task<string> GetRelativityUrlAsync(string correlationID)

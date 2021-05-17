@@ -18,88 +18,88 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_viewManager = new ViewManager();
 		}
 
-		public async Task<bool[]> IsAssociatedSearchProviderAccessibleAsync(int workspaceID, int searchArtifactID, string correlationID)
+		public Task<bool[]> IsAssociatedSearchProviderAccessibleAsync(int workspaceID, int searchArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _searchManager.IsAssociatedSearchProviderAccessible(GetBaseServiceContext(workspaceID), searchArtifactID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveNativesForSearchAsync(int workspaceID, string documentArtifactIDs, string correlationID)
+		public Task<DataSetWrapper> RetrieveNativesForSearchAsync(int workspaceID, string documentArtifactIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveNativesForDocuments(GetBaseServiceContext(workspaceID), documentArtifactIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrievePdfForSearchAsync(int workspaceID, string documentArtifactIDs, string correlationID)
+		public Task<DataSetWrapper> RetrievePdfForSearchAsync(int workspaceID, string documentArtifactIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrievePdfForDocuments(GetBaseServiceContext(workspaceID), documentArtifactIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveFilesForDynamicObjectsAsync(int workspaceID, int fileFieldArtifactID, int[] objectIDs, string correlationID)
+		public Task<DataSetWrapper> RetrieveFilesForDynamicObjectsAsync(int workspaceID, int fileFieldArtifactID, int[] objectIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveFilesForDynamicObjects(GetBaseServiceContext(workspaceID), fileFieldArtifactID, objectIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveNativesForProductionAsync(int workspaceID, int productionArtifactID, string documentArtifactIDs, string correlationID)
+		public Task<DataSetWrapper> RetrieveNativesForProductionAsync(int workspaceID, int productionArtifactID, string documentArtifactIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveNativesForProductionDocuments(GetBaseServiceContext(workspaceID), productionArtifactID, documentArtifactIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveImagesForSearchAsync(int workspaceID, int[] documentArtifactIDs, string correlationID)
+		public Task<DataSetWrapper> RetrieveImagesForSearchAsync(int workspaceID, int[] documentArtifactIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveAllImagesForDocuments(GetBaseServiceContext(workspaceID), documentArtifactIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveProducedImagesForDocumentAsync(int workspaceID, int documentArtifactID, string correlationID)
+		public Task<DataSetWrapper> RetrieveProducedImagesForDocumentAsync(int workspaceID, int documentArtifactID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveAllByDocumentArtifactIdAndType(GetBaseServiceContext(workspaceID), documentArtifactID, (int) FileType.StampedTif),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveImagesByProductionArtifactIDForProductionExportByDocumentSetAsync(int workspaceID, int productionArtifactID, int[] documentArtifactIDs, string correlationID)
+		public Task<DataSetWrapper> RetrieveImagesByProductionArtifactIDForProductionExportByDocumentSetAsync(int workspaceID, int productionArtifactID, int[] documentArtifactIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveImagesByProductionArtifactIDForProductionExportByDocumentSet(GetBaseServiceContext(workspaceID), productionArtifactID, documentArtifactIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveImagesByProductionIDsAndDocumentIDsForExportAsync(int workspaceID, int[] productionArtifactIDs, int[] documentArtifactIDs, string correlationID)
+		public Task<DataSetWrapper> RetrieveImagesByProductionIDsAndDocumentIDsForExportAsync(int workspaceID, int[] productionArtifactIDs, int[] documentArtifactIDs, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => FileQuery.RetrieveByProductionIDsAndDocumentIDsForExport(GetBaseServiceContext(workspaceID), productionArtifactIDs, documentArtifactIDs),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveViewsByContextArtifactIDAsync(int workspaceID, int artifactTypeID, bool isSearch, string correlationID)
+		public Task<DataSetWrapper> RetrieveViewsByContextArtifactIDAsync(int workspaceID, int artifactTypeID, bool isSearch, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _viewManager.ExternalRetrieveViews(GetBaseServiceContext(workspaceID), artifactTypeID, isSearch),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveDefaultViewFieldsForIdListAsync(int workspaceID, int artifactTypeID, int[] artifactIdList, bool isProductionList, string correlationID)
+		public Task<DataSetWrapper> RetrieveDefaultViewFieldsForIdListAsync(int workspaceID, int artifactTypeID, int[] artifactIdList, bool isProductionList, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _searchManager.Query.RetrieveOrderedAvfLookupByArtifactIdList(GetBaseServiceContext(workspaceID), artifactTypeID, artifactIdList, isProductionList),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveAllExportableViewFieldsAsync(int workspaceID, int artifactTypeID, string correlationID)
+		public Task<DataSetWrapper> RetrieveAllExportableViewFieldsAsync(int workspaceID, int artifactTypeID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _searchManager.Query.RetrieveAllExportableViewFields(GetBaseServiceContext(workspaceID), artifactTypeID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 	}
 }

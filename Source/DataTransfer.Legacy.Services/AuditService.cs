@@ -18,32 +18,32 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_massImportManager = new MassImportManager();
 		}
 
-		public async Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)
+		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _massExportManager.AuditExport(GetBaseServiceContext(workspaceID), isFatalError, exportStatistics.Map<MassImport.ExportStatistics>()),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID)
+		public Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<MassImport.ObjectImportStatistics>()),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID)
+		public Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<MassImport.ImageImportStatistics>()),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task DeleteAuditTokenAsync(string token, string correlationID)
+		public Task DeleteAuditTokenAsync(string token, string correlationID)
 		{
-			await ExecuteAsync(
+			return ExecuteAsync(
 				() => RelativityServicesAuthenticationTokenManager.DeleteSingleTokenForAuditSpoofing(token),
-				null, correlationID).ConfigureAwait(false);
+				null, correlationID);
 		}
 	}
 }

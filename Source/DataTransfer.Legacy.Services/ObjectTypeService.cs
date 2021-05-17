@@ -16,18 +16,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_objectTypeManager = new ObjectTypeManager();
 		}
 
-		public async Task<DataSetWrapper> RetrieveAllUploadableAsync(int workspaceID, string correlationID)
+		public Task<DataSetWrapper> RetrieveAllUploadableAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _objectTypeManager.Query.RetrieveAllDynamicArtifactTypesWithSecurity(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveParentArtifactTypeIDAsync(int workspaceID, int artifactTypeID, string correlationID)
+		public Task<DataSetWrapper> RetrieveParentArtifactTypeIDAsync(int workspaceID, int artifactTypeID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _objectTypeManager.Query.RetrieveParentArtifactTypeID(GetBaseServiceContext(workspaceID), artifactTypeID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 	}
 }

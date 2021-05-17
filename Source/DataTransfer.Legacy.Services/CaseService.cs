@@ -19,9 +19,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_caseManager = new CaseManager();
 		}
 
-		public async Task<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
+		public Task<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(() =>
+			return ExecuteAsync(() =>
 			{
 				BaseServiceContext instanceLevelContext = GetBaseServiceContext(AdminWorkspace);
 				Case workspace = _caseManager.Read(instanceLevelContext, workspaceID);
@@ -31,28 +31,28 @@ namespace Relativity.DataTransfer.Legacy.Services
 				caseInfo.DocumentPath = path;
 				caseInfo.Name = XmlHelper.StripIllegalXmlCharacters(caseInfo.Name);
 				return caseInfo.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo>();
-			}, workspaceID, correlationID).ConfigureAwait(false);
+			}, workspaceID, correlationID);
 		}
 
-		public async Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
+		public Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(workspaceID), workspaceID),
-				workspaceID, correlationID).ConfigureAwait(false);
+				workspaceID, correlationID);
 		}
 
-		public async Task<string[]> GetAllDocumentFolderPathsAsync(string correlationID)
+		public Task<string[]> GetAllDocumentFolderPathsAsync(string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _caseManager.GetAllDocumentFolderPaths(GetBaseServiceContext(AdminWorkspace)),
-				null, correlationID).ConfigureAwait(false);
+				null, correlationID);
 		}
 
-		public async Task<DataSetWrapper> RetrieveAllEnabledAsync(string correlationID)
+		public Task<DataSetWrapper> RetrieveAllEnabledAsync(string correlationID)
 		{
-			return await ExecuteAsync(
+			return ExecuteAsync(
 				() => _caseManager.RetrieveAll(GetBaseServiceContext(AdminWorkspace), null, true),
-				null, correlationID).ConfigureAwait(false);
+				null, correlationID);
 		}
 	}
 }
