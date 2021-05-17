@@ -11,6 +11,8 @@ FunctionalTest.runsettings
 *.jar
 *.exe
 *.bin
+*.DotSettings.user
 !vendor/*
-Source/RAPTemplate.FunctionalTests/Files/
-Source/RAPTemplate.FunctionalTests/oi/
+!Source/DataTransfer.Legacy.Tests/WebAPIContract/*
+Source/DataTransfer.Legacy.FunctionalTests/Files/
+Source/DataTransfer.Legacy.FunctionalTests/oi/
