@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.Threading.Tasks;
+using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
@@ -16,13 +17,13 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CD
 
 		[IdentifiedTest("94CE4420-EF1F-47C2-87BC-907468D66CE3")]
 		[TestExecutionCategory.RAPCD.Verification.Functional]
-		public void DataTransferLegacyApiTest()
+		public async Task DataTransferLegacyApiTest()
 		{
 			var serviceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
 
 			using (var pingService = serviceFactory.GetServiceProxy<IPingService>())
 			{
-				var result = pingService.PingAsync().GetAwaiter().GetResult();
+				var result = await pingService.PingAsync();
 
 				Assert.AreEqual(result, "Pong");
 			}
