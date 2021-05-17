@@ -11,6 +11,7 @@ FunctionalTest.runsettings
 *.jar
 *.exe
 *.bin
+*.DotSettings.user
 !vendor/*
 !Source/DataTransfer.Legacy.Tests/WebAPIContract/*
 Source/DataTransfer.Legacy.FunctionalTests/Files/
