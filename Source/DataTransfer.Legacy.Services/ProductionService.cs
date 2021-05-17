@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Data;
+using System.Linq;
 using System.Threading.Tasks;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Runners;
+using Relativity.Export;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -22,7 +25,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return ExecuteAsync(() =>
 			{
 				var result = ProductionQuery.RetrieveBatesByProductionAndDocument(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), productionIDs, documentIDs);
-				return result.Table.Select().Select(dr => dr.ItemArray).ToArray();
+				return ToObjectArrays(result, ProductionDocumentBatesHelper.ToSerializableObjectArray);
+                
 			}, workspaceID, correlationID);
 		}
 
@@ -60,5 +64,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 				() => _productionManager.ReadInfo(GetBaseServiceContext(workspaceID), productionArtifactID).Map<ProductionInfo>(),
 				workspaceID, correlationID);
 		}
+
+        private static object[][] ToObjectArrays(kCura.Data.DataView dv, Func<DataRow, object[]> transformer)
+        {
+            if (transformer == null)
+            {
+                transformer = row => row.ItemArray;
+            }
+
+            return dv.Table.Select().Select(transformer).ToArray();
+        }
 	}
 }
