@@ -18,24 +18,24 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_externalIo = new ExternalIO();
 		}
 
-		public Task<IoResponse> BeginFillAsync(int workspaceID, byte[] b, string documentDirectory, string fileGuid, string correlationID)
+		public Task<IoResponse> BeginFillAsync(int workspaceID, byte[] b, string documentDirectory, string fileName, string correlationID)
 		{
 			return ExecuteAsync(
-				() => _externalIo.ExternalBeginFill(GetBaseServiceContext(workspaceID), b, documentDirectory, workspaceID, fileGuid).Map<IoResponse>(),
+				() => _externalIo.ExternalBeginFill(GetBaseServiceContext(workspaceID), b, documentDirectory, workspaceID, fileName).Map<IoResponse>(),
 				workspaceID, correlationID);
 		}
 
-		public Task<IoResponse> FileFillAsync(int workspaceID, string documentDirectory, string fileGuid, byte[] b, string correlationID)
+		public Task<IoResponse> FileFillAsync(int workspaceID, string documentDirectory, string fileName, byte[] b, string correlationID)
 		{
 			return ExecuteAsync(
-				() => _externalIo.ExternalFileFill(GetBaseServiceContext(workspaceID), documentDirectory, fileGuid, b, workspaceID).Map<IoResponse>(),
+				() => _externalIo.ExternalFileFill(GetBaseServiceContext(workspaceID), documentDirectory, fileName, b, workspaceID).Map<IoResponse>(),
 				workspaceID, correlationID);
 		}
 
-		public Task RemoveFillAsync(int workspaceID, string documentDirectory, string fileGuid, string correlationID)
+		public Task RemoveFillAsync(int workspaceID, string documentDirectory, string fileName, string correlationID)
 		{
 			return ExecuteAsync(
-				() => _externalIo.ExternalRemoveFill(GetBaseServiceContext(workspaceID), documentDirectory, fileGuid, workspaceID),
+				() => _externalIo.ExternalRemoveFill(GetBaseServiceContext(workspaceID), documentDirectory, fileName, workspaceID),
 				workspaceID, correlationID);
 		}
 
