@@ -25,13 +25,14 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                 var cookieContainer = new CookieContainer();
 
                 var userManager = new UserManager(credentials, cookieContainer);
+                TestContext.WriteLine($"Run WebApiServiceWrapper with username={_username}, url={userManager.Url}");
                 userManager.Login(_username, _password);
 
                 action(credentials, cookieContainer);
             }
             catch (Exception ex)
             {
-                TestContext.WriteLine($"Exception occurred when retrieving data from RelativityWebApi endpoint for username {_username}: {ex}");
+                TestContext.WriteLine($"Exception occurred when retrieving data from RelativityWebApi endpoint: {ex}");
                 throw;
             }
         }
