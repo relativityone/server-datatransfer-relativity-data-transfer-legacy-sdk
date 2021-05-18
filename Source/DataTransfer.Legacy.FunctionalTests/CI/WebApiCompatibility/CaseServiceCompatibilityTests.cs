@@ -21,9 +21,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             DataSet webApiResult = null;
             DataSetWrapper keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
-                var caseManager = new CaseManager(credentials, cookieContainer);
                 webApiResult = caseManager.RetrieveAllEnabled();
             });
 
@@ -43,9 +42,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             string[] webApiResult = null;
             string[] keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
-                var caseManager = new CaseManager(credentials, cookieContainer);
                 webApiResult = caseManager.GetAllDocumentFolderPaths();
             });
 
@@ -66,9 +64,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             string[] webApiResult = null;
             string[] keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
-                var caseManager = new CaseManager(credentials, cookieContainer);
                 webApiResult = caseManager.GetAllDocumentFolderPathsForCase(workspaceId);
             });
 
@@ -89,9 +86,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             Relativity.CaseInfo webApiResult = null;
             DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
-                var caseManager = new CaseManager(credentials, cookieContainer);
                 webApiResult = WebApiResultMapper.Map<Relativity.CaseInfo>(caseManager.Read(workspaceId));
             });
 
