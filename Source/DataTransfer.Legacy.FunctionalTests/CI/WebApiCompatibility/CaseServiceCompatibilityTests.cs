@@ -1,10 +1,11 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
 using kCura.WinEDDS.Service;
+using Newtonsoft.Json;
 using NUnit.Framework;
-using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.Testing.Identification;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
@@ -17,89 +18,94 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         [IdentifiedTest("F5312AF8-D1E1-4400-962E-43A77FE44922")]
         public async Task RetrieveAllEnabled_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            DataSet webApiData = null;
-            DataSetWrapper keplerData = null;
+            DataSet webApiResult = null;
+            DataSetWrapper keplerResult = null;
 
             WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
             {
                 var caseManager = new CaseManager(credentials, cookieContainer);
-                webApiData = caseManager.RetrieveAllEnabled();
+                webApiResult = caseManager.RetrieveAllEnabled();
             });
 
             await KeplerServiceWrapper.PerformDataRequest<ICaseService>(async service =>
             {
-                keplerData = await service.RetrieveAllEnabledAsync(string.Empty);
+                keplerResult = await service.RetrieveAllEnabledAsync(string.Empty);
             });
 
             // assert
-            DataSetAssertHelper.AreEqual(webApiData, keplerData.Unwrap());
+            // TODO: compare data sets in a better way ?
+            Assert.AreEqual(JsonConvert.SerializeObject(webApiResult), JsonConvert.SerializeObject(keplerResult.Unwrap()));
         }
 
         [IdentifiedTest("EE590619-6890-4872-97A8-09FE90D789E3")]
         public async Task GetAllDocumentFolderPaths_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            string[] webApiData = null;
-            string[] keplerData = null;
+            string[] webApiResult = null;
+            string[] keplerResult = null;
 
             WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
             {
                 var caseManager = new CaseManager(credentials, cookieContainer);
-                webApiData = caseManager.GetAllDocumentFolderPaths();
+                webApiResult = caseManager.GetAllDocumentFolderPaths();
             });
 
             await KeplerServiceWrapper.PerformDataRequest<ICaseService>(async service =>
             {
-                keplerData = await service.GetAllDocumentFolderPathsAsync(string.Empty);
+                keplerResult = await service.GetAllDocumentFolderPathsAsync(string.Empty);
             });
 
             // assert
-            CollectionAssert.AreEqual(webApiData, keplerData);
+            CollectionAssert.AreEqual(webApiResult, keplerResult);
         }
 
-        [IdentifiedTest("")]
+        [IdentifiedTest("9B442373-20E4-4F86-B477-327EDEBD66EB")]
         public async Task GetAllDocumentFolderPathsForCase_ShouldReturnTheSameResultForWebApiAndKepler()
         {
             var workspaceId = await GetTestWorkspaceId();
             
-            string[] webApiData = null;
-            string[] keplerData = null;
+            string[] webApiResult = null;
+            string[] keplerResult = null;
 
             WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
             {
                 var caseManager = new CaseManager(credentials, cookieContainer);
-                webApiData = caseManager.GetAllDocumentFolderPathsForCase(workspaceId);
+                webApiResult = caseManager.GetAllDocumentFolderPathsForCase(workspaceId);
             });
 
             await KeplerServiceWrapper.PerformDataRequest<ICaseService>(async service =>
             {
-                keplerData = await service.GetAllDocumentFolderPathsForCaseAsync(workspaceId, string.Empty);
+                keplerResult = await service.GetAllDocumentFolderPathsForCaseAsync(workspaceId, string.Empty);
             });
 
             // assert
-            CollectionAssert.AreEqual(webApiData, keplerData);
+            CollectionAssert.AreEqual(webApiResult, keplerResult);
         }
 
-        [IdentifiedTest("")]
+        [IdentifiedTest("EF71DF51-3746-485F-A33F-8B68042954C1")]
         public async Task Read_ShouldReturnTheSameResultForWebApiAndKepler()
         {
             var workspaceId = await GetTestWorkspaceId();
 
-            Relativity.DataExchange.Service.CaseInfo webApiData = null;
-            DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo keplerData = null;
+            Relativity.CaseInfo webApiResult = null;
+            DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo keplerResult = null;
 
             WebApiServiceWrapper.PerformDataRequest((credentials, cookieContainer) =>
             {
                 var caseManager = new CaseManager(credentials, cookieContainer);
-                webApiData = caseManager.Read(workspaceId);
+                webApiResult = WebApiResultMapper.Map<Relativity.CaseInfo>(caseManager.Read(workspaceId));
             });
 
             await KeplerServiceWrapper.PerformDataRequest<ICaseService>(async service =>
             {
-                keplerData = await service.ReadAsync(workspaceId, string.Empty);
+                keplerResult = await service.ReadAsync(workspaceId, string.Empty);
             });
 
+            // map web api model to kepler model before comparing
+            var webApiResultMapped = webApiResult.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo>();
+
             // assert
-            //CollectionAssert.AreEqual(webApiData, keplerData);
+            // TODO: compare models in a better way ?
+            Assert.AreEqual(JsonConvert.SerializeObject(webApiResultMapped), JsonConvert.SerializeObject(keplerResult));
         }
     }
 }

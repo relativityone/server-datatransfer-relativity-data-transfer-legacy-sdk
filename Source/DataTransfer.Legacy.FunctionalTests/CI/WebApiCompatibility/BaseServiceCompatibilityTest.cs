@@ -10,11 +10,13 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
     {
         protected KeplerServiceWrapper KeplerServiceWrapper;
         protected WebApiServiceWrapper WebApiServiceWrapper;
+        protected WebApiResultMapper WebApiResultMapper;
 
         protected BaseServiceCompatibilityTest()
         {
             KeplerServiceWrapper = new KeplerServiceWrapper();
             WebApiServiceWrapper = new WebApiServiceWrapper();
+            WebApiResultMapper = new WebApiResultMapper();
         }
 
         protected async Task<int> GetTestWorkspaceId()
