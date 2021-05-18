@@ -29,10 +29,10 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 			RelativityFacade.Instance.RelyOn(new CoreComponent { ConfigurationRoot = configurationRoot });
 			RelativityFacade.Instance.RelyOn<ApiComponent>();
 
-			//var myRap = Path.Combine(RelativityFacade.Instance.Config.RelativityInstance.RapDirectory, "DataTransfer.Legacy.rap");
+			var myRap = Path.Combine(RelativityFacade.Instance.Config.RelativityInstance.RapDirectory, "DataTransfer.Legacy.rap");
 
-			//var applicationService = RelativityFacade.Instance.Resolve<ILibraryApplicationService>();
-			//applicationService.InstallToLibrary(myRap);
+			var applicationService = RelativityFacade.Instance.Resolve<ILibraryApplicationService>();
+			applicationService.InstallToLibrary(myRap);
 		}
 	}
 }

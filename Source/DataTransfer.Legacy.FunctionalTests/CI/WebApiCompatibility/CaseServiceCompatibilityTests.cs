@@ -33,7 +33,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             });
 
             // assert
-            // TODO: compare data sets in a better way ?
+            // TODO: compare data sets in a better way than json ?
             Assert.AreEqual(JsonConvert.SerializeObject(webApiResult), JsonConvert.SerializeObject(keplerResult.Unwrap()));
         }
 
@@ -104,7 +104,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             var webApiResultMapped = webApiResult.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo>();
 
             // assert
-            // TODO: compare models in a better way ?
+            // TODO: compare models in a better way than json (e.g. reflection, FluentAssertions) ?
             Assert.AreEqual(JsonConvert.SerializeObject(webApiResultMapped), JsonConvert.SerializeObject(keplerResult));
         }
     }
