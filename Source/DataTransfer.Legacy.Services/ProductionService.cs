@@ -25,8 +25,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return ExecuteAsync(() =>
 			{
 				var result = ProductionQuery.RetrieveBatesByProductionAndDocument(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), productionIDs, documentIDs);
-				return ToObjectArrays(result, ProductionDocumentBatesHelper.ToSerializableObjectArray);
-                
+                return ToObjectArrays(result, ProductionDocumentBatesHelper.ToSerializableObjectArray);
 			}, workspaceID, correlationID);
 		}
 
@@ -65,14 +64,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 				workspaceID, correlationID);
 		}
 
-        private static object[][] ToObjectArrays(kCura.Data.DataView dv, Func<DataRow, object[]> transformer)
+        private static object[][] ToObjectArrays(kCura.Data.DataView dataView, Func<DataRow, object[]> transformer)
         {
             if (transformer == null)
             {
                 transformer = row => row.ItemArray;
             }
 
-            return dv.Table.Select().Select(transformer).ToArray();
+            return dataView.Table.Select().Select(transformer).ToArray();
         }
 	}
 }
