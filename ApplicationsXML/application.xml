@@ -57,6 +57,11 @@
       <Name>Relativity.MassImport.dll</Name>
       <Notes />
     </Assembly>
+	<Assembly>
+      <Keywords />
+      <Name>Relativity.Core.dll</Name>
+      <Notes />
+    </Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />

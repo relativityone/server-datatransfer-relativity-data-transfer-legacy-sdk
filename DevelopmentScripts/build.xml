@@ -17,6 +17,7 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Contracts.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Data.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.MassImport.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Core.dll</Assembly>
         </Assemblies>
         <ResourceFiles />
         <CustomPages />
