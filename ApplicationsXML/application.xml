@@ -52,6 +52,11 @@
       <Name>Relativity.DistributedJobs.Data.dll</Name>
       <Notes />
     </Assembly>
+	<Assembly>
+      <Keywords />
+      <Name>Relativity.MassImport.dll</Name>
+      <Notes />
+    </Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />
