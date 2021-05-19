@@ -25,12 +25,12 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                         i => TimeSpan.FromSeconds(RetryPolicySleepDurationTimeSeconds),
                         (exception, timeSpan, retryCount, context) =>
                         {
-                            TestContext.WriteLine($"Service connection failed with message. Retry policy triggered... Attempt #{retryCount}");
+                            TestContext.WriteLine($"Service connection failed. Retry policy triggered... Attempt #{retryCount}");
                         });
 
+                var keplerServiceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
                 await keplerRetryPolicy.ExecuteAsync(async () =>
                 {
-                    var keplerServiceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
                     using (var keplerService = keplerServiceFactory.GetServiceProxy<T>())
                     {
                         await action(keplerService);
