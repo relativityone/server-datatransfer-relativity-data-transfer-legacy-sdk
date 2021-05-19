@@ -19,6 +19,10 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             WebApiResultMapper = new WebApiResultMapper();
         }
 
+        /// <summary>
+        /// TODO: We should create our own test workspace and work with it, not taking random workspace from relativity.
+        /// </summary>
+        /// <returns>Id of test workspace</returns>
         protected async Task<int> GetTestWorkspaceId()
         {
             DataSetWrapper workspaces = null;
