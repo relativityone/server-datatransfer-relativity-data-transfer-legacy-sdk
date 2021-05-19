@@ -17,15 +17,25 @@ namespace Relativity.DataTransfer.Legacy.Services.Runners
 
 		public async Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, [CallerMemberName] string callerMemberName = "")
         {
-            try
-            {
+			try
+			{
                 return await _methodRunner.ExecuteAsync(func, workspaceId, correlationId).ConfigureAwait(false);
             }
-            catch (Exception e)
+            catch (SoapException soapException)
             {
-                var msg = $"ERROR1: {e}, ERROR2: {e.InnerException}";
-                throw new Exception(msg);
+                //todo
+                throw new ServiceException("todo", soapException);
             }
-        }
+            catch (ServiceException serviceException)
+            {
+                //todo
+                throw new ServiceException("todo", serviceException);
+            }
+            catch (Exception exception)
+            {
+                //todo
+                throw new ServiceException("todo", exception);
+            }
+		}
 	}
 }
