@@ -6,19 +6,19 @@ using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Runners
 {
-	public sealed class MethodRunnerWithErrorHandling : IMethodRunner
-	{
-		private readonly IMethodRunner _methodRunner;
+    public sealed class MethodRunnerWithErrorHandling : IMethodRunner
+    {
+        private readonly IMethodRunner _methodRunner;
 
-		public MethodRunnerWithErrorHandling(IMethodRunner methodRunner)
-		{
-			_methodRunner = methodRunner;
-		}
-
-		public async Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, [CallerMemberName] string callerMemberName = "")
+        public MethodRunnerWithErrorHandling(IMethodRunner methodRunner)
         {
-			try
-			{
+            _methodRunner = methodRunner;
+        }
+
+        public async Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId, [CallerMemberName] string callerMemberName = "")
+        {
+            try
+            {
                 return await _methodRunner.ExecuteAsync(func, workspaceId, correlationId).ConfigureAwait(false);
             }
             catch (SoapException soapException)
@@ -36,6 +36,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Runners
                 //todo
                 throw new ServiceException("todo", exception);
             }
-		}
-	}
+        }
+    }
 }
