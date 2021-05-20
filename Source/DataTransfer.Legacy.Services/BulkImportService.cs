@@ -80,7 +80,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}
 
 			bool nonAdminsCanNoSnapshot = Config.AllowNoSnapshotImport;
-			if (UserQuery.UserIsSystemAdmin(serviceContext.GetMasterDbServiceContext()))
+			if (!UserQuery.UserIsSystemAdmin(serviceContext.GetMasterDbServiceContext()))
 			{
 				if (coordinator.DisableUserSecurityCheck)
 				{
@@ -121,10 +121,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 			};
 		}
 
-		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string importKey, bool writeHeader, int keyFieldID, string correlationID)
+		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
 			return ExecuteAsync(
-				() => _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), importKey, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>(),
+				() => _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>(),
 				workspaceID, correlationID);
 		}
 
@@ -135,10 +135,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 				workspaceID, correlationID);
 		}
 
-		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string importKey, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
+		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
 			return ExecuteAsync(
-				() => _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), importKey, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>(),
+				() => _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>(),
 				workspaceID, correlationID);
 		}
 
