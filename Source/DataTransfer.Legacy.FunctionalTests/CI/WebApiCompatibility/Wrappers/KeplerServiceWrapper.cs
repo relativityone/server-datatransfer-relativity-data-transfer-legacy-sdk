@@ -6,7 +6,7 @@ using Relativity.Kepler.Exceptions;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
 
-namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils
+namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Wrappers
 {
     public class KeplerServiceWrapper
     {

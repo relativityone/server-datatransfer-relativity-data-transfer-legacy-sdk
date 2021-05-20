@@ -4,7 +4,7 @@ using kCura.WinEDDS.Service;
 using NUnit.Framework;
 using Relativity.Testing.Framework;
 
-namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils
+namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Wrappers
 {
     public class WebApiServiceWrapper
     {
@@ -37,7 +37,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 
                 var managerType = typeof(T);
                 object[] args = { credentials, cookieContainer, _webApiUrl, _webApiTimeoutMs };
-                using (var manager = (T) Activator.CreateInstance(managerType, args))
+                using (var manager = (T)Activator.CreateInstance(managerType, args))
                 {
                     action(manager);
                 }

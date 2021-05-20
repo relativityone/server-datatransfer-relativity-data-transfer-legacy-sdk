@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils
+namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.WebApiClients
 {
     /// <summary>
     /// RelativityWebApi soap services return model from Relativity namespace (e.g.: Relativity.CaseInfo)
@@ -24,7 +24,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 
         private static void ConfigureMapping(IMapperConfigurationExpression cfg)
         {
-            cfg.CreateMap<Relativity.DataExchange.Service.CaseInfo, Relativity.CaseInfo>();
+            cfg.CreateMap<kCura.EDDS.WebAPI.CaseManagerBase.CaseInfo, Relativity.CaseInfo>();
         }
     }
 }

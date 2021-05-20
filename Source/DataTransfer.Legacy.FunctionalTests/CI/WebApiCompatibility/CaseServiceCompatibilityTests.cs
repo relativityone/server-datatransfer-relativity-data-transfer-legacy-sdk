@@ -1,8 +1,8 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
-using kCura.WinEDDS.Service;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.WebApiClients;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
@@ -21,7 +21,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             DataSet webApiResult = null;
             DataSetWrapper keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
             {
                 webApiResult = caseManager.RetrieveAllEnabled();
             });
@@ -32,7 +32,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             });
 
             // assert
-            // TODO: compare data sets in a better way than json ?
             Assert.AreEqual(JsonConvert.SerializeObject(webApiResult), JsonConvert.SerializeObject(keplerResult.Unwrap()));
         }
 
@@ -42,7 +41,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             string[] webApiResult = null;
             string[] keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
             {
                 webApiResult = caseManager.GetAllDocumentFolderPaths();
             });
@@ -64,7 +63,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             string[] webApiResult = null;
             string[] keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
             {
                 webApiResult = caseManager.GetAllDocumentFolderPathsForCase(workspaceId);
             });
@@ -86,9 +85,9 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             Relativity.CaseInfo webApiResult = null;
             DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
             {
-                webApiResult = WebApiResultMapper.Map<Relativity.CaseInfo>(caseManager.Read(workspaceId));
+                webApiResult = caseManager.Read(workspaceId);
             });
 
             await KeplerServiceWrapper.PerformDataRequest<ICaseService>(async service =>
@@ -100,7 +99,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             var webApiResultMapped = webApiResult.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo>();
 
             // assert
-            // TODO: compare models in a better way than json (e.g. reflection, FluentAssertions) ?
             Assert.AreEqual(JsonConvert.SerializeObject(webApiResultMapped), JsonConvert.SerializeObject(keplerResult));
         }
     }

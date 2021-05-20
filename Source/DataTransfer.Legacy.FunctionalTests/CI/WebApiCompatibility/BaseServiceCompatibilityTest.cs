@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils;
+using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Wrappers;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.Services.Exceptions;
@@ -10,13 +10,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
     {
         protected KeplerServiceWrapper KeplerServiceWrapper;
         protected WebApiServiceWrapper WebApiServiceWrapper;
-        protected WebApiResultMapper WebApiResultMapper;
 
         protected BaseServiceCompatibilityTest()
         {
             KeplerServiceWrapper = new KeplerServiceWrapper();
             WebApiServiceWrapper = new WebApiServiceWrapper();
-            WebApiResultMapper = new WebApiResultMapper();
         }
 
         /// <summary>
