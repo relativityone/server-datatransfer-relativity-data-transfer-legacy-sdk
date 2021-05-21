@@ -1,11 +1,10 @@
 ﻿using System.Data;
 using System.Threading.Tasks;
+using kCura.EDDS.WebAPI.CaseManagerBase;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.WebApiClients;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
-using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.Testing.Identification;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
@@ -21,7 +20,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             DataSet webApiResult = null;
             DataSetWrapper keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
                 webApiResult = caseManager.RetrieveAllEnabled();
             });
@@ -41,7 +40,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             string[] webApiResult = null;
             string[] keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
                 webApiResult = caseManager.GetAllDocumentFolderPaths();
             });
@@ -63,7 +62,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             string[] webApiResult = null;
             string[] keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
                 webApiResult = caseManager.GetAllDocumentFolderPathsForCase(workspaceId);
             });
@@ -82,10 +81,10 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         {
             var workspaceId = await GetTestWorkspaceId();
 
-            Relativity.CaseInfo webApiResult = null;
+            kCura.EDDS.WebAPI.CaseManagerBase.CaseInfo webApiResult = null;
             DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo keplerResult = null;
 
-            WebApiServiceWrapper.PerformDataRequest<CaseManagerClient>(caseManager =>
+            WebApiServiceWrapper.PerformDataRequest<CaseManager>(caseManager =>
             {
                 webApiResult = caseManager.Read(workspaceId);
             });
@@ -95,11 +94,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 keplerResult = await service.ReadAsync(workspaceId, string.Empty);
             });
 
-            // map web api model to kepler model before comparing
-            var webApiResultMapped = webApiResult.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo>();
-
             // assert
-            Assert.AreEqual(JsonConvert.SerializeObject(webApiResultMapped), JsonConvert.SerializeObject(keplerResult));
+            Assert.AreEqual(JsonConvert.SerializeObject(webApiResult), JsonConvert.SerializeObject(keplerResult));
         }
     }
 }

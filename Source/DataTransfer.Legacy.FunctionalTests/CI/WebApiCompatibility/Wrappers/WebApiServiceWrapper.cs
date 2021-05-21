@@ -36,9 +36,14 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                 }
 
                 var managerType = typeof(T);
-                object[] args = { credentials, cookieContainer, _webApiUrl, _webApiTimeoutMs };
-                using (var manager = (T)Activator.CreateInstance(managerType, args))
+
+                using (var manager = (T)Activator.CreateInstance(managerType))
                 {
+                    SetInstanceProperty(manager, "Credentials", credentials);
+                    SetInstanceProperty(manager, "CookieContainer", cookieContainer);
+                    SetInstanceProperty(manager, "Url", $"{_webApiUrl}{managerType.Name}.asmx");
+                    SetInstanceProperty(manager, "Timeout", _webApiTimeoutMs);
+
                     action(manager);
                 }
             }
@@ -47,6 +52,12 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                 TestContext.WriteLine($"Exception occurred when retrieving data from RelativityWebApi endpoint: {ex}");
                 throw;
             }
+        }
+
+        private static void SetInstanceProperty<T>(T instance, string propertyName, object propertyValue)
+        {
+            var property = typeof(T).GetProperty(propertyName);
+            property?.SetValue(instance, propertyValue);
         }
     }
 }

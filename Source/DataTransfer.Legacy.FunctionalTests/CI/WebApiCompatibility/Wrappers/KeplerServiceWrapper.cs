@@ -36,7 +36,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                         await action(keplerService);
                     }
                 });
-
             }
             catch (Exception ex)
             {

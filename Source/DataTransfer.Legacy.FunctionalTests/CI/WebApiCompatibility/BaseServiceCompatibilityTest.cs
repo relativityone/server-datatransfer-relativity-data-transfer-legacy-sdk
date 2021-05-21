@@ -8,6 +8,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 {
     public abstract class BaseServiceCompatibilityTest
     {
+        private int? testWorkspaceId;
+
         protected KeplerServiceWrapper KeplerServiceWrapper;
         protected WebApiServiceWrapper WebApiServiceWrapper;
 
@@ -23,6 +25,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         /// <returns>Id of test workspace</returns>
         protected async Task<int> GetTestWorkspaceId()
         {
+            if (testWorkspaceId.HasValue)
+            {
+                return testWorkspaceId.Value;
+            }
+
             DataSetWrapper workspaces = null;
             await KeplerServiceWrapper.PerformDataRequest<ICaseService>(async service =>
             {
@@ -38,7 +45,9 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             }
 
             var workspace = workspaces.Unwrap().Tables[0].Rows[0].ItemArray;
-            return (int)workspace.GetValue(0);
+            testWorkspaceId = (int)workspace.GetValue(0);
+
+            return testWorkspaceId.Value;
         }
     }
 }
