@@ -8,7 +8,10 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 
         public ServiceMethodExecutionInfo WebApiMethodExecutionInfo { get; set; }
 
-        public bool IsValid => string.Equals(KeplerMethodExecutionInfo.ExecutionResult, WebApiMethodExecutionInfo.ExecutionResult, StringComparison.OrdinalIgnoreCase);
+        public bool IsValid => KeplerMethodExecutionInfo != null &&
+                               WebApiMethodExecutionInfo != null &&
+                               string.Equals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.SuccessResult, StringComparison.OrdinalIgnoreCase) &&
+                               string.Equals(KeplerMethodExecutionInfo.ErrorMessage, WebApiMethodExecutionInfo.ErrorMessage, StringComparison.OrdinalIgnoreCase);
 
         public ServiceMethodComparisonResult()
         {

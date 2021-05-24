@@ -13,7 +13,7 @@ namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 {
 	public class RandomObjectGenerator
 	{
-		protected readonly IDictionary<Type, Func<object>> _generators = new Dictionary<Type, Func<object>>();
+		private readonly IDictionary<Type, Func<object>> _generators = new Dictionary<Type, Func<object>>();
 
 		public RandomObjectGenerator()
 		{
