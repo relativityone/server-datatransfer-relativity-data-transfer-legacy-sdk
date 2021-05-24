@@ -13,7 +13,7 @@ namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 {
 	public class RandomObjectGenerator
 	{
-		private readonly IDictionary<Type, Func<object>> _generators = new Dictionary<Type, Func<object>>();
+		protected readonly IDictionary<Type, Func<object>> _generators = new Dictionary<Type, Func<object>>();
 
 		public RandomObjectGenerator()
 		{
@@ -41,7 +41,7 @@ namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 			_generators.Add(typeof(SoapExceptionDetail), () => AutoFaker.Generate<SoapExceptionDetail>());
 			_generators.Add(typeof(Core.DTO.KeyboardShortcut), () => AutoFaker.Generate<Core.DTO.KeyboardShortcut>());
 			_generators.Add(typeof(RelationalFieldPane), () => AutoFaker.Generate<RelationalFieldPane>());
-		}
+        }
 
 		public object Generate(Type type)
 		{

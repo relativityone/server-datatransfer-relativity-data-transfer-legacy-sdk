@@ -3,14 +3,16 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using kCura.EDDS.WebAPI.CaseManagerBase;
+using kCura.EDDS.WebAPI.CodeManagerBase;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Models;
+using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
-using Relativity.DataTransfer.Legacy.Tests.Helpers;
 using Relativity.Testing.Identification;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
@@ -20,39 +22,43 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
     [TestLevel.L3]
     public class ServiceContractComparisonTests : BaseServiceCompatibilityTest
     {
-        private readonly RandomObjectGenerator _randomObjectGenerator;
+        private readonly WebApiRandomObjectGenerator _randomObjectGenerator;
 
         public ServiceContractComparisonTests()
         {
-            _randomObjectGenerator = new RandomObjectGenerator();
+            _randomObjectGenerator = new WebApiRandomObjectGenerator();
         }
 
         [IdentifiedTest("99983EF4-7DB6-4941-8AF8-C6AF6CD64104")]
         public async Task CaseServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            var serviceContractComparisonResult = await CompareServiceMethods<ICaseService, CaseManager>();
-            Assert.IsTrue(serviceContractComparisonResult.IsValid);
+            await CompareServiceContract<ICaseService, CaseManager>();
         }
 
-        private async Task<ServiceContractComparisonResult> CompareServiceMethods<TKeplerService, TWebApiManager>() where TKeplerService : IDisposable where TWebApiManager : IDisposable
+        [IdentifiedTest("32E8B4F6-145F-418D-B37D-392712C065AB")]
+        public async Task CodeServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            var serviceContractComparisonResult = new ServiceContractComparisonResult();
+            await CompareServiceContract<ICodeService, CodeManager>();
+        }
+
+        private async Task CompareServiceContract<TKeplerService, TWebApiManager>() where TKeplerService : IDisposable where TWebApiManager : IDisposable
+        {
+            var serviceMethodComparisonResults = new List<ServiceMethodComparisonResult>();
 
             var keplerMethodsToCompare = typeof(TKeplerService).GetMethods().Select(m => m.Name);
             foreach (var keplerMethodName in keplerMethodsToCompare)
             {
-                var methodComparisonResult = new ServiceMethodComparisonResult();
-                serviceContractComparisonResult.MethodComparisonResults.Add(methodComparisonResult);
+                var methodComparisonResult = new ServiceMethodComparisonResult
+                {
+                    KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName),
+                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(keplerMethodName.Replace("Async", ""))
+                };
 
-                // execute Kepler method
-                methodComparisonResult.KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName);
-
-                // execute WebApi method
-                var webApiMethodName = keplerMethodName.Replace("Async", "");
-                methodComparisonResult.WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(webApiMethodName);
+                serviceMethodComparisonResults.Add(methodComparisonResult);
             }
 
-            return serviceContractComparisonResult;
+            DisplayServiceMethodComparisonResults(serviceMethodComparisonResults);
+            Assert.IsTrue(serviceMethodComparisonResults.All(r => r.IsValid));
         }
 
         private async Task<ServiceMethodExecutionInfo> ExecuteKeplerServiceMethod<T>(string methodName) where T: IDisposable
@@ -68,7 +74,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                     result = task.GetType().GetProperty("Result")?.GetValue(task);
                 });
 
-                if (result is DataSetWrapper dataSetWrapper)
+                if (result is DataSetWrapper dataSetWrapper
+                )
                 {
                     return dataSetWrapper.Unwrap();
                 }
@@ -94,12 +101,13 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private async Task<ServiceMethodExecutionInfo> ExecuteServiceMethod<T>(string methodName, Func<MethodInfo, object[], Task<object>> action) where T : IDisposable
         {
-            var method = typeof(T).GetMethod(methodName);
+            var serviceType = typeof(T);
+            var method = serviceType.GetMethod(methodName);
             var parameters = await PopulateMethodParameters(method);
 
             var methodExecutionInfo = new ServiceMethodExecutionInfo
             {
-                MethodName = methodName,
+                MethodName = $"{serviceType.Name}.{methodName}",
                 InputParameters = parameters
             };
 
@@ -113,7 +121,21 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             }
             catch (Exception ex)
             {
-                methodExecutionInfo.ExecutionResult = $"ErrorMessage:{ex.Message} | InnerErrorMessage:{ex.InnerException?.Message}";
+                // It's difficult to prepare test environment to retrieve all data.
+                // Sometimes we get error but even though we must ensure that error is the same for both Kepler and WebApi endpoints.
+
+                // WebApi returns "real" error message in InnerException
+                if (ex.Message.Contains("Exception has been thrown by the target of an invocation") && ex.InnerException?.Message != null)
+                {
+                    methodExecutionInfo.ExecutionResult = ex.InnerException.Message;
+                }
+                else
+                // Kepler
+                {
+                    methodExecutionInfo.ExecutionResult = ex.Message;
+                }
+
+                methodExecutionInfo.ExecutionResult = methodExecutionInfo.ExecutionResult.Replace("\r", "").Replace("\n", "");
             }
 
             methodExecutionInfo.ExecutionTime = stopwatch.Elapsed;
@@ -145,6 +167,33 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             }
 
             return parameterValues.ToArray();
+        }
+
+        private static void DisplayServiceMethodComparisonResults(List<ServiceMethodComparisonResult> serviceMethodComparisonResults)
+        {
+            var sb = new StringBuilder();
+
+            foreach (var methodComparisonResult in serviceMethodComparisonResults)
+            {
+                sb.AppendLine($"==> {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} vs {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} : " + (methodComparisonResult.IsValid ? "OK" : "FAILED"));
+
+                if (methodComparisonResult.IsValid)
+                {
+                    sb.AppendLine($"  > {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} execution time: {methodComparisonResult.KeplerMethodExecutionInfo.ExecutionTime}");
+                    sb.AppendLine($"  > {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} execution time: {methodComparisonResult.WebApiMethodExecutionInfo.ExecutionTime}");
+                }
+
+                if (!methodComparisonResult.IsValid)
+                {
+                    sb.AppendLine($"  > {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} input parameters: {string.Join(",", methodComparisonResult.KeplerMethodExecutionInfo.InputParameters)}");
+                    sb.AppendLine($"  > {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} execution result: {methodComparisonResult.KeplerMethodExecutionInfo.ExecutionResult}");
+                    sb.AppendLine($"  > {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} input parameters: {string.Join(",", methodComparisonResult.WebApiMethodExecutionInfo.InputParameters)}");
+                    sb.AppendLine($"  > {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} execution result: {methodComparisonResult.WebApiMethodExecutionInfo.ExecutionResult}");
+                    sb.AppendLine();
+                }
+            }
+
+            TestContext.WriteLine(sb.ToString());
         }
     }
 }
