@@ -12,6 +12,7 @@ using kCura.EDDS.WebAPI.CodeManagerBase;
 using kCura.EDDS.WebAPI.DocumentManagerBase;
 using kCura.EDDS.WebAPI.ExportManagerBase;
 using kCura.EDDS.WebAPI.FieldManagerBase;
+using kCura.EDDS.WebAPI.FieldQueryBase;
 using kCura.EDDS.WebAPI.FileIOBase;
 using kCura.EDDS.WebAPI.FolderManagerBase;
 using kCura.EDDS.WebAPI.ObjectManagerBase;
@@ -73,7 +74,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         [IdentifiedTest("52570DB9-E2A4-4568-A7AF-ED641045DC6D")]
         public async Task FieldServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IFieldService, FieldManager>();
+            await CompareServiceContract<IFieldService, FieldQuery>();
         }
 
         [IdentifiedTest("DDB0CBE8-BEA0-4E3C-BB5A-EAA0CD7C8B10")]
@@ -124,12 +125,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             await CompareServiceContract<IUserService, UserManager>();
         }
 
-        //[IdentifiedTest("D20B60D7-585E-4975-AB6C-C96216586C75")]
-        //public async Task WebDistributedServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
-        //{
-        //    await CompareServiceContract<IWebDistributedService, WebDistributedManager>();
-        //}
-
         private async Task CompareServiceContract<TKeplerService, TWebApiManager>() where TKeplerService : IDisposable where TWebApiManager : IDisposable
         {
             var serviceMethodComparisonResults = new List<ServiceMethodComparisonResult>();
@@ -141,7 +136,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 var methodComparisonResult = new ServiceMethodComparisonResult
                 {
                     KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName),
-                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(keplerMethodName.Replace("Async", ""))
+                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(ConvertKeplerMethodName2WebApiMethodName(keplerMethodName))
                 };
 
                 serviceMethodComparisonResults.Add(methodComparisonResult);
@@ -153,7 +148,20 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private static IEnumerable<string> GetNonDeprecatedMethods<T>()
         {
-            return typeof(T).GetMethods().Where(m => m.GetCustomAttribute<ObsoleteAttribute>() == null).Select(m => m.Name);
+            return typeof(T).GetMethods().Where(m => m.GetCustomAttribute<ObsoleteAttribute>() == null)
+                .Select(m => m.Name);
+        }
+
+        private static string ConvertKeplerMethodName2WebApiMethodName(string keplerMethodName)
+        {
+            var webApiMethodName = keplerMethodName.Replace("Async", "");
+
+            if (webApiMethodName == "RetrieveInitialChunk")
+            {
+                return "RetrieveIntitialChunk";
+            }
+
+            return webApiMethodName;
         }
 
         private async Task<ServiceMethodExecutionInfo> ExecuteKeplerServiceMethod<T>(string methodName) where T: IDisposable
