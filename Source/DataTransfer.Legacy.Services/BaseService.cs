@@ -48,8 +48,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 				await Task.Yield();
 				return func();
 			}, workspaceId, correlationId);
-			return new DataSetWrapper(result);
-		}
+
+            return result != null ? new DataSetWrapper(result) : null;
+        }
 
 		public async Task<DataSetWrapper> ExecuteAsync(Func<DataView> func, int? workspaceId, string correlationId)
 		{
@@ -58,7 +59,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 				await Task.Yield();
 				return func();
 			}, workspaceId, correlationId).ConfigureAwait(false);
-			return new DataSetWrapper(result.ToDataSet());
+
+            return result != null ? new DataSetWrapper(result.ToDataSet()) : null;
 		}
 
 		protected BaseServiceContext GetBaseServiceContext(int workspaceID)

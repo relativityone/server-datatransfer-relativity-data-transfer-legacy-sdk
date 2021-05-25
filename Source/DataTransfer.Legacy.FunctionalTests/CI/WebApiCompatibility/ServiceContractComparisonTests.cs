@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -24,8 +25,10 @@ using kCura.EDDS.WebAPI.UserManagerBase;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Models;
+using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+using Relativity.Services.Exceptions;
 using Relativity.Testing.Identification;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
@@ -72,15 +75,41 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         }
 
         [IdentifiedTest("52570DB9-E2A4-4568-A7AF-ED641045DC6D")]
-        public async Task FieldServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
+        public async Task FieldServiceMethods_ShouldReturnTheSameResultForWebApiFieldQueryAndKepler()
         {
-            await CompareServiceContract<IFieldService, FieldQuery>();
+            await CompareServiceContract<IFieldService, FieldQuery>(null, new[] { "RetrieveAllMappableAsync", "RetrievePotentialBeginBatesFieldsAsync", "IsFieldIndexedAsync" });
+        }
+
+        [IdentifiedTest("52570DB9-E2A4-4568-A7AF-ED641045DC6D")]
+        public async Task FieldServiceMethods_ShouldReturnTheSameResultForWebApiFieldManagerAndKepler()
+        {
+            await CompareServiceContract<IFieldService, FieldManager>(null, new[] { "ReadAsync" });
         }
 
         [IdentifiedTest("DDB0CBE8-BEA0-4E3C-BB5A-EAA0CD7C8B10")]
         public async Task FileIOServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IFileIOService, FileIO>();
+            await CompareServiceContract<IFileIOService, FileIO>((methodName, jsonResult) =>
+            {
+                if (methodName.Contains("GetDefaultRepositorySpaceReport") ||
+                    methodName.Contains("GetBcpShareSpaceReport"))
+                {
+                    var columnsToIgnore = new[] { "Free Space", "Used Space", "Total Space", "%Free", "%Used" };
+
+                    var currentResult = JsonConvert.DeserializeObject<string[][]>(jsonResult);
+                    foreach (var item in currentResult)
+                    {
+                        if (columnsToIgnore.Contains(item[0]))
+                        {
+                            item[1] = string.Empty;
+                        }
+                    }
+
+                    return JsonConvert.SerializeObject(currentResult);
+                }
+
+                return jsonResult;
+            });
         }
 
         [IdentifiedTest("EF1408F2-5C6E-4CD4-8DE8-187943CB1997")]
@@ -125,18 +154,21 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             await CompareServiceContract<IUserService, UserManager>();
         }
 
-        private async Task CompareServiceContract<TKeplerService, TWebApiManager>() where TKeplerService : IDisposable where TWebApiManager : IDisposable
+        private async Task CompareServiceContract<TKeplerService, TWebApiManager>(Func<string, string, string> adjustMethodResultBeforeCompare = null, IEnumerable<string> keplerMethodsToCompare = null) where TKeplerService : IDisposable where TWebApiManager : IDisposable
         {
             var serviceMethodComparisonResults = new List<ServiceMethodComparisonResult>();
 
-            var keplerMethodsToCompare = GetNonDeprecatedMethods<TKeplerService>();
+            if (keplerMethodsToCompare == null)
+            {
+                keplerMethodsToCompare = GetNonDeprecatedMethods<TKeplerService>();
+            }
             
             foreach (var keplerMethodName in keplerMethodsToCompare)
             {
                 var methodComparisonResult = new ServiceMethodComparisonResult
                 {
-                    KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName),
-                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(ConvertKeplerMethodName2WebApiMethodName(keplerMethodName))
+                    KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName, adjustMethodResultBeforeCompare),
+                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(ConvertKeplerMethodName2WebApiMethodName(keplerMethodName), adjustMethodResultBeforeCompare)
                 };
 
                 serviceMethodComparisonResults.Add(methodComparisonResult);
@@ -148,7 +180,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private static IEnumerable<string> GetNonDeprecatedMethods<T>()
         {
-            return typeof(T).GetMethods().Where(m => m.GetCustomAttribute<ObsoleteAttribute>() == null)
+            return typeof(T).GetMethods()
+                .Where(m => m.GetCustomAttribute<ObsoleteAttribute>() == null)
                 .Select(m => m.Name);
         }
 
@@ -164,7 +197,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             return webApiMethodName;
         }
 
-        private async Task<ServiceMethodExecutionInfo> ExecuteKeplerServiceMethod<T>(string methodName) where T: IDisposable
+        private async Task<ServiceMethodExecutionInfo> ExecuteKeplerServiceMethod<T>(string methodName, Func<string, string, string> adjustMethodResultBeforeCompare) where T: IDisposable
         {
             return await ExecuteServiceMethod<T>(methodName, async (method, parameters) =>
             {
@@ -179,14 +212,14 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
                 if (result is DataSetWrapper dataSetWrapper)
                 {
-                    return dataSetWrapper.Unwrap();
+                    result = dataSetWrapper.Unwrap();
                 }
-
+                
                 return result;
-            });
+            }, adjustMethodResultBeforeCompare);
         }
 
-        private async Task<ServiceMethodExecutionInfo> ExecuteWebApiServiceMethod<T>(string methodName) where T : IDisposable
+        private async Task<ServiceMethodExecutionInfo> ExecuteWebApiServiceMethod<T>(string methodName, Func<string, string, string> adjustMethodResultBeforeCompare) where T : IDisposable
         {
             return await ExecuteServiceMethod<T>(methodName, (method, parameters) =>
             {
@@ -198,10 +231,10 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 });
 
                 return Task.FromResult(result);
-            });
+            }, adjustMethodResultBeforeCompare);
         }
 
-        private async Task<ServiceMethodExecutionInfo> ExecuteServiceMethod<T>(string methodName, Func<MethodInfo, object[], Task<object>> action) where T : IDisposable
+        private async Task<ServiceMethodExecutionInfo> ExecuteServiceMethod<T>(string methodName, Func<MethodInfo, object[], Task<object>> action, Func<string, string, string> adjustMethodResultBeforeCompare) where T : IDisposable
         {
             var serviceType = typeof(T);
             var method = serviceType.GetMethod(methodName);
@@ -219,7 +252,20 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             try
             {
                 var result = await action(method, parameters) ?? new { };
-                methodExecutionInfo.SuccessResult = JsonConvert.SerializeObject(result);
+
+                if (result is DataSet dataSet)
+                {
+                    SortDataSetByAllColumns(dataSet);
+                }
+                
+                var jsonResult = JsonConvert.SerializeObject(result);
+
+                if (adjustMethodResultBeforeCompare != null)
+                {
+                    jsonResult = adjustMethodResultBeforeCompare.Invoke(methodName, jsonResult);
+                }
+
+                methodExecutionInfo.SuccessResult = jsonResult;
             }
             catch (Exception ex)
             {
@@ -235,25 +281,26 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private string HandleServiceMethodException(Exception ex)
         {
-            string normalizedErrorMessage;
+            string normalizedErrorMessage = null;
+
+            // Kepler exception
+            if (ex is ServiceException keplerException)
+            {
+                normalizedErrorMessage = keplerException.ErrorDetails.Message;
+            }
 
             // WebApi returns "real" error message hidden in InnerException
             if (ex.Message.Contains("Exception has been thrown by the target of an invocation") && ex.InnerException?.Message != null)
             {
                 normalizedErrorMessage = ex.InnerException.Message;
-
                 if (normalizedErrorMessage.Contains("Server was unable to process request"))
                 {
                     normalizedErrorMessage = normalizedErrorMessage.Replace("Server was unable to process request. ---> ", "");
                 }
             }
-            else
-                // Kepler
-            {
-                normalizedErrorMessage = ex.Message;
-            }
 
-            return normalizedErrorMessage.Replace("\r", "").Replace("\n", "");
+            // remove line breaks etc.
+            return normalizedErrorMessage?.Replace("\r", "").Replace("\n", "");
         }
 
         private async Task<object[]> PopulateMethodParameters(MethodInfo method)
@@ -285,12 +332,48 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private object GetDefaultValue(Type t)
         {
-            return t.IsValueType ? Activator.CreateInstance(t) : null;
+            if (t.IsValueType)
+            {
+                return Activator.CreateInstance(t);
+            }
+
+            if (t == typeof(int[]))
+            {
+                return new int[] { };
+            }
+
+            return null;
+
+        }
+
+        private static void SortDataSetByAllColumns(DataSet dataSet)
+        {
+            if (dataSet == null || dataSet.Tables.Count == 0)
+            {
+                return;
+            }
+
+            var dataTable = dataSet.Tables[0];
+            if (dataTable.Columns.Count == 0)
+            {
+                return;
+            }
+
+            var sortExpression = new StringBuilder();
+            foreach (DataColumn column in dataTable.Columns)
+            {
+                sortExpression.Append($"{column.ColumnName} ASC,");
+            }
+
+            dataTable.DefaultView.Sort = sortExpression.Remove(sortExpression.Length - 1, 1).ToString();
         }
 
         private static void DisplayServiceMethodComparisonResults(List<ServiceMethodComparisonResult> serviceMethodComparisonResults)
         {
             var sb = new StringBuilder();
+
+            sb.AppendLine($"Comparison passed for {serviceMethodComparisonResults.Count(r => r.IsValid)} method(s).");
+            sb.AppendLine($"Comparison failed for {serviceMethodComparisonResults.Count(r => !r.IsValid)} method(s).");
 
             foreach (var methodComparisonResult in serviceMethodComparisonResults)
             {
