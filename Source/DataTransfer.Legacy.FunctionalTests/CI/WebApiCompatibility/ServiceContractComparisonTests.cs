@@ -25,7 +25,6 @@ using kCura.EDDS.WebAPI.UserManagerBase;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Models;
-using Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Utils;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.Services.Exceptions;
