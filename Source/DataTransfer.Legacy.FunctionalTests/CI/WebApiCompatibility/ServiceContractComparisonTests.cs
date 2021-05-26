@@ -277,7 +277,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                     jsonResult = adjustMethodResultBeforeCompare.Invoke(methodName, jsonResult);
                 }
 
-                methodExecutionInfo.SuccessResult = jsonResult;
+                // remove line breaks etc.
+                methodExecutionInfo.SuccessResult = CleanupText(jsonResult);
             }
             catch (Exception ex)
             {
@@ -298,7 +299,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             // Kepler exception
             if (ex is ServiceException keplerException)
             {
-                normalizedErrorMessage = keplerException.ErrorDetails.Message;
+                normalizedErrorMessage = keplerException.ErrorDetails?.Message ?? ex.Message;
             }
 
             // WebApi returns "real" error message hidden in InnerException
@@ -312,7 +313,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             }
 
             // remove line breaks etc.
-            return normalizedErrorMessage?.Replace("\r", "").Replace("\n", "");
+            return CleanupText(normalizedErrorMessage);
         }
 
         private async Task<object[]> PopulateMethodParameters(MethodInfo method)
@@ -342,20 +343,22 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             return parameterValues.ToArray();
         }
 
-        private object GetDefaultValue(Type t)
+        private static object GetDefaultValue(Type t)
         {
-            if (t.IsValueType)
+            try
             {
+                if (t == typeof(string))
+                {
+                    return "test";
+                }
+
                 return Activator.CreateInstance(t);
             }
-
-            if (t == typeof(int[]))
+            catch (Exception ex)
             {
-                return new int[] { };
+                LogInfo($"Error when creating default instance for {t.Name}: {ex.Message}");
+                return null;
             }
-
-            return null;
-
         }
 
         private static void SortDataSetByAllColumns(DataSet dataSet)
@@ -395,17 +398,45 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
             sb.AppendLine($"  > {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} method details:");
             sb.AppendLine($"    InputParameters: {string.Join(",", methodComparisonResult.KeplerMethodExecutionInfo.InputParameters)}");
-            sb.AppendLine($"    SuccessResult: {methodComparisonResult.KeplerMethodExecutionInfo.SuccessResult}");
-            sb.AppendLine($"    ErrorMessage: {methodComparisonResult.KeplerMethodExecutionInfo.ErrorMessage}");
+            sb.AppendLine($"    SuccessResult: {TrimTextIfTestValid(methodComparisonResult.IsValid, methodComparisonResult.KeplerMethodExecutionInfo.SuccessResult)}");
+            sb.AppendLine($"    ErrorMessage: {TrimTextIfTestValid(methodComparisonResult.IsValid, methodComparisonResult.KeplerMethodExecutionInfo.ErrorMessage)}");
             sb.AppendLine($"    ExecutionTime: {methodComparisonResult.KeplerMethodExecutionInfo.ExecutionTime}");
 
             sb.AppendLine($"  > {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} method details:");
             sb.AppendLine($"    InputParameters: {string.Join(",", methodComparisonResult.WebApiMethodExecutionInfo.InputParameters)}");
-            sb.AppendLine($"    SuccessResult: {methodComparisonResult.WebApiMethodExecutionInfo.SuccessResult}");
-            sb.AppendLine($"    ErrorMessage: {methodComparisonResult.WebApiMethodExecutionInfo.ErrorMessage}");
+            sb.AppendLine($"    SuccessResult: {TrimTextIfTestValid(methodComparisonResult.IsValid, methodComparisonResult.WebApiMethodExecutionInfo.SuccessResult)}");
+            sb.AppendLine($"    ErrorMessage: {TrimTextIfTestValid(methodComparisonResult.IsValid, methodComparisonResult.WebApiMethodExecutionInfo.ErrorMessage)}");
             sb.AppendLine($"    ExecutionTime: {methodComparisonResult.WebApiMethodExecutionInfo.ExecutionTime}");
 
             TestContext.WriteLine(sb.ToString());
+        }
+
+        private static string TrimTextIfTestValid(bool isValid, string inputText)
+        {
+            if (string.IsNullOrEmpty(inputText) || !isValid)
+            {
+                return inputText;
+            }
+
+            var trimLength = Math.Min(inputText.Length, 1000);
+            return inputText?.Substring(0, trimLength);
+        }
+
+        /// <summary>
+        /// // remove line breaks etc.
+        /// </summary>
+        private static string CleanupText(string inputText)
+        {
+            if (string.IsNullOrEmpty(inputText))
+            {
+                return inputText;
+            }
+
+            return inputText
+                .Replace("\r", "")
+                .Replace("\n", "")
+                .Replace("\\r", "")
+                .Replace("\\n", "");
         }
     }
 }
