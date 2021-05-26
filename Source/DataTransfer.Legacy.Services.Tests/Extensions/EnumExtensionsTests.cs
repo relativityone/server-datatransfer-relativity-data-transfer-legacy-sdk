@@ -29,7 +29,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Extensions
 		[Test]
 		public void ShouldReturnDescriptionFromAttributeForEnumValue()
 		{
-			var description = SampleEnumWithoutDescription.Value.GetDescription();
+			var description = SampleEnumWithDescription.Value.GetDescription();
 
 			description.Should().Be("ValueDescription");
 		}
@@ -43,7 +43,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Extensions
 			Value
 		}
 
-		private enum SampleEnumWithoutDescription
+		private enum SampleEnumWithDescription
 		{
 			[System.ComponentModel.Description("ValueDescription")] Value,
 		}

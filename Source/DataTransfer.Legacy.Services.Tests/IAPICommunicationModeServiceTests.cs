@@ -16,6 +16,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 	{
 		private IInstanceSettingsBundle _instanceSettingsBundle;
 		private IIAPICommunicationModeService _uut;
+		private IAPILog _logger;
 
 		[SetUp]
 		public void SetUp()
@@ -23,11 +24,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			var methodRunner = new BypassMethodRunner();
 			var serviceContextFactory = Substitute.For<IServiceContextFactory>();
 			_instanceSettingsBundle = Substitute.For<IInstanceSettingsBundle>();
-			_uut = new IAPICommunicationModeService(methodRunner, serviceContextFactory, _instanceSettingsBundle);
+			_logger = Substitute.For<IAPILog>();
+			_uut = new IAPICommunicationModeService(methodRunner, serviceContextFactory, _instanceSettingsBundle, _logger);
 		}
 
 		[Test]
-		public async Task ShouldReturnWebAPIModeWhenReadingInstanceSettingThrowsException()
+		public async Task ShouldReturnWebAPIModeAndLogWhenReadingInstanceSettingThrowsException()
 		{
 			_instanceSettingsBundle.GetStringAsync("DataTransfer.Legacy", "IAPICommunicationMode")
 				.Throws(Any.Exception());
@@ -35,6 +37,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			var result = await _uut.GetIAPICommunicationModeAsync(Any.String());
 
 			result.Should().Be(IAPICommunicationMode.WebAPI);
+			_logger.Received(1).LogWarning("'DataTransfer.Legacy.IAPICommunicationMode' setting not found. WebAPI IAPI communication mode will be used.");
 		}
 
 		[TestCase("webapi", IAPICommunicationMode.WebAPI)]
@@ -56,7 +59,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		}
 
 		[Test]
-		public async Task ShouldReturnWebAPIModeWhenReadingInstanceSettingReturnsUnrecognizedMode()
+		public async Task ShouldReturnWebAPIModeAndLogWhenReadingInstanceSettingReturnsUnrecognizedMode()
 		{
 			var settingValue = Any.OtherThan("webapi", "kepler", "forcewebapi", "forcekepler");
 			_instanceSettingsBundle.GetStringAsync("DataTransfer.Legacy", "IAPICommunicationMode")
@@ -65,6 +68,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			var result = await _uut.GetIAPICommunicationModeAsync(Any.String());
 
 			result.Should().Be(IAPICommunicationMode.WebAPI);
+			_logger.Received(1).LogWarning($"Invalid IAPI communication mode in 'DataTransfer.Legacy.IAPICommunicationMode' setting. WebAPI IAPI communication mode will be used.");
 		}
 	}
 }

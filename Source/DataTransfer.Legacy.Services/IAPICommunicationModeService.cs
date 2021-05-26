@@ -48,12 +48,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 					return communicationMode;
 				}
 
-				_logger.LogWarning($"Invalid IAPI communication mode in '{IAPICommunicationModeSettingSection}{IAPICommunicationModeSettingName}' setting. WebAPI IAPI communication mode will be used.");
+				_logger.LogWarning($"Invalid IAPI communication mode in '{IAPICommunicationModeSettingSection}.{IAPICommunicationModeSettingName}' setting. WebAPI IAPI communication mode will be used.");
 				return IAPICommunicationMode.WebAPI;
 			}
 			catch
 			{
-				_logger.LogWarning($"'{IAPICommunicationModeSettingSection}{IAPICommunicationModeSettingName}' setting not found. WebAPI IAPI communication mode will be used.");
+				_logger.LogWarning($"'{IAPICommunicationModeSettingSection}.{IAPICommunicationModeSettingName}' setting not found. WebAPI IAPI communication mode will be used.");
 				return IAPICommunicationMode.WebAPI;
 			}
 		}
