@@ -153,15 +153,19 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             await CompareServiceContract<IUserService, UserManager>();
         }
 
-        private async Task CompareServiceContract<TKeplerService, TWebApiManager>(Func<string, string, string> adjustMethodResultBeforeCompare = null, IEnumerable<string> keplerMethodsToCompare = null) where TKeplerService : IDisposable where TWebApiManager : IDisposable
+        private async Task CompareServiceContract<TKeplerService, TWebApiManager>(Func<string, string, string> adjustMethodResultBeforeCompare = null, string[] keplerMethodsToCompare = null) where TKeplerService : IDisposable where TWebApiManager : IDisposable
         {
             var serviceMethodComparisonResults = new List<ServiceMethodComparisonResult>();
+
+            LogInfo($"Start contract comparison test for {typeof(TKeplerService).Name} and {typeof(TWebApiManager).Name}");
 
             if (keplerMethodsToCompare == null)
             {
                 keplerMethodsToCompare = GetNonDeprecatedMethods<TKeplerService>();
             }
             
+            LogInfo($"Kepler service methods to be compared: {string.Join(", ", keplerMethodsToCompare)}");
+
             foreach (var keplerMethodName in keplerMethodsToCompare)
             {
                 var methodComparisonResult = new ServiceMethodComparisonResult
@@ -170,18 +174,23 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                     WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(ConvertKeplerMethodName2WebApiMethodName(keplerMethodName), adjustMethodResultBeforeCompare)
                 };
 
+                DisplayServiceMethodComparisonResult(methodComparisonResult);
                 serviceMethodComparisonResults.Add(methodComparisonResult);
             }
 
-            DisplayServiceMethodComparisonResults(serviceMethodComparisonResults);
+            LogInfo($"Test summary for {typeof(TKeplerService).Name} and {typeof(TWebApiManager).Name} :");
+            LogInfo($"Comparison passed for {serviceMethodComparisonResults.Count(r => r.IsValid)} method(s)");
+            LogInfo($"Comparison failed for {serviceMethodComparisonResults.Count(r => !r.IsValid)} method(s)");
+
             Assert.IsTrue(serviceMethodComparisonResults.All(r => r.IsValid));
         }
 
-        private static IEnumerable<string> GetNonDeprecatedMethods<T>()
+        private static string[] GetNonDeprecatedMethods<T>()
         {
             return typeof(T).GetMethods()
                 .Where(m => m.GetCustomAttribute<ObsoleteAttribute>() == null)
-                .Select(m => m.Name);
+                .Select(m => m.Name)
+                .ToArray();
         }
 
         private static string ConvertKeplerMethodName2WebApiMethodName(string keplerMethodName)
@@ -198,6 +207,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private async Task<ServiceMethodExecutionInfo> ExecuteKeplerServiceMethod<T>(string methodName, Func<string, string, string> adjustMethodResultBeforeCompare) where T: IDisposable
         {
+            LogInfo($"Execute Kepler service method: {typeof(T).Name}.{methodName}");
+
             return await ExecuteServiceMethod<T>(methodName, async (method, parameters) =>
             {
                 object result = null;
@@ -220,6 +231,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
         private async Task<ServiceMethodExecutionInfo> ExecuteWebApiServiceMethod<T>(string methodName, Func<string, string, string> adjustMethodResultBeforeCompare) where T : IDisposable
         {
+            LogInfo($"Execute WebApi service method: {typeof(T).Name}.{methodName}");
+
             return await ExecuteServiceMethod<T>(methodName, (method, parameters) =>
             {
                 object result = null;
@@ -367,61 +380,30 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             dataTable.DefaultView.Sort = sortExpression.Remove(sortExpression.Length - 1, 1).ToString();
         }
 
-        private static void DisplayServiceMethodComparisonResults(List<ServiceMethodComparisonResult> serviceMethodComparisonResults)
+        private static void LogInfo(string logMessage)
+        {
+            TestContext.WriteLine($"==> {logMessage}");
+        }
+
+        private static void DisplayServiceMethodComparisonResult(ServiceMethodComparisonResult methodComparisonResult)
         {
             var sb = new StringBuilder();
 
-            sb.AppendLine($"Comparison passed for {serviceMethodComparisonResults.Count(r => r.IsValid)} method(s).");
-            sb.AppendLine($"Comparison failed for {serviceMethodComparisonResults.Count(r => !r.IsValid)} method(s).");
+            sb.Append($"==> {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} vs {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} : ");
+            sb.Append(methodComparisonResult.IsValid ? "OK" : "FAILURE");
+            sb.AppendLine();
 
-            foreach (var methodComparisonResult in serviceMethodComparisonResults)
-            {
-                sb.Append($"==> {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} vs {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} : ");
+            sb.AppendLine($"  > {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} method details:");
+            sb.AppendLine($"    InputParameters: {string.Join(",", methodComparisonResult.KeplerMethodExecutionInfo.InputParameters)}");
+            sb.AppendLine($"    SuccessResult: {methodComparisonResult.KeplerMethodExecutionInfo.SuccessResult}");
+            sb.AppendLine($"    ErrorMessage: {methodComparisonResult.KeplerMethodExecutionInfo.ErrorMessage}");
+            sb.AppendLine($"    ExecutionTime: {methodComparisonResult.KeplerMethodExecutionInfo.ExecutionTime}");
 
-                if (methodComparisonResult.IsValid)
-                {
-                    if (!string.IsNullOrEmpty(methodComparisonResult.KeplerMethodExecutionInfo.SuccessResult) &&
-                        !string.IsNullOrEmpty(methodComparisonResult.WebApiMethodExecutionInfo.SuccessResult))
-                    {
-                        sb.Append("OK (same result)");
-                    }
-
-                    if (!string.IsNullOrEmpty(methodComparisonResult.KeplerMethodExecutionInfo.ErrorMessage) &&
-                        !string.IsNullOrEmpty(methodComparisonResult.WebApiMethodExecutionInfo.ErrorMessage))
-                    {
-                        sb.Append("OK (same error)");
-                        sb.AppendLine();
-                        sb.Append($"    Execution error: {methodComparisonResult.KeplerMethodExecutionInfo.ErrorMessage}");
-                    }
-                }
-                else
-                {
-                    sb.Append("FAILURE");
-                }
-
-                sb.AppendLine();
-                
-                if (methodComparisonResult.IsValid)
-                {
-                    sb.AppendLine($"    ExecutionTime for {methodComparisonResult.KeplerMethodExecutionInfo.MethodName}: {methodComparisonResult.KeplerMethodExecutionInfo.ExecutionTime}");
-                    sb.AppendLine($"    ExecutionTime for {methodComparisonResult.WebApiMethodExecutionInfo.MethodName}: {methodComparisonResult.WebApiMethodExecutionInfo.ExecutionTime}");
-                }
-
-                if (!methodComparisonResult.IsValid)
-                {
-                    sb.AppendLine($"  > {methodComparisonResult.KeplerMethodExecutionInfo.MethodName} method details:");
-                    sb.AppendLine($"    InputParameters: {string.Join(",", methodComparisonResult.KeplerMethodExecutionInfo.InputParameters)}");
-                    sb.AppendLine($"    SuccessResult: {methodComparisonResult.KeplerMethodExecutionInfo.SuccessResult}");
-                    sb.AppendLine($"    ErrorMessage: {methodComparisonResult.KeplerMethodExecutionInfo.ErrorMessage}");
-                    sb.AppendLine($"    ExecutionTime: {methodComparisonResult.KeplerMethodExecutionInfo.ExecutionTime}");
-
-                    sb.AppendLine($"  > {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} method details:");
-                    sb.AppendLine($"    InputParameters: {string.Join(",", methodComparisonResult.WebApiMethodExecutionInfo.InputParameters)}");
-                    sb.AppendLine($"    SuccessResult: {methodComparisonResult.WebApiMethodExecutionInfo.SuccessResult}");
-                    sb.AppendLine($"    ErrorMessage: {methodComparisonResult.WebApiMethodExecutionInfo.ErrorMessage}");
-                    sb.AppendLine($"    ExecutionTime: {methodComparisonResult.WebApiMethodExecutionInfo.ExecutionTime}");
-                }
-            }
+            sb.AppendLine($"  > {methodComparisonResult.WebApiMethodExecutionInfo.MethodName} method details:");
+            sb.AppendLine($"    InputParameters: {string.Join(",", methodComparisonResult.WebApiMethodExecutionInfo.InputParameters)}");
+            sb.AppendLine($"    SuccessResult: {methodComparisonResult.WebApiMethodExecutionInfo.SuccessResult}");
+            sb.AppendLine($"    ErrorMessage: {methodComparisonResult.WebApiMethodExecutionInfo.ErrorMessage}");
+            sb.AppendLine($"    ExecutionTime: {methodComparisonResult.WebApiMethodExecutionInfo.ExecutionTime}");
 
             TestContext.WriteLine(sb.ToString());
         }
