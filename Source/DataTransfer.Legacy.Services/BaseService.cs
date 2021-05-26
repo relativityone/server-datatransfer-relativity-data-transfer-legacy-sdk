@@ -43,7 +43,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<T> ExecuteAsync<T>(Func<Task<T>> func, int? workspaceId, string correlationId)
 		{
-			return _methodRunner.ExecuteAsync(async () => await func().ConfigureAwait(false), workspaceId, correlationId);
+			return _methodRunner.ExecuteAsync(func, workspaceId, correlationId);
 		}
 
 		public async Task<DataSetWrapper> ExecuteAsync(Func<DataSet> func, int? workspaceId, string correlationId)
