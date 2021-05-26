@@ -1,0 +1,49 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net462</TargetFramework>
+		<OutputType>Library</OutputType>
+		<IsTestProject>true</IsTestProject>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<RootNamespace>Relativity.DataTransfer.Legacy.Services.Tests</RootNamespace>
+		<AssemblyName>Relativity.DataTransfer.Legacy.Services.Tests</AssemblyName>
+		<RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+		<RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+		<LangVersion>7</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<WarningsAsErrors />
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AutoBogus" Version="2.13.0" />
+		<PackageReference Include="CompareNETObjects" Version="4.73.0" />
+		<PackageReference Include="FluentAssertions" Version="5.10.3" />
+		<PackageReference Include="Mono.Cecil" Version="0.11.3" />
+		<PackageReference Include="NUnit" Version="3.12.0" />
+		<PackageReference Include="NUnit3TestAdapter" Version="3.16.1" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
+		<PackageReference Include="NunitXml.TestLogger" Version="3.0.91" />
+		<PackageReference Include="Relativity.Core" Version="36.1.0" />
+		<PackageReference Include="NSubstitute" Version="4.2.2" />
+		<PackageReference Include="Tdd-Toolkit" Version="2.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
+		<ProjectReference Include="..\DataTransfer.Legacy.Services\DataTransfer.Legacy.Services.csproj" />
+	</ItemGroup>
+</Project>
