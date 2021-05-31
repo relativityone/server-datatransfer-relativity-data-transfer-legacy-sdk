@@ -20,6 +20,7 @@ using File = Relativity.Core.DTO.File;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(LogInterceptor))]
+	[Interceptor(typeof(MetricsInterceptor))]
 	public class WebDistributedService : BaseService, IWebDistributedService
 	{
 		private readonly ArtifactManager _artifactManager;
