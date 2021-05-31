@@ -1,6 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Framework.RingSetup;
@@ -21,11 +23,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CD
 		{
 			var serviceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
 
-			using (var pingService = serviceFactory.GetServiceProxy<IPingService>())
+			using (var iapiCommunicationModeService = serviceFactory.GetServiceProxy<IIAPICommunicationModeService>())
 			{
-				var result = await pingService.PingAsync();
+				var result = await iapiCommunicationModeService.GetIAPICommunicationModeAsync(Guid.NewGuid().ToString());
 
-				Assert.AreEqual(result, "Pong");
+				Assert.AreEqual(result, IAPICommunicationMode.WebAPI);
 			}
 		}
 	}
