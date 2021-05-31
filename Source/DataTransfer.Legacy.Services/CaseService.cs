@@ -13,7 +13,6 @@ using Relativity.DataTransfer.Legacy.Services.Runners;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(LogInterceptor))]
-	[Interceptor(typeof(MetricsInterceptor))]
 	public class CaseService : BaseService, ICaseService
 	{
 		private readonly CaseManager _caseManager;

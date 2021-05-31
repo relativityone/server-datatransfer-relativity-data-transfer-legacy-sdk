@@ -19,7 +19,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <param name="metricsPublishers"></param>
 		public MetricsContext(IEnumerable<IMetricsPublisher> metricsPublishers)
 		{
-			_metricsPublishers = metricsPublishers;
+			this._metricsPublishers = metricsPublishers;
 		}
 
 		/// <inheritdoc />

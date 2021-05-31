@@ -13,7 +13,6 @@ using Permission = Relativity.Core.Permission;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(LogInterceptor))]
-	[Interceptor(typeof(MetricsInterceptor))]
 
 	public class ExportService : BaseService, IExportService
 	{
