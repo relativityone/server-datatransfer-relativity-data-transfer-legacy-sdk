@@ -21,7 +21,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <param name="logger"></param>
 		public LoggingMetricsPublisher(IAPILog logger)
 		{
-			this._logger = logger;
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
 		public Task Publish(Dictionary<string, object> metrics)
 		{
-			this._logger.LogInformation("Metrics: {@metrics}", metrics);
+			_logger.LogInformation("Metrics: {@metrics}", metrics);
 
 			return Task.CompletedTask;
 		}

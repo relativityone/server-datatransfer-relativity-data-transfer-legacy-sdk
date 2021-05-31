@@ -23,7 +23,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <param name="apm"></param>
 		public APMMetricsPublisher(IAPM apm)
 		{
-			this._apm = apm;
+			_apm = apm;
 		}
 
 		/// <summary>
