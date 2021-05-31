@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Castle.Core;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
+using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(LogInterceptor))]
 	public class UserService : BaseService, IUserService
 	{
-		public UserService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) : base(methodRunner, serviceContextFactory)
+		public UserService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
+			: base(methodRunner, serviceContextFactory)
 		{
 		}
 

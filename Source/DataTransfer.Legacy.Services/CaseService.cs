@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Castle.Core;
 using kCura.Utility;
 using Relativity.Core;
 using Relativity.Core.DTO;
@@ -6,20 +7,23 @@ using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
+using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(LogInterceptor))]
 	public class CaseService : BaseService, ICaseService
 	{
 		private readonly CaseManager _caseManager;
 
-		public CaseService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) : base(methodRunner, serviceContextFactory)
+		public CaseService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
+			: base(methodRunner, serviceContextFactory)
 		{
 			_caseManager = new CaseManager();
 		}
 
-		public Task<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
+		public Task<SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
 		{
 			return ExecuteAsync(() =>
 			{

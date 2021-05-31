@@ -1,19 +1,24 @@
 ﻿using System.Threading.Tasks;
+using Castle.Core;
 using Relativity.Core;
 using Relativity.Core.DTO;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
+using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(LogInterceptor))]
+
 	public class FileIOService : BaseService, IFileIOService
 	{
 		private readonly ExternalIO _externalIo;
 
-		public FileIOService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) : base(methodRunner, serviceContextFactory)
+		public FileIOService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
+			: base(methodRunner, serviceContextFactory)
 		{
 			_externalIo = new ExternalIO();
 		}
