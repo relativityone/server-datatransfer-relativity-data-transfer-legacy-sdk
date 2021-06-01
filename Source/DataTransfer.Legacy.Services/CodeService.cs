@@ -13,6 +13,7 @@ using Relativity.DataTransfer.Legacy.Services.Runners;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(LogInterceptor))]
+	[Interceptor(typeof(MetricsInterceptor))]
 	public class CodeService : BaseService, ICodeService
 	{
 		private readonly CodeManagerImplementation _codeManager;
