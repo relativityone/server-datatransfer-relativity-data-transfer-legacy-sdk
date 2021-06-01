@@ -1,5 +1,4 @@
-﻿using System;
-using Castle.MicroKernel.Registration;
+﻿using Castle.MicroKernel.Registration;
 using Castle.MicroKernel.SubSystems.Configuration;
 using Castle.Windsor;
 using Relativity.API;
@@ -29,9 +28,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			
 			container.Register(Component.For<IMetricsPublisher>().ImplementedBy<APMMetricsPublisher>().LifestyleTransient());
 			container.Register(Component.For<IMetricsPublisher>().ImplementedBy<LoggingMetricsPublisher>().LifestyleTransient());
-			container.Register(Component.For<IMetricsContext>().ImplementedBy<MetricsContext>().LifestyleScoped());
-			container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
-				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
+			container.Register(Component.For<IMetricsContext>().ImplementedBy<MetricsContext>().LifestyleTransient());
 		}
 	}
 }
