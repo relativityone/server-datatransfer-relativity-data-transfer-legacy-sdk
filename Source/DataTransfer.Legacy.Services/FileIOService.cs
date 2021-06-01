@@ -12,6 +12,7 @@ using Relativity.DataTransfer.Legacy.Services.Runners;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(LogInterceptor))]
+	[Interceptor(typeof(MetricsInterceptor))]
 
 	public class FileIOService : BaseService, IFileIOService
 	{
