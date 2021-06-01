@@ -10,7 +10,6 @@ using Relativity.DataTransfer.Legacy.Services.Runners;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(LogInterceptor))]
-	[Interceptor(typeof(MetricsInterceptor))]
 	public class ObjectService : BaseService, IObjectService
 	{
 		private readonly ObjectManager _objectManager;
