@@ -1,16 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Castle.Core;
 using Relativity.Core;
 using Relativity.Core.Exception;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
+using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Runners;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(LogInterceptor))]
 	public class BulkImportService : BaseService, IBulkImportService
 	{
 		private const string SecurityWarning =
@@ -28,12 +31,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly MassImportManager _massImportManager;
 
 
-		public BulkImportService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) : base(methodRunner, serviceContextFactory)
+		public BulkImportService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
+			: base(methodRunner, serviceContextFactory)
 		{
 			_massImportManager = new MassImportManager();
 		}
 
-		public Task<MassImportResults> BulkImportImageAsync(int workspaceID, DataTransfer.Legacy.SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
 			return ExecuteAsync(() =>
 			{
@@ -42,7 +46,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}, workspaceID, correlationID);
 		}
 
-		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, DataTransfer.Legacy.SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
 		{
 			return ExecuteAsync(() =>
 			{
@@ -51,7 +55,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}, workspaceID, correlationID);
 		}
 
-		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, DataTransfer.Legacy.SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
+		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
 		{
 			return ExecuteAsync(() =>
 			{
@@ -60,7 +64,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}, workspaceID, correlationID);
 		}
 
-		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID, DataTransfer.Legacy.SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID, SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
 			return ExecuteAsync(() =>
 			{
@@ -112,12 +116,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return results.Map<MassImportResults>();
 		}
 
-		private MassImportResults CreateResultWithException(string exceptionMessage)
+		private static MassImportResults CreateResultWithException(string exceptionMessage)
 		{
 			SoapExceptionDetail soapExceptionDetail = new SoapExceptionDetail(new Exception(exceptionMessage));
 			return new MassImportResults
 			{
-				ExceptionDetail = soapExceptionDetail.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.SoapExceptionDetail>()
+				ExceptionDetail = soapExceptionDetail.Map<SDK.ImportExport.V1.Models.SoapExceptionDetail>()
 			};
 		}
 
