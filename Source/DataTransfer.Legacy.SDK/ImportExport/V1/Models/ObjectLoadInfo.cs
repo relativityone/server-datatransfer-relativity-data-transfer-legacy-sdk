@@ -3,5 +3,10 @@
 	public class ObjectLoadInfo : NativeLoadInfo
 	{
 		public int ArtifactTypeID { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

@@ -28,5 +28,10 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 		public bool CreateForeignKeys { get; set; }
 
 		public bool ManageFieldExposure { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

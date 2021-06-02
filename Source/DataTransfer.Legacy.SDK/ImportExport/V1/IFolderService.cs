@@ -17,10 +17,10 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		Task<Folder> ReadAsync(int workspaceID, int folderArtifactID, string correlationID);
 
 		[HttpPost]
-		Task<int> ReadIDAsync(int workspaceID, int parentArtifactID, string name, string correlationID);
+		Task<int> ReadIDAsync(int workspaceID, int parentArtifactID, [SensitiveData] string name, string correlationID);
 
 		[HttpPost]
-		Task<int> CreateAsync(int workspaceID, int parentArtifactID, string folderName, string correlationID);
+		Task<int> CreateAsync(int workspaceID, int parentArtifactID, [SensitiveData] string folderName, string correlationID);
 
 		[HttpPost]
 		Task<bool> ExistsAsync(int workspaceID, int folderArtifactID, string correlationID);
