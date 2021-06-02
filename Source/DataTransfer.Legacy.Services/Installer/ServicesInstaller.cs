@@ -26,12 +26,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			// interceptors registration
 			container.Register(Component.For<LogInterceptor>().LifestyleTransient());
 			container.Register(Component.For<MetricsInterceptor>().LifestyleTransient());
+			container.Register(Component.For<PermissionCheckInterceptor>().LifestyleTransient());
 			
 			container.Register(Component.For<IMetricsPublisher>().ImplementedBy<APMMetricsPublisher>().LifestyleTransient());
 			container.Register(Component.For<IMetricsPublisher>().ImplementedBy<LoggingMetricsPublisher>().LifestyleTransient());
 			container.Register(Component.For<IMetricsContext>().ImplementedBy<MetricsContext>().LifestyleTransient());
 			container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
 				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
+			container.Register(Component.For<IRelativityPermissionHelper>().ImplementedBy<RelativityPermissionHelper>().LifestyleTransient());
 		}
 	}
 }
