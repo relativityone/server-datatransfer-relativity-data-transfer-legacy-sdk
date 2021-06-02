@@ -43,7 +43,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
 		{
 			return ExecuteAsync(
-				() => _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(workspaceID), workspaceID),
+				() => _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(AdminWorkspace), workspaceID),
 				workspaceID, correlationID);
 		}
 
