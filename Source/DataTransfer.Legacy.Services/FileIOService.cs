@@ -49,9 +49,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			return ExecuteAsync(() =>
 				{
-					var serviceContext = GetBaseServiceContext(AdminWorkspace);
-					string documentDirectory = GetDefaultDocumentDirectory(serviceContext, workspaceID);
-					_externalIo.ExternalRemoveFill(serviceContext, documentDirectory, fileName, workspaceID);
+					string documentDirectory = GetDefaultDocumentDirectory(workspaceID);
+					_externalIo.ExternalRemoveFill(GetBaseServiceContext(workspaceID), documentDirectory, fileName, workspaceID);
 				},
 				workspaceID, correlationID);
 		}
@@ -60,8 +59,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			return ExecuteAsync(() =>
 			{
-				var serviceContext = GetBaseServiceContext(AdminWorkspace);
-				string documentDirectory = GetDefaultDocumentDirectory(serviceContext, workspaceID);
+				string documentDirectory = GetDefaultDocumentDirectory(workspaceID);
 				return _externalIo.GetRepositoryReport(documentDirectory);
 			}, workspaceID, correlationID);
 		}
@@ -88,8 +86,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return ExecuteAsync(() => Config.RepositoryVolumeMax, null, correlationID);
 		}
 
-		private string GetDefaultDocumentDirectory(BaseServiceContext serviceContext, int workspaceID)
+		private string GetDefaultDocumentDirectory(int workspaceID)
 		{
+			BaseServiceContext serviceContext = GetBaseServiceContext(AdminWorkspace);
 			CaseManager caseManager = new CaseManager();
 			int fileLocationCodeArtifactID = caseManager.Read(serviceContext, workspaceID).DefaultFileLocationCodeArtifactID;
 			ResourceServer resourceServer = ResourceServerManager.Read(serviceContext, fileLocationCodeArtifactID);

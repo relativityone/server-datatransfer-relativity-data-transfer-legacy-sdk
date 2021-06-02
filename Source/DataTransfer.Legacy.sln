@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.Service
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.Tests", "DataTransfer.Legacy.Tests\DataTransfer.Legacy.Tests.csproj", "{9734768A-8820-4860-98FE-2C85111EAA41}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransfer.Legacy.Services.Tests", "DataTransfer.Legacy.Services.Tests\DataTransfer.Legacy.Services.Tests.csproj", "{93CF087B-3C75-4132-AF27-B4C295ECCB5C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.Services.Tests", "DataTransfer.Legacy.Services.Tests\DataTransfer.Legacy.Services.Tests.csproj", "{93CF087B-3C75-4132-AF27-B4C295ECCB5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F691B12D-E37F-4782-B5BA-DEAD72758C1F}"
+	ProjectSection(SolutionItems) = preProject
+		..\CHANGELOG.md = ..\CHANGELOG.md
+		..\version.txt = ..\version.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
