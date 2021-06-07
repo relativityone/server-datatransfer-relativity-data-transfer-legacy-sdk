@@ -55,14 +55,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		}
 
 		[Test]
-		public void ShouldNotCheckPermissionsWhenRunMethodWithWorkspaceIdArgumentSetToAnyIntAndArgCasingIsUnrecognized()
-		{
-			_interceptedObject.RunWithWorkspaceUnrecognizedCase(Any.Integer());
-
-			_serviceContextFactoryMock.Verify(x => x.GetBaseServiceContext(It.IsAny<int>()), Times.Never);
-		}
-
-		[Test]
 		public void ShouldCheckImportAndExportPermissionsAndNotThrowWhenRunMethodWithWorkspaceIdArgumentSetToAnyIntAndImportAndExportAreAllowedForRecognizedArgCasings()
 		{
 			var workspaceId = Any.Integer();

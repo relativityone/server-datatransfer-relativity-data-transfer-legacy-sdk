@@ -1,9 +1,7 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Relativity.Core;
+﻿using Relativity.Core;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
-	[ExcludeFromCodeCoverage]
 	public class RelativityPermissionHelper : IRelativityPermissionHelper
 	{
 		public bool HasAdminOperationPermission(ICoreContext coreContext, Permission permission)

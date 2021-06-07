@@ -5,7 +5,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Relativity.API;
@@ -34,7 +33,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			const string Controller = "Controller";
 			const string EndpointCalled = "EndpointCalled";
-			Dictionary<string, string> arguments = GetFunctionAttributes(invocation);
+			var arguments = InterceptorHelper.GetFunctionArgumentsFrom(invocation);
 
 			_contextPushPropertiesHandlers = new List<IDisposable>
 			{
@@ -50,30 +49,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			DisposeLoggerContext(_contextPushPropertiesHandlers);
 			return Task.CompletedTask;
-		}
-
-		private static Dictionary<string, string> GetFunctionAttributes(IInvocation invocation)
-		{
-			Type type = Type.GetType($"{invocation.TargetType.FullName}, {invocation.TargetType.Assembly.FullName}");
-			Dictionary<string, string> arguments = new Dictionary<string, string>();
-			if (type == null)
-			{
-				return arguments;
-			}
-
-			ParameterInfo[] parameters = invocation.Method.GetParameters();
-			if (parameters.Length != invocation.Arguments.Length)
-			{
-				return arguments;
-			}
-
-			for (int i = 0; i < parameters.Length; i++)
-			{
-				string value = invocation.Arguments[i]?.ToString() ?? "null";
-				arguments.Add(parameters[i].Name, value);
-			}
-
-			return arguments;
 		}
 
 		private static void DisposeLoggerContext(List<IDisposable> loggers)
