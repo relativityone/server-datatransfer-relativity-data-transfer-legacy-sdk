@@ -45,6 +45,7 @@
     <PackageReference Include="Relativity.Testing.Framework.Api" Version="1.1.0-pre.7" />
     <PackageReference Include="Relativity.Testing.Framework.RingSetup" Version="0.7.0" />
     <PackageReference Include="Relativity.Testing.Identification" Version="3.4.0" />
+    <PackageReference Include="Tdd-Toolkit" Version="2.0.1" />
   </ItemGroup>
 
   <ItemGroup>
