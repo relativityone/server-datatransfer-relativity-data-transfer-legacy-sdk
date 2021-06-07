@@ -46,16 +46,16 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 			_workspaceService.Delete(_workspace.ArtifactID);
 		}
 
-		private void SetUpNoPermissionUser(IWorkspacePermissionService permissionService)
+		private void SetUpNoPermissionUser(IWorkspacePermissionService workspacePermissionService)
 		{
-			_group = _groupService.Create(new Group{ Name = $"NoPermissionGroup_{Any.Guid()}"});
+			_group = _groupService.Create(new Group{ Name = $"TestGroup_{Any.Guid()}"});
 			_user = _userService.Create(new User());
 			var templateWorkspace = _workspaceService.Get("Relativity Starter Template");
 			_workspace = _workspaceService.Create(new Workspace
-				{Name = $"NoPermissionWorkspace_{Any.String()}", TemplateWorkspace = templateWorkspace});
+				{Name = $"TestWorkspace_{Any.String()}", TemplateWorkspace = templateWorkspace});
 			_userService.AddToGroup(_user.ArtifactID, _group.ArtifactID);
-			permissionService.AddWorkspaceToGroup(_workspace.ArtifactID, _group.ArtifactID);
-			permissionService.SetWorkspaceGroupPermissions(_workspace.ArtifactID,
+			workspacePermissionService.AddWorkspaceToGroup(_workspace.ArtifactID, _group.ArtifactID);
+			workspacePermissionService.SetWorkspaceGroupPermissions(_workspace.ArtifactID,
 				_group.ArtifactID, changeset => changeset.AdminPermissions.DisableAll());
 		}
 
