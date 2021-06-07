@@ -56,7 +56,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 			_userService.AddToGroup(_user.ArtifactID, _group.ArtifactID);
 			workspacePermissionService.AddWorkspaceToGroup(_workspace.ArtifactID, _group.Name);
 			workspacePermissionService.SetWorkspaceGroupPermissions(_workspace.ArtifactID,
-				_group.ArtifactID, changeset => changeset.AdminPermissions.DisableAll());
+				_group.Name, changeset => changeset.AdminPermissions.DisableAll());
 		}
 
 		[IdentifiedTest("5ADCC868-8E78-459E-9779-A34EBC695809")]
