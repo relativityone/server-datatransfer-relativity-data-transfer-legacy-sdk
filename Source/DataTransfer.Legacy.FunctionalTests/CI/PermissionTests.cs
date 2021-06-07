@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.Testing.Framework;
@@ -20,28 +19,44 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 	{
 		private static Workspace _workspace;
 		private static User _user;
+		private IUserService _userService;
+		private IGroupService _groupService;
+		private IWorkspaceService _workspaceService;
+		private Group _group;
 
 		[OneTimeSetUp]
 		public void OneTimeSetUp()
 		{
-			var userService = RelativityFacade.Instance.Resolve<IUserService>();
-			var groupService = RelativityFacade.Instance.Resolve<IGroupService>();
-			var permissionService = RelativityFacade.Instance.Resolve<IPermissionService>();
-			var workspaceService = RelativityFacade.Instance.Resolve<IWorkspaceService>();
+			RelativityFacade.Instance.RelyOn<CoreComponent>();
+			RelativityFacade.Instance.RelyOn<ApiComponent>();
 
-			SetUpNoPermissionUser(workspaceService, groupService, userService, permissionService);
+			_userService = RelativityFacade.Instance.Resolve<IUserService>();
+			_groupService = RelativityFacade.Instance.Resolve<IGroupService>();
+			var workspacePermissionService = RelativityFacade.Instance.Resolve<IWorkspacePermissionService>();
+			_workspaceService = RelativityFacade.Instance.Resolve<IWorkspaceService>();
+
+			SetUpNoPermissionUser(workspacePermissionService);
 		}
 
-		private static void SetUpNoPermissionUser(IWorkspaceService workspaceService, IGroupService groupService,
-			IUserService userService, IPermissionService permissionService)
+		[OneTimeTearDown]
+		public void OneTimeTearDown()
 		{
-			_workspace = workspaceService.Create(new Workspace());
-			var group = groupService.Create(new Group());
-			_user = userService.Create(new User());
-			userService.AddToGroup(_user.ArtifactID, group.ArtifactID);
-			permissionService.WorkspacePermissionService.AddWorkspaceToGroup(_workspace.ArtifactID, group.ArtifactID);
-			permissionService.WorkspacePermissionService.SetWorkspaceGroupPermissions(_workspace.ArtifactID,
-				group.ArtifactID, changeset => changeset.AdminPermissions.DisableAll());
+			_userService.Delete(_user.ArtifactID);
+			_groupService.Delete(_group.ArtifactID);
+			_workspaceService.Delete(_workspace.ArtifactID);
+		}
+
+		private void SetUpNoPermissionUser(IWorkspacePermissionService permissionService)
+		{
+			_group = _groupService.Create(new Group{ Name = $"NoPermissionGroup_{Any.Guid()}"});
+			_user = _userService.Create(new User());
+			var templateWorkspace = _workspaceService.Get("Relativity Starter Template");
+			_workspace = _workspaceService.Create(new Workspace
+				{Name = $"NoPermissionWorkspace_{Any.String()}", TemplateWorkspace = templateWorkspace});
+			_userService.AddToGroup(_user.ArtifactID, _group.ArtifactID);
+			permissionService.AddWorkspaceToGroup(_workspace.ArtifactID, _group.ArtifactID);
+			permissionService.SetWorkspaceGroupPermissions(_workspace.ArtifactID,
+				_group.ArtifactID, changeset => changeset.AdminPermissions.DisableAll());
 		}
 
 		[IdentifiedTest("5ADCC868-8E78-459E-9779-A34EBC695809")]
