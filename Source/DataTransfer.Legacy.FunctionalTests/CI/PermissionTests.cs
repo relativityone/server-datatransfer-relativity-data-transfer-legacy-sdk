@@ -1,6 +1,8 @@
 ﻿using System.Threading.Tasks;
+using FluentAssertions;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
+using Relativity.Services.Exceptions;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Framework.Api.Services;
@@ -61,12 +63,14 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 
 		[IdentifiedTest("5ADCC868-8E78-459E-9779-A34EBC695809")]
 		[Description("Should throw permission denied exception when user has no permissions to import/export")]
-		public async Task ShouldThrowPermissionDeniedExceptionWhenUserHasNoPermissionsToImportExport()
+		public void ShouldThrowPermissionDeniedExceptionWhenUserHasNoPermissionsToImportExport()
 		{
 			var keplerServiceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
 			using (var caseService = keplerServiceFactory.GetServiceProxy<ICaseService>(_user.EmailAddress, _user.Password))
 			{
-				await caseService.ReadAsync(_workspace.ArtifactID, Any.String());
+				FluentActions.Invoking(async () => await caseService.ReadAsync(_workspace.ArtifactID, Any.String()))
+					.Should().Throw<ServiceException>()
+					.WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 			}
 		}
 	}
