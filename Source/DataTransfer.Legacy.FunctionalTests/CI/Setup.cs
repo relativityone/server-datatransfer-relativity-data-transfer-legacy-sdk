@@ -6,6 +6,7 @@ using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Framework.Api.Services;
 using Relativity.Testing.Framework.Configuration;
+using Relativity.Testing.Framework.Models;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 { 

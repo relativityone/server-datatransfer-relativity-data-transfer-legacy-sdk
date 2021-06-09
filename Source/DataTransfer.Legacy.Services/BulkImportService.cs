@@ -13,6 +13,7 @@ using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	public class BulkImportService : BaseService, IBulkImportService
