@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.Services.Exceptions;
@@ -69,8 +68,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 			using (var caseService = keplerServiceFactory.GetServiceProxy<ICaseService>(_user.EmailAddress, _user.Password))
 			{
 				FluentActions.Invoking(async () => await caseService.ReadAsync(_workspace.ArtifactID, Any.String()))
-					.Should().Throw<ServiceException>()
-					.WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+					.Should().Throw<ServiceException>().And.Message
+					.Should().Contain("User does not have permissions to use WebAPI Kepler replacement");
 			}
 		}
 	}
