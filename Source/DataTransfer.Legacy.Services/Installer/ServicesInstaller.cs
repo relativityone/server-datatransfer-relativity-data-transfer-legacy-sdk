@@ -34,6 +34,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
 				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
 			container.Register(Component.For<IRelativityPermissionHelper>().ImplementedBy<RelativityPermissionHelper>().LifestyleTransient());
+
+			container.Register(Component.For<IInstanceSettingsBundle>()
+				.UsingFactoryMethod((x, c) => x.Resolve<IHelper>().GetInstanceSettingBundle()));
 		}
 	}
 }
