@@ -25,15 +25,21 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 			else
 			{
 				_data = exportData.Cast<object[]>().ToArray();
+				_xml = Serialize(_data);
+			}
+		}
 
-				XmlSerializer serializer = new XmlSerializer(typeof(object[][]));
-				StringBuilder builder = new StringBuilder();
-				using (TextWriter textWriter = new StringWriter(builder))
-				{
-					serializer.Serialize(textWriter, _data);
-				}
-
-				_xml = builder.ToString();
+		public ExportDataWrapper(object[][] exportData)
+		{
+			if (exportData == null)
+			{
+				_data = null;
+				_xml = null;
+			}
+			else
+			{
+				_data = exportData;
+				_xml = Serialize(_data);
 			}
 		}
 
@@ -63,6 +69,18 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 		public void GetObjectData(SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue(FieldName, _xml, typeof(string));
+		}
+
+		private static string Serialize(object[][] data)
+		{
+			XmlSerializer serializer = new XmlSerializer(typeof(object[][]));
+			StringBuilder builder = new StringBuilder();
+			using (TextWriter textWriter = new StringWriter(builder))
+			{
+				serializer.Serialize(textWriter, data);
+			}
+
+			return builder.ToString();
 		}
 	}
 }
