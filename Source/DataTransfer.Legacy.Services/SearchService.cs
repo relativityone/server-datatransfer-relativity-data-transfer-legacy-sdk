@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class SearchService : BaseService, ISearchService
 	{
 		private readonly SearchManager _searchManager;

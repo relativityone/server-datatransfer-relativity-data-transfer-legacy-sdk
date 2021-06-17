@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class ObjectTypeService : BaseService, IObjectTypeService
 	{
 		private readonly ObjectTypeManager _objectTypeManager;
