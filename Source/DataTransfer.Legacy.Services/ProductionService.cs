@@ -27,12 +27,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_productionManager = new ProductionManager();
 		}
 
-		public Task<object[][]> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs, int[] documentIDs, string correlationID)
+		public Task<ExportDataWrapper> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs, int[] documentIDs, string correlationID)
 		{
 			return ExecuteAsync(() =>
 			{
-				var result = ProductionQuery.RetrieveBatesByProductionAndDocument(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), productionIDs, documentIDs);
-                return ToObjectArrays(result, ProductionDocumentBatesHelper.ToSerializableObjectArray);
+				kCura.Data.DataView resultAsDataView = ProductionQuery.RetrieveBatesByProductionAndDocument(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), productionIDs, documentIDs);
+				object[][] resultAsObjectArrays =  ToObjectArrays(resultAsDataView, ProductionDocumentBatesHelper.ToSerializableObjectArray);
+				return new ExportDataWrapper(resultAsObjectArrays);
 			}, workspaceID, correlationID);
 		}
 
