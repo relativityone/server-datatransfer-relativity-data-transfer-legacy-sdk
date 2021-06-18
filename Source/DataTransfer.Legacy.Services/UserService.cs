@@ -13,6 +13,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class UserService : BaseService, IUserService
 	{
 		public UserService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 

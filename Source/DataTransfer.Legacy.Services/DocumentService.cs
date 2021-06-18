@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class DocumentService : BaseService, IDocumentService
 	{
 		public DocumentService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 

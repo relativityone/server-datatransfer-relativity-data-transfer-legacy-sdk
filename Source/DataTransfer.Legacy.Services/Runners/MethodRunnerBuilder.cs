@@ -5,8 +5,7 @@
 		public IMethodRunner Build()
 		{
 			var methodRunner = new MethodRunner();
-			var errorHandling = new MethodRunnerWithErrorHandling(methodRunner);
-			var toggle = new MethodRunnerWithToggleCheck(errorHandling);
+			var toggle = new MethodRunnerWithToggleCheck(methodRunner);
 			return toggle;
 		}
 	}
