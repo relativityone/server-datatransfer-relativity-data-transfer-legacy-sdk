@@ -5,7 +5,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -20,20 +19,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private readonly ICommunicationModeStorage _communicationModeStorage;
 
-		public IAPICommunicationModeService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory,
+		public IAPICommunicationModeService(IServiceContextFactory serviceContextFactory,
 			IAPILog logger, ICommunicationModeStorage communicationModeStorage)
-			: base(methodRunner, serviceContextFactory)
+			: base(serviceContextFactory)
 		{
 			_logger = logger;
 			_communicationModeStorage = communicationModeStorage;
 		}
 
-		public Task<IAPICommunicationMode> GetIAPICommunicationModeAsync(string correlationId)
-		{
-			return ExecuteAsync(GetIAPICommunicationModeAsync, null, correlationId);
-		}
-
-		private async Task<IAPICommunicationMode> GetIAPICommunicationModeAsync()
+		public async Task<IAPICommunicationMode> GetIAPICommunicationModeAsync(string correlationId)
 		{
 			try
 			{

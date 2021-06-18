@@ -8,7 +8,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -21,70 +20,65 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private readonly CodeManagerImplementation _codeManager;
 
-		public CodeService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public CodeService(IServiceContextFactory serviceContextFactory)
+			: base(serviceContextFactory)
 		{
 			_codeManager = new CodeManagerImplementation();
 		}
 
 		public Task<DataSetWrapper> RetrieveCodesAndTypesForCaseAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _codeManager.ExternalRetrieveCodesAndTypesForCase(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID);
+			var result = _codeManager.ExternalRetrieveCodesAndTypesForCase(GetBaseServiceContext(workspaceID));
+			return Task.FromResult(new DataSetWrapper(result));
 		}
 
 		public Task<object> CreateEncodedAsync(int workspaceID, Code code, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				code.Name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(code.Name)));
-				return _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false);
-			}, workspaceID, correlationID);
+			code.Name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(code.Name)));
+			var result = _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false);
+			return Task.FromResult(result);
 		}
 
-		public Task<int> ReadIDEncodedAsync(int workspaceID, int parentArtifactID, int codeTypeID, string name, string correlationID)
+		public Task<int> ReadIDEncodedAsync(int workspaceID, int parentArtifactID, int codeTypeID, string name,
+			string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(name)));
-				return _codeManager.ReadID(GetBaseServiceContext(workspaceID), parentArtifactID, codeTypeID, name);
-			}, workspaceID, correlationID);
+			name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(name)));
+			var result = _codeManager.ReadID(GetBaseServiceContext(workspaceID), parentArtifactID, codeTypeID, name);
+			return Task.FromResult(result);
 		}
 
 		public Task<DataSetWrapper> GetAllForHierarchicalAsync(int workspaceID, int codeTypeID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => Core.Query.Code.RetrieveHierarchicalByCodeTypeID(GetBaseServiceContext(workspaceID), codeTypeID),
-				workspaceID, correlationID);
+			var result = Core.Query.Code.RetrieveHierarchicalByCodeTypeID(GetBaseServiceContext(workspaceID), codeTypeID);
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
 		public Task<DataSetWrapper> GetInitialChunkAsync(int workspaceID, int codeTypeID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _codeManager.GetInitialCodeListChunk(GetBaseServiceContext(workspaceID), codeTypeID),
-				workspaceID, correlationID);
+			var result = _codeManager.GetInitialCodeListChunk(GetBaseServiceContext(workspaceID), codeTypeID);
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
-		public Task<DataSetWrapper> GetLastChunkAsync(int workspaceID, int codeTypeID, int lastCodeID, string correlationID)
+		public Task<DataSetWrapper> GetLastChunkAsync(int workspaceID, int codeTypeID, int lastCodeID,
+			string correlationID)
 		{
-			return ExecuteAsync(
-				() => _codeManager.GetNextCodeListChunk(GetBaseServiceContext(workspaceID), codeTypeID, lastCodeID),
-				workspaceID, correlationID);
+			var result = _codeManager.GetNextCodeListChunk(GetBaseServiceContext(workspaceID), codeTypeID, lastCodeID);
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
-		public Task<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ChoiceInfo> RetrieveCodeByNameAndTypeIDEncodedAsync(int workspaceID, int codeTypeID, string name, string correlationID)
+		public Task<SDK.ImportExport.V1.Models.ChoiceInfo> RetrieveCodeByNameAndTypeIDEncodedAsync(
+			int workspaceID, int codeTypeID, string name, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(name)));
-				return _codeManager.RetrieveCodeByNameAndTypeID(GetBaseServiceContext(workspaceID), codeTypeID, name).Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ChoiceInfo>();
-			}, workspaceID, correlationID);
+			name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(name)));
+			var result = _codeManager.RetrieveCodeByNameAndTypeID(GetBaseServiceContext(workspaceID), codeTypeID, name)
+				.Map<SDK.ImportExport.V1.Models.ChoiceInfo>();
+			return Task.FromResult(result);
 		}
 
 		public Task<int> GetChoiceLimitForUIAsync(string correlationID)
 		{
-			return ExecuteAsync(() => Config.ChoiceLimitForUI, null, correlationID);
+			var result = Config.ChoiceLimitForUI;
+			return Task.FromResult(result);
 		}
 	}
 }

@@ -7,7 +7,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
@@ -22,68 +21,58 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private static readonly string[] DynamicallyLoadedDllPaths = {Config.DynamicallyLoadedStandardSearchDLLs, Config.DynamicallyLoadedClientSearchDLLs};
 
-		public ExportService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public ExportService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 		}
 
 		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
-			return ExecuteAsync(
-				() =>
-				{
-					return InitializeExport(workspaceID, (int) ArtifactType.Document,
+			var result = InitializeExport(workspaceID, (int) ArtifactType.Document,
 						e => e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs,
 							startAtRecord).Map<InitializationResults>());
-				}, workspaceID, correlationID);
+			return Task.FromResult(result);
 		}
 
-		public Task<InitializationResults> InitializeFolderExportAsync(int workspaceID, int viewArtifactID, int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID, string correlationID)
+		public Task<InitializationResults> InitializeFolderExportAsync(int workspaceID, int viewArtifactID,
+			int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID,
+			string correlationID)
 		{
-			return ExecuteAsync(
-				() =>
-				{
-					return InitializeExport(workspaceID, artifactTypeID,
-						e => e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders,
-							DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>());
-				},
-				workspaceID, correlationID);
+			var result = InitializeExport(workspaceID, artifactTypeID,
+				e => e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders,
+					DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>());
+			return Task.FromResult(result);
 		}
 
-		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID, int[] avfIds, int startAtRecord, string correlationID)
+		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID,
+			int[] avfIds, int startAtRecord, string correlationID)
 		{
-			return ExecuteAsync(
-				() =>
-				{
-					return InitializeExport(workspaceID, (int) ArtifactType.Document,
-						e => e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds,
-							startAtRecord).Map<InitializationResults>());
-				},
-				workspaceID, correlationID);
+			var result = InitializeExport(workspaceID, (int) ArtifactType.Document,
+				e => e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds,
+					startAtRecord).Map<InitializationResults>());
+			return Task.FromResult(result);
 		}
 
 		public Task<ExportDataWrapper> RetrieveResultsBlockForProductionStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter,
 			char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int productionId, int index, string correlationID)
 		{
-			return ExecuteAsync(
-				() => RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
-					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index),
-				workspaceID, correlationID);
+			var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
+					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index);
+			return Task.FromResult(result);
 		}
 
 		public Task<ExportDataWrapper> RetrieveResultsBlockStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter, char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int index, string correlationID)
 		{
-			return ExecuteAsync(
-				() => RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
-					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index),
-				workspaceID, correlationID);
+			var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
+					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index);
+			return Task.FromResult(result);
 		}
 
 		private InitializationResults InitializeExport(int workspaceID, int artifactTypeID, Func<Core.Export, InitializationResults> initialization)
 		{
-			Core.Export export = new Core.Export(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), artifactTypeID);
+			var export = new Core.Export(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), artifactTypeID);
 			if (!export.HasExportPermissions())
 			{
 				throw new InsufficientAccessControlListPermissions("Insufficient Permissions! Please ask your Relativity Administrator to allow you export permission.");
@@ -96,7 +85,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			int? productionId,
 			int index)
 		{
-			Core.Export export = new Core.Export(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), artifactTypeID, textPrecedenceAvfIds);
+			var export = new Core.Export(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), artifactTypeID, textPrecedenceAvfIds);
 			if (!export.HasExportPermissions())
 			{
 				throw new InsufficientAccessControlListPermissions("Insufficient Permissions! Please ask your Relativity Administrator to allow you export permission.");
@@ -117,9 +106,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> HasExportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientExport),
-				workspaceID, correlationID);
+			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientExport);
+			return Task.FromResult(result);
 		}
 	}
 }

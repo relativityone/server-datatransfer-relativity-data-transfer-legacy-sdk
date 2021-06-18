@@ -8,7 +8,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -19,16 +18,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class RelativityService : BaseService, IRelativityService
 	{
-		public RelativityService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public RelativityService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 		}
 
 		public Task<string> RetrieveCurrencySymbolAsync(string correlationID)
 		{
-			return ExecuteAsync(
-				() => CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol,
-				null, correlationID);
+			var result = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+			return Task.FromResult(result);
 		}
 
 		public Task<string> GetImportExportWebApiVersionAsync(string correlationID)
@@ -43,16 +41,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> IsImportEmailNotificationEnabledAsync(string correlationID)
 		{
-			return ExecuteAsync(
-				() => Config.SendNotificationOnImportCompletion,
-				null, correlationID);
+			var result = Config.SendNotificationOnImportCompletion;
+			return Task.FromResult(result);
 		}
 
 		public Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
 		{
-			return ExecuteAsync(
-				() => WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace)),
-				null, correlationID);
+			var result = WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace));
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
 		public Task<string> GetRelativityUrlAsync(string correlationID)

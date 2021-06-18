@@ -12,7 +12,6 @@ using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 using Relativity.Kepler.Transport;
 using Relativity.Services.Exceptions;
 using File = Relativity.Core.DTO.File;
@@ -31,8 +30,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly DynamicFieldsFileManager _fieldsFileManager;
 		private readonly FileManager _fileManager;
 
-		public WebDistributedService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public WebDistributedService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 			_artifactManager = new ArtifactManager();
 			_caseManager = new CaseManager();
@@ -50,89 +49,86 @@ namespace Relativity.DataTransfer.Legacy.Services
 			throw new NotSupportedException();
 		}
 
-		public Task<IKeplerStream> DownloadFieldFileAsync(int workspaceID, int objectArtifactID, int fileID, int fileFieldArtifactId, string correlationID)
+		public Task<IKeplerStream> DownloadFieldFileAsync(int workspaceID, int objectArtifactID, int fileID,
+			int fileFieldArtifactId, string correlationID)
 		{
-			return ExecuteAsync(() =>
+			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
+			var artifactTypeID = _artifactManager.Read(workspaceServiceContext, objectArtifactID).ArtifactTypeID;
+			var hasPermission = _artifactManager.GetPermissionByArtifactTypeID(workspaceServiceContext,
+				objectArtifactID, (int) ArtifactManager.PermissionType.View, artifactTypeID);
+
+			if (!hasPermission)
 			{
-				var workspaceServiceContext = GetBaseServiceContext(workspaceID);
-				int artifactTypeID = _artifactManager.Read(workspaceServiceContext, objectArtifactID).ArtifactTypeID;
-				bool hasPermission = _artifactManager.GetPermissionByArtifactTypeID(workspaceServiceContext, objectArtifactID, (int) ArtifactManager.PermissionType.View, artifactTypeID);
+				throw new NotAuthorizedException("kcuraaccessdeniedmarker");
+			}
 
-				if (!hasPermission)
-				{
-					throw new NotAuthorizedException("kcuraaccessdeniedmarker");
-				}
+			var file = _fieldsFileManager.GetFileDTO(workspaceServiceContext, fileFieldArtifactId, fileID);
 
-				var file = _fieldsFileManager.GetFileDTO(workspaceServiceContext, fileFieldArtifactId, fileID);
+			if (!LongPath.FileExists(file.Location))
+			{
+				throw new NotFoundException("File not found");
+			}
 
-				if (!LongPath.FileExists(file.Location))
-				{
-					throw new NotFoundException("File not found");
-				}
+			AuditDownload(workspaceServiceContext, file.Filename);
 
-				AuditDownload(workspaceServiceContext, file.Filename);
-
-				return GetKeplerStream(file.Location);
-			}, workspaceID, correlationID);
+			var result = GetKeplerStream(file.Location);
+			return Task.FromResult(result);
 		}
 
-		public Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int artifactID, Guid remoteGuid, string correlationID)
+		public Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int artifactID, Guid remoteGuid,
+			string correlationID)
 		{
-			return ExecuteAsync(() =>
+			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
+
+			var artifactTypeId = _artifactManager.ReadArtifact(workspaceServiceContext, artifactID).ArtifactTypeID;
+			if (!PermissionsHelper.HasPermissionToView(workspaceServiceContext, artifactID, artifactTypeId))
 			{
-				var workspaceServiceContext = GetBaseServiceContext(workspaceID);
+				throw new NotAuthorizedException("kcuraaccessdeniedmarker");
+			}
 
-				int artifactTypeID = _artifactManager.ReadArtifact(workspaceServiceContext, artifactID).ArtifactTypeID;
-				if (!PermissionsHelper.HasPermissionToView(workspaceServiceContext, artifactID, artifactTypeID))
-				{
-					throw new NotAuthorizedException("kcuraaccessdeniedmarker");
-				}
+			var file = _fileManager.Read(workspaceServiceContext, remoteGuid.ToString());
+			if (file.DocumentArtifactID != artifactID)
+			{
+				throw new ServiceException("ArtifactID does not match file name");
+			}
 
-				File file = _fileManager.Read(workspaceServiceContext, remoteGuid.ToString());
-				if (file.DocumentArtifactID != artifactID)
-				{
-					throw new ServiceException("ArtifactID does not match file name");
-				}
+			var filePath = file.Location.Replace("file://", "");
+			if (!LongPath.FileExists(filePath))
+			{
+				throw new NotFoundException("File not found");
+			}
 
-				string filePath = file.Location.Replace("file://", "");
-				if (!LongPath.FileExists(filePath))
-				{
-					throw new NotFoundException("File not found");
-				}
+			AuditDownload(workspaceServiceContext, file.Filename);
 
-				AuditDownload(workspaceServiceContext, file.Filename);
-
-				return GetKeplerStream(filePath);
-			}, workspaceID, correlationID);
+			var result = GetKeplerStream(filePath);
+			return Task.FromResult(result);
 		}
 
 		public Task<IKeplerStream> DownloadTempFileAsync(int workspaceID, Guid remoteGuid, string correlationID)
 		{
-			return ExecuteAsync(() =>
+			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
+			var instanceServiceContext = GetBaseServiceContext(AdminWorkspace);
+
+			var fileExistsInDatabase = _fileManager.Exists(workspaceServiceContext, remoteGuid.ToString());
+
+			if (fileExistsInDatabase)
 			{
-				var workspaceServiceContext = GetBaseServiceContext(workspaceID);
-				var instanceServiceContext = GetBaseServiceContext(AdminWorkspace);
+				//if specified file is in database it means it's native not temp file and cannot be downloaded using this endpoint
+				throw new NotAuthorizedException("kcuraaccessdeniedmarker");
+			}
 
-				bool fileExistsInDatabase = _fileManager.Exists(workspaceServiceContext, remoteGuid.ToString());
+			int fileShareId = _caseManager.Read(instanceServiceContext, workspaceID).DefaultFileLocationCodeArtifactID;
+			string fileSharePath = ResourceServerManager.Read(instanceServiceContext, fileShareId).URL;
+			string filePath = Path.Combine(fileSharePath, remoteGuid.ToString());
+			if (!LongPath.FileExists(filePath))
+			{
+				throw new NotFoundException("File not found");
+			}
 
-				if (fileExistsInDatabase)
-				{
-					//if specified file is in database it means it's native not temp file and cannot be downloaded using this endpoint
-					throw new NotAuthorizedException("kcuraaccessdeniedmarker");
-				}
+			AuditDownload(workspaceServiceContext, remoteGuid.ToString());
 
-				int fileShareId = _caseManager.Read(instanceServiceContext, workspaceID).DefaultFileLocationCodeArtifactID;
-				string fileSharePath = ResourceServerManager.Read(instanceServiceContext, fileShareId).URL;
-				string filePath = Path.Combine(fileSharePath, remoteGuid.ToString());
-				if (!LongPath.FileExists(filePath))
-				{
-					throw new NotFoundException("File not found");
-				}
-
-				AuditDownload(workspaceServiceContext, remoteGuid.ToString());
-
-				return GetKeplerStream(filePath);
-			}, workspaceID, correlationID);
+			var result = GetKeplerStream(filePath);
+			return Task.FromResult(result);
 		}
 
 		private static IKeplerStream GetKeplerStream(string filePath)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -21,11 +20,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		[SetUp]
 		public void SetUp()
 		{
-			var methodRunner = new BypassMethodRunner();
 			var serviceContextFactory = new Mock<IServiceContextFactory>();
 			_connectionModeStorage = new Mock<ICommunicationModeStorage>();
 			_logger = new Mock<IAPILog>();
-			_uut = new IAPICommunicationModeService(methodRunner, serviceContextFactory.Object, _logger.Object, _connectionModeStorage.Object);
+			_uut = new IAPICommunicationModeService(serviceContextFactory.Object, _logger.Object, _connectionModeStorage.Object);
 		}
 
 		[Test]

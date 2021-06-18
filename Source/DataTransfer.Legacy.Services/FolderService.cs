@@ -6,7 +6,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -19,63 +18,55 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private readonly FolderManager _folderManager;
 
-		public FolderService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public FolderService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 			_folderManager = new FolderManager();
 		}
 
 		public Task<DataSetWrapper> RetrieveFolderAndDescendantsAsync(int workspaceID, int folderID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _folderManager.ExtenernalRetrieveFolderAndDescendants(GetBaseServiceContext(workspaceID), folderID),
-				workspaceID, correlationID);
+			var result = _folderManager.ExtenernalRetrieveFolderAndDescendants(GetBaseServiceContext(workspaceID), folderID);
+			return Task.FromResult(new DataSetWrapper(result));
 		}
 
 		public Task<Folder> ReadAsync(int workspaceID, int folderArtifactID, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				Core.DTO.Folder folder = FolderManager.Read(GetBaseServiceContext(workspaceID), folderArtifactID);
-				folder.Name = XmlHelper.StripIllegalXmlCharacters(folder.Name);
-				folder.TextIdentifier = XmlHelper.StripIllegalXmlCharacters(folder.TextIdentifier);
-				return folder.Map<Folder>();
-			}, workspaceID, correlationID);
+			var folder = FolderManager.Read(GetBaseServiceContext(workspaceID), folderArtifactID);
+			folder.Name = XmlHelper.StripIllegalXmlCharacters(folder.Name);
+			folder.TextIdentifier = XmlHelper.StripIllegalXmlCharacters(folder.TextIdentifier);
+			var result = folder.Map<Folder>();
+			return Task.FromResult(result);
 		}
 
 		public Task<int> ReadIDAsync(int workspaceID, int parentArtifactID, string name, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _folderManager.Read(GetBaseServiceContext(workspaceID), parentArtifactID, name),
-				workspaceID, correlationID);
+			var result = _folderManager.Read(GetBaseServiceContext(workspaceID), parentArtifactID, name);
+			return Task.FromResult(result);
 		}
 
 		public Task<int> CreateAsync(int workspaceID, int parentArtifactID, string folderName, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _folderManager.CheckFolderExistenceThenCreateWithoutDuplicates(GetBaseServiceContext(workspaceID), parentArtifactID, folderName),
-				workspaceID, correlationID);
+			var result = _folderManager.CheckFolderExistenceThenCreateWithoutDuplicates(GetBaseServiceContext(workspaceID), parentArtifactID, folderName);
+			return Task.FromResult(result);
 		}
 
 		public Task<bool> ExistsAsync(int workspaceID, int folderArtifactID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _folderManager.Exists(GetBaseServiceContext(workspaceID), folderArtifactID),
-				workspaceID, correlationID);
+			var result = _folderManager.Exists(GetBaseServiceContext(workspaceID), folderArtifactID);
+			return Task.FromResult(result);
 		}
 
 		public Task<DataSetWrapper> RetrieveInitialChunkAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID);
+			var result = _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID));
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
 		public Task<DataSetWrapper> RetrieveNextChunkAsync(int workspaceID, int lastFolderID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID), lastFolderID),
-				workspaceID, correlationID);
+			var result = _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID), lastFolderID);
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 	}
 }
