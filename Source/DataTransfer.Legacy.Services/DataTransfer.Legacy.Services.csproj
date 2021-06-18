@@ -40,6 +40,7 @@
     <PackageReference Include="Relativity.MassImport" Version="36.1.0" />
     <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.3.0" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.6" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

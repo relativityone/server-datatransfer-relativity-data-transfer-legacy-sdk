@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -13,7 +14,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 	[TestFixture]
 	public class IAPICommunicationModeServiceTests
 	{
-		private Mock<IInstanceSettingsBundle> _instanceSettingsBundle;
+		private Mock<ICommunicationModeStorage> _connectionModeStorage;
 		private IIAPICommunicationModeService _uut;
 		private Mock<IAPILog> _logger;
 
@@ -22,54 +23,55 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		{
 			var methodRunner = new BypassMethodRunner();
 			var serviceContextFactory = new Mock<IServiceContextFactory>();
-			_instanceSettingsBundle = new Mock<IInstanceSettingsBundle>();
+			_connectionModeStorage = new Mock<ICommunicationModeStorage>();
 			_logger = new Mock<IAPILog>();
-			_uut = new IAPICommunicationModeService(methodRunner, serviceContextFactory.Object, _instanceSettingsBundle.Object, _logger.Object);
+			_uut = new IAPICommunicationModeService(methodRunner, serviceContextFactory.Object, _logger.Object, _connectionModeStorage.Object);
 		}
 
 		[Test]
-		public async Task ShouldReturnWebAPIModeAndLogWhenReadingInstanceSettingThrowsException()
+		public async Task ShouldReturnWebAPIModeAndLogWhenReadingModeThrowsException()
 		{
-			_instanceSettingsBundle.Setup(x => x.GetStringAsync("DataTransfer.Legacy", "IAPICommunicationMode"))
+			_connectionModeStorage.Setup(x => x.TryGetModeAsync())
 				.Throws(Any.Exception());
 			_logger.Setup(x => x.LogWarning(It.IsAny<string>()));
+			var storageKey = Any.String();
+			_connectionModeStorage.Setup(x => x.GetStorageKey())
+				.Returns(storageKey);
 
 			var result = await _uut.GetIAPICommunicationModeAsync(Any.String());
 
 			result.Should().Be(IAPICommunicationMode.WebAPI);
-			_logger.Verify(x => x.LogWarning("'DataTransfer.Legacy.IAPICommunicationMode' setting not found. WebAPI IAPI communication mode will be used."), Times.Once);
-		}
-
-		[TestCase("webapi", IAPICommunicationMode.WebAPI)]
-		[TestCase("WebAPI", IAPICommunicationMode.WebAPI)]
-		[TestCase("kepler", IAPICommunicationMode.Kepler)]
-		[TestCase("Kepler", IAPICommunicationMode.Kepler)]
-		[TestCase("forcewebapi", IAPICommunicationMode.ForceWebAPI)]
-		[TestCase("ForceWebAPI", IAPICommunicationMode.ForceWebAPI)]
-		[TestCase("forcekepler", IAPICommunicationMode.ForceKepler)]
-		[TestCase("ForceKepler", IAPICommunicationMode.ForceKepler)]
-		public async Task ShouldReturnCorrectModeWhenReadingInstanceSettingReturnsValidValue(string settingValue, IAPICommunicationMode expectedMode)
-		{
-			_instanceSettingsBundle.Setup(x => x.GetStringAsync("DataTransfer.Legacy", "IAPICommunicationMode"))
-				.Returns(Task.FromResult(settingValue));
-
-			var result = await _uut.GetIAPICommunicationModeAsync(Any.String());
-
-			result.Should().Be(expectedMode);
+			_logger.Verify(x => x.LogWarning($"'{storageKey}' toggle not found. WebAPI IAPI communication mode will be used."), Times.Once);
 		}
 
 		[Test]
-		public async Task ShouldReturnWebAPIModeAndLogWhenReadingInstanceSettingReturnsUnrecognizedMode()
+		public async Task ShouldReturnWebAPIModeAndLogWhenReadingModeReturnsNoMode()
 		{
-			var settingValue = Any.OtherThan("webapi", "kepler", "forcewebapi", "forcekepler");
-			_instanceSettingsBundle.Setup(x => x.GetStringAsync("DataTransfer.Legacy", "IAPICommunicationMode"))
-				.Returns(Task.FromResult(settingValue));
+			_connectionModeStorage.Setup(x => x.TryGetModeAsync())
+				.Returns(Task.FromResult((false, Any.ValueOf<IAPICommunicationMode>())));
 			_logger.Setup(x => x.LogWarning(It.IsAny<string>()));
+			var storageKey = Any.String();
+			_connectionModeStorage.Setup(x => x.GetStorageKey())
+				.Returns(storageKey);
 
 			var result = await _uut.GetIAPICommunicationModeAsync(Any.String());
 
 			result.Should().Be(IAPICommunicationMode.WebAPI);
-			_logger.Verify(x => x.LogWarning($"Invalid IAPI communication mode in 'DataTransfer.Legacy.IAPICommunicationMode' setting. WebAPI IAPI communication mode will be used."), Times.Once);
+			_logger.Verify(x => x.LogWarning($"Invalid IAPI communication mode in '{storageKey}' toggle. WebAPI IAPI communication mode will be used."), Times.Once);
+		}
+
+		[Test]
+		public async Task ShouldReturnModeModeAndLogWhenReadingModeReturnsMode()
+		{
+			var mode = Any.ValueOf<IAPICommunicationMode>();
+			_connectionModeStorage.Setup(x => x.TryGetModeAsync())
+				.Returns(Task.FromResult((true, mode)));
+			_logger.Setup(x => x.LogWarning(It.IsAny<string>()));
+			var storageKey = Any.String();
+
+			var result = await _uut.GetIAPICommunicationModeAsync(Any.String());
+
+			result.Should().Be(mode);
 		}
 	}
 }

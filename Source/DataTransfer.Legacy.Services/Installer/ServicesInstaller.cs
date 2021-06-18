@@ -22,6 +22,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<IMethodRunner>()
 				.UsingFactoryMethod((x, c) => x.Resolve<MethodRunnerBuilder>().Build()));
 			container.Register(Component.For<IServiceContextFactory>().ImplementedBy<ServiceContextFactory>());
+			container.Register(Component.For<ICommunicationModeStorage>().ImplementedBy<CommunicationModeInstanceSettingStorage>());
 			
 			// interceptors registration
 			container.Register(Component.For<LogInterceptor>().LifestyleTransient());

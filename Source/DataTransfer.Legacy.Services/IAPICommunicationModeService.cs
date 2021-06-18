@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
@@ -18,26 +16,16 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 	public class IAPICommunicationModeService : BaseService, IIAPICommunicationModeService
 	{
-		private readonly IInstanceSettingsBundle _instanceSettingsBundle;
 		private readonly IAPILog _logger;
-		private const string IAPICommunicationModeSettingSection = "DataTransfer.Legacy";
-		private const string IAPICommunicationModeSettingName = "IAPICommunicationMode";
 
-		private readonly Dictionary<string, IAPICommunicationMode> _instanceSettingToCommunicationModeLookup =
-			new Dictionary<string, IAPICommunicationMode>(StringComparer.InvariantCultureIgnoreCase)
-			{
-				{"WebAPI", IAPICommunicationMode.WebAPI},
-				{"Kepler", IAPICommunicationMode.Kepler},
-				{"ForceWebAPI", IAPICommunicationMode.ForceWebAPI},
-				{"ForceKepler", IAPICommunicationMode.ForceKepler}
-			};
+		private readonly ICommunicationModeStorage _communicationModeStorage;
 
 		public IAPICommunicationModeService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory,
-			IInstanceSettingsBundle instanceSettingsBundle, IAPILog logger)
+			IAPILog logger, ICommunicationModeStorage communicationModeStorage)
 			: base(methodRunner, serviceContextFactory)
 		{
-			_instanceSettingsBundle = instanceSettingsBundle;
 			_logger = logger;
+			_communicationModeStorage = communicationModeStorage;
 		}
 
 		public Task<IAPICommunicationMode> GetIAPICommunicationModeAsync(string correlationId)
@@ -49,18 +37,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			try
 			{
-				var mode = await _instanceSettingsBundle.GetStringAsync(IAPICommunicationModeSettingSection, IAPICommunicationModeSettingName).ConfigureAwait(false);
-				if (_instanceSettingToCommunicationModeLookup.TryGetValue(mode, out var communicationMode))
+				var (success, mode) = await _communicationModeStorage.TryGetModeAsync().ConfigureAwait(false);
+				if (success)
 				{
-					return communicationMode;
+					return mode;
 				}
 
-				_logger.LogWarning($"Invalid IAPI communication mode in '{IAPICommunicationModeSettingSection}.{IAPICommunicationModeSettingName}' setting. WebAPI IAPI communication mode will be used.");
+				_logger.LogWarning($"Invalid IAPI communication mode in '{_communicationModeStorage.GetStorageKey()}' toggle. WebAPI IAPI communication mode will be used.");
 				return IAPICommunicationMode.WebAPI;
 			}
 			catch
 			{
-				_logger.LogWarning($"'{IAPICommunicationModeSettingSection}.{IAPICommunicationModeSettingName}' setting not found. WebAPI IAPI communication mode will be used.");
+				_logger.LogWarning($"'{_communicationModeStorage.GetStorageKey()}' toggle not found. WebAPI IAPI communication mode will be used.");
 				return IAPICommunicationMode.WebAPI;
 			}
 		}
