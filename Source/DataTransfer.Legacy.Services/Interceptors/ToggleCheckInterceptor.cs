@@ -23,6 +23,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				{
 					throw new ServiceException($"IAPI communication mode set to {IAPICommunicationMode.ForceWebAPI.GetDescription()}. Kepler service disabled.");
 				}
+				return;
 			}
 
 			throw new ServiceException("Unable to determine IAPI communication mode toggle value.");
