@@ -4,12 +4,14 @@ using System.IO;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Castle.Core;
 using kCura.LongPath;
 using kCura.Utility;
 using Relativity.Core;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
+using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Runners;
 using Relativity.Kepler.Transport;
 using Relativity.Services.Exceptions;
@@ -17,6 +19,10 @@ using File = Relativity.Core.DTO.File;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(LogInterceptor))]
+	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class WebDistributedService : BaseService, IWebDistributedService
 	{
 		private readonly ArtifactManager _artifactManager;
@@ -24,7 +30,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly DynamicFieldsFileManager _fieldsFileManager;
 		private readonly FileManager _fileManager;
 
-		public WebDistributedService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) : base(methodRunner, serviceContextFactory)
+		public WebDistributedService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
+			: base(methodRunner, serviceContextFactory)
 		{
 			_artifactManager = new ArtifactManager();
 			_caseManager = new CaseManager();
@@ -127,7 +134,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}, workspaceID, correlationID);
 		}
 
-		private IKeplerStream GetKeplerStream(string filePath)
+		private static IKeplerStream GetKeplerStream(string filePath)
 		{
 			var fileStream = new LongFileStream(filePath, FileMode.Open, FileAccess.Read);
 			var keplerStream = new KeplerStream(fileStream)
@@ -137,7 +144,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return keplerStream;
 		}
 
-		private void AuditDownload(BaseServiceContext serviceContext, string fileName)
+		private static void AuditDownload(BaseServiceContext serviceContext, string fileName)
 		{
 			AuditHelper.CreateAuditRecord(serviceContext, -1, (int) AuditAction.File_Download, XmlHelper.GenerateAuditElement($"File {fileName} downloaded by {ClaimsPrincipal.Current.Claims.UserArtifactID()}"));
 		}

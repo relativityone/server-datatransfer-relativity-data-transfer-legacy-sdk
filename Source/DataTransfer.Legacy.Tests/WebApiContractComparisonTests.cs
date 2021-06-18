@@ -141,7 +141,7 @@ namespace Relativity.DataTransfer.Legacy.Tests
 				//exception b/c we have to wrap export data (Kepler loses types which we need in RDC)
 				else if (genericReturnTypeName == typeof(ExportDataWrapper).FullName)
 				{
-					webApiMethodReturnType.FullName.Should().Be(typeof(object[]).FullName);
+					webApiMethodReturnType.FullName.Should().BeOneOf(typeof(object[]).FullName, typeof(object[][]).FullName);
 				}
 				else
 				{
@@ -213,7 +213,7 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			foreach (var type in assembly.MainModule.Types.Where(x => x.Name != nameof(IWebDistributedService)))
 			{
 				if (type.CustomAttributes.Any(x => x.AttributeType.Name == nameof(WebServiceAttribute)) 
-				    && type.Name != nameof(IPingService))
+				    && type.Name != nameof(IIAPICommunicationModeService))
 				{
 					yield return type;
 				}

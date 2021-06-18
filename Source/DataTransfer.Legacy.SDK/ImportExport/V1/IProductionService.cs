@@ -11,7 +11,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	public interface IProductionService : IDisposable
 	{
 		[HttpPost]
-		Task<object[][]> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs, int[] documentIDs, string correlationID);
+		Task<ExportDataWrapper> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs, int[] documentIDs, string correlationID);
 
 		[HttpPost]
 		Task<DataSetWrapper> RetrieveProducedByContextArtifactIDAsync(int workspaceID, string correlationID);

@@ -1,28 +1,40 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Castle.Core;
 using Relativity.Core;
 using Relativity.Core.Exception;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
+using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Runners;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(LogInterceptor))]
+	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
+
 	public class ExportService : BaseService, IExportService
 	{
 		private static readonly string[] DynamicallyLoadedDllPaths = {Config.DynamicallyLoadedStandardSearchDLLs, Config.DynamicallyLoadedClientSearchDLLs};
 
-		public ExportService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) : base(methodRunner, serviceContextFactory)
+		public ExportService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
+			: base(methodRunner, serviceContextFactory)
 		{
 		}
 
 		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
 			return ExecuteAsync(
-				() => { return InitializeExport(workspaceID, (int) ArtifactType.Document, e => { return e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>(); }); },
-				workspaceID, correlationID);
+				() =>
+				{
+					return InitializeExport(workspaceID, (int) ArtifactType.Document,
+						e => e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs,
+							startAtRecord).Map<InitializationResults>());
+				}, workspaceID, correlationID);
 		}
 
 		public Task<InitializationResults> InitializeFolderExportAsync(int workspaceID, int viewArtifactID, int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID, string correlationID)
@@ -30,7 +42,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return ExecuteAsync(
 				() =>
 				{
-					return InitializeExport(workspaceID, artifactTypeID, e => { return e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders, DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>(); });
+					return InitializeExport(workspaceID, artifactTypeID,
+						e => e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders,
+							DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>());
 				},
 				workspaceID, correlationID);
 		}
@@ -38,7 +52,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID, int[] avfIds, int startAtRecord, string correlationID)
 		{
 			return ExecuteAsync(
-				() => { return InitializeExport(workspaceID, (int) ArtifactType.Document, e => { return e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds, startAtRecord).Map<InitializationResults>(); }); },
+				() =>
+				{
+					return InitializeExport(workspaceID, (int) ArtifactType.Document,
+						e => e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds,
+							startAtRecord).Map<InitializationResults>());
+				},
 				workspaceID, correlationID);
 		}
 
@@ -47,7 +66,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 			int[] textPrecedenceAvfIds, int productionId, int index, string correlationID)
 		{
 			return ExecuteAsync(
-				() => { return RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested, multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index); },
+				() => RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
+					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index),
 				workspaceID, correlationID);
 		}
 
@@ -55,7 +75,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 			int[] textPrecedenceAvfIds, int index, string correlationID)
 		{
 			return ExecuteAsync(
-				() => { return RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested, multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index); },
+				() => RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
+					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index),
 				workspaceID, correlationID);
 		}
 
