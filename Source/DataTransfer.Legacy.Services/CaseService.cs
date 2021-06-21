@@ -18,7 +18,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private readonly CaseManager _caseManager;
 
-		public CaseService( IServiceContextFactory serviceContextFactory) 
+		public CaseService(IServiceContextFactory serviceContextFactory) 
 			: base(serviceContextFactory)
 		{
 			_caseManager = new CaseManager();
