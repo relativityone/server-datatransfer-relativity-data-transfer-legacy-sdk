@@ -25,6 +25,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<MetricsInterceptor>().LifestyleTransient());
 			container.Register(Component.For<PermissionCheckInterceptor>().LifestyleTransient());
 			container.Register(Component.For<UnhandledExceptionInterceptor>().LifestyleTransient());
+			container.Register(Component.For<ToggleCheckInterceptor>().LifestyleTransient());
 			
 			container.Register(Component.For<IMetricsPublisher>().ImplementedBy<APMMetricsPublisher>().LifestyleTransient());
 			container.Register(Component.For<IMetricsPublisher>().ImplementedBy<LoggingMetricsPublisher>().LifestyleTransient());
