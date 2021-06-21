@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using FluentAssertions;
-using FluentAssertions.Common;
-using Microsoft.ApplicationInsights.Extensibility.Implementation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -79,10 +76,22 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 
         private bool AreDynamicObjectsEqual(dynamic keplerObject, dynamic webApiObject)
         {
-            JObject keplerJObject = keplerObject;
-	        JObject webApiJObject = webApiObject;
+	        JObject keplerJObject = null;
+	        JObject webApiJObject = null;
+	        
+	        if (keplerObject is JObject && webApiObject is JObject)
+	        {
+		        keplerJObject = keplerObject;
+		        webApiJObject = webApiObject;
+            }
 
-	        var keplerObjectProperties = keplerJObject?.ToObject<Dictionary<string, object>>();
+	        if (keplerObject is JArray && webApiObject is JArray)
+	        {
+		        keplerJObject = ((JArray)keplerObject).Children<JObject>().FirstOrDefault();
+		        webApiJObject = ((JArray)webApiObject).Children<JObject>().FirstOrDefault();
+	        }
+
+            var keplerObjectProperties = keplerJObject?.ToObject<Dictionary<string, object>>();
 	        var webApiObjectProperties = webApiJObject?.ToObject<Dictionary<string, object>>();
 
 	        if (keplerObjectProperties == null && webApiObjectProperties == null)
@@ -102,17 +111,34 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 	            var keplerPropertyKey = keplerProperty.Key;
 	            var keplerPropertyValue = keplerProperty.Value;
                 
-                if (!webApiObjectProperties.ContainsKey(keplerProperty.Key))
+                if (!webApiObjectProperties.ContainsKey(keplerPropertyKey))
 		        {
 			        return false;
 		        }
                 
-		        var webApiPropertyValue = webApiObjectProperties[keplerProperty.Key];
+		        var webApiPropertyValue = webApiObjectProperties[keplerPropertyKey];
 
-		        if (webApiPropertyValue?.ToString() != keplerPropertyValue?.ToString())
-		        {
-			        return false;
-		        }
+                // ignore RunID when comparing results - it is different for every WebApi or Kepler request
+                if (keplerPropertyKey == "RunID")
+                {
+	                continue;
+                }
+
+                if (keplerPropertyKey == "ExceptionDetail" || keplerPropertyKey == "Details")
+                {
+	                var innerResult = AreDynamicObjectsEqual(keplerPropertyValue, webApiPropertyValue);
+	                if (innerResult == false)
+	                {
+		                return false;
+	                }
+
+                    continue;
+                }
+
+                if (keplerPropertyValue?.ToString() != webApiPropertyValue?.ToString())
+                {
+	                return false;
+                }
 	        }
 
 	        return true;
