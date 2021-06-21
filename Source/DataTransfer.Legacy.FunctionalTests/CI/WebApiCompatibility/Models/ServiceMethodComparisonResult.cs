@@ -1,4 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
+using FluentAssertions.Common;
+using Microsoft.ApplicationInsights.Extensibility.Implementation;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.Models
 {
@@ -20,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                 // both have the same success result json
                 if (!string.IsNullOrEmpty(KeplerMethodExecutionInfo.SuccessResult) &&
                     !string.IsNullOrEmpty(WebApiMethodExecutionInfo.SuccessResult) &&
-                    string.Equals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.SuccessResult, StringComparison.OrdinalIgnoreCase))
+                    AreMessagesEquals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.SuccessResult))
                 {
                     return true;
                 }
@@ -28,7 +35,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                 // both have the same error message
                 if(!string.IsNullOrEmpty(KeplerMethodExecutionInfo.ErrorMessage) &&
                    !string.IsNullOrEmpty(WebApiMethodExecutionInfo.ErrorMessage) &&
-                   (KeplerMethodExecutionInfo.ErrorMessage.Contains(WebApiMethodExecutionInfo.ErrorMessage) || WebApiMethodExecutionInfo.ErrorMessage.Contains(KeplerMethodExecutionInfo.ErrorMessage)))
+                   AreMessagesEquals(KeplerMethodExecutionInfo.ErrorMessage, WebApiMethodExecutionInfo.ErrorMessage))
                 {
                     return true;
                 }
@@ -37,7 +44,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                 // we must compare if error messages are the same
                 if (!string.IsNullOrEmpty(KeplerMethodExecutionInfo.SuccessResult) &&
                     !string.IsNullOrEmpty(WebApiMethodExecutionInfo.ErrorMessage) &&
-                    KeplerMethodExecutionInfo.SuccessResult.Contains(WebApiMethodExecutionInfo.ErrorMessage))
+                    AreMessagesEquals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.ErrorMessage))
                 {
                     return true;
                 }
@@ -50,6 +57,65 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
         {
             KeplerMethodExecutionInfo = new ServiceMethodExecutionInfo();
             WebApiMethodExecutionInfo = new ServiceMethodExecutionInfo();
+        }
+
+        private bool AreMessagesEquals(string keplerMessage, string webApiMessage)
+        {
+	        if (string.Equals(keplerMessage, webApiMessage, StringComparison.OrdinalIgnoreCase))
+	        {
+		        return true;
+	        }
+
+	        if (keplerMessage.Contains(webApiMessage) || webApiMessage.Contains(keplerMessage))
+	        {
+		        return true;
+	        }
+
+	        var keplerObject = JsonConvert.DeserializeObject(keplerMessage);
+	        var webApiObject = JsonConvert.DeserializeObject(webApiMessage);
+
+	        return AreDynamicObjectsEqual(keplerObject, webApiObject);
+        }
+
+        private bool AreDynamicObjectsEqual(dynamic keplerObject, dynamic webApiObject)
+        {
+            JObject keplerJObject = keplerObject;
+	        JObject webApiJObject = webApiObject;
+
+	        var keplerObjectProperties = keplerJObject?.ToObject<Dictionary<string, object>>();
+	        var webApiObjectProperties = webApiJObject?.ToObject<Dictionary<string, object>>();
+
+	        if (keplerObjectProperties == null && webApiObjectProperties == null)
+	        {
+		        return true;
+	        }
+
+            if (keplerObjectProperties == null ||
+	            webApiObjectProperties == null ||
+	            keplerObjectProperties.Count != webApiObjectProperties.Count)
+	        {
+		        return false;
+	        }
+
+            foreach (var keplerProperty in keplerObjectProperties)
+            {
+	            var keplerPropertyKey = keplerProperty.Key;
+	            var keplerPropertyValue = keplerProperty.Value;
+                
+                if (!webApiObjectProperties.ContainsKey(keplerProperty.Key))
+		        {
+			        return false;
+		        }
+                
+		        var webApiPropertyValue = webApiObjectProperties[keplerProperty.Key];
+
+		        if (webApiPropertyValue?.ToString() != keplerPropertyValue?.ToString())
+		        {
+			        return false;
+		        }
+	        }
+
+	        return true;
         }
     }
 }

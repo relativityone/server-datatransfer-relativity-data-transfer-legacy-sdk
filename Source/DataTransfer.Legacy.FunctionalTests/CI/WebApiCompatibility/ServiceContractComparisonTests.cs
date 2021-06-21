@@ -300,6 +300,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             if (ex is ServiceException keplerException)
             {
                 normalizedErrorMessage = keplerException.ErrorDetails?.Message ?? ex.Message;
+                // TODO:
                 LogInfo(keplerException.ErrorDetails == null ? "NoErrorDetails" : $"ErrorDetailsExists: {keplerException.ErrorDetails.Message}");
             }
 
