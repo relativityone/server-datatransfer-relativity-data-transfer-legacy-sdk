@@ -5,10 +5,10 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
@@ -17,38 +17,34 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private readonly FieldManager _fieldManager;
 
-		public FieldService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public FieldService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 			_fieldManager = new FieldManager();
 		}
 
 		public Task<Field> ReadAsync(int workspaceID, int fieldArtifactID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _fieldManager.Read(GetBaseServiceContext(workspaceID), fieldArtifactID).Map<Field>(),
-				workspaceID, correlationID);
+			var result = _fieldManager.Read(GetBaseServiceContext(workspaceID), fieldArtifactID).Map<Field>();
+			return Task.FromResult(result);
 		}
 
 		public Task<DataSetWrapper> RetrieveAllMappableAsync(int workspaceID, int artifactTypeID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => FieldManagerFoundation.Query.RetrieveAllMappable(GetBaseServiceContext(workspaceID), artifactTypeID),
-				workspaceID, correlationID);
+			var result = FieldManagerFoundation.Query.RetrieveAllMappable(GetBaseServiceContext(workspaceID), artifactTypeID);
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
 		public Task<DataSetWrapper> RetrievePotentialBeginBatesFieldsAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => FieldQuery.RetrievePotentialBeginBatesFields(GetBaseServiceContext(workspaceID)),
-				workspaceID, correlationID);
+			var result = FieldQuery.RetrievePotentialBeginBatesFields(GetBaseServiceContext(workspaceID));
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 
 		public Task<bool> IsFieldIndexedAsync(int workspaceID, int fieldArtifactID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _fieldManager.IsFieldIndexed(GetBaseServiceContext(workspaceID), fieldArtifactID),
-				workspaceID, correlationID);
+			var result = _fieldManager.IsFieldIndexed(GetBaseServiceContext(workspaceID), fieldArtifactID);
+			return Task.FromResult(result);
 		}
 	}
 }

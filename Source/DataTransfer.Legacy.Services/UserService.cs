@@ -6,28 +6,26 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class UserService : BaseService, IUserService
 	{
-		public UserService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public UserService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 		}
 
 		public Task<DataSetWrapper> RetrieveAllAssignableInCaseAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				UserManager manager = new UserManager();
-				return manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
-			}, workspaceID, correlationID);
+			var manager = new UserManager();
+			var result = manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
+			return Task.FromResult(new DataSetWrapper(result));
 		}
 
 		public Task LogoutAsync(string correlationID)

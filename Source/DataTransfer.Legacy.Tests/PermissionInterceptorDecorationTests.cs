@@ -16,9 +16,9 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			var services = typeof(BaseService).Assembly.GetTypes().Where(x => x.Name.EndsWith("Service") && !x.Name.EndsWith(nameof(BaseService)));
 			foreach (var service in services)
 			{
-				((InterceptorAttribute) service.GetCustomAttributes(typeof(InterceptorAttribute), true).First())
-					.Interceptor.ToString()
-					.Should().EndWith(nameof(PermissionCheckInterceptor));
+				service.GetCustomAttributes(typeof(InterceptorAttribute), true).Any(x =>
+					((InterceptorAttribute) x).Interceptor.ToString().EndsWith(nameof(PermissionCheckInterceptor)))
+					.Should().BeTrue();
 			}
 		}
 	}
