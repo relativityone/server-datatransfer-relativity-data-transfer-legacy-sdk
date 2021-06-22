@@ -191,56 +191,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             Assert.IsTrue(serviceMethodComparisonResults.All(r => r.IsValid));
         }
 
-        private object[] GetWebApiMethodParameters<TWebApiManager>(string webApiMethodName, object[] keplerMethodParameters)
-        {
-	        var webApiServiceType = typeof(TWebApiManager);
-	        var webApiMethod = webApiServiceType.GetMethod(webApiMethodName);
-	        var webApiParameters = webApiMethod?.GetParameters();
-
-	        var webApiParameterValues = new List<object>();
-            if (webApiParameters == null || webApiParameters.Length == 0)
-	        {
-		        return webApiParameterValues.ToArray();
-            }
-
-            for (var i=0; i< webApiParameters.Length; i++)
-            {
-	            var keplerParameterValue = keplerMethodParameters[i];
-	            webApiParameterValues.Add(MapKeplerValueToWebApiValue(keplerParameterValue, webApiParameters[i].ParameterType));
-            }
-
-	        return webApiParameterValues.ToArray();
-        }
-
-        private object MapKeplerValueToWebApiValue(object sourceValue, Type destinationType)
-        {
-	        var isWebApiType = destinationType.FullName != null && destinationType.FullName.Contains("kCura.EDDS.WebAPI");
-	        if (!isWebApiType)
-            {
-	            return sourceValue;
-            }
-
-            var mapper = new Mapper();
-            
-            try
-            {
-                return mapper.Map(sourceValue, sourceValue.GetType(), destinationType);
-            }
-            catch (Exception e)
-            {
-	            Console.WriteLine(e);
-	            throw;
-            }
-            
-        }
-
-        private async Task<object[]> GetKeplerMethodParameters<TKeplerService>(string keplerMethodName)
-        {
-	        var keplerServiceType = typeof(TKeplerService);
-	        var keplerMethod = keplerServiceType.GetMethod(keplerMethodName);
-	        return await PopulateMethodParameters(keplerMethod);
-        }
-
         private static string[] GetNonDeprecatedMethods<T>()
         {
             return typeof(T).GetMethods()
@@ -259,6 +209,46 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             }
 
             return webApiMethodName;
+        }
+
+        private async Task<object[]> GetKeplerMethodParameters<TKeplerService>(string keplerMethodName)
+        {
+	        var keplerServiceType = typeof(TKeplerService);
+	        var keplerMethod = keplerServiceType.GetMethod(keplerMethodName);
+	        return await PopulateMethodParameters(keplerMethod);
+        }
+
+        private object[] GetWebApiMethodParameters<TWebApiManager>(string webApiMethodName, object[] keplerMethodParameters)
+        {
+	        var webApiServiceType = typeof(TWebApiManager);
+	        var webApiMethod = webApiServiceType.GetMethod(webApiMethodName);
+	        var webApiParameters = webApiMethod?.GetParameters();
+
+	        var webApiParameterValues = new List<object>();
+	        if (webApiParameters == null || webApiParameters.Length == 0)
+	        {
+		        return webApiParameterValues.ToArray();
+	        }
+
+	        for (var i = 0; i < webApiParameters.Length; i++)
+	        {
+		        var keplerParameterValue = keplerMethodParameters[i];
+		        webApiParameterValues.Add(MapKeplerValueToWebApiValue(keplerParameterValue, webApiParameters[i].ParameterType));
+	        }
+
+	        return webApiParameterValues.ToArray();
+        }
+
+        private object MapKeplerValueToWebApiValue(object sourceValue, Type destinationType)
+        {
+	        var isWebApiType = destinationType.FullName != null && destinationType.FullName.Contains("kCura.EDDS.WebAPI");
+	        if (!isWebApiType)
+	        {
+		        return sourceValue;
+	        }
+
+	        var mapper = new Mapper();
+	        return mapper.Map(sourceValue, sourceValue.GetType(), destinationType);
         }
 
         private async Task<ServiceMethodExecutionInfo> ExecuteKeplerServiceMethod<T>(string methodName, object[] methodParameters, Func<string, string, string> adjustMethodResultBeforeCompare) where T: IDisposable
@@ -406,10 +396,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                     return "test";
                 }
 
-                // var randomObjectGenerator = new RandomObjectGenerator();
-                // var generatedObject = randomObjectGenerator.Generate(t);
-
-                //  generatedObject ?? Activator.CreateInstance(t);
                 return Activator.CreateInstance(t);
             }
             catch (Exception ex)
