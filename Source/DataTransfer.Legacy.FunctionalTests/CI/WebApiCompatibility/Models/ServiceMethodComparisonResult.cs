@@ -71,27 +71,22 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 	        var keplerObject = JsonConvert.DeserializeObject(keplerMessage);
 	        var webApiObject = JsonConvert.DeserializeObject(webApiMessage);
 
-	        return AreDynamicObjectsEqual(keplerObject, webApiObject);
-        }
-
-        private bool AreDynamicObjectsEqual(dynamic keplerObject, dynamic webApiObject)
-        {
-	        JObject keplerJObject = null;
-	        JObject webApiJObject = null;
-	        
-	        if (keplerObject is JObject && webApiObject is JObject)
+	        if (keplerObject is JObject keplerJObject && webApiObject is JObject webApiJObject)
 	        {
-		        keplerJObject = keplerObject;
-		        webApiJObject = webApiObject;
+		        return AreDynamicObjectsEqual(keplerJObject, webApiJObject);
             }
 
-	        if (keplerObject is JArray && webApiObject is JArray)
+	        if (keplerObject is JArray keplerJArray && webApiObject is JArray webApiJArray)
 	        {
-		        keplerJObject = ((JArray)keplerObject).Children<JObject>().FirstOrDefault();
-		        webApiJObject = ((JArray)webApiObject).Children<JObject>().FirstOrDefault();
-	        }
+		        return AreDynamicArraysEqual(keplerJArray, webApiJArray);
+            }
 
-            var keplerObjectProperties = keplerJObject?.ToObject<Dictionary<string, object>>();
+	        return false;
+        }
+        
+        private bool AreDynamicObjectsEqual(JObject keplerJObject, JObject webApiJObject)
+        {
+	        var keplerObjectProperties = keplerJObject?.ToObject<Dictionary<string, object>>();
 	        var webApiObjectProperties = webApiJObject?.ToObject<Dictionary<string, object>>();
 
 	        if (keplerObjectProperties == null && webApiObjectProperties == null)
@@ -124,10 +119,10 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 	                continue;
                 }
 
-                if (keplerPropertyKey == "ExceptionDetail" || keplerPropertyKey == "Details")
+                if (keplerPropertyValue is JArray keplerJArray && webApiPropertyValue is JArray webApiJArray)
                 {
-	                var innerResult = AreDynamicObjectsEqual(keplerPropertyValue, webApiPropertyValue);
-	                if (innerResult == false)
+	                var innerResult = AreDynamicArraysEqual(keplerJArray, webApiJArray);
+	                if (!innerResult)
 	                {
 		                return false;
 	                }
@@ -142,6 +137,55 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 	        }
 
 	        return true;
+        }
+
+        private bool AreDynamicArraysEqual(JArray keplerJArray, JArray webApiJArray)
+        {
+	        var keplerJArrayItems = keplerJArray.Children<JObject>();
+	        var webApiJArrayItems = webApiJArray.Children<JObject>();
+
+	        if (keplerJArrayItems.Count() != webApiJArrayItems.Count())
+	        {
+		        return false;
+	        }
+
+	        if (keplerJArrayItems.Count() == 1)
+	        {
+		        return AreDynamicObjectsEqual(keplerJArrayItems.First(), webApiJArrayItems.First());
+            }
+
+            // get id column name to sort by:
+            JArray keplerJArrayItemsSorted;
+            JArray webApiJArrayItemsSorted;
+            var idColumnName = GetIdColumnName(keplerJArrayItems.First());
+            if (!string.IsNullOrEmpty(idColumnName))
+            {
+	            // sort array by artifact id
+	            keplerJArrayItemsSorted = new JArray(keplerJArrayItems.OrderBy(obj => (string)obj[idColumnName]));
+	            webApiJArrayItemsSorted = new JArray(webApiJArrayItems.OrderBy(obj => (string)obj[idColumnName]));
+            }
+            else
+            {
+	            keplerJArrayItemsSorted = new JArray(keplerJArrayItems);
+	            webApiJArrayItemsSorted = new JArray(webApiJArrayItems);
+            }
+
+            for (var i = 0; i < keplerJArrayItemsSorted.Count; i++)
+            {
+	            var areItemsEqual = AreDynamicObjectsEqual((JObject)keplerJArrayItemsSorted[i], (JObject)webApiJArrayItemsSorted[i]);
+	            if (!areItemsEqual)
+	            {
+		            return false;
+	            }
+            }
+
+            return true;
+        }
+
+        private string GetIdColumnName(JObject jObject)
+        {
+	        var idColumnObject = jObject.Properties().FirstOrDefault(p => p.Name.Contains("ID"));
+	        return idColumnObject?.Name;
         }
     }
 }
