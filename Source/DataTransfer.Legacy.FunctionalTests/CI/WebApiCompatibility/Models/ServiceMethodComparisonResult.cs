@@ -119,6 +119,17 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 	                continue;
                 }
 
+                if (keplerPropertyValue is JObject keplerJObjecInner && webApiPropertyValue is JObject webApiJObjectInner)
+                {
+	                var innerResult = AreDynamicObjectsEqual(keplerJObjecInner, webApiJObjectInner);
+	                if (!innerResult)
+	                {
+		                return false;
+	                }
+
+	                continue;
+                }
+
                 if (keplerPropertyValue is JArray keplerJArray && webApiPropertyValue is JArray webApiJArray)
                 {
 	                var innerResult = AreDynamicArraysEqual(keplerJArray, webApiJArray);
@@ -143,13 +154,18 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
         {
 	        var keplerJArrayItems = keplerJArray.Children<JObject>();
 	        var webApiJArrayItems = webApiJArray.Children<JObject>();
-
+			
 	        if (keplerJArrayItems.Count() != webApiJArrayItems.Count())
 	        {
 		        return false;
 	        }
 
-	        if (keplerJArrayItems.Count() == 1)
+	        if (keplerJArrayItems.Count() == 0)
+	        {
+		        return true;
+	        }
+
+			if (keplerJArrayItems.Count() == 1)
 	        {
 		        return AreDynamicObjectsEqual(keplerJArrayItems.First(), webApiJArrayItems.First());
             }
