@@ -34,7 +34,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		public void ShouldLogErrorAndThrowServiceExceptionWithInnerWhenExecutingMethodThrows()
 		{
 			FluentActions.Invoking(() => _interceptedObject.Execute()).Should().Throw<ServiceException>()
-				.WithMessage("Error during call Execute")
+				.WithMessage("Error during call Execute - *")
 				.WithInnerException<Exception>();
 		}
 	}

@@ -94,6 +94,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 if (methodName.Contains("GetDefaultRepositorySpaceReport") ||
                     methodName.Contains("GetBcpShareSpaceReport"))
                 {
+                    // Ignore this columns because it is related to the test environment (e.g.: free disk space) and may be different between Kepler and WebApi executions
                     var columnsToIgnore = new[] { "Free Space", "Used Space", "Total Space", "%Free", "%Used" };
 
                     var currentResult = JsonConvert.DeserializeObject<string[][]>(jsonResult);
