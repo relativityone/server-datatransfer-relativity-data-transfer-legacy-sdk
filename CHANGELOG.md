@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.1.11]
 
+- Add interceptor for communication mode toggle checking
+
 - Include original exception message in ServiceException message
 
 ## [0.1.10]

@@ -34,6 +34,16 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 
 			var applicationService = RelativityFacade.Instance.Resolve<ILibraryApplicationService>();
 			applicationService.InstallToLibrary(myRap);
+
+			var instanceSettingsService = RelativityFacade.Instance.Resolve<IInstanceSettingsService>();
+			var iapiCommunicationMode = new Testing.Framework.Models.InstanceSetting
+			{
+				Name = "IAPICommunicationMode",
+				Section = "DataTransfer.Legacy",
+				Value = "Kepler",
+				ValueType = InstanceSettingValueType.Text
+			};
+			instanceSettingsService.Create(iapiCommunicationMode);
 		}
 	}
 }

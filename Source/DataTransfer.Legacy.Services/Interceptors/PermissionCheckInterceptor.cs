@@ -11,7 +11,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		private readonly IServiceContextFactory _serviceContextFactory;
 		private readonly IRelativityPermissionHelper _relativityPermissionHelper;
 
-		public PermissionCheckInterceptor(IServiceContextFactory serviceContextFactory, 
+		public PermissionCheckInterceptor(IServiceContextFactory serviceContextFactory,
 			IRelativityPermissionHelper relativityPermissionHelper)
 		{
 			_serviceContextFactory = serviceContextFactory;
