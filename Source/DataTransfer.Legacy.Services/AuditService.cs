@@ -5,19 +5,21 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(ToggleCheckInterceptor))]
+	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class AuditService : BaseService, IAuditService
 	{
 		private readonly IMassExportManager _massExportManager;
 		private readonly MassImportManager _massImportManager;
 
-		public AuditService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public AuditService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 			_massExportManager = new MassExportManager();
 			_massImportManager = new MassImportManager();
@@ -25,30 +27,26 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massExportManager.AuditExport(GetBaseServiceContext(workspaceID), isFatalError, exportStatistics.Map<MassImport.ExportStatistics>()),
-				workspaceID, correlationID);
+			var result  = _massExportManager.AuditExport(GetBaseServiceContext(workspaceID), isFatalError, exportStatistics.Map<MassImport.ExportStatistics>());
+			return Task.FromResult(result);
 		}
 
 		public Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<MassImport.ObjectImportStatistics>()),
-				workspaceID, correlationID);
+			var result = _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<MassImport.ObjectImportStatistics>());
+			return Task.FromResult(result);
 		}
 
 		public Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<MassImport.ImageImportStatistics>()),
-				workspaceID, correlationID);
+			var result = _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<MassImport.ImageImportStatistics>());
+			return Task.FromResult(result);
 		}
 
 		public Task DeleteAuditTokenAsync(string token, string correlationID)
 		{
-			return ExecuteAsync(
-				() => RelativityServicesAuthenticationTokenManager.DeleteSingleTokenForAuditSpoofing(token),
-				null, correlationID);
+			RelativityServicesAuthenticationTokenManager.DeleteSingleTokenForAuditSpoofing(token);
+			return Task.CompletedTask;
 		}
 	}
 }

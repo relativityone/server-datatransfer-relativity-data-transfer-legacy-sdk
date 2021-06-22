@@ -37,7 +37,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			const string Controller = "Controller";
 			const string EndpointCalled = "EndpointCalled";
-			Dictionary<string, string> arguments = GetFunctionAttributes(invocation);
+			var arguments = InterceptorHelper.GetFunctionArgumentsFrom(invocation);
 
 			_contextPushPropertiesHandlers = new List<IDisposable>
 			{

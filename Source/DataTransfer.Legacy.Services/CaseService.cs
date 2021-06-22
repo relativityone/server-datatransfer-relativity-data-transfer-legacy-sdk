@@ -1,63 +1,58 @@
 ﻿using System.Threading.Tasks;
 using Castle.Core;
 using kCura.Utility;
-using Relativity.Core;
-using Relativity.Core.DTO;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(ToggleCheckInterceptor))]
+	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class CaseService : BaseService, ICaseService
 	{
 		private readonly CaseManager _caseManager;
 
-		public CaseService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public CaseService( IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 			_caseManager = new CaseManager();
 		}
 
 		public Task<SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				BaseServiceContext instanceLevelContext = GetBaseServiceContext(AdminWorkspace);
-				Case workspace = _caseManager.Read(instanceLevelContext, workspaceID);
-				CaseInfo caseInfo = workspace.ToCaseInfo();
+			var instanceLevelContext = GetBaseServiceContext(AdminWorkspace);
+			var workspace = _caseManager.Read(instanceLevelContext, workspaceID);
+			var caseInfo = workspace.ToCaseInfo();
 
-				string path = ResourceServerManager.Read(instanceLevelContext, workspace.DefaultFileLocationCodeArtifactID).URL;
-				caseInfo.DocumentPath = path;
-				caseInfo.Name = XmlHelper.StripIllegalXmlCharacters(caseInfo.Name);
-				return caseInfo.Map<DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo>();
-			}, workspaceID, correlationID);
+			var path = ResourceServerManager.Read(instanceLevelContext, workspace.DefaultFileLocationCodeArtifactID).URL;
+			caseInfo.DocumentPath = path;
+			caseInfo.Name = XmlHelper.StripIllegalXmlCharacters(caseInfo.Name);
+			var result = caseInfo.Map<SDK.ImportExport.V1.Models.CaseInfo>();
+			return Task.FromResult(result);
 		}
 
 		public Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(workspaceID), workspaceID),
-				workspaceID, correlationID);
+			var result = _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(AdminWorkspace), workspaceID);
+			return Task.FromResult(result);
 		}
 
 		public Task<string[]> GetAllDocumentFolderPathsAsync(string correlationID)
 		{
-			return ExecuteAsync(
-				() => _caseManager.GetAllDocumentFolderPaths(GetBaseServiceContext(AdminWorkspace)),
-				null, correlationID);
+			var result = _caseManager.GetAllDocumentFolderPaths(GetBaseServiceContext(AdminWorkspace));
+			return Task.FromResult(result);
 		}
 
 		public Task<DataSetWrapper> RetrieveAllEnabledAsync(string correlationID)
 		{
-			return ExecuteAsync(
-				() => _caseManager.RetrieveAll(GetBaseServiceContext(AdminWorkspace), null, true),
-				null, correlationID);
+			var result = _caseManager.RetrieveAll(GetBaseServiceContext(AdminWorkspace), null, true);
+			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
 		}
 	}
 }

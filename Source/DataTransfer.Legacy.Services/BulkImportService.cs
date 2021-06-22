@@ -8,13 +8,15 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Runners;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(ToggleCheckInterceptor))]
+	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class BulkImportService : BaseService, IBulkImportService
 	{
 		private const string SecurityWarning =
@@ -32,59 +34,59 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly MassImportManager _massImportManager;
 
 
-		public BulkImportService(IMethodRunner methodRunner, IServiceContextFactory serviceContextFactory) 
-			: base(methodRunner, serviceContextFactory)
+		public BulkImportService(IServiceContextFactory serviceContextFactory) 
+			: base(serviceContextFactory)
 		{
 			_massImportManager = new MassImportManager();
 		}
 
-		public Task<MassImportResults> BulkImportImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
+			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
-				return BulkImport(workspaceID, coordinator);
-			}, workspaceID, correlationID);
+			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
+			var result = BulkImport(workspaceID, coordinator);
+			return Task.FromResult(result);
 		}
 
-		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID,
+			SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository,
+			string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
-				return BulkImport(workspaceID, coordinator);
-			}, workspaceID, correlationID);
+			IImportCoordinator coordinator =
+				new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
+			var result = BulkImport(workspaceID, coordinator);
+			return Task.FromResult(result);
 		}
 
-		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
+		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID,
+			SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding,
+			string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				IImportCoordinator coordinator = new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
-				return BulkImport(workspaceID, coordinator);
-			}, workspaceID, correlationID);
+			IImportCoordinator coordinator =
+				new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
+			var result = BulkImport(workspaceID, coordinator);
+			return Task.FromResult(result);
 		}
 
-		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID, SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID,
+			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
-			return ExecuteAsync(() =>
-			{
-				IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
-				return BulkImport(workspaceID, coordinator);
-			}, workspaceID, correlationID);
+			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
+			var result = BulkImport(workspaceID, coordinator);
+			return Task.FromResult(result);
 		}
 
 		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator)
 		{
-			BaseServiceContext serviceContext = GetBaseServiceContext(workspaceID);
-			MassImportManager massImportManager = new MassImportManager();
+			var serviceContext = GetBaseServiceContext(workspaceID);
+			var massImportManager = new MassImportManager();
 
 			if (!massImportManager.HasImportPermission(serviceContext))
 			{
 				throw new InsufficientAccessControlListPermissions("Insufficient Permissions! Please ask your Relativity Administrator to allow you import permission.");
 			}
 
-			bool nonAdminsCanNoSnapshot = Config.AllowNoSnapshotImport;
+			var nonAdminsCanNoSnapshot = Config.AllowNoSnapshotImport;
 			if (!UserQuery.UserIsSystemAdmin(serviceContext.GetMasterDbServiceContext()))
 			{
 				if (coordinator.DisableUserSecurityCheck)
@@ -108,7 +110,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 				}
 			}
 
-			MassImportManagerBase.MassImportResults results = coordinator.RunImport(serviceContext, massImportManager);
+			var results = coordinator.RunImport(serviceContext, massImportManager);
 			if (coordinator.ArtifactTypeID == (int) ArtifactType.Document && Config.EnforceDocumentLimit)
 			{
 				results = massImportManager.PostImportDocumentLimitLogic(serviceContext, workspaceID, results);
@@ -119,7 +121,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private static MassImportResults CreateResultWithException(string exceptionMessage)
 		{
-			SoapExceptionDetail soapExceptionDetail = new SoapExceptionDetail(new Exception(exceptionMessage));
+			var soapExceptionDetail = new SoapExceptionDetail(new Exception(exceptionMessage));
 			return new MassImportResults
 			{
 				ExceptionDetail = soapExceptionDetail.Map<SDK.ImportExport.V1.Models.SoapExceptionDetail>()
@@ -128,44 +130,38 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>(),
-				workspaceID, correlationID);
+			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>();
+			return Task.FromResult(result);
 		}
 
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID),
-				workspaceID, correlationID);
+			var result = _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID);
+			return Task.FromResult(result);
 		}
 
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>(),
-				workspaceID, correlationID);
+			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>();
+			return Task.FromResult(result);
 		}
 
 		public Task<bool> NativeRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID),
-				workspaceID, correlationID);
+			var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID);
+			return Task.FromResult(result);
 		}
 
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID),
-				workspaceID, correlationID);
+			var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
+			return Task.FromResult(result);
 		}
 
 		public Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			return ExecuteAsync(
-				() => PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport),
-				workspaceID, correlationID);
+			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
+			return Task.FromResult(result);
 		}
 	}
 }
