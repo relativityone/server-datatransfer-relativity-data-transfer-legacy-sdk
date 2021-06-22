@@ -5,13 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Relativity.API;
-using Relativity.DataTransfer.Legacy.SDK.ImportExport;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
@@ -53,50 +49,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			DisposeLoggerContext(_contextPushPropertiesHandlers);
 			return Task.CompletedTask;
-		}
-
-		private static Dictionary<string, string> GetFunctionAttributes(IInvocation invocation)
-		{
-			Type type = Type.GetType($"{invocation.TargetType.FullName}, {invocation.TargetType.Assembly.FullName}");
-			Dictionary<string, string> arguments = new Dictionary<string, string>();
-			if (type == null)
-			{
-				return arguments;
-			}
-
-			ParameterInfo[] parameters = invocation.Method.GetParameters();
-			if (parameters.Length != invocation.Arguments.Length)
-			{
-				return arguments;
-			}
-
-			for (int i = 0; i < parameters.Length; i++)
-			{
-				string value = invocation.Arguments[i]?.ToString() ?? "null";
-				if (Attribute.IsDefined(parameters[i], typeof(SensitiveDataAttribute)))
-				{
-					value = HashValue(value);
-				}
-				arguments.Add(parameters[i].Name, value);
-			}
-
-			return arguments;
-		}
-
-		private static string HashValue(string value)
-		{
-			StringBuilder sb = new StringBuilder();
-			using (SHA256 hash = SHA256.Create())
-			{
-				Encoding enc = Encoding.UTF8;
-				Byte[] result = hash.ComputeHash(enc.GetBytes(value));
-
-				foreach (Byte b in result)
-				{
-					sb.Append(b.ToString("x2"));
-				}
-			}
-			return sb.ToString();
 		}
 
 		private static void DisposeLoggerContext(List<IDisposable> loggers)
