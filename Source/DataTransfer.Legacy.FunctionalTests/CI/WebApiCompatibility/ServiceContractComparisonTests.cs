@@ -341,9 +341,8 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             // Kepler exception
             if (ex is ServiceException keplerException)
             {
-                normalizedErrorMessage = keplerException.ErrorDetails?.Message ?? ex.Message;
-                // TODO:
-                LogInfo(keplerException.ErrorDetails == null ? "NoErrorDetails" : $"ErrorDetailsExists: {keplerException.ErrorDetails.Message}");
+	            var exceptionBits = keplerException.Message.Split('-');
+	            normalizedErrorMessage = exceptionBits.Length > 0 ? exceptionBits[1] : ex.Message;
             }
 
             // WebApi returns "real" error message hidden in InnerException
