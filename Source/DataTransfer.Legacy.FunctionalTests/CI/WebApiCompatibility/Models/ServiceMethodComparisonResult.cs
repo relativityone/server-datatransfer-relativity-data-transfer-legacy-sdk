@@ -170,22 +170,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
 		        return AreDynamicObjectsEqual(keplerJArrayItems.First(), webApiJArrayItems.First());
             }
 
-            // get id column name to sort by:
-            JArray keplerJArrayItemsSorted;
-            JArray webApiJArrayItemsSorted;
-            var idColumnName = GetIdColumnName(keplerJArrayItems.First());
-            if (!string.IsNullOrEmpty(idColumnName))
-            {
-	            // sort array by artifact id
-	            keplerJArrayItemsSorted = new JArray(keplerJArrayItems.OrderBy(obj => (string)obj[idColumnName]));
-	            webApiJArrayItemsSorted = new JArray(webApiJArrayItems.OrderBy(obj => (string)obj[idColumnName]));
-            }
-            else
-            {
-	            keplerJArrayItemsSorted = new JArray(keplerJArrayItems);
-	            webApiJArrayItemsSorted = new JArray(webApiJArrayItems);
-            }
-
+            var sortColumnName1 = keplerJArrayItems.First().Properties().ToArray()[0].Name;
+            var sortColumnName2 = keplerJArrayItems.First().Properties().ToArray()[1].Name;
+            var keplerJArrayItemsSorted = new JArray(keplerJArrayItems.OrderBy(obj => (string)obj[sortColumnName1]).ThenBy(obj => (string)obj[sortColumnName2]));
+            var webApiJArrayItemsSorted = new JArray(webApiJArrayItems.OrderBy(obj => (string)obj[sortColumnName1]).ThenBy(obj => (string)obj[sortColumnName2]));
+            
             for (var i = 0; i < keplerJArrayItemsSorted.Count; i++)
             {
 	            var areItemsEqual = AreDynamicObjectsEqual((JObject)keplerJArrayItemsSorted[i], (JObject)webApiJArrayItemsSorted[i]);
@@ -196,12 +185,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
             }
 
             return true;
-        }
-
-        private string GetIdColumnName(JObject jObject)
-        {
-	        var idColumnObject = jObject.Properties().FirstOrDefault(p => p.Name.Contains("ID"));
-	        return idColumnObject?.Name;
         }
     }
 }

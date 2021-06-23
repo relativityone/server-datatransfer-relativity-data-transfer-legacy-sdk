@@ -27,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveFolderAndDescendantsAsync(int workspaceID, int folderID, string correlationID)
 		{
 			var result = _folderManager.ExtenernalRetrieveFolderAndDescendants(GetBaseServiceContext(workspaceID), folderID);
-			return Task.FromResult(new DataSetWrapper(result));
+			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task<Folder> ReadAsync(int workspaceID, int folderArtifactID, string correlationID)
@@ -60,13 +60,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveInitialChunkAsync(int workspaceID, string correlationID)
 		{
 			var result = _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID));
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<DataSetWrapper> RetrieveNextChunkAsync(int workspaceID, int lastFolderID, string correlationID)
 		{
 			var result = _folderManager.RetrieveFolderChunk(GetBaseServiceContext(workspaceID), lastFolderID);
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 	}
 }

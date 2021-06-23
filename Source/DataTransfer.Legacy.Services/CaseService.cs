@@ -52,7 +52,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveAllEnabledAsync(string correlationID)
 		{
 			var result = _caseManager.RetrieveAll(GetBaseServiceContext(AdminWorkspace), null, true);
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 	}
 }
