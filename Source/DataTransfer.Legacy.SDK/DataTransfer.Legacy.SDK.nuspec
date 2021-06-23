@@ -5,6 +5,7 @@
     <version>$version$</version>
     <authors>Relativity ODA LLC</authors>
     <owners>Relativity ODA LLC</owners>
+    <iconUrl>https://www.relativity.com/images/relativity-nuget-logo.png</iconUrl>
     <license type="file">LICENSE.txt</license>
     <projectUrl>https://einstein.kcura.com/display/DTV/IAPI+2.0</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
