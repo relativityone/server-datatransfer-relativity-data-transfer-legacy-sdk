@@ -4,11 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [0.1.14]
+## [0.1.15]
 
 - Include original exception message in ServiceException message
 
 - Fix null reference exception when creating DataSetWrapper from null result
+
+## [0.1.14]
+
+- Add Relativity logo to SDK nuget to meet publish to nuget.org requirements
 
 ## [0.1.13]
 
