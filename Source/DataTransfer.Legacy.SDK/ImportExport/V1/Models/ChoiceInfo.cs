@@ -11,10 +11,16 @@
 
 		public int CodeTypeID { get; set; }
 
+		[SensitiveData]
 		public string Name { get; set; }
 
 		public int ArtifactID { get; set; }
 
 		public int ParentArtifactID { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

@@ -57,5 +57,10 @@
 		public ExecutionSource ExecutionSource { get; set; }
 
 		public bool Billable { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

@@ -9,5 +9,10 @@
 		public string ErrorMessage { get; set; }
 
 		public string ErrorText { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

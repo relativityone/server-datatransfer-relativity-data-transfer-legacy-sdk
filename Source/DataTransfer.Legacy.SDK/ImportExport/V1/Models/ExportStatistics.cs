@@ -93,5 +93,10 @@
 		public string SubdirectoryPDFPrefix { get; set; }
 
 		public bool ExportSearchablePDFs { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

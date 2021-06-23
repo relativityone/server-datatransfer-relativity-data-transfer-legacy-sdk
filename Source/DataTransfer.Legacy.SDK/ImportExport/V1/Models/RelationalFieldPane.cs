@@ -17,5 +17,10 @@
 		public byte[] IconFileData { get; set; }
 
 		public int PaneID { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

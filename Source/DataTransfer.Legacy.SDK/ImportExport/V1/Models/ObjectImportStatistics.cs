@@ -29,5 +29,10 @@
 		public int[][] FieldsMapped { get; set; }
 
 		public char NestedValueDelimiter { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

@@ -4,11 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [0.1.12]
+## [0.1.14]
 
 - Include original exception message in ServiceException message
 
 - Fix null reference exception when creating DataSetWrapper from null result
+
+## [0.1.13]
+
+- Add missing ut for services
+
+## [0.1.12]
+
+- Hash sensitive values in logs
 
 ## [0.1.11]
 

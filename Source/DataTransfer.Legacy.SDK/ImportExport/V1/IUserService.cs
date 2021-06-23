@@ -39,7 +39,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </summary>
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
-		Task<bool> LoginAsync(string emailAddress, string password, string correlationID);
+		Task<bool> LoginAsync([SensitiveData] string emailAddress, [SensitiveData] string password, string correlationID);
 
 		/// <summary>
 		/// parameters don't match WebAPI, but endpoint is obsolete anyway

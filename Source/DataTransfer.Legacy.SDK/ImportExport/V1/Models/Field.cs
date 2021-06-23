@@ -42,6 +42,7 @@
 
 		public bool IsArtifactBaseField { get; set; }
 
+		[SensitiveData]
 		public object Value { get; set; }
 
 		public string TableName { get; set; }
@@ -129,5 +130,10 @@
 		public bool IsSystemOrRelationalField { get; set; }
 
 		public bool IsRelationalField { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

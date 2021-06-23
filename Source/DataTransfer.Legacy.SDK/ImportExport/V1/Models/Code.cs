@@ -11,6 +11,7 @@
 
 		public int CodeType { get; set; }
 
+		[SensitiveData]
 		public string Name { get; set; }
 
 		public int Order { get; set; }
@@ -24,5 +25,10 @@
 		public KeyboardShortcut KeyboardShortcut { get; set; }
 
 		public int[] RelativityApplications { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

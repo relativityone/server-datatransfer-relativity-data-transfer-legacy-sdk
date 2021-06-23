@@ -7,5 +7,10 @@
 		public int ArtifactsUpdated { get; set; }
 		public string RunID { get; set; }
 		public SoapExceptionDetail ExceptionDetail { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

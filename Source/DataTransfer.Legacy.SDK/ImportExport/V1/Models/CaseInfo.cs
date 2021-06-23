@@ -4,6 +4,7 @@
 	{
 		public int ArtifactID { get; set; }
 
+		[SensitiveData]
 		public string Name { get; set; }
 
 		public int MatterArtifactID { get; set; }
@@ -23,5 +24,10 @@
 		public bool ExportAllowed { get; set; }
 
 		public string DocumentPath { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

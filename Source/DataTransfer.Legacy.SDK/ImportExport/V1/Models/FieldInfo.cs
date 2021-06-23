@@ -26,5 +26,10 @@
 		public bool IsUnicodeEnabled { get; set; }
 
 		public ImportBehaviorChoice? ImportBehavior { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }
