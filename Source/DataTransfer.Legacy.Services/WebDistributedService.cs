@@ -14,7 +14,6 @@ using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.Kepler.Transport;
 using Relativity.Services.Exceptions;
-using File = Relativity.Core.DTO.File;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
