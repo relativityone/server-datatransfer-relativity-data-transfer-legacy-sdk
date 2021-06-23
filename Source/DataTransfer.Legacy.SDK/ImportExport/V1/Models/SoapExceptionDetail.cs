@@ -18,5 +18,10 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 		public string ExceptionFullText { get; set; }
 
 		public List<string> Details { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

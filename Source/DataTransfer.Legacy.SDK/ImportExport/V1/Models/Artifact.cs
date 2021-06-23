@@ -42,5 +42,10 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 		public bool DeleteFlag { get; set; }
 
 		public List<Guid> Guids { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

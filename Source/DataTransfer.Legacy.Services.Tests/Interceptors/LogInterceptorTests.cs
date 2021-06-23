@@ -204,5 +204,64 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			// Assert
 			disposableMock.Verify(m => m.Dispose(), Times.Exactly(NumberOfCalls));
 		}
+
+
+		/// <summary>
+		/// Intercept_SensitiveData.
+		/// </summary>
+		[Test]
+		[Category("Unit")]
+		public void Intercept_SensitiveData()
+		{
+			// Arrange
+			string NameAddend1 = "sensitiveData";
+			string NameAddend2 = "notSensitiveData";
+			string sensitiveData = "value1";
+			string notSensitiveData = "value2";
+
+			string hashedSensitiveData = "3c9683017f9e4bf33d0fbedd26bf143fd72de9b9dd145441b75f0604047ea28e";
+
+			// Act
+			_interceptedObject.SensitiveData(sensitiveData, notSensitiveData);
+				
+			// Assert
+			_loggerMock.Verify(m => m.LogContextPushProperty(NameAddend1, hashedSensitiveData), Times.Once);
+			_loggerMock.Verify(m => m.LogContextPushProperty(NameAddend2, notSensitiveData), Times.Once);
+
+			//Make sure sensitive data has never been logged even under different name
+			_loggerMock.Verify(m => m.LogContextPushProperty(It.IsAny<string>(), sensitiveData), Times.Never);
+		}
+
+
+		/// <summary>
+		/// Intercept_SensitiveDataWithModel.
+		/// </summary>
+		[Test]
+		[Category("Unit")]
+		public void Intercept_SensitiveDataWithModel()
+		{
+			// Arrange
+			string sensitiveData = "value1";
+
+			string hashedSensitiveData = "3c9683017f9e4bf33d0fbedd26bf143fd72de9b9dd145441b75f0604047ea28e";
+
+			var testClass = new SDK.ImportExport.V1.Models.ChoiceInfo
+			{
+				Name = sensitiveData,
+				ArtifactID = 1,
+				CodeTypeID = 2,
+				Order = 3,
+				ParentArtifactID = 4
+			};
+
+			// Act
+			_interceptedObject.SensitiveDataWithModel(testClass);
+
+			// Assert
+			_loggerMock.Verify(m => m.LogContextPushProperty("testClass", It.Is<string>(x => x.Contains(hashedSensitiveData))), Times.Once);
+
+			//Make sure sensitive data has never been logged even under different name
+			_loggerMock.Verify(m => m.LogContextPushProperty(It.IsAny<string>(), It.Is<string>(x => x.Contains(sensitiveData))), Times.Never);
+		}
 	}
 }

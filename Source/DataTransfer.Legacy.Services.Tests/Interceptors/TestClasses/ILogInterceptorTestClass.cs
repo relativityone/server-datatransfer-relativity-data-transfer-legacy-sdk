@@ -5,6 +5,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Castle.Core;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
@@ -69,6 +70,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		/// <param name="b">b.</param>
 		/// <returns>Task.</returns>
 		int AddValues7(int a, int b);
+
+		/// <summary>
+		/// SensitiveData.
+		/// </summary>
+		/// <param name="sensitiveData">sensitiveData.</param>
+		/// <param name="notSensitiveData">notSensitiveData.</param>
+		void SensitiveData([SensitiveData] string sensitiveData, string notSensitiveData);
+
+		/// <summary>
+		/// SensitiveDataWithModel
+		/// </summary>
+		/// <param name="testClass">testClass.</param>
+		void SensitiveDataWithModel(SDK.ImportExport.V1.Models.ChoiceInfo testClass);
 	}
 
 	/// <inheritdoc />
@@ -129,6 +143,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 			LogInterceptorTests.FunctionExecuted = true;
 
 			return addend1 + addend2;
+		}
+
+		public void SensitiveData(string sensitiveData, string notSensitiveData)
+		{
+
+		}
+
+		public void SensitiveDataWithModel(SDK.ImportExport.V1.Models.ChoiceInfo testClass)
+		{
+
 		}
 	}
 }

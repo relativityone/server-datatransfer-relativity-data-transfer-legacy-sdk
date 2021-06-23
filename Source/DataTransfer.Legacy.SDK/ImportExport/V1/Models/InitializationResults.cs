@@ -9,5 +9,10 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 		public long RowCount { get; set; }
 
 		public string[] ColumnNames { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

@@ -10,8 +10,14 @@
 
 		public bool IncludeImageLevelNumberingForDocumentLevelNumbering { get; set; }
 
+		[SensitiveData]
 		public string Name { get; set; }
 
 		public bool UseDocumentLevelNumbering { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }
