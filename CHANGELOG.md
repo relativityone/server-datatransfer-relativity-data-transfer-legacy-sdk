@@ -4,11 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.12]
+
+- Include original exception message in ServiceException message
+
+- Fix null reference exception when creating DataSetWrapper from null result
+
 ## [0.1.11]
 
 - Add interceptor for communication mode toggle checking
-
-- Include original exception message in ServiceException message
 
 ## [0.1.10]
 

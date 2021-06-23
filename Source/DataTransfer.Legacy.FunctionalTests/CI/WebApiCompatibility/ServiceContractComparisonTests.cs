@@ -466,9 +466,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             return inputText.Substring(0, trimLength);
         }
 
-        /// <summary>
-        /// remove line breaks etc.
-        /// </summary>
         private static string CleanupText(string inputText)
         {
             if (string.IsNullOrEmpty(inputText))

@@ -21,32 +21,9 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
                     return false;
                 }
 
-                // both have the same success result json
-                if (!string.IsNullOrEmpty(KeplerMethodExecutionInfo.SuccessResult) &&
-                    !string.IsNullOrEmpty(WebApiMethodExecutionInfo.SuccessResult) &&
-                    AreMessagesEquals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.SuccessResult))
-                {
-                    return true;
-                }
-
-                // both have the same error message
-                if(!string.IsNullOrEmpty(KeplerMethodExecutionInfo.ErrorMessage) &&
-                   !string.IsNullOrEmpty(WebApiMethodExecutionInfo.ErrorMessage) &&
-                   AreMessagesEquals(KeplerMethodExecutionInfo.ErrorMessage, WebApiMethodExecutionInfo.ErrorMessage))
-                {
-                    return true;
-                }
-
-                // sometimes Kepler service (e.g.BulkImportService) returns model with error wrapped inside but WebApi service just throws SoapException.
-                // we must compare if error messages are the same
-                if (!string.IsNullOrEmpty(KeplerMethodExecutionInfo.SuccessResult) &&
-                    !string.IsNullOrEmpty(WebApiMethodExecutionInfo.ErrorMessage) &&
-                    AreMessagesEquals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.ErrorMessage))
-                {
-                    return true;
-                }
-
-                return false;
+                return SuccessResultEqualsForKeplerAndWebApi() ||
+                       ErrorMessageEqualsForKeplerAndWebApi() ||
+                       ExceptionDetailsEqualsForKeplerAndWebApi();
             }
         }
 
@@ -54,6 +31,27 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility.
         {
             KeplerMethodExecutionInfo = new ServiceMethodExecutionInfo();
             WebApiMethodExecutionInfo = new ServiceMethodExecutionInfo();
+        }
+
+        private bool SuccessResultEqualsForKeplerAndWebApi()
+        {
+	        return !string.IsNullOrEmpty(KeplerMethodExecutionInfo.SuccessResult) &&
+	               !string.IsNullOrEmpty(WebApiMethodExecutionInfo.SuccessResult) &&
+	               AreMessagesEquals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.SuccessResult);
+        }
+
+        private bool ErrorMessageEqualsForKeplerAndWebApi()
+        {
+	        return !string.IsNullOrEmpty(KeplerMethodExecutionInfo.ErrorMessage) &&
+	               !string.IsNullOrEmpty(WebApiMethodExecutionInfo.ErrorMessage) &&
+	               AreMessagesEquals(KeplerMethodExecutionInfo.ErrorMessage, WebApiMethodExecutionInfo.ErrorMessage);
+        }
+
+        private bool ExceptionDetailsEqualsForKeplerAndWebApi()
+        {
+	        return !string.IsNullOrEmpty(KeplerMethodExecutionInfo.SuccessResult) &&
+	               !string.IsNullOrEmpty(WebApiMethodExecutionInfo.ErrorMessage) &&
+	               AreMessagesEquals(KeplerMethodExecutionInfo.SuccessResult, WebApiMethodExecutionInfo.ErrorMessage);
         }
 
         private bool AreMessagesEquals(string keplerMessage, string webApiMessage)
