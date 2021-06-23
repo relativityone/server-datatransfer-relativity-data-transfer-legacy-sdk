@@ -9,5 +9,10 @@
 		public int DestinationProductionArtifactID { get; set; }
 
 		public int ExtractedTextDefaultEncodingCodePageID { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

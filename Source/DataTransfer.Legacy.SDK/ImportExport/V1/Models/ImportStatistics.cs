@@ -37,5 +37,10 @@
 		public bool SendNotification { get; set; }
 
 		public OverlayBehavior? OverlayBehavior { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }

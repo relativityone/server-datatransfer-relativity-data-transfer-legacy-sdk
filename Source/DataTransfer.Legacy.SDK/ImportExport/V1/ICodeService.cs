@@ -20,7 +20,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		Task<object> CreateEncodedAsync(int workspaceID, Code code, string correlationID);
 
 		[HttpPost]
-		Task<int> ReadIDEncodedAsync(int workspaceID, int parentArtifactID, int codeTypeID, string name, string correlationID);
+		Task<int> ReadIDEncodedAsync(int workspaceID, int parentArtifactID, int codeTypeID, [SensitiveData] string name, string correlationID);
 
 		[HttpPost]
 		Task<DataSetWrapper> GetAllForHierarchicalAsync(int workspaceID, int codeTypeID, string correlationID);
@@ -32,7 +32,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		Task<DataSetWrapper> GetLastChunkAsync(int workspaceID, int codeTypeID, int lastCodeID, string correlationID);
 
 		[HttpPost]
-		Task<ChoiceInfo> RetrieveCodeByNameAndTypeIDEncodedAsync(int workspaceID, int codeTypeID, string name, string correlationID);
+		Task<ChoiceInfo> RetrieveCodeByNameAndTypeIDEncodedAsync(int workspaceID, int codeTypeID, [SensitiveData] string name, string correlationID);
 
 		[HttpPost]
 		Task<int> GetChoiceLimitForUIAsync(string correlationID);

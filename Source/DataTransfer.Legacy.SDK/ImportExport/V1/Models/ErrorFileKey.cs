@@ -5,5 +5,10 @@
 		public string OpticonKey { get; set; }
 
 		public string LogKey { get; set; }
+
+		public override string ToString()
+		{
+			return this.ToSafeString();
+		}
 	}
 }
