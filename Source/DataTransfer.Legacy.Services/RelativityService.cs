@@ -48,7 +48,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
 		{
 			var result = WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace));
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<string> GetRelativityUrlAsync(string correlationID)

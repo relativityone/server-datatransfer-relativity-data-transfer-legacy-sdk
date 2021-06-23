@@ -52,6 +52,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
     <ProjectReference Include="..\DataTransfer.Legacy.Services\DataTransfer.Legacy.Services.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.Tests\DataTransfer.Legacy.Tests.csproj" />
   </ItemGroup>
 
 </Project>

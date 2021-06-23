@@ -29,7 +29,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveCodesAndTypesForCaseAsync(int workspaceID, string correlationID)
 		{
 			var result = _codeManager.ExternalRetrieveCodesAndTypesForCase(GetBaseServiceContext(workspaceID));
-			return Task.FromResult(new DataSetWrapper(result));
+			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task<object> CreateEncodedAsync(int workspaceID, Code code, string correlationID)
@@ -50,20 +50,20 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> GetAllForHierarchicalAsync(int workspaceID, int codeTypeID, string correlationID)
 		{
 			var result = Core.Query.Code.RetrieveHierarchicalByCodeTypeID(GetBaseServiceContext(workspaceID), codeTypeID);
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<DataSetWrapper> GetInitialChunkAsync(int workspaceID, int codeTypeID, string correlationID)
 		{
 			var result = _codeManager.GetInitialCodeListChunk(GetBaseServiceContext(workspaceID), codeTypeID);
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<DataSetWrapper> GetLastChunkAsync(int workspaceID, int codeTypeID, int lastCodeID,
 			string correlationID)
 		{
 			var result = _codeManager.GetNextCodeListChunk(GetBaseServiceContext(workspaceID), codeTypeID, lastCodeID);
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<SDK.ImportExport.V1.Models.ChoiceInfo> RetrieveCodeByNameAndTypeIDEncodedAsync(

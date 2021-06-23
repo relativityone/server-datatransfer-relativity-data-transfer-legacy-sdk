@@ -41,7 +41,7 @@ namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 			_generators.Add(typeof(SoapExceptionDetail), () => AutoFaker.Generate<SoapExceptionDetail>());
 			_generators.Add(typeof(Core.DTO.KeyboardShortcut), () => AutoFaker.Generate<Core.DTO.KeyboardShortcut>());
 			_generators.Add(typeof(RelationalFieldPane), () => AutoFaker.Generate<RelationalFieldPane>());
-		}
+        }
 
 		public object Generate(Type type)
 		{

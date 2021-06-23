@@ -32,13 +32,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveAllMappableAsync(int workspaceID, int artifactTypeID, string correlationID)
 		{
 			var result = FieldManagerFoundation.Query.RetrieveAllMappable(GetBaseServiceContext(workspaceID), artifactTypeID);
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<DataSetWrapper> RetrievePotentialBeginBatesFieldsAsync(int workspaceID, string correlationID)
 		{
 			var result = FieldQuery.RetrievePotentialBeginBatesFields(GetBaseServiceContext(workspaceID));
-			return Task.FromResult(new DataSetWrapper(result.ToDataSet()));
+			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
 		public Task<bool> IsFieldIndexedAsync(int workspaceID, int fieldArtifactID, string correlationID)

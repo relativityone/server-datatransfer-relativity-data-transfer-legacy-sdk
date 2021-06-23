@@ -41,13 +41,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveProducedByContextArtifactIDAsync(int workspaceID, string correlationID)
 		{
 			var result = _productionManager.ExternalRetrieveProduced(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID));
-			return Task.FromResult(new DataSetWrapper(result));
+			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task<DataSetWrapper> RetrieveImportEligibleByContextArtifactIDAsync(int workspaceID, string correlationID)
 		{
 			var result = _productionManager.ExternalRetrieveImportEligible(GetBaseServiceContext(workspaceID));
-			return Task.FromResult(new DataSetWrapper(result));
+			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task DoPostImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)

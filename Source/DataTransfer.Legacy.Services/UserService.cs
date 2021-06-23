@@ -25,7 +25,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var manager = new UserManager();
 			var result = manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
-			return Task.FromResult(new DataSetWrapper(result));
+			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task LogoutAsync(string correlationID)
