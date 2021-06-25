@@ -342,8 +342,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             // Kepler exception
             if (ex is ServiceException keplerException)
             {
-	            var exceptionBits = keplerException.Message.Split('-');
-	            normalizedErrorMessage = exceptionBits.Length > 0 ? exceptionBits[1] : ex.Message;
+                // example error message:
+                // Error during call BulkImportImageAsync. InnerExceptionType: Relativity.Core.Exception.InsufficientAccessControlListPermissions, InnerExceptionMessage: Insufficient Permissions! Please ask your Relativity Administrator to allow you import permission.
+                const string exceptionMessageKey = "InnerExceptionMessage:";
+                var exceptionMessageIndex = keplerException.Message.IndexOf(exceptionMessageKey, StringComparison.OrdinalIgnoreCase);
+                normalizedErrorMessage = exceptionMessageIndex == -1 ? keplerException.Message : keplerException.Message.Substring(exceptionMessageIndex + exceptionMessageKey.Length).Trim();
             }
 
             // WebApi returns "real" error message hidden in InnerException
