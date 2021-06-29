@@ -29,6 +29,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				base.Intercept(invocation);
 			}
+			catch (ServiceException serviceException)
+			{
+				_logger.LogError(serviceException, "There was an error during call {method} - {message}", invocation.Method.Name, serviceException.Message);
+				throw;
+			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "There was an error during call {method} - {message}", invocation.Method.Name, e.Message);
@@ -43,6 +48,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				await base.Continuation(task, invocation);
 			}
+			catch (ServiceException serviceException)
+			{
+				_logger.LogError(serviceException, "There was an error during custom continuation of call {method} - {message}", invocation.Method.Name, serviceException.Message);
+				throw;
+			}
 			catch (Exception e)
 			{
 				_logger.LogError(e, "There was an error during custom continuation of call {method} - {message}", invocation.Method.Name, e.Message);
@@ -56,6 +66,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			try
 			{
 				return await base.Continuation(task, invocation);
+			}
+			catch (ServiceException serviceException)
+			{
+				_logger.LogError(serviceException, "There was an error during continuation of call {method} - {message}", invocation.Method.Name, serviceException.Message);
+				throw;
 			}
 			catch (Exception e)
 			{

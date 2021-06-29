@@ -65,7 +65,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 			if (!LongPath.FileExists(file.Location))
 			{
-				throw new NotFoundException("File not found");
+				throw new ConflictException("File not found");
 			}
 
 			AuditDownload(workspaceServiceContext, file.Filename);
@@ -94,7 +94,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			var filePath = file.Location.Replace("file://", "");
 			if (!LongPath.FileExists(filePath))
 			{
-				throw new NotFoundException("File not found");
+				throw new ConflictException("File not found");
 			}
 
 			AuditDownload(workspaceServiceContext, file.Filename);
@@ -121,7 +121,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			string filePath = Path.Combine(fileSharePath, remoteGuid.ToString());
 			if (!LongPath.FileExists(filePath))
 			{
-				throw new NotFoundException("File not found");
+				throw new ConflictException("File not found");
 			}
 
 			AuditDownload(workspaceServiceContext, remoteGuid.ToString());
