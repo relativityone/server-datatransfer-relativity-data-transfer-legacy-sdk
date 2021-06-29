@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.1.17]
 
-- throw original exception which inherits from ServiceException
+- Throw original exception which inherits from ServiceException
 
 ## [0.1.16]
 
