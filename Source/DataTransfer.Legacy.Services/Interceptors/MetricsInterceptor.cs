@@ -16,7 +16,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	/// </summary> 
 	public class MetricsInterceptor : InterceptorBase
 	{
-		private readonly IAPILog _logger;
 		private readonly Func<IMetricsContext> _metricsContextFactory;
 		private Stopwatch _stopwatch;
 
@@ -25,14 +24,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// </summary> 
 		/// <param name="logger"></param> 
 		/// <param name="metricsContextFactory"></param> 
-		public MetricsInterceptor(IAPILog logger, Func<IMetricsContext> metricsContextFactory)
+		public MetricsInterceptor(IAPILog logger, Func<IMetricsContext> metricsContextFactory) : base(logger)
 		{
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_metricsContextFactory = metricsContextFactory;
 		}
 
 		/// <inheritdoc /> 
-		public override void ExecuteBefore(IInvocation invocation)
+		public override void ExecuteBeforeInner(IInvocation invocation)
 		{
 			_stopwatch = Stopwatch.StartNew();
 		}
@@ -48,9 +46,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 			await _metricsContextFactory.Invoke().Publish();
 
-			using (_logger.LogContextPushProperty("CallDuration", _stopwatch.ElapsedMilliseconds))
+			using (Logger.LogContextPushProperty("CallDuration", _stopwatch.ElapsedMilliseconds))
 			{
-				_logger.LogInformation(
+				Logger.LogInformation(
 					"DataTransfer.Legacy service Kepler call {@controller} {@method} finished",
 					invocation.TargetType.Name,
 					invocation.Method.Name);

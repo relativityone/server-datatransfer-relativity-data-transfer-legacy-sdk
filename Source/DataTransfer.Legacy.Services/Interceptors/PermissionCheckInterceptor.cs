@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Castle.DynamicProxy;
+using Relativity.API;
 using Relativity.Core;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.Services.Objects.Exceptions;
@@ -11,14 +12,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		private readonly IServiceContextFactory _serviceContextFactory;
 		private readonly IRelativityPermissionHelper _relativityPermissionHelper;
 
-		public PermissionCheckInterceptor(IServiceContextFactory serviceContextFactory,
-			IRelativityPermissionHelper relativityPermissionHelper)
+		public PermissionCheckInterceptor(IAPILog logger, IServiceContextFactory serviceContextFactory, IRelativityPermissionHelper relativityPermissionHelper) : base(logger)
 		{
 			_serviceContextFactory = serviceContextFactory;
 			_relativityPermissionHelper = relativityPermissionHelper;
 		}
 
-		public override void ExecuteBefore(IInvocation invocation)
+		public override void ExecuteBeforeInner(IInvocation invocation)
 		{
 			var arguments = InterceptorHelper.GetFunctionArgumentsFrom(invocation);
 

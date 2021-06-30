@@ -5,6 +5,8 @@
 using System;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using Relativity.API;
+using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
@@ -13,6 +15,17 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	/// </summary>
 	public abstract class InterceptorBase : IInterceptor
 	{
+		protected readonly IAPILog Logger;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="InterceptorBase"/> class.
+		/// </summary>
+		/// <param name="logger">Logger.</param>
+		protected InterceptorBase(IAPILog logger)
+		{
+			Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+		}
+
 		/// <summary>
 		/// Wrap intercepted method with custom actions.
 		/// </summary>
@@ -40,7 +53,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// Custom action executed before intercepted method.
 		/// </summary>
 		/// <param name="invocation"></param>
-		public virtual void ExecuteBefore(IInvocation invocation)
+		private void ExecuteBefore(IInvocation invocation)
+		{
+			SafeExecute(() => ExecuteBeforeInner(invocation));
+		}
+
+		/// <summary>
+		/// Custom action executed before intercepted method.
+		/// </summary>
+		/// <param name="invocation"></param>
+		public virtual void ExecuteBeforeInner(IInvocation invocation)
 		{
 		}
 
@@ -79,6 +101,24 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			var returnValue = await task;
 			await this.ExecuteAfter(invocation, returnValue);
 			return returnValue;
+		}
+
+		private void SafeExecute(Action action)
+		{
+			try
+			{
+				action?.Invoke();
+			}
+			catch (ServiceException serviceException)
+			{
+				Logger.LogError(serviceException, serviceException.Message);
+				throw;
+			}
+			catch (Exception exception)
+			{
+				Logger.LogError(exception, exception.Message);
+				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+			}
 		}
 	}
 }
