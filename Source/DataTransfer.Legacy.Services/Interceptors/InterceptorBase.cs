@@ -112,12 +112,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, serviceException.Message);
+				Logger.LogError(serviceException, $"Error during call {GetType().Name} - {serviceException.Message}");
 				throw;
 			}
 			catch (Exception exception)
 			{
-				Logger.LogError(exception, exception.Message);
+				Logger.LogError(exception, $"Error during call {GetType().Name} - {exception.Message}");
 				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
@@ -130,12 +130,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, serviceException.Message);
+				Logger.LogError(serviceException, $"Error during call {GetType().Name} - {serviceException.Message}");
 				throw;
 			}
 			catch (Exception exception)
 			{
-				Logger.LogError(exception, exception.Message);
+				Logger.LogError(exception, $"Error during call {GetType().Name} - {exception.Message}");
 				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
