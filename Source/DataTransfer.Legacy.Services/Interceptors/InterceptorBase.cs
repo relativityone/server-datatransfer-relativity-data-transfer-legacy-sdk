@@ -5,6 +5,8 @@
 using System;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using Relativity.API;
+using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
@@ -13,13 +15,24 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	/// </summary>
 	public abstract class InterceptorBase : IInterceptor
 	{
+		protected readonly IAPILog Logger;
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="InterceptorBase"/> class.
+		/// </summary>
+		/// <param name="logger">Logger.</param>
+		protected InterceptorBase(IAPILog logger)
+		{
+			Logger = logger ?? throw new ArgumentNullException(nameof(logger));
+		}
+
 		/// <summary>
 		/// Wrap intercepted method with custom actions.
 		/// </summary>
 		/// <param name="invocation"></param>
 		public virtual void Intercept(IInvocation invocation)
 		{
-			this.ExecuteBefore(invocation);
+			this.SafeExecuteBefore(invocation);
 
 			invocation.Proceed();
 
@@ -32,7 +45,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			else
 			{
 				// synchronous method cannot be changed to asynchronous
-				this.ExecuteAfter(invocation, invocation.ReturnValue).Wait();
+				this.SafeExecuteAfter(invocation, invocation.ReturnValue).Wait();
 			}
 		}
 
@@ -64,7 +77,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		public virtual async Task Continuation(Task task, IInvocation invocation)
 		{
 			await task;
-			await this.ExecuteAfter(invocation, null);
+			await this.SafeExecuteAfter(invocation, null);
 		}
 
 		/// <summary>
@@ -77,8 +90,54 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		public virtual async Task<T> Continuation<T>(Task<T> task, IInvocation invocation)
 		{
 			var returnValue = await task;
-			await this.ExecuteAfter(invocation, returnValue);
+			await this.SafeExecuteAfter(invocation, returnValue);
 			return returnValue;
+		}
+
+		private void SafeExecuteBefore(IInvocation invocation)
+		{
+			SafeExecute(() => ExecuteBefore(invocation));
+		}
+
+		private async Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
+		{
+			await SafeExecute(async () => await ExecuteAfter(invocation, returnValue));
+		}
+
+		private void SafeExecute(Action action)
+		{
+			try
+			{
+				action.Invoke();
+			}
+			catch (ServiceException serviceException)
+			{
+				Logger.LogError(serviceException, $"Error during call {GetType().Name} - {serviceException.Message}");
+				throw;
+			}
+			catch (Exception exception)
+			{
+				Logger.LogError(exception, $"Error during call {GetType().Name} - {exception.Message}");
+				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+			}
+		}
+
+		private async Task SafeExecute(Func<Task> action)
+		{
+			try
+			{
+				await action.Invoke();
+			}
+			catch (ServiceException serviceException)
+			{
+				Logger.LogError(serviceException, $"Error during call {GetType().Name} - {serviceException.Message}");
+				throw;
+			}
+			catch (Exception exception)
+			{
+				Logger.LogError(exception, $"Error during call {GetType().Name} - {exception.Message}");
+				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+			}
 		}
 	}
 }

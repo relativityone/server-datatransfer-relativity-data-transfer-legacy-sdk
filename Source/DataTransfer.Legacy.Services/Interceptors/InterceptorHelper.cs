@@ -37,6 +37,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			return arguments;
 		}
 
+		/// <summary>
+		/// Builds custom error text using exception type and exception message.
+		/// When the ServiceException is thrown and developer mode is disabled for environment, the real inner exception is not returned by kepler service,
+		/// but in some cases (e.g.: for RDC, IAPI) the inner exception type and message is needed to correctly handle the error.
+		/// </summary>
+		/// <param name="ex">Exception</param>
+		/// <returns>Text based on exception type and message</returns>
+		public static string BuildErrorMessageDetails(Exception ex)
+		{
+			return $"InnerExceptionType: {ex.GetType()}, InnerExceptionMessage: {ex.Message}";
+		}
+
 		private static string HashValue(string value)
 		{
 			var sb = new StringBuilder();

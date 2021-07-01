@@ -4,6 +4,7 @@ using Castle.Windsor;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Relativity.API;
 using Relativity.Core;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
@@ -16,6 +17,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 	[TestFixture]
 	public class PermissionCheckInterceptorTests
 	{
+		private Mock<IAPILog> _loggerMock;
 		private Mock<IServiceContextFactory> _serviceContextFactoryMock;
 		private IPermissionCheckInterceptorTestClass _interceptedObject;
 		private Mock<IRelativityPermissionHelper> _relativityPermissionHelper;
@@ -23,10 +25,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		[SetUp]
 		public void SetUp()
 		{
+			_loggerMock = new Mock<IAPILog>();
 			_serviceContextFactoryMock = new Mock<IServiceContextFactory>();
 			_relativityPermissionHelper = new Mock<IRelativityPermissionHelper>();
 
 			var container = new WindsorContainer();
+			container.Register(Component.For<IAPILog>().Instance(_loggerMock.Object));
 			container.Register(Component.For<IServiceContextFactory>().Instance(_serviceContextFactoryMock.Object));
 			container.Register(Component.For<IRelativityPermissionHelper>().Instance(_relativityPermissionHelper.Object));
 			container.Register(Component.For<PermissionCheckInterceptor>());

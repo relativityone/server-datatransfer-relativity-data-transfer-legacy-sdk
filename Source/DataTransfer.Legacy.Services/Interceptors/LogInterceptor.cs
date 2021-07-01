@@ -16,16 +16,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	/// </summary>
 	public class LogInterceptor : InterceptorBase
 	{
-		private readonly IAPILog _logger;
 		private List<IDisposable> _contextPushPropertiesHandlers;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="LogInterceptor"/> class.
 		/// </summary>
 		/// <param name="logger">Logger.</param>
-		public LogInterceptor(IAPILog logger)
+		public LogInterceptor(IAPILog logger) : base(logger)
 		{
-			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 		}
 
 		/// <inheritdoc />
@@ -37,11 +35,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 			_contextPushPropertiesHandlers = new List<IDisposable>
 			{
-				_logger.LogContextPushProperty(Controller, invocation.TargetType.Name),
-				_logger.LogContextPushProperty(EndpointCalled, invocation.Method.Name)
+				Logger.LogContextPushProperty(Controller, invocation.TargetType.Name),
+				Logger.LogContextPushProperty(EndpointCalled, invocation.Method.Name)
 			};
 
-			_contextPushPropertiesHandlers.AddRange(arguments.Select(argument => _logger.LogContextPushProperty(argument.Key, argument.Value)));
+			_contextPushPropertiesHandlers.AddRange(arguments.Select(argument => Logger.LogContextPushProperty(argument.Key, argument.Value)));
 		}
 
 		/// <inheritdoc />

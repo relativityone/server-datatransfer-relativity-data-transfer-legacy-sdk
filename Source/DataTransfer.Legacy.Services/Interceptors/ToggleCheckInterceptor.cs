@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Extensions;
 using Relativity.Services.Exceptions;
@@ -9,7 +10,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	{
 		private readonly ICommunicationModeStorage _communicationModeStorage;
 
-		public ToggleCheckInterceptor(ICommunicationModeStorage communicationModeStorage)
+		public ToggleCheckInterceptor(IAPILog logger, ICommunicationModeStorage communicationModeStorage) : base(logger)
 		{
 			_communicationModeStorage = communicationModeStorage;
 		}
