@@ -5,6 +5,7 @@ using Castle.Windsor;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses;
@@ -16,17 +17,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 	[TestFixture]
 	public class ToggleCheckInterceptorTests
 	{
+		private Mock<IAPILog> _loggerMock;
 		private IToggleCheckInterceptorTestClass _interceptedObject;
 		private Mock<ICommunicationModeStorage> _communicationModeStorage;
 
 		[SetUp]
 		public void SetUp()
 		{
+			_loggerMock = new Mock<IAPILog>();
 			_communicationModeStorage = new Mock<ICommunicationModeStorage>();
 
 			var container = new WindsorContainer();
 			container.Register(Component.For<ICommunicationModeStorage>().Instance(_communicationModeStorage.Object));
-			container.Register(Component.For<ToggleCheckInterceptor>());
+			container.Register(Component.For<ToggleCheckInterceptor>().DependsOn(Dependency.OnValue<IAPILog>(_loggerMock.Object)));
 			container.Register(Component.For<IToggleCheckInterceptorTestClass>().ImplementedBy<ToggleCheckInterceptorTestClass>());
 
 			_interceptedObject = container.Resolve<IToggleCheckInterceptorTestClass>();

@@ -53,28 +53,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// Custom action executed before intercepted method.
 		/// </summary>
 		/// <param name="invocation"></param>
-		private void SafeExecuteBefore(IInvocation invocation)
-		{
-			SafeExecute(() => ExecuteBefore(invocation));
-		}
-
-		/// <summary>
-		/// Custom action executed before intercepted method.
-		/// </summary>
-		/// <param name="invocation"></param>
 		public virtual void ExecuteBefore(IInvocation invocation)
 		{
-		}
-
-		/// <summary>
-		/// Custom action executed after intercepted method return value.
-		/// </summary>
-		/// <param name="invocation"></param>
-		/// <param name="returnValue"></param>
-		/// /// <returns></returns>
-		private Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
-		{
-			return SafeExecute(() => ExecuteAfter(invocation, returnValue));
 		}
 
 		/// <summary>
@@ -112,6 +92,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			var returnValue = await task;
 			await this.SafeExecuteAfter(invocation, returnValue);
 			return returnValue;
+		}
+
+		private void SafeExecuteBefore(IInvocation invocation)
+		{
+			SafeExecute(() => ExecuteBefore(invocation));
+		}
+
+		private Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
+		{
+			return SafeExecute(() => ExecuteAfter(invocation, returnValue));
 		}
 
 		private void SafeExecute(Action action)
