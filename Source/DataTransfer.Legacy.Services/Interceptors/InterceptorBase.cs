@@ -99,9 +99,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			SafeExecute(() => ExecuteBefore(invocation));
 		}
 
-		private Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
+		private async Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
 		{
-			return SafeExecute(() => ExecuteAfter(invocation, returnValue));
+			await SafeExecute(async () => await ExecuteAfter(invocation, returnValue));
 		}
 
 		private void SafeExecute(Action action)
