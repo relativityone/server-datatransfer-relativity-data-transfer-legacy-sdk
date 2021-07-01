@@ -30,9 +30,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_relativityPermissionHelper = new Mock<IRelativityPermissionHelper>();
 
 			var container = new WindsorContainer();
+			container.Register(Component.For<IAPILog>().Instance(_loggerMock.Object));
 			container.Register(Component.For<IServiceContextFactory>().Instance(_serviceContextFactoryMock.Object));
 			container.Register(Component.For<IRelativityPermissionHelper>().Instance(_relativityPermissionHelper.Object));
-			container.Register(Component.For<PermissionCheckInterceptor>().DependsOn(Dependency.OnValue<IAPILog>(_loggerMock.Object)));
+			container.Register(Component.For<PermissionCheckInterceptor>());
 			container.Register(Component.For<IPermissionCheckInterceptorTestClass>().ImplementedBy<PermissionCheckInterceptorTestClass>());
 
 			_interceptedObject = container.Resolve<IPermissionCheckInterceptorTestClass>();

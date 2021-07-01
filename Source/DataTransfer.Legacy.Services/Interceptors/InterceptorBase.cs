@@ -108,7 +108,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			try
 			{
-				action?.Invoke();
+				action.Invoke();
 			}
 			catch (ServiceException serviceException)
 			{
@@ -122,11 +122,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			}
 		}
 
-		private Task SafeExecute(Func<Task> action)
+		private async Task SafeExecute(Func<Task> action)
 		{
 			try
 			{
-				return action?.Invoke();
+				await action.Invoke();
 			}
 			catch (ServiceException serviceException)
 			{

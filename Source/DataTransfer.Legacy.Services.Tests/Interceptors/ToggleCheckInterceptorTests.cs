@@ -28,8 +28,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_communicationModeStorage = new Mock<ICommunicationModeStorage>();
 
 			var container = new WindsorContainer();
+			container.Register(Component.For<IAPILog>().Instance(_loggerMock.Object));
 			container.Register(Component.For<ICommunicationModeStorage>().Instance(_communicationModeStorage.Object));
-			container.Register(Component.For<ToggleCheckInterceptor>().DependsOn(Dependency.OnValue<IAPILog>(_loggerMock.Object)));
+			container.Register(Component.For<ToggleCheckInterceptor>());
 			container.Register(Component.For<IToggleCheckInterceptorTestClass>().ImplementedBy<ToggleCheckInterceptorTestClass>());
 
 			_interceptedObject = container.Resolve<IToggleCheckInterceptorTestClass>();
