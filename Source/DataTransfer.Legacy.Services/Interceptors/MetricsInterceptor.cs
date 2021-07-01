@@ -30,7 +30,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		}
 
 		/// <inheritdoc /> 
-		public override void ExecuteBeforeInner(IInvocation invocation)
+		public override void ExecuteBefore(IInvocation invocation)
 		{
 			_stopwatch = Stopwatch.StartNew();
 		}

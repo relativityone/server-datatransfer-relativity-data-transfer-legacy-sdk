@@ -27,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		}
 
 		/// <inheritdoc />
-		public override void ExecuteBeforeInner(IInvocation invocation)
+		public override void ExecuteBefore(IInvocation invocation)
 		{
 			const string Controller = "Controller";
 			const string EndpointCalled = "EndpointCalled";

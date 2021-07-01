@@ -15,7 +15,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			_communicationModeStorage = communicationModeStorage;
 		}
 
-		public override void ExecuteBeforeInner(IInvocation invocation)
+		public override void ExecuteBefore(IInvocation invocation)
 		{
 			var (success, mode) = _communicationModeStorage.TryGetModeAsync().Result;
 			if (success)

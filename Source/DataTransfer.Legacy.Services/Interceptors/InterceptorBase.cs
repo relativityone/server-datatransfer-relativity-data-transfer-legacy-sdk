@@ -32,7 +32,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// <param name="invocation"></param>
 		public virtual void Intercept(IInvocation invocation)
 		{
-			this.ExecuteBefore(invocation);
+			this.SafeExecuteBefore(invocation);
 
 			invocation.Proceed();
 
@@ -45,7 +45,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			else
 			{
 				// synchronous method cannot be changed to asynchronous
-				this.ExecuteAfter(invocation, invocation.ReturnValue).Wait();
+				this.SafeExecuteAfter(invocation, invocation.ReturnValue).Wait();
 			}
 		}
 
@@ -53,17 +53,28 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// Custom action executed before intercepted method.
 		/// </summary>
 		/// <param name="invocation"></param>
-		private void ExecuteBefore(IInvocation invocation)
+		private void SafeExecuteBefore(IInvocation invocation)
 		{
-			SafeExecute(() => ExecuteBeforeInner(invocation));
+			SafeExecute(() => ExecuteBefore(invocation));
 		}
 
 		/// <summary>
 		/// Custom action executed before intercepted method.
 		/// </summary>
 		/// <param name="invocation"></param>
-		public virtual void ExecuteBeforeInner(IInvocation invocation)
+		public virtual void ExecuteBefore(IInvocation invocation)
 		{
+		}
+
+		/// <summary>
+		/// Custom action executed after intercepted method return value.
+		/// </summary>
+		/// <param name="invocation"></param>
+		/// <param name="returnValue"></param>
+		/// /// <returns></returns>
+		private Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
+		{
+			return SafeExecute(() => ExecuteAfter(invocation, returnValue));
 		}
 
 		/// <summary>
@@ -86,7 +97,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		public virtual async Task Continuation(Task task, IInvocation invocation)
 		{
 			await task;
-			await this.ExecuteAfter(invocation, null);
+			await this.SafeExecuteAfter(invocation, null);
 		}
 
 		/// <summary>
@@ -99,7 +110,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		public virtual async Task<T> Continuation<T>(Task<T> task, IInvocation invocation)
 		{
 			var returnValue = await task;
-			await this.ExecuteAfter(invocation, returnValue);
+			await this.SafeExecuteAfter(invocation, returnValue);
 			return returnValue;
 		}
 
@@ -108,6 +119,24 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			try
 			{
 				action?.Invoke();
+			}
+			catch (ServiceException serviceException)
+			{
+				Logger.LogError(serviceException, serviceException.Message);
+				throw;
+			}
+			catch (Exception exception)
+			{
+				Logger.LogError(exception, exception.Message);
+				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+			}
+		}
+
+		private Task SafeExecute(Func<Task> action)
+		{
+			try
+			{
+				return action?.Invoke();
 			}
 			catch (ServiceException serviceException)
 			{
