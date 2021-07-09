@@ -1,0 +1,6 @@
+<NUnitProject>
+    <Settings activeconfig="RAPCD"/>
+    <Config name="RAPCD">
+        <assembly path="DataTransfer.Legacy.FunctionalTests.dll"/>
+    </Config>
+</NUnitProject>
