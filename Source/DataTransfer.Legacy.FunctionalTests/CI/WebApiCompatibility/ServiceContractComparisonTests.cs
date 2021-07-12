@@ -36,6 +36,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
     [TestFixture]
     [TestExecutionCategory.CI]
     [TestLevel.L3]
+    [TestType.MainFlow]
     public class ServiceContractComparisonTests : BaseServiceCompatibilityTest
     {
         [IdentifiedTest("4FEC15F9-5AC3-4A0B-B06A-8343B2B34155")]

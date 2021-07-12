@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
     [TestFixture]
     [TestExecutionCategory.CI]
     [TestLevel.L3]
+    [TestType.MainFlow]
     public class CaseServiceCompatibilityTests : BaseServiceCompatibilityTest
     {
         [IdentifiedTest("F5312AF8-D1E1-4400-962E-43A77FE44922")]
