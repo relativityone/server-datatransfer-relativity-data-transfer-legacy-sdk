@@ -1,7 +1,8 @@
-# RAP Repository Template
+# DataTransfer Legacy SDK
 
-This repository should serve as the template when migrating your project to RAP CD or creating a new project using RAP CD.
-Note: If you are going to start your project's repository using this template, you must replace the contents of this document with information specific to your project. For information on what your documentation should look like, refer to [this Einstein page](https://einstein.kcura.com/x/RglUB)
+This is a port of old WebAPI Import API to Kepler API
+
+
 
 ## Build Tasks
 
@@ -11,10 +12,16 @@ It supports standard tasks like `.\build.ps1 compile`, `.\build.ps1 test`, `.\bu
 For functional tests, point PowerShell to the root of this repository and provide the necessary arguments for the test settings using `.\DevelopmentScripts\New-TestSettings.ps1 <INSERT_ARGUMENTS_HERE>` before running the functionaltest task.
 
 
-## Online Documentation
+## Test
+
+Run Functional Tests
+> .\build.ps1 -- Builds the code.
+> .\DevelopmentScripts\New-TestSettings.ps1 p-dv-vm-<currentVm> -- Generates the settings for local test vm.
+> .\build.ps1 FunctionalTest -- Uses the generated settings.
+> .\build.ps1 -TaskList Compile, Package, FunctionalTest -RAPVersion 1.0.0.xxx -- Generates RAP with provided versions 
+
+
+## Online Documentation RAP CD
 
 For more information on RAP CD, [view the documentation in Einstein](https://einstein.kcura.com/x/hRkFCQ)
 
-## Maintainers
-
-This repository is owned by the Tools Team. Please send any issues or feature requests to tools-support@relativity.com

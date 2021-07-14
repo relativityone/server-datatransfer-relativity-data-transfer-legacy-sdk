@@ -13,6 +13,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 	[SetUpFixture]
 	public class Setup
 	{
+		private const string IApiSettingsName = "IAPICommunicationMode";
+		private const string IApiSettingsSection = "DataTransfer.Legacy";
+		private const string IApiSettingsValue = "Kepler";
+		private const InstanceSettingValueType IApiSettingsValueType = InstanceSettingValueType.Text;
+
 		[OneTimeSetUp]
 		public void SetupTests()
 		{
@@ -36,14 +41,25 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 			applicationService.InstallToLibrary(myRap);
 
 			var instanceSettingsService = RelativityFacade.Instance.Resolve<IInstanceSettingsService>();
-			var iapiCommunicationMode = new Testing.Framework.Models.InstanceSetting
+			
+			var currentInstanceSetting = instanceSettingsService.Get(IApiSettingsName, IApiSettingsSection);
+			if (currentInstanceSetting == null)
 			{
-				Name = "IAPICommunicationMode",
-				Section = "DataTransfer.Legacy",
-				Value = "Kepler",
-				ValueType = InstanceSettingValueType.Text
-			};
-			instanceSettingsService.Create(iapiCommunicationMode);
+				var iapiCommunicationMode = new Testing.Framework.Models.InstanceSetting
+				{
+					Name = IApiSettingsName,
+					Section = IApiSettingsSection,
+					Value = IApiSettingsValue,
+					ValueType = IApiSettingsValueType
+				};
+				instanceSettingsService.Create(iapiCommunicationMode);
+			}
+			else
+			{
+				currentInstanceSetting.Value = IApiSettingsValue;
+				currentInstanceSetting.ValueType = IApiSettingsValueType;
+				instanceSettingsService.Update(currentInstanceSetting);
+			}
 		}
 	}
 }
