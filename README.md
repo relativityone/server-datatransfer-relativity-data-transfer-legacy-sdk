@@ -3,9 +3,6 @@
 This is a port of old WebAPI Import API to Kepler API
 
 
-## Requirements
-.NET Core SDK 2.1.403 - this is defined in file `global.json`, you can change this locally for your version, for CI only for version defined here: [Trident Docs: Generic Build Agent](https://einstein.kcura.com/display/DEVOP/Trident+Docs%3A+Generic+Build+Agent)
-
 
 ## Build Tasks
 
