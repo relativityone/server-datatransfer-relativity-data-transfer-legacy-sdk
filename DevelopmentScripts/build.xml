@@ -11,7 +11,6 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\AutoMapper.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\BCrypt.Net-Core.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\dtSearchNetApi4.dll</Assembly>
-          <Assembly>Source\DataTransfer.Legacy.Services\bin\FreeImageNET.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\kCura.Assembly.Analysis.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\kCura.LongPath.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Contracts.dll</Assembly>

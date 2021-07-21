@@ -29,11 +29,6 @@
     </Assembly>
     <Assembly>
       <Keywords />
-      <Name>FreeImageNET.dll</Name>
-      <Notes />
-    </Assembly>
-    <Assembly>
-      <Keywords />
       <Name>kCura.Assembly.Analysis.dll</Name>
       <Notes />
     </Assembly>
