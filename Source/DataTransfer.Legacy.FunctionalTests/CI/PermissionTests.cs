@@ -16,6 +16,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 	[TestExecutionCategory.CI]
 	[TestType.Error]
 	[TestLevel.L3]
+	[Feature.DataTransfer.ImportApi.Authentication]
 	public class PermissionTests
 	{
 		private static Workspace _workspace;
