@@ -54,6 +54,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		}
 
 		[Test]
+		public async Task ShouldReturnFailWithNoModeWhenInstanceSettingIsNotSet()
+		{
+			_instanceSettingsBundle.Setup(x => x.GetStringAsync("DataTransfer.Legacy", "IAPICommunicationMode"))
+				.Returns(Task.FromResult((string) null));
+
+			var (success, result) = await _uut.TryGetModeAsync();
+
+			success.Should().BeFalse();
+			result.Should().Be(IAPICommunicationMode.WebAPI);
+		}
+
+		[Test]
 		public void ShouldReturnInstanceSettingNameWhenStorageKeyIsRetrieved()
 		{
 			var result = _uut.GetStorageKey();
