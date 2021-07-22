@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.21]
+
+- REL-574894 Remove FreeImageNET.dll from application files
+
+- REL-574894 Update Relativity.DataExchange.Client.SDK to 1.14.16, version without FreeImageNET.dll
+
 ## [0.1.20]
 
 - REL-572781 Update CI Test Feature Attributes
