@@ -27,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				return;
 			}
 
-			throw new ServiceException("Unable to determine IAPI communication mode toggle value.");
+			throw new ServiceException("Unable to determine IAPI communication mode toggle value. Please verify that instance setting is properly set (Section: DataTransfer.Legacy, Name: IAPICommunicationMode)");
 		}
 	}
 }

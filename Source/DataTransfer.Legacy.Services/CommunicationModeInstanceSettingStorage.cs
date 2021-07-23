@@ -31,6 +31,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var mode = await _instanceSettingsBundle
 				.GetStringAsync(IAPICommunicationModeSettingSection, IAPICommunicationModeSettingName).ConfigureAwait(false);
+
+			if (mode == null)
+			{
+				return (false, default);
+			}
+
 			if (_instanceSettingToCommunicationModeLookup.TryGetValue(mode, out var communicationMode))
 			{
 				{

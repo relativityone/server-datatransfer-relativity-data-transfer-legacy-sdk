@@ -43,7 +43,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 				.Returns(Task.FromResult((false, Any.ValueOf<IAPICommunicationMode>())));
 
 			FluentActions.Invoking(() => _interceptedObject.Execute()).Should().Throw<ServiceException>()
-				.WithMessage("Unable to determine IAPI communication mode toggle value.");
+				.WithMessage("Unable to determine IAPI communication mode toggle value. Please verify that instance setting is properly set (Section: DataTransfer.Legacy, Name: IAPICommunicationMode)");
 		}
 
 		[Test]
