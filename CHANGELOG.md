@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.24]
+- REL-572781 Disable R# errors for usage of obsolete methods in tests
+
 ## [0.1.23]
 - REL-577929 Fix namespace to correctly analyze unit test coverage
 

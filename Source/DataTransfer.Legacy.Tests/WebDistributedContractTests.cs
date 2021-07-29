@@ -40,7 +40,9 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		{
 			string[] queryParams = HttpUtility.ParseQueryString(DownloadFullTextUrlTemplate.Split('?')[1]).AllKeys.Where(x => x != "AuthenticationToken").ToArray();
 
+#pragma warning disable 618 //Obsolete method is used in tests to compare Contract
 			var methodParameters = typeof(IWebDistributedService).GetMethod(nameof(IWebDistributedService.DownloadFullTextAsync)).GetParameters().Where(x => x.Name != "correlationID").ToArray();
+#pragma warning restore 618
 
 			//however ExtractedText parameter is always true, so it's skipped
 			methodParameters.Length.Should().Be(queryParams.Length - 1);
@@ -51,7 +53,9 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		{
 			string[] queryParams = HttpUtility.ParseQueryString(DownloadLongTextFieldArtifactUrlTemplate.Split('?')[1]).AllKeys.Where(x => x != "AuthenticationToken").ToArray();
 
+#pragma warning disable 618 //Obsolete method is used in tests to compare Contract
 			var methodParameters = typeof(IWebDistributedService).GetMethod(nameof(IWebDistributedService.DownloadLongTextFieldAsync)).GetParameters().Where(x => x.Name != "correlationID").ToArray();
+#pragma warning restore 618
 
 			methodParameters.Length.Should().Be(queryParams.Length);
 		}
