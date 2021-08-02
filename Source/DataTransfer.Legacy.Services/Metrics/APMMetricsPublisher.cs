@@ -14,6 +14,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 	public class APMMetricsPublisher : IMetricsPublisher
 	{
 		private const string BucketName = "DataTransfer.Legacy.KeplerCall";
+		private const string HealthCheckMetric = "DataTransfer.Legacy.HealthCheckMetric";
 
 		private readonly IAPM _apm;
 
@@ -34,6 +35,21 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		public Task Publish(Dictionary<string, object> metrics)
 		{
 			_apm.CountOperation(BucketName, customData: metrics);
+			return Task.CompletedTask;
+		}
+
+		/// <summary>
+		/// Publish health check result to New Relic
+		/// </summary>
+		/// <param name="isHealthy"></param>
+		/// <param name="message"></param>
+		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns> 
+		public Task PublishHealthCheckResult(bool isHealthy, string message)
+		{
+			var result = new HealthCheckOperationResult(isHealthy, message);
+			var apmHealthCheck = _apm.HealthCheckOperation(HealthCheckMetric, () => result);
+			apmHealthCheck.Write();
+
 			return Task.CompletedTask;
 		}
 	}

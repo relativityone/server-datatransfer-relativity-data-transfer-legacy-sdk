@@ -35,5 +35,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 
 			return Task.CompletedTask;
 		}
+
+		/// <summary>
+		/// Log Health Check result
+		/// </summary>
+		/// <param name="isHealthy"></param>
+		/// <param name="message"></param>
+		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns> 
+		public Task PublishHealthCheckResult(bool isHealthy, string message)
+		{
+			_logger.LogInformation("Health Check Result: {@isHealthy}, message: {@message}", isHealthy, message);
+
+			return Task.CompletedTask;
+		}
 	}
 }

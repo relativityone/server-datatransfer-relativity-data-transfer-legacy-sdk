@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using NUnit.Framework;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.Services.Interfaces.LibraryApplication;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
@@ -53,5 +54,21 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI
 
             Assert.That(libraryVersion, Is.Not.Empty);
         }
+
+
+
+        [IdentifiedTest("11DE3768-9288-4DBC-B988-473FD654287D")]
+        [Description("Check that DataTransfer.Legacy health check is working")]
+        public void ShouldRunHealthCheck()
+        {
+	        var keplerServiceFactory = RelativityFacade.Instance.GetComponent<ApiComponent>().ServiceFactory;
+	        using (var healthCheckService = keplerServiceFactory.GetServiceProxy<IHealthCheckService>())
+	        {
+		        var response = healthCheckService.HealthCheckAsync();
+                Assert.That(response.Result.IsHealthy, Is.True);
+                Assert.That(response.Result.Message, Is.EqualTo($"{ApplicationName} is Healthy"));
+	        }
+        }
+
     }
 }

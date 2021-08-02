@@ -212,12 +212,21 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			var assembly = AssemblyDefinition.ReadAssembly(GetWebApiKeplerContractDll());
 			foreach (var type in assembly.MainModule.Types.Where(x => x.Name != nameof(IWebDistributedService)))
 			{
-				if (type.CustomAttributes.Any(x => x.AttributeType.Name == nameof(WebServiceAttribute)) 
-				    && type.Name != nameof(IIAPICommunicationModeService))
+				if (GetOnlyKeplerServicesNames().Contains(type.Name))
+				{
+					continue;
+				}
+
+				if (type.CustomAttributes.Any(x => x.AttributeType.Name == nameof(WebServiceAttribute)))
 				{
 					yield return type;
 				}
 			}
+		}
+
+		private static IEnumerable<string> GetOnlyKeplerServicesNames()
+		{
+			return new[] {nameof(IIAPICommunicationModeService), nameof(IHealthCheckService)};
 		}
 
 		private static string GetWebApiKeplerContractDll()

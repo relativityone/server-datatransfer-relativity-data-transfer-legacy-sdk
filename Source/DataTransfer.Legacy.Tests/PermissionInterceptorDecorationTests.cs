@@ -13,11 +13,16 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		[Test]
 		public void ShouldHaveAllServiceClassesAttributedWithPermissionInterceptor()
 		{
-			var services = typeof(BaseService).Assembly.GetTypes().Where(x => x.Name.EndsWith("Service") && !x.Name.EndsWith(nameof(BaseService)));
+			var services = typeof(BaseService).Assembly
+				.GetTypes()
+				.Where(x => x.Name.EndsWith("Service"))
+				.Except(new[] {typeof(BaseService), typeof(HealthCheckService)});
 			foreach (var service in services)
 			{
-				service.GetCustomAttributes(typeof(InterceptorAttribute), true).Any(x =>
-					((InterceptorAttribute) x).Interceptor.ToString().EndsWith(nameof(PermissionCheckInterceptor)))
+				service.GetCustomAttributes(typeof(InterceptorAttribute), true)
+					.Any(x =>
+					((InterceptorAttribute) x).Interceptor.ToString()
+					.EndsWith(nameof(PermissionCheckInterceptor)))
 					.Should().BeTrue();
 			}
 		}

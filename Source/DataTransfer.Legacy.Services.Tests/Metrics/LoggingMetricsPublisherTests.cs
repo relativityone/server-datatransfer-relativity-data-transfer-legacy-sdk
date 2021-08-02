@@ -29,5 +29,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 
 			_loggerMock.Verify(x => x.LogInformation("Metrics: {@metrics}", metrics), Times.Once);
 		}
+
+
+		[Test]
+		public async Task ShouldLogHealthCheckWhenPublished([Values(true, false)] bool isHealthy)
+		{
+			await _uut.PublishHealthCheckResult(isHealthy, "Message");
+
+			_loggerMock.Verify(x => x.LogInformation("Health Check Result: {@isHealthy}, message: {@message}", isHealthy, "Message"), Times.Once);
+		}
 	}
 }
