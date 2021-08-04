@@ -33,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Relativity.Kepler" Version="2.15.0" />
+    <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
