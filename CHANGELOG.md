@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.27]
+- REL-581451 Updated Relativity.Kepler to version 2.15.3 (version used in the Relativity Prairie Smoke)
+
 ## [0.1.26]
 - REL-577406 Change the type of exception, NotFoundException is expected by the ImportApi
 
