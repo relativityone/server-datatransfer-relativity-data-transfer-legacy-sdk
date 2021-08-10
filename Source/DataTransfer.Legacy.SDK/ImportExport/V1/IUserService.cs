@@ -11,6 +11,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	public interface IUserService : IDisposable
 	{
 		[HttpPost]
+		[Route("RetrieveAllAssignableInCaseAsync")]
 		Task<DataSetWrapper> RetrieveAllAssignableInCaseAsync(int workspaceID, string correlationID);
 
 		/// <summary>
@@ -18,6 +19,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </summary>
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
+		[Route("LogoutAsync")]
 		Task LogoutAsync(string correlationID);
 
 		/// <summary>
@@ -25,6 +27,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </summary>
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
+		[Route("ClearCookiesBeforeLoginAsync")]
 		Task ClearCookiesBeforeLoginAsync(string correlationID);
 
 		/// <summary>
@@ -32,6 +35,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </summary>
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
+		[Route("LoggedInAsync")]
 		Task<bool> LoggedInAsync(string correlationID);
 
 		/// <summary>
@@ -39,6 +43,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </summary>
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
+		[Route("LoginAsync")]
 		Task<bool> LoginAsync([SensitiveData] string emailAddress, [SensitiveData] string password, string correlationID);
 
 		/// <summary>
@@ -46,6 +51,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </summary>
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
+		[Route("GenerateDistributedAuthenticationTokenAsync")]
 		Task<string> GenerateDistributedAuthenticationTokenAsync(string correlationID);
 	}
 }

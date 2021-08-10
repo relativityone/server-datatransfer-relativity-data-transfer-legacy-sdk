@@ -40,12 +40,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<IKeplerStream> DownloadFullTextAsync(int workspaceID, int artifactID, string correlationID)
 		{
-			throw new NotSupportedException();
+			throw new NotSupportedException("This should not be used when using Kepler endpoints");
 		}
 
 		public Task<IKeplerStream> DownloadLongTextFieldAsync(int workspaceID, int artifactID, int longTextFieldArtifactID, string correlationID)
 		{
-			throw new NotSupportedException();
+			throw new NotSupportedException("This should not be used when using Kepler endpoints");
 		}
 
 		public Task<IKeplerStream> DownloadFieldFileAsync(int workspaceID, int objectArtifactID, int fileID,

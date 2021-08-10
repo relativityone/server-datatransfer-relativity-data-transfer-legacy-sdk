@@ -11,9 +11,11 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	public interface IObjectTypeService : IDisposable
 	{
 		[HttpPost]
+		[Route("RetrieveAllUploadableAsync")]
 		Task<DataSetWrapper> RetrieveAllUploadableAsync(int workspaceID, string correlationID);
 
 		[HttpPost]
+		[Route("RetrieveParentArtifactTypeIDAsync")]
 		Task<DataSetWrapper> RetrieveParentArtifactTypeIDAsync(int workspaceID, int artifactTypeID, string correlationID);
 	}
 }

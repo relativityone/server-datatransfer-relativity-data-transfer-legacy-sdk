@@ -18,15 +18,19 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// "CE2E5412-3422-4721-9E05-317D74416E73" }
 		/// </example>
 		[HttpPost]
+		[Route("AuditExportAsync")]
 		Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID);
 
 		[HttpPost]
+		[Route("AuditObjectImportAsync")]
 		Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID);
 
 		[HttpPost]
+		[Route("AuditImageImportAsync")]
 		Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID);
 
 		[HttpPost]
+		[Route("DeleteAuditTokenAsync")]
 		Task DeleteAuditTokenAsync(string token, string correlationID);
 	}
 }

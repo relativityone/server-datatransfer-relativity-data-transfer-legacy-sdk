@@ -11,24 +11,30 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	public interface IRelativityService : IDisposable
 	{
 		[HttpPost]
+		[Route("RetrieveCurrencySymbolAsync")]
 		Task<string> RetrieveCurrencySymbolAsync(string correlationID);
 
 		[Obsolete("I consider it not necessary anymore since we have Kepler versioning")]
 		[HttpPost]
+		[Route("GetImportExportWebApiVersionAsync")]
 		Task<string> GetImportExportWebApiVersionAsync(string correlationID);
 
 		[Obsolete("I consider it not necessary anymore since we have Kepler auth")]
 		[HttpPost]
+		[Route("ValidateSuccessfulLoginAsync")]
 		Task<bool> ValidateSuccessfulLoginAsync(string correlationID);
 
 		[HttpPost]
+		[Route("IsImportEmailNotificationEnabledAsync")]
 		Task<bool> IsImportEmailNotificationEnabledAsync(string correlationID);
 
 		[HttpPost]
+		[Route("RetrieveRdcConfigurationAsync")]
 		Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID);
 
 		[Obsolete("I consider it not necessary anymore since we use Kepler only")]
 		[HttpPost]
+		[Route("GetRelativityUrlAsync")]
 		Task<string> GetRelativityUrlAsync(string correlationID);
 	}
 }

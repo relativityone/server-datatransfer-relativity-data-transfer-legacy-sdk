@@ -11,6 +11,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	public interface IIAPICommunicationModeService : IDisposable
 	{
 		[HttpPost]
+		[Route("")]
 		Task<IAPICommunicationMode> GetIAPICommunicationModeAsync(string correlationId);
 	}
 }

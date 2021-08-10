@@ -14,15 +14,19 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	public interface IFieldService : IDisposable
 	{
 		[HttpPost]
+		[Route("ReadAsync")]
 		Task<Field> ReadAsync(int workspaceID, int fieldArtifactID, string correlationID);
 
 		[HttpPost]
+		[Route("RetrieveAllMappableAsync")]
 		Task<DataSetWrapper> RetrieveAllMappableAsync(int workspaceID, int artifactTypeID, string correlationID);
 
 		[HttpPost]
+		[Route("RetrievePotentialBeginBatesFieldsAsync")]
 		Task<DataSetWrapper> RetrievePotentialBeginBatesFieldsAsync(int workspaceID, string correlationID);
 
 		[HttpPost]
+		[Route("IsFieldIndexedAsync")]
 		Task<bool> IsFieldIndexedAsync(int workspaceID, int fieldArtifactID, string correlationID);
 	}
 }

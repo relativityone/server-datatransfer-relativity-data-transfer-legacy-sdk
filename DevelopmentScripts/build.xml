@@ -16,6 +16,7 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Contracts.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DistributedJobs.Data.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.ValueTuple.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.PostInstallEventHandler\bin\DataTransfer.Legacy.PostInstallEventHandler.dll</Assembly>
         </Assemblies>
         <ResourceFiles />
         <CustomPages />
