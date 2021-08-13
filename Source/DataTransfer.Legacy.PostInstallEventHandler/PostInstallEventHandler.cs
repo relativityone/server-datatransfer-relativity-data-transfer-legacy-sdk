@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Castle.Windsor;
 using kCura.EventHandler;
 using kCura.EventHandler.CustomAttributes;
-using Castle.Windsor;
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 
-namespace DataTransfer.Legacy.PostInstallEventHandler
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 {
 	[kCura.EventHandler.CustomAttributes.Description("Post Install EventHandler")]
 	[System.Runtime.InteropServices.Guid("36AA8C8B-BF20-4678-BC4A-FAD8E051908F")]

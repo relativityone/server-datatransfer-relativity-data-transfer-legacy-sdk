@@ -9,7 +9,7 @@
     <license type="file">LICENSE.txt</license>
     <projectUrl>https://einstein.kcura.com/display/DTV/IAPI+2.0</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Models for communication in migrated WebAPI</description>
+    <description>Models for communication in migrated WebAPI - the package is for internal Relativity development only.</description>
     <releaseNotes>https://git.kcura.com/projects/DTX/repos/relativity-data-transfer-legacy-sdk/browse/CHANGELOG.md</releaseNotes>
     <copyright>(c) Relativity</copyright>
   </metadata>

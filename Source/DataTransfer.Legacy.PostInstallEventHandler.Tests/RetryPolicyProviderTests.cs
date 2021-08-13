@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using Relativity.API;
 
-namespace DataTransfer.Legacy.PostInstallEventHandler.Tests
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler.Tests
 {
 	[TestFixture]
 	public class RetryPolicyProviderTests

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace DataTransfer.Legacy.PostInstallEventHandler
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 {
 	public interface IInstanceSettingsService
 	{

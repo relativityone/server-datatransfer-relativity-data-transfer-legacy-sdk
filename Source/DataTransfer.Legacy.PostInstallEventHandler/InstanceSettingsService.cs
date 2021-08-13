@@ -1,14 +1,10 @@
-﻿using System.Drawing;
-using Relativity.Services.Layout.DataContracts.Builder;
+﻿using System;
+using System.Threading.Tasks;
+using Relativity.API;
+using Relativity.Services.InstanceSetting;
 
-namespace DataTransfer.Legacy.PostInstallEventHandler
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 {
-	using System;
-	using System.Threading.Tasks;
-	using Relativity.API;
-	using System.Linq;
-	using Relativity.Services.InstanceSetting;
-
 	public class InstanceSettingsService : IInstanceSettingsService
 	{
 		private readonly IAPILog _logger;
@@ -34,11 +30,11 @@ namespace DataTransfer.Legacy.PostInstallEventHandler
 			try
 			{
 				_logger.LogInformation("DataTransfer.Legacy PostInstallEventHandler: start upserting instance setting {name}.", name);
-				var setting = new InstanceSetting
+				var setting = new Services.InstanceSetting.InstanceSetting
 				{
 					Name = name,
 					Section = section,
-					ValueType = Relativity.Services.InstanceSetting.ValueType.Text,
+					ValueType = Services.InstanceSetting.ValueType.Text,
 					Value = value,
 					Description = description,
 				};
@@ -54,11 +50,11 @@ namespace DataTransfer.Legacy.PostInstallEventHandler
 			}
 		}
 
-		private async Task<bool> CreateFromInstanceSettingRequest(InstanceSetting settings)
+		private async Task<bool> CreateFromInstanceSettingRequest(Services.InstanceSetting.InstanceSetting settings)
 		{
 			using (var instanceSettingManager = this._helper.GetServicesManager().CreateProxy<IInstanceSettingManager>(ExecutionIdentity.System))
 			{
-				var query = new Relativity.Services.Query { Condition = $"'Name' == '{settings.Name}' AND 'Section' == '{settings.Section}'" };
+				var query = new Services.Query { Condition = $"'Name' == '{settings.Name}' AND 'Section' == '{settings.Section}'" };
 				InstanceSettingQueryResultSet instanceSettings = await this._retryPolicyProvider.GetAsyncRetryPolicy().ExecuteAsync(() => instanceSettingManager.QueryAsync(query)).ConfigureAwait(false);
 				if (!instanceSettings.Success)
 				{

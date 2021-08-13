@@ -10,11 +10,13 @@ using Relativity.Testing.Identification;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.CD
 {
+	[TestExecutionCategory.CD]
+	[TestLevel.L3]
 	[IdentifiedTestFixture("1068299A-A7E9-469E-BD28-0F2AFDD9CE65")]
 	public class APITests : TestSetup
 	{
 		public APITests() 
-			: base("DataTransfer.Legacy")
+			: base("DataTransfer.Legacy", desiredNumberOfDocuments: 0, importImages: false)
 		{ }
 
 		[IdentifiedTest("94CE4420-EF1F-47C2-87BC-907468D66CE3")]

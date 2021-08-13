@@ -25,6 +25,7 @@
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
+    <RootNamespace>Relativity.DataTransfer.Legacy.PostInstallEventHandler</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="castle.windsor" Version="3.3.0.51" />

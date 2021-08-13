@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+
+## [0.1.29]
+- REL-574902 Performacne Test
+
 ## [0.1.28]
 - REL-577456 Added DataTransfer.Legacy.PostInstallEventHandler for upserting instance setting
 

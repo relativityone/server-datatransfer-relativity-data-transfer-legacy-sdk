@@ -1,10 +1,10 @@
-﻿namespace DataTransfer.Legacy.PostInstallEventHandler
-{
-	using System;
-	using System.Runtime.CompilerServices;
-	using Polly;
-	using Relativity.API;
+﻿using System;
+using System.Runtime.CompilerServices;
+using Polly;
+using Relativity.API;
 
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
+{
 	/// <inheritdoc />
 	public class RetryPolicyProvider : IRetryPolicyProvider
 	{

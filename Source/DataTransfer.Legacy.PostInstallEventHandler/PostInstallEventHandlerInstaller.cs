@@ -1,11 +1,10 @@
-﻿namespace DataTransfer.Legacy.PostInstallEventHandler
-{
-	using System;
-	using Relativity.API;
-	using Castle.MicroKernel.Registration;
-	using Castle.MicroKernel.SubSystems.Configuration;
-	using Castle.Windsor;
+﻿using System;
+using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using Relativity.API;
 
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
+{
 	public class PostInstallEventHandlerInstaller
 	{
 		/// <summary>

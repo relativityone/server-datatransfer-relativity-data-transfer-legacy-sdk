@@ -1,15 +1,15 @@
-﻿namespace DataTransfer.Legacy.PostInstallEventHandler.Tests
-{
-	using System;
-	using System.Collections.Generic;
-	using System.Threading.Tasks;
-	using Moq;
-	using NUnit.Framework;
-	using Polly;
-	using Relativity.API;
-	using Relativity.Services;
-	using Relativity.Services.InstanceSetting;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Moq;
+using NUnit.Framework;
+using Polly;
+using Relativity.API;
+using Relativity.Services;
+using Relativity.Services.InstanceSetting;
 
+namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler.Tests
+{
 	[TestFixture]
 	public class InstanceSettingsServiceTests
 	{
@@ -45,15 +45,15 @@
 			string desc = "sample description";
 			Mock<IInstanceSettingManager> instanceSettingManagerMock = new Mock<IInstanceSettingManager>();
 			this._helperMock.Setup(m => m.GetServicesManager().CreateProxy<IInstanceSettingManager>(It.IsAny<ExecutionIdentity>())).Returns(instanceSettingManagerMock.Object);
-			instanceSettingManagerMock.Setup(m => m.QueryAsync(It.IsAny<Query>())).ReturnsAsync(new InstanceSettingQueryResultSet() { Success = true, Results = new List<Result<InstanceSetting>>() { new Result<InstanceSetting>() { Artifact = new InstanceSetting() { ArtifactID = 1 } } } });
-			instanceSettingManagerMock.Setup(m => m.UpdateSingleAsync(It.IsAny<InstanceSetting>())).Returns(Task.FromResult(0));
+			instanceSettingManagerMock.Setup(m => m.QueryAsync(It.IsAny<Services.Query>())).ReturnsAsync(new InstanceSettingQueryResultSet() { Success = true, Results = new List<Result<Services.InstanceSetting.InstanceSetting>>() { new Result<Services.InstanceSetting.InstanceSetting>() { Artifact = new Services.InstanceSetting.InstanceSetting() { ArtifactID = 1 } } } });
+			instanceSettingManagerMock.Setup(m => m.UpdateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>())).Returns(Task.FromResult(0));
 
 			// Act
 			bool result = await this._sut.CreateInstanceSettingsTextType(agentName, sectionName, value, desc).ConfigureAwait(false);
 
 			// Assert
-			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Query>()), Times.Once);
-			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<InstanceSetting>()), Times.Never);
+			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Services.Query>()), Times.Once);
+			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>()), Times.Never);
 			Assert.That(result, Is.EqualTo(true));
 		}
 
@@ -69,15 +69,15 @@
 			string desc = "sample description";
 			Mock<IInstanceSettingManager> instanceSettingManagerMock = new Mock<IInstanceSettingManager>();
 			this._helperMock.Setup(m => m.GetServicesManager().CreateProxy<IInstanceSettingManager>(It.IsAny<ExecutionIdentity>())).Returns(instanceSettingManagerMock.Object);
-			instanceSettingManagerMock.Setup(m => m.QueryAsync(It.IsAny<Query>())).ReturnsAsync(new InstanceSettingQueryResultSet() { Success = true, Results = new List<Result<InstanceSetting>>() });
-			instanceSettingManagerMock.Setup(m => m.CreateSingleAsync(It.IsAny<InstanceSetting>())).ReturnsAsync(1);
+			instanceSettingManagerMock.Setup(m => m.QueryAsync(It.IsAny<Services.Query>())).ReturnsAsync(new InstanceSettingQueryResultSet() { Success = true, Results = new List<Result<Services.InstanceSetting.InstanceSetting>>() });
+			instanceSettingManagerMock.Setup(m => m.CreateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>())).ReturnsAsync(1);
 
 			// Act
 			bool result = await this._sut.CreateInstanceSettingsTextType(agentName, sectionName, value, desc).ConfigureAwait(false);
 
 			// Assert
-			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Query>()), Times.Once);
-			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<InstanceSetting>()), Times.Once);
+			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Services.Query>()), Times.Once);
+			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>()), Times.Once);
 			_loggerMock.Verify(x => x.LogInformation(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<object>()), Times.Once);
 			Assert.That(result, Is.EqualTo(true));
 		}
@@ -94,13 +94,13 @@
 			string desc = "sample description";
 			Mock<IInstanceSettingManager> instanceSettingManagerMock = new Mock<IInstanceSettingManager>();
 			this._helperMock.Setup(m => m.GetServicesManager().CreateProxy<IInstanceSettingManager>(It.IsAny<ExecutionIdentity>())).Returns(instanceSettingManagerMock.Object);
-			instanceSettingManagerMock.Setup(m => m.QueryAsync(It.IsAny<Query>())).ReturnsAsync(new InstanceSettingQueryResultSet() { Success = true, Results = new List<Result<InstanceSetting>>() });
-			instanceSettingManagerMock.Setup(m => m.CreateSingleAsync(It.IsAny<InstanceSetting>())).Throws<Exception>();
+			instanceSettingManagerMock.Setup(m => m.QueryAsync(It.IsAny<Services.Query>())).ReturnsAsync(new InstanceSettingQueryResultSet() { Success = true, Results = new List<Result<Services.InstanceSetting.InstanceSetting>>() });
+			instanceSettingManagerMock.Setup(m => m.CreateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>())).Throws<Exception>();
 
 			// Act && Assert
 			Assert.ThrowsAsync<Exception>(() => this._sut.CreateInstanceSettingsTextType(agentName, sectionName, value, desc));
-			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Query>()), Times.Once);
-			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<InstanceSetting>()), Times.Once);
+			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Services.Query>()), Times.Once);
+			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>()), Times.Once);
 		}
 	}
 }

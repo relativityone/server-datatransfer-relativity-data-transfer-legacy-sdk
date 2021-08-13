@@ -79,7 +79,7 @@
     <InstallEventHandler>
       <ArtifactId>1045283</ArtifactId>
       <AssemblyArtifactId>1329220</AssemblyArtifactId>
-      <Name>DataTransfer.Legacy.PostInstallEventHandler.PostInstallEventHandler</Name>
+      <Name>Relativity.DataTransfer.Legacy.PostInstallEventHandler.PostInstallEventHandler</Name>
       <Guid>bf653f0f-6b16-47de-a8b8-9e01e31931fd</Guid>
       <Guids>263f7c7d-18c1-4ba6-99be-a7105364237a</Guids>
       <ExecutionType>8</ExecutionType>
