@@ -10,6 +10,8 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataTransfer.Legacy.Services.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\AutoMapper.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\BCrypt.Net-Core.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Castle.Core.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Castle.Windsor.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\dtSearchNetApi4.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\kCura.Assembly.Analysis.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\kCura.LongPath.dll</Assembly>

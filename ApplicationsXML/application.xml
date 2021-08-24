@@ -2,6 +2,16 @@
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <ArtifactViewFields />
   <Assemblies>
+      <Assembly>
+      <Keywords />
+      <Name>Castle.Core.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Castle.Windsor.dll</Name>
+      <Notes />
+    </Assembly>
 	  <Assembly>
       <Keywords />
       <Name>Relativity.DataTransfer.Legacy.SDK.dll</Name>
