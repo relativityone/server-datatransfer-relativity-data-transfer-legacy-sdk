@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.32]
+- REL-581451 set `disableSignedModule` to true in Castle's `DefaultProxyFactory`
+
 ## [0.1.31]
 - REL-587119 - Added Castle dll's to RAP
 
