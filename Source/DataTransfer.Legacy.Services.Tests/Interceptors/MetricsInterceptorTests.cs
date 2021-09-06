@@ -62,7 +62,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_loggerMock.Verify(m => m.LogContextPushProperty("CallDuration", It.IsAny<object>()));
 			_loggerMock.Verify(m => m.LogInformation("DataTransfer.Legacy service Kepler call {@controller} {@method} finished", It.Is<object[]>(x => (string)x[0] == "MetricsInterceptorTestClass" &&
 				(string)x[1] == "Run")));
-			_metricsContextMock.Verify(m => m.PushProperty("Action:MetricsInterceptorTestClass.Run", It.IsAny<object>()));
+			
+			_metricsContextMock.Verify(m => m.PushProperty($"TargetType", It.IsAny<object>()));
+			_metricsContextMock.Verify(m => m.PushProperty($"Method", It.IsAny<object>()));
+			_metricsContextMock.Verify(m => m.PushProperty($"ElapsedMilliseconds", It.IsAny<object>()));
+
 			_metricsContextMock.Verify(m => m.Publish());
 		}
 	}
