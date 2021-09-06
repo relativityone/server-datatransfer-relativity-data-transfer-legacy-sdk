@@ -26,10 +26,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 		public async Task ShouldPublishMetricsToAPMWhenExecuted()
 		{
 			var metrics = Any.Dictionary<string, object>();
+			var counterOperation = new Mock<ICounterMeasure>();
+			_apmMock.Setup(x => x.CountOperation(It.IsAny<string>(),
+					It.IsAny<Guid>(), It.IsAny<string>(), 
+					It.IsAny<string>(), It.IsAny<bool>(), 
+					It.IsAny<int?>(), It.IsAny<Dictionary<string, object>>(),
+					It.IsAny<IEnumerable<ISink>>()))
+				.Returns(counterOperation.Object);
 
 			await _uut.Publish(metrics);
 
 			_apmMock.Verify(x => x.CountOperation("DataTransfer.Legacy.KeplerCall", default(Guid), "", "operation(s)", true, null, metrics, null), Times.Once);
+			counterOperation.Verify(m=>m.Write(), Times.Once);
 		}
 
 		[Test]

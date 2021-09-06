@@ -34,7 +34,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns> 
 		public Task Publish(Dictionary<string, object> metrics)
 		{
-			_apm.CountOperation(BucketName, customData: metrics);
+			var countOperation = _apm.CountOperation(BucketName, customData: metrics);
+			countOperation.Write();
+
 			return Task.CompletedTask;
 		}
 
