@@ -39,14 +39,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		public override async Task ExecuteAfter(IInvocation invocation, dynamic returnValue)
 		{
 			_stopwatch.Stop();
+			var elapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
+			var metrics = _metricsContextFactory.Invoke();
 
-			_metricsContextFactory.Invoke().PushProperty(
-				$"Action:{invocation.TargetType.Name}.{invocation.Method.Name}",
-				_stopwatch.ElapsedMilliseconds);
+			metrics.PushProperty($"TargetType", invocation.TargetType.Name);
+			metrics.PushProperty($"Method", invocation.Method.Name);
+			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 
-			await _metricsContextFactory.Invoke().Publish();
+			await metrics.Publish();
 
-			using (Logger.LogContextPushProperty("CallDuration", _stopwatch.ElapsedMilliseconds))
+			using (Logger.LogContextPushProperty("CallDuration", elapsedMilliseconds))
 			{
 				Logger.LogInformation(
 					"DataTransfer.Legacy service Kepler call {@controller} {@method} finished",
