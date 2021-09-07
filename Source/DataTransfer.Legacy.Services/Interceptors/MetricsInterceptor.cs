@@ -41,7 +41,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			_stopwatch.Stop();
 			var elapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
 			var metrics = _metricsContextFactory.Invoke();
-
+			
+			var arguments = InterceptorHelper.GetFunctionArgumentsFrom(invocation);
+			foreach (var argument in arguments)
+			{
+				metrics.PushProperty(argument.Key, argument.Value);
+			}
 			metrics.PushProperty($"TargetType", invocation.TargetType.Name);
 			metrics.PushProperty($"Method", invocation.Method.Name);
 			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
