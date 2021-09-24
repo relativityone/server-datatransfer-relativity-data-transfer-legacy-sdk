@@ -2,6 +2,7 @@
 using Castle.Core;
 using FluentAssertions;
 using NUnit.Framework;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.Services;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 
@@ -16,7 +17,7 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			var services = typeof(BaseService).Assembly
 				.GetTypes()
 				.Where(x => x.Name.EndsWith("Service"))
-				.Except(new[] {typeof(BaseService), typeof(HealthCheckService)});
+				.Except(new[] {typeof(BaseService), typeof(HealthCheckService), typeof(TAPIService) });
 			foreach (var service in services)
 			{
 				service.GetCustomAttributes(typeof(InterceptorAttribute), true)
