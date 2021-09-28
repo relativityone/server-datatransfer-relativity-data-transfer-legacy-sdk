@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Castle.Core;
-using kCura.Config;
 using Relativity.Core;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
@@ -23,8 +22,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private readonly IInstanceSettingsBundle _instanceSettingsBundle;
 
-		private const string CloudInstanceSettingSection = "Relativity.Core";
-		private const string CloudInstanceSettingName = "CloudInstance";
 		private const string TapiMaxAllowedTargetDataRateMbpsSettingSection = "Relativity.DataTransfer";
 		private const string TapiMaxAllowedTargetDataRateMbpsSettingName = "TapiMaxAllowedTargetDataRateMbps";
 
@@ -34,29 +31,25 @@ namespace Relativity.DataTransfer.Legacy.Services
 			_instanceSettingsBundle = instanceSettingsBundle;
 		}
 
-		public async Task<DataSetWrapper> RetrieveTapiConfigurationAsync(string correlationID)
+		public async Task<TAPIConfiguration> RetrieveConfigurationAsync(string correlationID)
 		{
-			var result = await RetrieveTapiConfiguration(GetBaseServiceContext(AdminWorkspace)).ConfigureAwait(false);
-			return result != null ? new DataSetWrapper(result.ToDataSet()) : null;
-		}
+			bool cloudInstance = Relativity.Core.Config.CloudInstance;
+			int? tapiMaxAllowedTargetDataRateMbpse = null;
 
-		public async Task<kCura.Data.DataView> RetrieveTapiConfiguration(BaseServiceContext sc)
-		{
-			System.Data.DataTable table = new System.Data.DataTable();
-			table.Columns.Add(new DataColumn("Section", typeof(string)));
-			table.Columns.Add(new DataColumn("Name", typeof(string)));
-			table.Columns.Add(new DataColumn("Value", typeof(string)));
-
-			var cloudInstance = await _instanceSettingsBundle
-				.GetStringAsync(CloudInstanceSettingSection, CloudInstanceSettingName).ConfigureAwait(false);
-
-			var tapiMaxAllowedTargetDataRateMbpse = await _instanceSettingsBundle
+			var tapiMaxAllowedTargetDataRateMbpseResult = await _instanceSettingsBundle
 				.GetStringAsync(TapiMaxAllowedTargetDataRateMbpsSettingSection,
-					TapiMaxAllowedTargetDataRateMbpsSettingSection).ConfigureAwait(false);
+					TapiMaxAllowedTargetDataRateMbpsSettingName).ConfigureAwait(false);
+			
+			if (tapiMaxAllowedTargetDataRateMbpseResult != null)
+			{
+				tapiMaxAllowedTargetDataRateMbpse = Convert.ToInt32(tapiMaxAllowedTargetDataRateMbpseResult);
+			}
 
-			table.Rows.Add((object) CloudInstanceSettingSection, (object) CloudInstanceSettingName, (object) cloudInstance);
-			table.Rows.Add((object) TapiMaxAllowedTargetDataRateMbpsSettingSection, (object) TapiMaxAllowedTargetDataRateMbpsSettingName, (object) tapiMaxAllowedTargetDataRateMbpse);
-			return new kCura.Data.DataView(table);
+			return new TAPIConfiguration()
+			{
+				IsCloudInstance = cloudInstance,
+				TapiMaxAllowedTargetDataRateMbps = tapiMaxAllowedTargetDataRateMbpse
+			};
 		}
     }
 }

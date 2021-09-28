@@ -10,11 +10,11 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 {
 	[WebService("TAPI configuration service")]
 	[ServiceAudience(Audience.Private)]
-	[RoutePrefix("relativity")]
+	[RoutePrefix("tapi")]
 	public interface ITAPIService : IDisposable
 	{
 		[HttpPost]
-		[Route("RetrieveTapiConfigurationAsync")]
-		Task<DataSetWrapper> RetrieveTapiConfigurationAsync(string correlationID);
+		[Route("RetrieveConfigurationAsync")]
+		Task<TAPIConfiguration> RetrieveConfigurationAsync(string correlationID);
 	}
 }
