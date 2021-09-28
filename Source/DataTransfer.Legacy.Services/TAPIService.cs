@@ -34,21 +34,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public async Task<TAPIConfiguration> RetrieveConfigurationAsync(string correlationID)
 		{
 			bool cloudInstance = Relativity.Core.Config.CloudInstance;
-			int? tapiMaxAllowedTargetDataRateMbpse = null;
-
-			var tapiMaxAllowedTargetDataRateMbpseResult = await _instanceSettingsBundle
-				.GetStringAsync(TapiMaxAllowedTargetDataRateMbpsSettingSection,
+			uint? tapiMaxAllowedTargetDataRateMbps = tapiMaxAllowedTargetDataRateMbps = await _instanceSettingsBundle
+				.GetUIntAsync(TapiMaxAllowedTargetDataRateMbpsSettingSection,
 					TapiMaxAllowedTargetDataRateMbpsSettingName).ConfigureAwait(false);
-			
-			if (tapiMaxAllowedTargetDataRateMbpseResult != null)
-			{
-				tapiMaxAllowedTargetDataRateMbpse = Convert.ToInt32(tapiMaxAllowedTargetDataRateMbpseResult);
-			}
 
 			return new TAPIConfiguration()
 			{
 				IsCloudInstance = cloudInstance,
-				TapiMaxAllowedTargetDataRateMbps = tapiMaxAllowedTargetDataRateMbpse
+				TapiMaxAllowedTargetDataRateMbps = tapiMaxAllowedTargetDataRateMbps
 			};
 		}
     }
