@@ -69,35 +69,35 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				if (Attribute.IsDefined(currentParameter, typeof(SensitiveDataAttribute)))
 				{
 					var data = invocationArgument.ToString();
-					PushSensitiveDataMetrics(generalMetrics, currentParameter.Name, data, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushSensitiveDataMetrics(generalMetrics, currentParameter.Name, data);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(AuditExportDataAttribute)))
 				{
 					var exportStatistics = (ExportStatistics)invocationArgument;
-					PushExportStatisticsMetrics(generalMetrics, exportStatistics, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushExportStatisticsMetrics(generalMetrics, exportStatistics);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(AuditObjectImportDataAttribute)))
 				{
 					var objectImportStatistics = (ObjectImportStatistics)invocationArgument;
-					PushObjectImportStatisticsMetrics(generalMetrics, objectImportStatistics, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushObjectImportStatisticsMetrics(generalMetrics, objectImportStatistics);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(AuditImageImportDataAttribute)))
 				{
 					var imageImportStatistics = (ImageImportStatistics)invocationArgument;
-					PushImageImportStatisticsMetrics(generalMetrics, imageImportStatistics, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushImageImportStatisticsMetrics(generalMetrics, imageImportStatistics);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(ObjectLoadInfoDataAttribute)))
 				{
 					var objectLoadInfo = (SDK.ImportExport.V1.Models.ObjectLoadInfo)invocationArgument;
-					PushObjectLoadInfoMetrics(generalMetrics, objectLoadInfo, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushObjectLoadInfoMetrics(generalMetrics, objectLoadInfo);
 
 					await SendFieldInfoMetrics(invocation, parameters, objectLoadInfo, elapsedMilliseconds);
 
@@ -107,7 +107,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				if (Attribute.IsDefined(currentParameter, typeof(NativeLoadInfoDataAttribute)))
 				{
 					var nativeLoadInfo = (SDK.ImportExport.V1.Models.NativeLoadInfo)invocationArgument;
-					PushNativeLoadInfoMetrics(generalMetrics, nativeLoadInfo, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushNativeLoadInfoMetrics(generalMetrics, nativeLoadInfo);
 
 					await SendFieldInfoMetrics(invocation, parameters, nativeLoadInfo, elapsedMilliseconds);
 
@@ -117,29 +117,29 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				if (Attribute.IsDefined(currentParameter, typeof(ImageLoadInfoDataAttribute)))
 				{
 					var imageLoadInfo = (SDK.ImportExport.V1.Models.ImageLoadInfo)invocationArgument;
-					PushImageLoadInfoMetrics(generalMetrics, imageLoadInfo, invocation.TargetType.Name, invocation.Method.Name, elapsedMilliseconds);
+					PushImageLoadInfoMetrics(generalMetrics, imageLoadInfo);
 					continue;
 				}
 
 				generalMetrics.PushProperty(currentParameter.Name, invocationArgument.ToString());
 			}
+
+			generalMetrics.PushProperty($"TargetType", invocation.TargetType.Name);
+			generalMetrics.PushProperty($"Method", invocation.Method.Name);
+			generalMetrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 			await generalMetrics.Publish();
 		}
 
-		private void PushSensitiveDataMetrics(IMetricsContext metrics, string name, string value, string targetType, string method, long elapsedMilliseconds)
+		private void PushSensitiveDataMetrics(IMetricsContext metrics, string name, string value)
 		{
 			metrics.PushProperty("SensitiveDataMetrics", "1");
 
 			var hashValue = InterceptorHelper.HashValue(value);
 
 			metrics.PushProperty(name, hashValue);
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 
-		private void PushExportStatisticsMetrics(IMetricsContext metrics, ExportStatistics exportStatistics, string targetType, string method, long elapsedMilliseconds)
+		private void PushExportStatisticsMetrics(IMetricsContext metrics, ExportStatistics exportStatistics)
 		{
 			metrics.PushProperty("ExportStatisticsMetrics", "1");
 			metrics.PushProperty(nameof(exportStatistics.Type), exportStatistics.Type);
@@ -190,13 +190,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(exportStatistics.ArtifactTypeID), exportStatistics.ArtifactTypeID.ToString());
 			metrics.PushProperty(nameof(exportStatistics.SubdirectoryPDFPrefix), exportStatistics.SubdirectoryPDFPrefix);
 			metrics.PushProperty(nameof(exportStatistics.ExportSearchablePDFs), exportStatistics.ExportSearchablePDFs.ToString());
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 
-		private void PushObjectImportStatisticsMetrics(IMetricsContext metrics, ObjectImportStatistics objectImportStatistics, string targetType, string method, long elapsedMilliseconds)
+		private void PushObjectImportStatisticsMetrics(IMetricsContext metrics, ObjectImportStatistics objectImportStatistics)
 		{
 			metrics.PushProperty("ObjectImportStatisticsMetrics", "1");
 			metrics.PushProperty(nameof(objectImportStatistics.ArtifactTypeID), objectImportStatistics.ArtifactTypeID.ToString());
@@ -235,13 +231,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(objectImportStatistics.RunTimeInMilliseconds), objectImportStatistics.RunTimeInMilliseconds.ToString());
 			metrics.PushProperty(nameof(objectImportStatistics.SendNotification), objectImportStatistics.SendNotification.ToString());
 			metrics.PushProperty(nameof(objectImportStatistics.OverlayBehavior), objectImportStatistics.OverlayBehavior.HasValue ? Enum.GetName(typeof(OverlayBehavior), objectImportStatistics.OverlayBehavior) : "null");
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 
-		private void PushImageImportStatisticsMetrics(IMetricsContext metrics, ImageImportStatistics imageImportStatistics, string targetType, string method, long elapsedMilliseconds)
+		private void PushImageImportStatisticsMetrics(IMetricsContext metrics, ImageImportStatistics imageImportStatistics)
 		{
 			metrics.PushProperty("ImageImportStatisticsMetrics", "1");
 			metrics.PushProperty(nameof(imageImportStatistics.ExtractedTextReplaced), imageImportStatistics.ExtractedTextReplaced.ToString());
@@ -267,13 +259,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(imageImportStatistics.RunTimeInMilliseconds), imageImportStatistics.RunTimeInMilliseconds.ToString());
 			metrics.PushProperty(nameof(imageImportStatistics.SendNotification), imageImportStatistics.SendNotification.ToString());
 			metrics.PushProperty(nameof(imageImportStatistics.OverlayBehavior), imageImportStatistics.OverlayBehavior.HasValue ? Enum.GetName(typeof(OverlayBehavior), imageImportStatistics.OverlayBehavior) : "null");
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 
-		private void PushObjectLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ObjectLoadInfo objectLoadInfo, string targetType, string method, long elapsedMilliseconds)
+		private void PushObjectLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ObjectLoadInfo objectLoadInfo)
 		{
 			metrics.PushProperty("ObjectLoadInfoMetrics", "1");
 			metrics.PushProperty(nameof(objectLoadInfo.ArtifactTypeID), objectLoadInfo.ArtifactTypeID.ToString());
@@ -302,10 +290,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(objectLoadInfo.MoveDocumentsInAppendOverlayMode), objectLoadInfo.MoveDocumentsInAppendOverlayMode.ToString());
 			metrics.PushProperty(nameof(objectLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), objectLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(objectLoadInfo.Billable), objectLoadInfo.Billable.ToString());
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 
 		private async Task SendFieldInfoMetrics(IInvocation invocation, ParameterInfo[] parameters, SDK.ImportExport.V1.Models.NativeLoadInfo objectLoadInfo, long elapsedMilliseconds)
@@ -357,7 +341,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			await metrics.Publish();
 		}
 
-		private void PushNativeLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.NativeLoadInfo nativeLoadInfo, string targetType, string method, long elapsedMilliseconds)
+		private void PushNativeLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.NativeLoadInfo nativeLoadInfo)
 		{
 			metrics.PushProperty("NativeLoadInfoMetrics", "1");
 			var range = nativeLoadInfo.Range;
@@ -391,13 +375,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(nativeLoadInfo.MoveDocumentsInAppendOverlayMode), nativeLoadInfo.MoveDocumentsInAppendOverlayMode.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), nativeLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(nativeLoadInfo.Billable), nativeLoadInfo.Billable.ToString());
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 
-		private void PushImageLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ImageLoadInfo imageLoadInfo, string targetType, string method, long elapsedMilliseconds)
+		private void PushImageLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ImageLoadInfo imageLoadInfo)
 		{
 			metrics.PushProperty("ImageLoadInfoMetrics", "1");
 			metrics.PushProperty(nameof(imageLoadInfo.DisableUserSecurityCheck), imageLoadInfo.DisableUserSecurityCheck);
@@ -414,10 +394,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(imageLoadInfo.OverlayArtifactID), imageLoadInfo.OverlayArtifactID);
 			metrics.PushProperty(nameof(imageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(imageLoadInfo.Billable), imageLoadInfo.Billable);
-
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
 		}
 	}
 }
