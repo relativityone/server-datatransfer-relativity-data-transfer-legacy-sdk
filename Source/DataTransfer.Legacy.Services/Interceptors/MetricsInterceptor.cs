@@ -6,8 +6,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Relativity.API;
@@ -265,31 +263,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			metrics.PushProperty("ObjectLoadInfoMetrics", "1");
 			metrics.PushProperty(nameof(objectLoadInfo.ArtifactTypeID), objectLoadInfo.ArtifactTypeID.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.Range.StartIndex), objectLoadInfo.Range.StartIndex.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.Range.Count), objectLoadInfo.Range.Count.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.Overlay), Enum.GetName(typeof(OverwriteType), objectLoadInfo.Overlay));
-			metrics.PushProperty(nameof(objectLoadInfo.Repository), objectLoadInfo.Repository);
-			metrics.PushProperty(nameof(objectLoadInfo.RunID), objectLoadInfo.RunID);
-			metrics.PushProperty(nameof(objectLoadInfo.DataFileName), objectLoadInfo.DataFileName);
-			metrics.PushProperty(nameof(objectLoadInfo.UseBulkDataImport), objectLoadInfo.UseBulkDataImport.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.UploadFiles), objectLoadInfo.UploadFiles.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.CodeFileName), objectLoadInfo.CodeFileName);
-			metrics.PushProperty(nameof(objectLoadInfo.ObjectFileName), objectLoadInfo.ObjectFileName);
-			metrics.PushProperty(nameof(objectLoadInfo.DataGridFileName), objectLoadInfo.DataGridFileName);
-			metrics.PushProperty(nameof(objectLoadInfo.DataGridOffsetFileName), objectLoadInfo.DataGridOffsetFileName);
-			metrics.PushProperty(nameof(objectLoadInfo.DisableUserSecurityCheck), objectLoadInfo.DisableUserSecurityCheck.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.OnBehalfOfUserToken), objectLoadInfo.OnBehalfOfUserToken);
-			metrics.PushProperty(nameof(objectLoadInfo.AuditLevel), Enum.GetName(typeof(ImportAuditLevel), objectLoadInfo.AuditLevel));
-			metrics.PushProperty(nameof(objectLoadInfo.BulkLoadFileFieldDelimiter), objectLoadInfo.BulkLoadFileFieldDelimiter);
-			metrics.PushProperty(nameof(objectLoadInfo.OverlayArtifactID), objectLoadInfo.OverlayArtifactID.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.OverlayBehavior), Enum.GetName(typeof(OverlayBehavior), objectLoadInfo.OverlayBehavior));
-			metrics.PushProperty(nameof(objectLoadInfo.LinkDataGridRecords), objectLoadInfo.LinkDataGridRecords.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.LoadImportedFullTextFromServer), objectLoadInfo.LoadImportedFullTextFromServer.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.KeyFieldArtifactID), objectLoadInfo.KeyFieldArtifactID.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.RootFolderID), objectLoadInfo.RootFolderID.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.MoveDocumentsInAppendOverlayMode), objectLoadInfo.MoveDocumentsInAppendOverlayMode.ToString());
-			metrics.PushProperty(nameof(objectLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), objectLoadInfo.ExecutionSource));
-			metrics.PushProperty(nameof(objectLoadInfo.Billable), objectLoadInfo.Billable.ToString());
+
+			PushNativeLoadInfoMetrics(metrics, objectLoadInfo);
 		}
 
 		private async Task SendFieldInfoMetrics(IInvocation invocation, ParameterInfo[] parameters, SDK.ImportExport.V1.Models.NativeLoadInfo objectLoadInfo, long elapsedMilliseconds)
