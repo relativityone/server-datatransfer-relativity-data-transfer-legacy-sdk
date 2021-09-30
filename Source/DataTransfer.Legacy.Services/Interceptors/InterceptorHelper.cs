@@ -27,10 +27,15 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			for (var i = 0; i < parameters.Length; i++)
 			{
 				var value = invocation.Arguments[i]?.ToString() ?? "null";
+
 				if (Attribute.IsDefined(parameters[i], typeof(SensitiveDataAttribute)))
 				{
-					value = HashValue(value);
+					var hashValue  = invocation.Arguments[i]?.ToString() ?? "null";
+					hashValue = HashValue(hashValue);
+					arguments.Add(parameters[i].Name, hashValue);
+					continue;
 				}
+				
 				arguments.Add(parameters[i].Name, value);
 			}
 
