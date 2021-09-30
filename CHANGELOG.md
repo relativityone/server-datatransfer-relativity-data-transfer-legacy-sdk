@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.36]
+- REL-595509 Structured and enhanced metrics
+
 ## [0.1.35]
 - REL-591402 add metrics to APM (arguments)
 
