@@ -130,7 +130,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			metrics.PushProperty("SensitiveDataMetrics", "1");
 
-			var hashValue = HashValue(value);
+			var hashValue = InterceptorHelper.HashValue(value);
 
 			metrics.PushProperty(name, hashValue);
 
@@ -418,22 +418,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty($"TargetType", targetType);
 			metrics.PushProperty($"Method", method);
 			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
-		}
-
-		private static string HashValue(string value)
-		{
-			var sb = new StringBuilder();
-			using (var hash = SHA256.Create())
-			{
-				var enc = Encoding.UTF8;
-				var result = hash.ComputeHash(enc.GetBytes(value));
-
-				foreach (var b in result)
-				{
-					sb.Append(b.ToString("x2"));
-				}
-			}
-			return sb.ToString();
 		}
 	}
 }

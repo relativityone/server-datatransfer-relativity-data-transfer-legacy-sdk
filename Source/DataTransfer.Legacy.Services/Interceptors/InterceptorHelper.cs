@@ -27,15 +27,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			for (var i = 0; i < parameters.Length; i++)
 			{
 				var value = invocation.Arguments[i]?.ToString() ?? "null";
-
 				if (Attribute.IsDefined(parameters[i], typeof(SensitiveDataAttribute)))
 				{
-					var hashValue  = invocation.Arguments[i]?.ToString() ?? "null";
-					hashValue = HashValue(hashValue);
-					arguments.Add(parameters[i].Name, hashValue);
-					continue;
+					value = HashValue(value);
 				}
-				
 				arguments.Add(parameters[i].Name, value);
 			}
 
@@ -54,7 +49,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			return $"InnerExceptionType: {ex.GetType()}, InnerExceptionMessage: {ex.Message}";
 		}
 
-		private static string HashValue(string value)
+		public static string HashValue(string value)
 		{
 			var sb = new StringBuilder();
 			using (var hash = SHA256.Create())
