@@ -51,6 +51,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 		public static string HashValue(string value)
 		{
+			if (string.IsNullOrEmpty(value))
+			{
+				return string.Empty;
+			}
 			var sb = new StringBuilder();
 			using (var hash = SHA256.Create())
 			{

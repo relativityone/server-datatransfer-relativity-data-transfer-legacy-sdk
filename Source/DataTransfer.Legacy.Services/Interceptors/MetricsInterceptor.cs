@@ -294,16 +294,21 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 		private async Task SendFieldInfoMetrics(IInvocation invocation, ParameterInfo[] parameters, SDK.ImportExport.V1.Models.NativeLoadInfo objectLoadInfo, long elapsedMilliseconds)
 		{
+			if (objectLoadInfo.MappedFields == null)
+			{
+				return;
+			}
+
 			var workspaceID = string.Empty;
 			var firstParameter = parameters.First();
-			if (firstParameter.Name == "workspaceID")
+			if (firstParameter?.Name == "workspaceID")
 			{
 				workspaceID = invocation.Arguments.First()?.ToString();
 			}
 
 			var correlationID = string.Empty;
 			var lastParameter = parameters.Last();
-			if (lastParameter.Name == "correlationID")
+			if (lastParameter?.Name == "correlationID")
 			{
 				correlationID = invocation.Arguments.Last()?.ToString();
 			}
