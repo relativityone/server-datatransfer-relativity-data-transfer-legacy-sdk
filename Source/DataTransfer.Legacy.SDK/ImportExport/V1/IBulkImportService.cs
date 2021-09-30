@@ -12,19 +12,19 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 	{
 		[HttpPost]
 		[Route("BulkImportImageAsync")]
-		Task<MassImportResults> BulkImportImageAsync(int workspaceID, ImageLoadInfo settings, bool inRepository, string correlationID);
+		Task<MassImportResults> BulkImportImageAsync(int workspaceID, [ImageLoadInfoData] ImageLoadInfo settings, bool inRepository, string correlationID);
 
 		[HttpPost]
 		[Route("BulkImportProductionImageAsync")]
-		Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID);
+		Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, [ImageLoadInfoData] ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID);
 
 		[HttpPost]
 		[Route("BulkImportNativeAsync")]
-		Task<MassImportResults> BulkImportNativeAsync(int workspaceID, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID);
+		Task<MassImportResults> BulkImportNativeAsync(int workspaceID, [NativeLoadInfoData] NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID);
 
 		[HttpPost]
 		[Route("BulkImportObjectsAsync")]
-		Task<MassImportResults> BulkImportObjectsAsync(int workspaceID, ObjectLoadInfo settings, bool inRepository, string correlationID);
+		Task<MassImportResults> BulkImportObjectsAsync(int workspaceID, [ObjectLoadInfoData] ObjectLoadInfo settings, bool inRepository, string correlationID);
 
 		[HttpPost]
 		[Route("GenerateImageErrorFilesAsync")]
