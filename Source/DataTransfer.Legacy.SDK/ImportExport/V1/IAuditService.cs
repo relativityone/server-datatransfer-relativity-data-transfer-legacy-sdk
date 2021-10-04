@@ -19,15 +19,15 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		/// </example>
 		[HttpPost]
 		[Route("AuditExportAsync")]
-		Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID);
+		Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, [AuditExportData] ExportStatistics exportStatistics, string correlationID);
 
 		[HttpPost]
 		[Route("AuditObjectImportAsync")]
-		Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID);
+		Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, [AuditObjectImportData] ObjectImportStatistics importStatistics, string correlationID);
 
 		[HttpPost]
 		[Route("AuditImageImportAsync")]
-		Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID);
+		Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, [AuditImageImportData] ImageImportStatistics importStatistics, string correlationID);
 
 		[HttpPost]
 		[Route("DeleteAuditTokenAsync")]

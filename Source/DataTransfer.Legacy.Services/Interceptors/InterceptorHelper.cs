@@ -49,8 +49,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			return $"InnerExceptionType: {ex.GetType()}, InnerExceptionMessage: {ex.Message}";
 		}
 
-		private static string HashValue(string value)
+		public static string HashValue(string value)
 		{
+			if (string.IsNullOrEmpty(value))
+			{
+				return string.Empty;
+			}
 			var sb = new StringBuilder();
 			using (var hash = SHA256.Create())
 			{

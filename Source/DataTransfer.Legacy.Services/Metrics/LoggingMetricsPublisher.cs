@@ -31,7 +31,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns> 
 		public Task Publish(Dictionary<string, object> metrics)
 		{
-			_logger.LogInformation("Metrics: {@metrics}", metrics);
+			_logger.LogWarning("DataTransfer.Legacy Metrics: {@metrics}", metrics);
 
 			return Task.CompletedTask;
 		}
@@ -44,7 +44,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns> 
 		public Task PublishHealthCheckResult(bool isHealthy, string message)
 		{
-			_logger.LogInformation("Health Check Result: {@isHealthy}, message: {@message}", isHealthy, message);
+			if (isHealthy)
+			{
+				_logger.LogInformation("Health Check Result: {@isHealthy}, message: {@message}", isHealthy, message);
+			}
+			else
+			{
+				_logger.LogError("Health Check Result: {@isHealthy}, message: {@message}", isHealthy, message);
+			}
 
 			return Task.CompletedTask;
 		}
