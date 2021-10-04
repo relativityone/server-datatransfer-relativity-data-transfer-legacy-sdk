@@ -210,7 +210,7 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		private static IEnumerable<TypeDefinition> GetAllKeplerServices()
 		{
 			var assembly = AssemblyDefinition.ReadAssembly(GetWebApiKeplerContractDll());
-			foreach (var type in assembly.MainModule.Types.Where(x => x.Name != nameof(IWebDistributedService)))
+			foreach (var type in assembly.MainModule.Types.Where(x => x.Name != nameof(IWebDistributedService) && x.Name != nameof(ITAPIService)))
 			{
 				if (GetOnlyKeplerServicesNames().Contains(type.Name))
 				{

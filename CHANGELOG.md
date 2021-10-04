@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.1.37]
+- REL-596365 New endpoint for TAPI configuration
+
 ## [0.1.36]
 - REL-595509 Structured and enhanced metrics
 
