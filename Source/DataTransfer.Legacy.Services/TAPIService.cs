@@ -15,9 +15,9 @@ using IInstanceSettingsBundle = Relativity.API.IInstanceSettingsBundle;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
-	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class TAPIService : BaseService, ITAPIService
 	{
 		private readonly IInstanceSettingsBundle _instanceSettingsBundle;

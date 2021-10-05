@@ -17,11 +17,11 @@ using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
-	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class WebDistributedService : BaseService, IWebDistributedService
 	{
 		private readonly ArtifactManager _artifactManager;
