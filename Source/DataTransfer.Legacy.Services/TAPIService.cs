@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Castle.Core;
-using Relativity.Core;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
@@ -34,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public async Task<TAPIConfiguration> RetrieveConfigurationAsync(string correlationID)
 		{
 			bool cloudInstance = Relativity.Core.Config.CloudInstance;
-			uint? tapiMaxAllowedTargetDataRateMbps = tapiMaxAllowedTargetDataRateMbps = await _instanceSettingsBundle
+			uint? tapiMaxAllowedTargetDataRateMbps = await _instanceSettingsBundle
 				.GetUIntAsync(TapiMaxAllowedTargetDataRateMbpsSettingSection,
 					TapiMaxAllowedTargetDataRateMbpsSettingName).ConfigureAwait(false);
 
