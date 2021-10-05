@@ -42,22 +42,35 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// <inheritdoc /> 
 		public override async Task ExecuteAfter(IInvocation invocation, dynamic returnValue)
 		{
+			try
+			{
+				await LogMetricsAsync(invocation);
+			}
+			catch (Exception ex)
+			{
+				// Exception in interceptor should not break current request, no rethrow, only log the error 
+				Logger.LogError(ex, "There was an error in MetricsInterceptor during call {method} - {message}", invocation.Method.Name, ex.Message);
+			}
+		}
+
+		private async Task LogMetricsAsync(IInvocation invocation)
+		{
 			_stopwatch.Stop();
 			var elapsedMilliseconds = _stopwatch.ElapsedMilliseconds;
-			
+
 			var parameters = invocation.Method.GetParameters();
 			if (parameters.Length != invocation.Arguments.Length)
 			{
 				return;
 			}
-			
+
 			var generalMetrics = _metricsContextFactory.Invoke();
 			generalMetrics.PushProperty("GeneralMetrics", "1");
 			for (var i = 0; i < parameters.Length; i++)
 			{
 				var currentParameter = parameters[i];
 				var invocationArgument = invocation.Arguments[i];
-				
+
 				if (invocationArgument == null)
 				{
 					generalMetrics.PushProperty(currentParameter.Name, "null");
@@ -73,28 +86,28 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 				if (Attribute.IsDefined(currentParameter, typeof(AuditExportDataAttribute)))
 				{
-					var exportStatistics = (ExportStatistics)invocationArgument;
+					var exportStatistics = (ExportStatistics) invocationArgument;
 					PushExportStatisticsMetrics(generalMetrics, exportStatistics);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(AuditObjectImportDataAttribute)))
 				{
-					var objectImportStatistics = (ObjectImportStatistics)invocationArgument;
+					var objectImportStatistics = (ObjectImportStatistics) invocationArgument;
 					PushObjectImportStatisticsMetrics(generalMetrics, objectImportStatistics);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(AuditImageImportDataAttribute)))
 				{
-					var imageImportStatistics = (ImageImportStatistics)invocationArgument;
+					var imageImportStatistics = (ImageImportStatistics) invocationArgument;
 					PushImageImportStatisticsMetrics(generalMetrics, imageImportStatistics);
 					continue;
 				}
 
 				if (Attribute.IsDefined(currentParameter, typeof(ObjectLoadInfoDataAttribute)))
 				{
-					var objectLoadInfo = (SDK.ImportExport.V1.Models.ObjectLoadInfo)invocationArgument;
+					var objectLoadInfo = (SDK.ImportExport.V1.Models.ObjectLoadInfo) invocationArgument;
 					PushObjectLoadInfoMetrics(generalMetrics, objectLoadInfo);
 
 					await SendFieldInfoMetrics(invocation, parameters, objectLoadInfo, elapsedMilliseconds);
@@ -104,7 +117,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 				if (Attribute.IsDefined(currentParameter, typeof(NativeLoadInfoDataAttribute)))
 				{
-					var nativeLoadInfo = (SDK.ImportExport.V1.Models.NativeLoadInfo)invocationArgument;
+					var nativeLoadInfo = (SDK.ImportExport.V1.Models.NativeLoadInfo) invocationArgument;
 					PushNativeLoadInfoMetrics(generalMetrics, nativeLoadInfo);
 
 					await SendFieldInfoMetrics(invocation, parameters, nativeLoadInfo, elapsedMilliseconds);
@@ -114,7 +127,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 				if (Attribute.IsDefined(currentParameter, typeof(ImageLoadInfoDataAttribute)))
 				{
-					var imageLoadInfo = (SDK.ImportExport.V1.Models.ImageLoadInfo)invocationArgument;
+					var imageLoadInfo = (SDK.ImportExport.V1.Models.ImageLoadInfo) invocationArgument;
 					PushImageLoadInfoMetrics(generalMetrics, imageLoadInfo);
 					continue;
 				}
