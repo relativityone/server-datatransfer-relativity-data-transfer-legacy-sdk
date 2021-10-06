@@ -12,6 +12,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
 	/// <summary>
 	/// Base class for all interceptors.
+	/// Orders of interceptor can be important.
+	/// Interceptors are executed from top to bottom (attributes order).
 	/// </summary>
 	public abstract class InterceptorBase : IInterceptor
 	{
@@ -112,13 +114,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, $"Error during call {GetType().Name} - {serviceException.Message}");
+				Logger.LogError(serviceException, $"Error during interceptor action {GetType().Name} - {serviceException.Message}");
 				throw;
 			}
 			catch (Exception exception)
 			{
-				Logger.LogError(exception, $"Error during call {GetType().Name} - {exception.Message}");
-				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+				Logger.LogError(exception, $"Error during interceptor action {GetType().Name} - {exception.Message}");
+				throw new ServiceException($"Error during interceptor action {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
 
@@ -130,13 +132,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, $"Error during call {GetType().Name} - {serviceException.Message}");
+				Logger.LogError(serviceException, $"Error during interceptor action {GetType().Name} - {serviceException.Message}");
 				throw;
 			}
 			catch (Exception exception)
 			{
-				Logger.LogError(exception, $"Error during call {GetType().Name} - {exception.Message}");
-				throw new ServiceException($"Error during call {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+				Logger.LogError(exception, $"Error during interceptor action {GetType().Name} - {exception.Message}");
+				throw new ServiceException($"Error during interceptor action {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
 	}

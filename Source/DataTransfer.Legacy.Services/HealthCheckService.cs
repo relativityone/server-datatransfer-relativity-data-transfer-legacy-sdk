@@ -11,9 +11,9 @@ using Relativity.DataTransfer.Legacy.Services.Metrics;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
-	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	public class HealthCheckService : BaseService, IHealthCheckService
 	{
 		private const string ApplicationName = "DataTransfer.Legacy";

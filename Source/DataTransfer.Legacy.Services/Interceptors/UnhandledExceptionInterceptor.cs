@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
 	/// <summary>
 	/// Catch all unhandled exceptions from intercepted method.
+	/// This interceptor should be first one on the list of attributes to catch all unhandled exception from other interceptors.
 	/// </summary>
 	public class UnhandledExceptionInterceptor : InterceptorBase
 	{
