@@ -5,6 +5,7 @@
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     <CodeAnalysisRuleSet>Relativity.MassImport.ruleset</CodeAnalysisRuleSet>
     <IsPackable>true</IsPackable>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <!-- Start NuGet properties -->
   <PropertyGroup>

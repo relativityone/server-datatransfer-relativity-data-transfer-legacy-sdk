@@ -114,8 +114,10 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Framework
 			// Act & Assert
 			IResolveConstraint expectedExceptionConstraint = Throws
 				.Exception.TypeOf<MassImportExecutionException>()
-				.With.Message.Contain("Error occured while executing 'ObjectProxy")
+				.With.Message.Contain("Error occured while executing")
 				.And.InnerException.EqualTo(originalException);
+
+			var ex = expectedExceptionConstraint.ToString();
 			Assert.That(() => _sut.Execute(stageMock.Object, input), expectedExceptionConstraint, "It should wrap exception");
 
 			// Assert
