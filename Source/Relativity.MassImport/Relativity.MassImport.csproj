@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
+    <CodeAnalysisRuleSet>Relativity.MassImport.ruleset</CodeAnalysisRuleSet>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <!-- Start NuGet properties -->
+  <PropertyGroup>
+    <PackageId>Relativity.MassImport</PackageId>
+    <Description>Relativity</Description>
+    <PackageReleaseNotes>https://platform.relativity.com</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <Authors>Relativity ODA LLC</Authors>
+    <Owners>Relativity ODA LLC</Owners>
+    <PackageProjectUrl>https://platform.relativity.com/index.html</PackageProjectUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="Shared\**" />
+    <EmbeddedResource Remove="Shared\**" />
+    <None Remove="Shared\**" />
+  </ItemGroup>
+  <!-- End -->
+  <ItemGroup>
+	<PackageReference Include="Castle.Core" Version="3.3.0" />
+	<PackageReference Include="kCura" Version="14.2.0" />
+	<PackageReference Include="kCura.DataGrid.Services.Interfaces" Version="16.4.11" />
+	<PackageReference Include="Newtonsoft.Json" Version="6.0.8" />
+	<PackageReference Include="Polly" Version="5.7.0" />
+	<PackageReference Include="Relativity.API" Version="17.0.7" />
+    <PackageReference Include="Relativity.Core" Version="47.11.21" />
+	<PackageReference Include="Relativity.DataGrid" Version="16.4.11" />
+    <PackageReference Include="Relativity.Logging.Interfaces" Version="2019.10.2" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
+    <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
+    <PackageReference Include="System.Threading.Tasks.Dataflow" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Core\CollationStringComparer.cs" />
+    <None Include="Core\Command\ImportCommandBase.cs" />
+    <None Include="Core\Command\NativeImportCommand.cs" />
+    <None Include="Core\DetailedObjectImporReportGenerator.cs" />
+    <None Include="Core\FolderNode.cs" />
+    <None Include="Core\ImportMoveDocuments.cs" />
+    <None Include="Core\Logging\ImportLogContext.cs" />
+    <None Include="Core\Logging\LoggingExtenstion.cs" />
+    <None Include="Core\Logging\StackOfDisposables.cs" />
+    <None Include="Core\MassImporter.cs" />
+    <None Include="Core\MassImportManager.cs" />
+    <None Include="Core\MassImportManagerBase.cs" />
+    <None Include="Core\MassImportMetrics.cs" />
+    <None Include="Core\MassImportWorkspaceOperationLocks.cs" />
+    <None Include="Core\Pipeline\Builders\NativePipelineBuilder.cs" />
+    <None Include="Core\Pipeline\Builders\NativePipelineBuilderForObjectManagerAndOCR.cs" />
+    <None Include="Core\Pipeline\Builders\ObjectsPipelineBuilder.cs" />
+    <None Include="Core\Pipeline\Builders\ObjectsPipelineBuilderForObjectManagerAndRSAPI.cs" />
+    <None Include="Core\Pipeline\Framework\IPipelineExecutor.cs" />
+    <None Include="Core\Pipeline\Framework\IPipelineStage.cs" />
+    <None Include="Core\Pipeline\Framework\PipelineExecutor.cs" />
+    <None Include="Core\Pipeline\Framework\PipelineExecutorImportMeasurementsDecorator.cs" />
+    <None Include="Core\Pipeline\Framework\PipelineExecutorErrorHandlingDecorator.cs" />
+    <None Include="Core\Pipeline\Framework\Stages\ConditionalStage.cs" />
+    <None Include="Core\Pipeline\Framework\Stages\ICustomJsonSerializationStage.cs" />
+    <None Include="Core\Pipeline\Framework\Stages\IInfrastructureStage.cs" />
+    <None Include="Core\Pipeline\Framework\Stages\IPipelineStageExtensions.cs" />
+    <None Include="Core\Pipeline\Input\CommonInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\IAuditInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\ICollectCreatedIDsInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\IColumnDefinitionCacheInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\IDataGridInputReaderProviderInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\IExtractedTextInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\IImportSettingsInput.cs" />
+    <None Include="Core\Pipeline\Input\Interface\INativeSpecificInput.cs" />
+    <None Include="Core\Pipeline\Input\NativeImportInput.cs" />
+    <None Include="Core\Pipeline\Input\ObjectImportInput.cs" />
+    <None Include="Core\Pipeline\LoggingContext.cs" />
+    <None Include="Core\Pipeline\MassImportContext.cs" />
+    <None Include="Core\Pipeline\Stages\Job\CreateStagingTablesStage.cs" />
+    <None Include="Core\Pipeline\Stages\Job\ExecuteIfJobNotInitializedStage.cs" />
+    <None Include="Core\Pipeline\Stages\Job\PopulateCacheStage.cs" />
+    <None Include="Core\Pipeline\Stages\Job\TruncateStagingTablesStage.cs" />
+    <None Include="Core\Pipeline\Stages\Natives\CreateFoldersStage.cs" />
+    <None Include="Core\Pipeline\Stages\Natives\ImportNativesStage.cs" />
+    <None Include="Core\Pipeline\Stages\NotImportApi\PopulateStagingTablesUsingActionStage.cs" />
+    <None Include="Core\Pipeline\Stages\Objects\ExecuteIfRangeIsNotDefinedStage.cs" />
+    <None Include="Core\Pipeline\Stages\Objects\ImportObjectsStage.cs" />
+    <None Include="Core\Pipeline\Stages\Shared\CopyFullTextFromFileShareLocation.cs" />
+    <None Include="Core\Pipeline\Stages\Shared\ImportMetadataFilesToStagingTablesStage.cs" />
+    <None Include="Core\Pipeline\Stages\Shared\LoadColumnDefinitionCacheStage.cs" />
+    <None Include="Core\Pipeline\Stages\Shared\ValidateSettingsStage.cs" />
+    <None Include="Core\ServerSideFolderGenerator.cs" />
+    <None Include="Core\SqlDataRecordEnumerable.cs" />
+    <None Include="Core\VerboseLoggingTimeKeeper.cs" />
+    <None Include="Data\SqlFramework\AppLock.cs" />
+    <None Include="Data\SqlFramework\ActionSqlQuery.cs" />
+    <None Include="Data\AssociatedObjectsValidationSql.cs" />
+    <None Include="Data\BulkLoadSqlErrorRetryHelper.cs" />
+    <None Include="Data\Cache\ColumnDefinitionCache.cs" />
+    <None Include="Data\Cache\ColumnDefinitionInfo.cs" />
+    <None Include="Data\ChoicesImportSql.cs" />
+    <None Include="Data\DataGridImportHelper.cs" />
+    <None Include="Data\DataGridOffSetFileWriter.cs" />
+    <None Include="Data\DataGridReader.cs" />
+    <None Include="Data\DataGridReaderOptions.cs" />
+    <None Include="Data\DataGridTempFileDataReader.cs" />
+    <None Include="Data\DataGridWriteStrategy\BulkDataGridWriter.cs" />
+    <None Include="Data\DataGridWriteStrategy\ByteMeasuringWriter.cs" />
+    <None Include="Data\DataGridWriteStrategy\DataGridImportErrorManager.cs" />
+    <None Include="Data\DataGridWriteStrategy\DataGridSqlTempReader.cs" />
+    <None Include="Data\DataGridWriteStrategy\FileSystemRecordBuilder.cs" />
+    <None Include="Data\DataGridWriteStrategy\IDataGridRecordBuilder.cs" />
+    <None Include="Data\DataGridWriteStrategy\IDataGridSqlTempReader.cs" />
+    <None Include="Data\DataGridWriteStrategy\IDataGridWriter.cs" />
+    <None Include="Data\DataGridWriteStrategy\IDListDictionary.cs" />
+    <None Include="Data\DataGridWriteStrategy\LinkedOnlyWriter.cs" />
+    <None Include="Data\DataGrid\IDataGridInputReaderProvider.cs" />
+    <None Include="Data\Folder.cs" />
+    <None Include="Data\FolderArtifactIDMapping.cs" />
+    <None Include="Data\FullTextFileImportDataReader.cs" />
+    <None Include="Data\Helper.cs" />
+    <None Include="Data\IDataGridOffSetWriter.cs" />
+    <None Include="Data\IImportContext.cs" />
+    <None Include="Data\Image.cs" />
+    <None Include="Data\ImageImportSql.cs" />
+    <None Include="Data\ImageTempFileReader.cs" />
+    <None Include="Core\IMassImportMetricsService.cs" />
+    <None Include="Data\ImportAuditor.cs" />
+    <None Include="Data\ImportMeasurements.cs" />
+    <None Include="Data\SqlFramework\InlineSqlQuery.cs" />
+    <None Include="Data\IObjectBase.cs" />
+    <None Include="Data\SqlFramework\ISqlQueryPart.cs" />
+    <None Include="Data\MassImportSqlHelper.cs" />
+    <None Include="Data\Native.cs" />
+    <None Include="Data\NativeImportSql.cs" />
+    <None Include="Data\NativeTempFileReader.cs" />
+    <None Include="Data\ObjectBase.cs" />
+    <None Include="Data\ObjectImportSql.cs" />
+    <None Include="Data\Objects.cs" />
+    <None Include="Data\SqlFramework\PrintSectionQuery.cs" />
+    <None Include="Data\SqlFramework\SerialSqlQuery.cs" />
+    <None Include="Data\SqlFramework\SqlQueryPart.cs" />
+    <None Include="Data\StagingTables\BaseStagingTableRepository.cs" />
+    <None Include="Data\StagingTables\IStagingTableRepository.cs" />
+    <None Include="Data\StagingTables\NativeStagingTableRepository.cs" />
+    <None Include="Data\StagingTables\ObjectsStagingTableRepository.cs" />
+    <None Include="Data\SqlFramework\StatisticsTimeOnQuery.cs" />
+    <None Include="Data\TableNames.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+  </ItemGroup>
+</Project>
