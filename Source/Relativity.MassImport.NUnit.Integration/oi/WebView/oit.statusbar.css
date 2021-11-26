@@ -1,0 +1,22 @@
+/* Portions (C) 1991, 2016, Oracle Corp, and (C) 2017, Relativity ODA LLC */
+
+/* Status Bar */
+.oit-statusbar {
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 10px;
+	color: #666;
+	border-top: 1px solid #aaa;
+	height: 20px;
+	bottom: 0;
+	overflow: hidden;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background: #ffffff;
+}
+.oit-statusbar div {
+	margin: 2px;
+}
+

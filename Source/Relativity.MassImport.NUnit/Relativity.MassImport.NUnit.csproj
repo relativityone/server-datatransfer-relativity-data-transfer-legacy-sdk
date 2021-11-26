@@ -6,7 +6,7 @@
     <DisableImplicitFSharpCoreReference>true</DisableImplicitFSharpCoreReference>
     <CodeAnalysisRuleSet>Relativity.MassImport.NUnit.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>x64</PlatformTarget>
-	<LangVersion>latest</LangVersion>
+	<LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.8.1" />
