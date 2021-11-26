@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Relativity.MassImport.NUnit.Properties {
+namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Relativity.MassImport.NUnit.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("DataTransfer.Legacy.MassImport.NUnit.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -76,8 +76,8 @@ namespace Relativity.MassImport.NUnit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CAST(N&apos;&amp;lt;auditElement&amp;gt;&apos; AS NVARCHAR(MAX)) +
-        ///	&apos;&amp;lt;/auditElement&amp;gt;&apos;,.
+        ///   Looks up a localized string similar to CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+        ///	&apos;&lt;/auditElement&gt;&apos;,.
         /// </summary>
         internal static string AuditDetailsBuilderTests_detailsClause_NoAudit {
             get {
@@ -86,9 +86,9 @@ namespace Relativity.MassImport.NUnit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CAST(N&apos;&amp;lt;auditElement&amp;gt;&apos; AS NVARCHAR(MAX)) +
-        ///	&apos;&amp;lt;extractedTextEncodingPageCode&amp;gt;&apos; + ISNULL(CAST(N.[ExtractedTextEncodingPageCode] AS NVARCHAR(200)), &apos;-1&apos;) + &apos;&amp;lt;/extractedTextEncodingPageCode&amp;gt;&apos; +
-        ///	&apos;&amp;lt;/auditElement&amp;gt;&apos;,.
+        ///   Looks up a localized string similar to CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+        ///	&apos;&lt;extractedTextEncodingPageCode&gt;&apos; + ISNULL(CAST(N.[ExtractedTextEncodingPageCode] AS NVARCHAR(200)), &apos;-1&apos;) + &apos;&lt;/extractedTextEncodingPageCode&gt;&apos; +
+        ///	&apos;&lt;/auditElement&gt;&apos;,.
         /// </summary>
         internal static string AuditDetailsBuilderTests_detailsClause_NoAudit_Encoding {
             get {
@@ -98,7 +98,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to ,
-        ///		&apos;&amp;lt;unsetChoice&amp;gt;&apos; + (SELECT CAST(MappedArtifactID AS VARCHAR(10)) FROM [Resource].[RELNATTMPMAP_AAD09DF6-A4C7-4DF0-B963-0050C7809000] M1 WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = 100123 AND M1.IsNew = 0) + &apos;&amp;lt;/unsetChoice&amp;gt;&apos; [CodeField].
+        ///		&apos;&lt;unsetChoice&gt;&apos; + (SELECT CAST(MappedArtifactID AS VARCHAR(10)) FROM [Resource].[RELNATTMPMAP_AAD09DF6-A4C7-4DF0-B963-0050C7809000] M1 WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = 100123 AND M1.IsNew = 0) + &apos;&lt;/unsetChoice&gt;&apos; [CodeField].
         /// </summary>
         internal static string AuditDetailsBuilderTests_mapClause_Audit {
             get {
@@ -107,11 +107,11 @@ namespace Relativity.MassImport.NUnit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CAST(N&apos;&amp;lt;auditElement&amp;gt;&apos; AS NVARCHAR(MAX)) +
-        ///		&apos;&amp;lt;field id=&quot;100123&quot; type=&quot;8&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&amp;gt;&apos; + 
+        ///   Looks up a localized string similar to CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+        ///		&apos;&lt;field id=&quot;100123&quot; type=&quot;8&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&gt;&apos; + 
         ///			ISNULL(CAST(GM.[MultiCodeField IsNew] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;) +
-        ///		&apos;&amp;lt;/field&amp;gt;&apos; +
-        ///	&apos;&amp;lt;/auditElement&amp;gt;&apos;,.
+        ///		&apos;&lt;/field&gt;&apos; +
+        ///	&apos;&lt;/auditElement&gt;&apos;,.
         /// </summary>
         internal static string AuditDetailsBuilderTests_MultiCode_detailsClause_MergeAll {
             get {
@@ -120,12 +120,12 @@ namespace Relativity.MassImport.NUnit.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to CAST(N&apos;&amp;lt;auditElement&amp;gt;&apos; AS NVARCHAR(MAX)) +
-        ///		&apos;&amp;lt;field id=&quot;100123&quot; type=&quot;8&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&amp;gt;&apos; + 
+        ///   Looks up a localized string similar to CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+        ///		&apos;&lt;field id=&quot;100123&quot; type=&quot;8&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&gt;&apos; + 
         ///			ISNULL(CAST(GM.[MultiCodeField IsNew] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;) +
         ///			ISNULL(CAST(GM.[MultiCodeField] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;) +
-        ///		&apos;&amp;lt;/field&amp;gt;&apos; +
-        ///	&apos;&amp;lt;/auditElement&amp;gt;&apos;,.
+        ///		&apos;&lt;/field&gt;&apos; +
+        ///	&apos;&lt;/auditElement&gt;&apos;,.
         /// </summary>
         internal static string AuditDetailsBuilderTests_MultiCode_detailsClause_ReplaceAll {
             get {
@@ -336,7 +336,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT /* IncludeDistinctClause */
-        ///		N.ArtifactID, C.CodeArtifact [rest of string was truncated]&quot;;.
+        ///		N.A [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldExecuteQueryForTwoChoices {
             get {
@@ -370,9 +370,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT DISTINCT
-        ///		N.ArtifactID, C.CodeArtifactID
-        ///	FROM 
-        ///		[Resour [rest of string was truncated]&quot;;.
+        ///		N.ArtifactID, C.CodeAr [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldIncludeDistinctClause {
             get {
@@ -396,9 +394,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
-        ///
-        /// [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NativeSqlQueryTest_ExpecteCreateAssociatedObjectsForSingleObjectFieldByName {
             get {
@@ -413,7 +409,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///	SELECT
         ///		[ArtifactTypeID] = 10,
         ///		[ParentArtifactID] = [kCura_Import_ParentFolderID],
-        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7809038 [rest of string was truncated]&quot;;.
+        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NativeSqlQueryTest_ExpectedCreateDocumentsSqlStatement {
             get {
@@ -428,7 +424,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///	SELECT
         ///		[ArtifactTypeID] = 10,
         ///		[ParentArtifactID] = [kCura_Import_ParentFolderID],
-        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7809038 [rest of string was truncated]&quot;;.
+        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NativeSqlQueryTest_ExpectedCreateDocumentsSqlStatementWithExtractedText {
             get {
@@ -452,9 +448,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
-        ///
-        /// [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateAssociatedObjectsForSelfReferencedSingleObjectFieldByName {
             get {
@@ -479,9 +473,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
-        ///
-        /// [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateAssociatedObjectsForSingleObjectDocumentFieldByName {
             get {
@@ -506,9 +498,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
-        ///
-        /// [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateAssociatedObjectsForSingleObjectFieldByName {
             get {
@@ -529,7 +519,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///		[LastModifiedOn] = @now,
         ///		[CreatedBy] = @auditUserID,
         ///		[LastModifiedBy] = @auditUserID,
-        ///		[TextIdentifier] = N.[KeyFi [rest of string was truncated]&quot;;.
+        ///		[TextIdentifier [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateObjectsSqlStatement {
             get {
@@ -555,10 +545,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 102
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 102 AND [ArtifactID] = [CodeArtifactID])
-        ///)
-        ///BEGIN
-        ///	RAISER [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 102 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldExecuteQueryForMultiChoice {
             get {
@@ -584,10 +571,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 101
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID])
-        ///)
-        ///BEGIN
-        ///	RAISER [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldExecuteQueryForSingleChoice {
             get {
@@ -613,10 +597,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 101
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID])
-        ///)
-        ///BEGIN
-        ///	RAISER [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldExecuteQueryForTwoChoices {
             get {
@@ -642,10 +623,7 @@ namespace Relativity.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 101
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID])
-        ///)
-        ///BEGIN
-        ///	RAISER [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldIncludeDistinctClause {
             get {

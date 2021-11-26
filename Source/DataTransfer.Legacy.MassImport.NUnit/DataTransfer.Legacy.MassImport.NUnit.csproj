@@ -48,9 +48,6 @@
     <PackageReference Include="kCura.SearchProvider" Version="13.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Relativity.MassImport\Relativity.MassImport.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="System.ServiceModel" Private="True" />
     <Reference Include="System.Web" Private="True" />
   </ItemGroup>
@@ -73,6 +70,9 @@
   </ItemGroup>
   <ItemGroup>
     <DataGridTestFiles Include="Resources\DataGrid*.*" />  
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">

@@ -1,4 +1,5 @@
-﻿using kCura.Data.RowDataGateway;
+﻿using DataTransfer.Legacy.MassImport.NUnit.Properties;
+using kCura.Data.RowDataGateway;
 using Moq;
 using NUnit.Framework;
 using Relativity.Data.MassImport;
@@ -42,12 +43,12 @@ namespace Relativity.MassImport.NUnit.Data
 
 			if (performAudit && auditLevel == ImportAuditLevel.FullAudit)
 			{
-				expectedDetailsClause = Properties.Resources.AuditDetailsBuilderTests_detailsClause_Audit;
-				expectedMapClause = Properties.Resources.AuditDetailsBuilderTests_mapClause_Audit;
+				expectedDetailsClause = Resources.AuditDetailsBuilderTests_detailsClause_Audit;
+				expectedMapClause = Resources.AuditDetailsBuilderTests_mapClause_Audit;
 			}
 			else
 			{
-				expectedDetailsClause = Properties.Resources.AuditDetailsBuilderTests_detailsClause_NoAudit;
+				expectedDetailsClause = Resources.AuditDetailsBuilderTests_detailsClause_NoAudit;
 				expectedMapClause = string.Empty;
 			}
 
@@ -109,8 +110,8 @@ namespace Relativity.MassImport.NUnit.Data
 
 			// ASSERT
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, includeExtractedTextEncoding
-																				? Properties.Resources.AuditDetailsBuilderTests_detailsClause_NoAudit_Encoding
-																				: Properties.Resources.AuditDetailsBuilderTests_detailsClause_NoAudit);
+																				? Resources.AuditDetailsBuilderTests_detailsClause_NoAudit_Encoding
+																				: Resources.AuditDetailsBuilderTests_detailsClause_NoAudit);
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, string.Empty);
 		}
 
@@ -145,11 +146,11 @@ namespace Relativity.MassImport.NUnit.Data
 
 			// ASSERT
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, overlayBehavior == OverlayBehavior.MergeAll
-				? Properties.Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_MergeAll
-				: Properties.Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_ReplaceAll);
+				? Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_MergeAll
+				: Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_ReplaceAll);
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, overlayBehavior == OverlayBehavior.MergeAll
-				? Properties.Resources.AuditDetailsBuilderTests_MultiCode_mapClause_MergeAll
-				: Properties.Resources.AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll);
+				? Resources.AuditDetailsBuilderTests_MultiCode_mapClause_MergeAll
+				: Resources.AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll);
 		}
 
 		[Test]
@@ -180,7 +181,7 @@ namespace Relativity.MassImport.NUnit.Data
 			var results = _builder.GenerateAuditDetails(true, false);
 
 			// ASSERT
-			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, Properties.Resources.AuditDetailsBuilderTests_detailsClause_NoAudit);
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, Resources.AuditDetailsBuilderTests_detailsClause_NoAudit);
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, string.Empty);
 		}
 

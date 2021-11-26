@@ -1,7 +1,7 @@
 ﻿using System.Data;
+using DataTransfer.Legacy.MassImport.NUnit.Properties;
 using Moq;
 using NUnit.Framework;
-using Relativity.MassImport.NUnit.Properties;
 
 namespace Relativity.MassImport.NUnit.Data.Native
 {

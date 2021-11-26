@@ -67,6 +67,11 @@
       <Keywords />
       <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
       <Notes />
+	</Assembly>
+	<Assembly>
+      <Keywords />
+      <Name>DataTransfer.Legacy.MassImport.dll</Name>
+      <Notes />
     </Assembly>
   </Assemblies>
   <ResourceFiles />

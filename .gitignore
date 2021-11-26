@@ -1,6 +1,7 @@
 .vs/
 [b|B]in
 [o|O]bj
+oi
 packages
 Artifacts/
 buildtools/*

@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using DataTransfer.Legacy.MassImport.NUnit.Properties;
 using kCura.Data;
 using Moq;
 using NUnit.Framework;
 using Relativity.Core;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
-using Relativity.MassImport.NUnit.Properties;
 
 namespace Relativity.MassImport.NUnit.Data
 {

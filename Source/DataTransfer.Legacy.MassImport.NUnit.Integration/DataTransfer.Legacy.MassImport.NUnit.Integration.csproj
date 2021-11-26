@@ -80,6 +80,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Relativity.MassImport\Relativity.MassImport.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
   </ItemGroup>
 </Project>
