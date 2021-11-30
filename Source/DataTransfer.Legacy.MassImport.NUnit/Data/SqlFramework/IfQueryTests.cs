@@ -55,7 +55,14 @@ BEGIN
 False
 END
 ";
-			Assert.That(actualQuery, Is.EqualTo(expectedQuery));
+			var actualQueryLines = actualQuery.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+			var expectedQueryLines = expectedQuery.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+			Assert.That(actualQueryLines.Length, Is.EqualTo(expectedQueryLines.Length));
+			for (var i = 0; i < actualQueryLines.Length; i++)
+			{
+				Assert.That(actualQueryLines[i], Is.EqualTo(expectedQueryLines[i]));
+			}
 		}
 	}
 }
