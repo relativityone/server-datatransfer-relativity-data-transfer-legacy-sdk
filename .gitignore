@@ -8,6 +8,7 @@ buildtools/*
 !buildtools/packages.config
 FunctionalTestSettings
 FunctionalTest.runsettings
+TestParameters.json
 *.dll
 *.jar
 *.exe
