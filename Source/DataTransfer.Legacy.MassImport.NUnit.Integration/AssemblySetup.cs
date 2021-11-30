@@ -46,7 +46,7 @@ namespace MassImport.NUnit.Integration
 		{
 			string solutionPath = Directory
 				.GetParent(System.Reflection.Assembly.GetExecutingAssembly().Location)
-				.Parent.Parent.Parent.Parent.FullName;
+				.Parent.Parent.Parent.FullName;
 
 			string pluginPath = Path.Combine(solutionPath, "TestParameters.json");
 
