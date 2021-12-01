@@ -37,7 +37,6 @@
     <PackageReference Include="kCura" Version="14.2.0" />
     <PackageReference Include="kCura.LongPath" Version="2.5.0" />
     <PackageReference Include="Relativity.API" Version="17.0.7" />
-    <PackageReference Include="Relativity.Core" Version="47.11.21" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.3.0" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.6" />
