@@ -31,7 +31,7 @@
     <PackageReference Include="castle.windsor" Version="3.3.0.51" />
     <PackageReference Include="Polly" Version="5.7.0" />
     <PackageReference Include="Relativity" Version="11.2.172.14" />
-    <PackageReference Include="Relativity.API" Version="17.0.4" />
+    <PackageReference Include="Relativity.API" Version="17.4.1" />
     <PackageReference Include="Relativity.EventHandler" Version="17.0.2" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.ObjectManager" Version="10.3.191.8" />
