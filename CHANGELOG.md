@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.1.38]
+- REL-593815 Update RTF, RTF API, RingSetup
+
+## [0.1.38]
 - REL-600343 Reoreder interceptors to catch all unhandled exception, improve logging
 
 ## [0.1.37]
