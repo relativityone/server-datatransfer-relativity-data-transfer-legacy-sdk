@@ -40,6 +40,7 @@
 		<PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
 		<PackageReference Include="NunitXml.TestLogger" Version="3.0.91" />
+		<PackageReference Include="Relativity.Core" Version="47.11.21" />
 		<PackageReference Include="Relativity.Toggles" Version="1.9.10" />
 		<PackageReference Include="Tdd-Toolkit" Version="2.0.1" />
 	</ItemGroup>
