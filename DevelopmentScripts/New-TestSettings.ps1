@@ -172,5 +172,35 @@ foreach($parameter in $testRunParameters.ChildNodes)
 {
     Add-Content (Join-Path $PSScriptRoot ..\FunctionalTestSettings) "--params `"$($parameter.Name)=$($parameter.Value)`""
 }
+Write-Host $PSBoundParameters['RestServicesHostAddress']
+Write-Host $PSBoundParameters['RsapiServicesHostAddress']
+Write-Host $PSBoundParameters['WebApiHostAddress']
+Write-Host $PSBoundParameters['RAPDirectory']
+Write-Host $PSBoundParameters['AdminPassword']
+Write-Host $PSBoundParameters['AdminUsername']
+Write-Host $PSBoundParameters['RelativityHostAddress']
+Write-Host $PSBoundParameters['SqlPassword']
+Write-Host $PSBoundParameters['SqlUsername']
+Write-Host $PSBoundParameters['SqlServer']
+Write-Host $PSBoundParameters['SqlUsername']
+Write-Host $PSBoundParameters['ServerBindingType']
+$resturl = "https://" +($PSBoundParameters['RsapiServicesHostAddress'] + "/relativity.rest/api")
+$restHost = "https://" +($PSBoundParameters['RsapiServicesHostAddress'])
+$jsonRequest = @{
+    RelativityUrl = $restHost
+    RelativityRestUrl = $resturl
+    WorkspaceTemplateName = "Relativity Starter Template"
+    RelativityPassword = $PSBoundParameters['AdminPassword']
+    RelativityUserName = $PSBoundParameters['AdminUsername']
+    SqlEddsdboPassword = $PSBoundParameters['SqlPassword']
+    SqlEddsdboUserName = $PSBoundParameters['SqlUsername']
+    SqlInstanceName = $PSBoundParameters['SqlServer']
+    BcpSharePath = "\\emttest\BCPPath"
+}
+
+$text = $jsonRequest | ConvertTo-Json -Depth 10 
+Write-Host $text 
+Write-Host (Join-Path $PSScriptRoot ..\TestParameters.json)
+Set-Content -Path (Join-Path $PSScriptRoot ..\TestParameters.json) -Value $text
 
 $runSettingsDocument.Save((Join-Path $PSScriptRoot ..\FunctionalTest.runsettings))

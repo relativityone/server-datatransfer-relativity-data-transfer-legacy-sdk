@@ -19,9 +19,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\version.txt = ..\version.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransfer.Legacy.PostInstallEventHandler", "DataTransfer.Legacy.PostInstallEventHandler\DataTransfer.Legacy.PostInstallEventHandler.csproj", "{BF653F0F-6B16-47DE-A8B8-9E01E31931FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.PostInstallEventHandler", "DataTransfer.Legacy.PostInstallEventHandler\DataTransfer.Legacy.PostInstallEventHandler.csproj", "{BF653F0F-6B16-47DE-A8B8-9E01E31931FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataTransfer.Legacy.PostInstallEventHandler.Tests", "DataTransfer.Legacy.PostInstallEventHandler.Tests\DataTransfer.Legacy.PostInstallEventHandler.Tests.csproj", "{6339626A-E3A3-40C6-931A-18379C1666FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.PostInstallEventHandler.Tests", "DataTransfer.Legacy.PostInstallEventHandler.Tests\DataTransfer.Legacy.PostInstallEventHandler.Tests.csproj", "{6339626A-E3A3-40C6-931A-18379C1666FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.MassImport", "DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj", "{24AA6FB1-D57D-47AE-808D-E1D8D254F9D7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.MassImport.NUnit", "DataTransfer.Legacy.MassImport.NUnit\DataTransfer.Legacy.MassImport.NUnit.csproj", "{45B91F6C-3117-4979-9D17-2EF77E5F5A39}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.MassImport.NUnit.Integration", "DataTransfer.Legacy.MassImport.NUnit.Integration\DataTransfer.Legacy.MassImport.NUnit.Integration.csproj", "{4FA7E652-D120-4CF4-8DB3-DA8F9CF069D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +63,18 @@ Global
 		{6339626A-E3A3-40C6-931A-18379C1666FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6339626A-E3A3-40C6-931A-18379C1666FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6339626A-E3A3-40C6-931A-18379C1666FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24AA6FB1-D57D-47AE-808D-E1D8D254F9D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24AA6FB1-D57D-47AE-808D-E1D8D254F9D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24AA6FB1-D57D-47AE-808D-E1D8D254F9D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24AA6FB1-D57D-47AE-808D-E1D8D254F9D7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{45B91F6C-3117-4979-9D17-2EF77E5F5A39}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45B91F6C-3117-4979-9D17-2EF77E5F5A39}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45B91F6C-3117-4979-9D17-2EF77E5F5A39}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45B91F6C-3117-4979-9D17-2EF77E5F5A39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA7E652-D120-4CF4-8DB3-DA8F9CF069D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA7E652-D120-4CF4-8DB3-DA8F9CF069D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA7E652-D120-4CF4-8DB3-DA8F9CF069D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA7E652-D120-4CF4-8DB3-DA8F9CF069D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
