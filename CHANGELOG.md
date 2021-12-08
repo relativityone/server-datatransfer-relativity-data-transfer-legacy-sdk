@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.1]
+- REL-619788 bump version to rerun the pipeline
+
 ## [0.2.0]
 - REL-619788 Decouple MassImport from relativity-core 
 
