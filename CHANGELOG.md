@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.2]
+- REL-618414 add retries for exception "Bad or inaccessible location specified in external data source"
+
 ## [0.2.1]
 - REL-619788 bump version to rerun the pipeline
 
