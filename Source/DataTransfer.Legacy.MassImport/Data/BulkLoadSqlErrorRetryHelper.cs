@@ -9,6 +9,8 @@ namespace Relativity.MassImport.Data
 		// https://docs.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-2017
 		private const int _CANNOT_BULK_LOAD_BECAUSE_FILE_LOCKED_MSG_ID = 4861;
 		private const int _CANNOT_BULK_LOAD_BECAUSE_FILE_DOES_NOT_EXIST_MSG_ID = 4860;
+		// https://lsuse.com/sql-error-messages/
+		private const int _BAD_OR_INACCESSIBLE_LOCATION_SPECIFIED_IN_EXTERNAL_DATA_SOURCE_ID = 12704;
 
 		private static bool IsRetryableBulkLoadError(Exception ex)
 		{
@@ -20,7 +22,7 @@ namespace Relativity.MassImport.Data
 
 			foreach (SqlError e in sqlException.Errors)
 			{
-				if (e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_LOCKED_MSG_ID || e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_DOES_NOT_EXIST_MSG_ID)
+				if (e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_LOCKED_MSG_ID || e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_DOES_NOT_EXIST_MSG_ID || e.Number == _BAD_OR_INACCESSIBLE_LOCATION_SPECIFIED_IN_EXTERNAL_DATA_SOURCE_ID)
 				{
 					return true;
 				}
