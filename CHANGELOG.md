@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.3]
+- REL-630923 Change default IAPICommunicationMode to ForceKepler
+
 ## [0.2.2]
 - REL-618414 add retries for exception "Bad or inaccessible location specified in external data source"
 
