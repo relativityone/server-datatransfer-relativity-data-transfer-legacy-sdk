@@ -83,7 +83,7 @@ namespace Relativity.MassImport.Data
 				docsWithNullGuids = dataGridMappings.ExceptByDocumentIdentifier(foundIdentifiers);
 				if (docsWithNullGuids.Any())
 				{
-					logger.LogError("Some identifiers expected in the data file were not found: [{missingIdentifiers}]", docsWithNullGuids);
+					logger.LogError("Some identifiers expected in the data file were not found: [{@missingIdentifiers}]", docsWithNullGuids);
 					logger.LogWarning("Document Identifiers with null guids: {nullGuids}", docsWithNullGuids.Select(doc => doc.DocumentIdentifier));
 					logger.LogWarning("Import Identifiers with null guids: {nullGuids}", docsWithNullGuids.Select(doc => doc.ImportID));
 					foreach (DataGridImportIdentity identifier in docsWithNullGuids)
