@@ -86,7 +86,7 @@ namespace Relativity.MassImport.Core
 
 			if (image.IsNewJob)
 			{
-				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.WebApi);
+				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.Kepler);
 			}
 
 			timekeeper.MarkEnd("TempFileInitialization");
@@ -240,7 +240,7 @@ namespace Relativity.MassImport.Core
 					precalculatedMilliseconds: image.ImportMeasurements.SqlImportTime.ElapsedMilliseconds,
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
-				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.WebApi, retval, image.ImportMeasurements);
+				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
 			}
 
 			retval.RunID = settings.RunID;
@@ -281,7 +281,7 @@ namespace Relativity.MassImport.Core
 
 			if (image.IsNewJob)
 			{
-				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.WebApi);
+				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.Kepler);
 			}
 
 			image.ImportMeasurements.StartMeasure(nameof(productionManager.CreateProductionDocumentFileTableForProduction));
@@ -431,7 +431,7 @@ namespace Relativity.MassImport.Core
 					precalculatedMilliseconds: image.ImportMeasurements.SqlImportTime.ElapsedMilliseconds,
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
-				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.WebApi, retval, image.ImportMeasurements);
+				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
 			}
 
 			retval.RunID = settings.RunID;

@@ -8,7 +8,7 @@ namespace Relativity.MassImport.Core.Pipeline
 
 		/// <summary>
 		/// Gets a name of the system which started the mass import job.
-		/// E.g. WebAPI, ObjectManager.
+		/// E.g. Kepler, WebAPI, ObjectManager.
 		/// </summary>
 		public string ClientSystemName { get; }
 
