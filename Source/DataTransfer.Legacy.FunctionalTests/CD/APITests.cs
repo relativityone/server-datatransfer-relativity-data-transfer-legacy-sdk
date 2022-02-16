@@ -27,9 +27,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CD
 
 			using (var iapiCommunicationModeService = serviceFactory.GetServiceProxy<IIAPICommunicationModeService>())
 			{
-				var result = await iapiCommunicationModeService.GetIAPICommunicationModeAsync(Guid.NewGuid().ToString());
+				IAPICommunicationMode result = await iapiCommunicationModeService.GetIAPICommunicationModeAsync(Guid.NewGuid().ToString());
 
-				Assert.AreEqual(result, IAPICommunicationMode.WebAPI);
+				Assert.NotNull(result);
+				Assert.AreEqual(result, Is.AnyOf(IAPICommunicationMode.Kepler, IAPICommunicationMode.ForceKepler, IAPICommunicationMode.WebAPI, IAPICommunicationMode.ForceWebAPI));
+				
 			}
 		}
 	}
