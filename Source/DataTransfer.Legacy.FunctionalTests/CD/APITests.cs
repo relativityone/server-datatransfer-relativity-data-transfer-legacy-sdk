@@ -30,8 +30,6 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CD
 				IAPICommunicationMode result = await iapiCommunicationModeService.GetIAPICommunicationModeAsync(Guid.NewGuid().ToString());
 
 				Assert.NotNull(result);
-				Assert.AreEqual(result, Is.AnyOf(IAPICommunicationMode.Kepler, IAPICommunicationMode.ForceKepler, IAPICommunicationMode.WebAPI, IAPICommunicationMode.ForceWebAPI));
-				
 			}
 		}
 	}
