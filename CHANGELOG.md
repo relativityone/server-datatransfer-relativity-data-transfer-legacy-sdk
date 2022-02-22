@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.8]
+- REL-593286 Change index on temp tables to allow import of records with length of 450
+
 ## [0.2.7]
 - REL-644482 Fix Assert condition in CI Test #2
 
