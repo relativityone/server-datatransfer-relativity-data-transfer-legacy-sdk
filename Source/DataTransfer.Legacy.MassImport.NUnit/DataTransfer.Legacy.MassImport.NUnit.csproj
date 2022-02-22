@@ -36,10 +36,10 @@
     <PackageReference Include="FParsec-Big-Data-Edition" Version="1.0.3" />
     <PackageReference Include="kCura.DataGrid.Services.Interfaces" Version="16.4.11" />
     <!-- -->
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="6.0.8" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
+    <PackageReference Include="NUnit" Version="3.13.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
     <PackageReference Include="kCura" Version="14.2.2" />
     <!--Higher Moq versions bring in Castle.Core 4.0+ that has a public class CollectionExtensions which is not the real Extension method and was updated to drop the ForEach method in the 4.0+ series.
