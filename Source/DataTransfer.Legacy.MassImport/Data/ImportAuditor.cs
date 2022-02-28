@@ -7,10 +7,12 @@ namespace Relativity.MassImport.Data
     internal class ImportAuditor
     {
         private kCura.Data.RowDataGateway.BaseContext _context;
+        private readonly Logging.ILog _correlationLogger;
 
-        public ImportAuditor(kCura.Data.RowDataGateway.BaseContext dbContext)
+        public ImportAuditor(kCura.Data.RowDataGateway.BaseContext dbContext, Logging.ILog correlationLogger)
         {
             _context = dbContext;
+            _correlationLogger = correlationLogger;
         }
 
         public string GetImportAuditXmlSnapshot(ImportStatistics statistics, bool success)
@@ -41,7 +43,15 @@ namespace Relativity.MassImport.Data
             System.Collections.Specialized.HybridDictionary auditDictionary = new System.Collections.Specialized.HybridDictionary();
             if (statistics.DestinationFolderArtifactID > 0)
             {
-	            auditDictionary.Add("Destination Folder", @"\" + Relativity.Data.Folder.GetFolderPath(_context, statistics.DestinationFolderArtifactID));
+	            try
+	            {
+		            auditDictionary.Add("Destination Folder", @"\" + Relativity.Data.Folder.GetFolderPath(_context, statistics.DestinationFolderArtifactID));
+                }
+	            catch (InvalidCastException ex)
+	            {
+		            auditDictionary.Add("Destination Folder", statistics.DestinationFolderArtifactID);
+                    _correlationLogger.LogWarning(ex, "Error getting the Folder.GetFolderPath, with param: {DestinationFolderArtifactID}", statistics.DestinationFolderArtifactID);
+	            }
             }
 
             string filesCopiedToRepository = statistics.FilesCopiedToRepository;
