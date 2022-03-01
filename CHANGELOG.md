@@ -4,6 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.4.0] - 05-18-2023
 
+## [0.2.11]
+- REL-576997 Catch exception when folder does not exist and use folder ArtifactID instead of folder name
+
+## [0.2.10]
+- REL-576995 Do not throw the exception when RunId is empty - there is no temp table in DB
+
 ### Added
 
 - NuGet 6 centralized package management support

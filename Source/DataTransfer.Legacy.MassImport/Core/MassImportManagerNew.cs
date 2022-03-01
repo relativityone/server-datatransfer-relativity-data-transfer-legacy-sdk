@@ -613,7 +613,7 @@ namespace Relativity.MassImport.Core
 		public bool AuditImport(Relativity.Core.BaseServiceContext icc, string runID, bool isFatalError, ImportStatistics importStats)
 		{
 			var context = icc.ChicagoContext;
-			var auditor = new ImportAuditor(context.DBContext);
+			var auditor = new ImportAuditor(context.DBContext, CorrelationLogger);
 			string xmlSnapshot = auditor.GetImportAuditXmlSnapshot(importStats, !isFatalError);
 			int systemArtifactID = Relativity.Core.Service.SystemArtifactQuery.Instance().RetrieveArtifactIDByIdentifier(context, "System");
 
@@ -679,7 +679,7 @@ namespace Relativity.MassImport.Core
 				destinationPath = destinationPath.Replace(".", "_") + ".csv";
 				using (var sw = new System.IO.StreamWriter(destinationPath, false, System.Text.Encoding.Default))
 				{
-					sw.Write(new ImportAuditor(icc.ChicagoContext.DBContext).GetAuditCsvSnapshot(importStats));
+					sw.Write(new ImportAuditor(icc.ChicagoContext.DBContext, CorrelationLogger).GetAuditCsvSnapshot(importStats));
 				}
 
 				msg.Attachments.Add(new System.Net.Mail.Attachment(destinationPath));
