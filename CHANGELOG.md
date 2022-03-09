@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.12]
+- REL-637797 Remove CreateItemErrorWhenIdentifierIsNullToggle and UseNewChoicesQueryToggle
+
 ## [0.2.11]
 - REL-576997 Catch exception when folder does not exist and use folder ArtifactID instead of folder name
 
