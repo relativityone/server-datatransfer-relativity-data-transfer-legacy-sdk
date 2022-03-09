@@ -16,7 +16,6 @@ using Relativity.MassImport.Data.DataGrid;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
-using Relativity.MassImport.Toggles;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 
 namespace Relativity.MassImport.Data
@@ -409,11 +408,6 @@ namespace Relativity.MassImport.Data
 		public ISqlQueryPart ValidateIdentifiersAreNonEmpty()
 		{
 			var result = new SerialSqlQuery();
-
-			if (!Relativity.Toggles.ToggleProvider.Current.IsEnabled<CreateItemErrorWhenIdentifierIsNullToggle>())
-			{
-				return result;
-			}
 
 			bool isIdentifierFieldMapped = this.Settings.MappedFields.Any(x => x.ArtifactID == IdentifierField.ArtifactID);
 			if (isIdentifierFieldMapped)
