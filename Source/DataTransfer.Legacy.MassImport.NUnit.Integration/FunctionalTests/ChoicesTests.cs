@@ -13,12 +13,9 @@ using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	[TestFixture(false)]
-	[TestFixture(true)]
+	[TestFixture]
 	public class ChoicesTests : MassImportTestBase
 	{
-		private readonly bool _massImportImprovementsToggle;
-		
 		private int _rootFolderId;
 		private MassImportField _identifierField;
 
@@ -30,16 +27,9 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		
 		private const int ImportObjectType = (int)ArtifactType.Document;
 
-		public ChoicesTests(bool massImportImprovementsToggle)
-		{
-			_massImportImprovementsToggle = massImportImprovementsToggle;
-		}
-		
 		[OneTimeSetUp]
 		public async Task OneTimeSetUp()
 		{
-			SettingsHelper.SetToggle<Relativity.MassImport.Toggles.EnableMassImportImprovementsInMassImportManager>(_massImportImprovementsToggle);
-
 			_rootFolderId = await FolderHelper.ReadRootFolderIdAsync(TestParameters, TestWorkspace).ConfigureAwait(false);
 			_identifierField = await FieldHelper.ReadIdentifierField(TestParameters, TestWorkspace).ConfigureAwait(false);
 

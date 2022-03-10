@@ -128,16 +128,6 @@ namespace Relativity.Core.Service
 			return Core.PermissionsHelper.HasAdminOperationPermission(context, Core.Permission.AllowDesktopClientImport);
 		}
 
-		public MassImportResults RunObjectImportForAPI(ICoreContext icc, ObjectLoadInfo settings, Relativity.Data.MassImportOld.Objects importObjects)
-		{
-			return ConvertResults(_massImportManagerLazy.Value.RunObjectImportForAPI(icc, settings, importObjects));
-		}
-
-		public MassImportResults RunNativeImportForAPI(ICoreContext icc, NativeLoadInfo settings, Relativity.Data.MassImportOld.Native importNative)
-		{
-			return ConvertResults(_massImportManagerLazy.Value.RunNativeImportForAPI(icc, settings, importNative));
-		}
-
 		public MassImportResults PostImportDocumentLimitLogic(Core.BaseServiceContext sc, int workspaceId, MassImportResults importResults)
 		{
 			return ConvertResults(_massImportManagerLazy.Value.PostImportDocumentLimitLogic(sc, workspaceId, importResults.ToOldType()));
