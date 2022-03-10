@@ -32,7 +32,7 @@ namespace Relativity.MassImport.Api
 			_artifactManager = artifactManager;
 			_context = context;
 
-			_massImportManager = new Relativity.Core.Service.MassImportManager(collectIDsOnCreate: true, isToggleEnabled: true);
+			_massImportManager = new Relativity.Core.Service.MassImportManager(collectIDsOnCreate: true);
 		}
 
 		public Task<MassImportResults> RunMassImportAsync(IEnumerable<MassImportArtifact> artifacts, MassImportSettings settings, CancellationToken cancel, IProgress<MassImportProgress> progress)

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using kCura.Utility;
-using Microsoft.VisualBasic.CompilerServices;
-using Relativity.Core.Toggle;
 using Relativity.Telemetry.APM;
-using Relativity.Toggles;
 using Relativity.MassImport;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
@@ -21,14 +16,10 @@ namespace Relativity.Core.Service
 
 		public const string TEMP_TABLE_PREFIX_FOR_FOLDER_CREATION = "RELNATTMP_";
 
-		public MassImportManager(bool collectIDsOnCreate, bool isToggleEnabled)
+		public MassImportManager(bool collectIDsOnCreate = false)
 		{
 			CollectIDsOnCreate = collectIDsOnCreate;
-			_massImportManagerLazy = new Lazy<IMassImportManagerInternal>(() => isToggleEnabled ? new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate) as IMassImportManagerInternal : new Relativity.Core.Service.MassImportManagerOld(collectIDsOnCreate) as IMassImportManagerInternal);
-		}
-
-		public MassImportManager(bool collectIDsOnCreate = false) : this(collectIDsOnCreate, ToggleProvider.Current.IsEnabled<MassImportImprovementsToggle>())
-		{
+			_massImportManagerLazy = new Lazy<IMassImportManagerInternal>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
 		}
 
 		protected IAPM APMClient
@@ -95,22 +86,6 @@ namespace Relativity.Core.Service
 		public bool NativeRunHasErrors(Core.ICoreContext icc, string runId)
 		{
 			return _massImportManagerLazy.Value.NativeRunHasErrors(icc, runId);
-		}
-		
-		public static object DisposeRunTempTables(Core.ICoreContext icc, Guid runID)
-		{
-			if (ToggleProvider.Current.IsEnabled<MassImportImprovementsToggle>())
-			{
-				string runIdStringRepresentation = runID.ToString().Replace("-", "_");
-				Relativity.MassImport.Data.Helper.DropRunTempTables(icc.ChicagoContext.DBContext, runIdStringRepresentation);
-				return null;
-			}
-			else
-			{
-				string runIdStringRepresentation = runID.ToString().Replace("-", "_");
-				Data.MassImportOld.Helper.DropRunTempTables(icc.ChicagoContext.DBContext, runIdStringRepresentation);
-				return null;
-			}
 		}
 
 		public object DisposeRunTempTables(Core.ICoreContext icc, string runId)
