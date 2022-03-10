@@ -145,7 +145,7 @@ namespace Relativity.MassImport.Api
 			var popoluteStagingTablesStage = new PopulateStagingTablesStage<TableNames>(_context, artifacts, settings, _artifactManager);
 			void LoadStagingTablesAction(TableNames tableNames) => popoluteStagingTablesStage.Execute(tableNames.Native, tableNames.Code, tableNames.Objects);
 
-			IMassImportManagerInternal.MassImportResults internalResult;
+			MassImportManagerBase.MassImportResults internalResult;
 			if (artifactTypeID == (int)ArtifactType.Document)
 			{
 				DataGridReader dataGridReader = null;
@@ -158,7 +158,7 @@ namespace Relativity.MassImport.Api
 				internalResult = MassImporter.ImportObjectsForObjectManager(_context, objectSettings, true, LoadStagingTablesAction);
 			}
 
-			MassImportManagerBase.MassImportResults results = internalResult is IMassImportManagerInternal.DetailedMassImportResults detailedInternalResult ?
+			MassImportManagerBase.MassImportResults results = internalResult is MassImportManagerBase.DetailedMassImportResults detailedInternalResult ?
 				new MassImportManagerBase.DetailedMassImportResults(detailedInternalResult) :
 				new MassImportManagerBase.MassImportResults(internalResult);
 

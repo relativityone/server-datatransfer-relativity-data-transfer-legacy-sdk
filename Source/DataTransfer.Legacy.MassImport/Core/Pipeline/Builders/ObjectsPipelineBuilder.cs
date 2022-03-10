@@ -16,7 +16,7 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 	{
 		public ObjectsPipelineBuilder(IPipelineExecutor pipelineExecutor, IAPM apm) : base(pipelineExecutor, apm) { }
 
-		public IPipelineStage<ObjectImportInput, IMassImportManagerInternal.MassImportResults> BuildPipeline(MassImportContext context)
+		public IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> BuildPipeline(MassImportContext context)
 		{
 			IStagingTableRepository stagingTableRepository = new ObjectsStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
@@ -37,7 +37,7 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 			return new ExecuteIfJobNotInitializedStage<ObjectImportInput>(PipelineExecutor, jobStage, stagingTableRepository);
 		}
 
-		private IPipelineStage<ObjectImportInput, IMassImportManagerInternal.MassImportResults> BuildBatchExecutionStage(
+		private IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> BuildBatchExecutionStage(
 			MassImportContext context,
 			IStagingTableRepository stagingTableRepository,
 			IMassImportMetricsService metricsService)
@@ -60,9 +60,9 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 				.AddNextStage(new SendMetricWithPreImportStagingTablesDetails<ObjectImportInput>(context, stagingTableRepository, metricsService), PipelineExecutor);
 		}
 
-		private IPipelineStage<ObjectImportInput, IMassImportManagerInternal.MassImportResults> BuildImportStage(MassImportContext context)
+		private IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> BuildImportStage(MassImportContext context)
 		{
-			IPipelineStage<ObjectImportInput, IMassImportManagerInternal.MassImportResults> importStage = new ImportObjectsStage(context, new LockHelper(new AppLockProvider()));
+			IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> importStage = new ImportObjectsStage(context, new LockHelper(new AppLockProvider()));
 			importStage = ExecuteInTransactionDecoratorStage.New(importStage, PipelineExecutor, context);
 			importStage = RetryOnExceptionDecoratorStage.New(importStage, PipelineExecutor, context, actionName: "importing Objects");
 			importStage = new SendLegacyImportMetricDecoratorStage<ObjectImportInput>(

@@ -18,7 +18,7 @@ namespace Relativity.Core.Service.MassImport
 	{
 		private static IAPM APMClient => Client.APMClient;
 
-		internal static IMassImportManagerInternal.MassImportResults ImportNatives(BaseContext baseContext, NativeImportInput input)
+		internal static MassImportManagerBase.MassImportResults ImportNatives(BaseContext baseContext, NativeImportInput input)
 		{
 			var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
 				baseContext,
@@ -31,7 +31,7 @@ namespace Relativity.Core.Service.MassImport
 			return result;
 		}
 
-		internal static IMassImportManagerInternal.MassImportResults ImportObjects(BaseContext baseContext, ObjectImportInput input)
+		internal static MassImportManagerBase.MassImportResults ImportObjects(BaseContext baseContext, ObjectImportInput input)
 		{
 			var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
 				baseContext,
@@ -44,7 +44,7 @@ namespace Relativity.Core.Service.MassImport
 			return result;
 		}
 
-		public static IMassImportManagerInternal.MassImportResults ImportNativesForObjectManager(BaseContext baseContext, NativeLoadInfo settings, Action<TableNames> loadStagingTablesAction, DataGridReader dataGridReader)
+		public static MassImportManagerBase.MassImportResults ImportNativesForObjectManager(BaseContext baseContext, NativeLoadInfo settings, Action<TableNames> loadStagingTablesAction, DataGridReader dataGridReader)
 		{
 			IDataGridInputReaderProvider dataGridInputReaderProvider = dataGridReader is null ? null : new DataGridInputReaderProvider(dataGridReader);
 			var input = NativeImportInput.ForObjectManager(settings, dataGridInputReaderProvider);
@@ -59,7 +59,7 @@ namespace Relativity.Core.Service.MassImport
 			return results;
 		}
 
-		public static IMassImportManagerInternal.MassImportResults ImportObjectsForObjectManager(BaseContext baseContext, ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
+		public static MassImportManagerBase.MassImportResults ImportObjectsForObjectManager(BaseContext baseContext, ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
 		{
 			var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
 				baseContext,
@@ -75,7 +75,7 @@ namespace Relativity.Core.Service.MassImport
 
 		public static MassImportManagerBase.MassImportResults ImportObjectsForRSAPI(BaseContext baseContext, ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
 		{
-			IMassImportManagerInternal.MassImportResults results;
+			MassImportManagerBase.MassImportResults results;
 			if (settings.ArtifactTypeID == (int)ArtifactType.Document)
 			{
 				var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
@@ -101,18 +101,18 @@ namespace Relativity.Core.Service.MassImport
 				results = ExecuteImport(pipeline, input, input.Settings, contextAndExecutorDto);
 			}
 
-			return results is IMassImportManagerInternal.DetailedMassImportResults ?
-				new MassImportManagerBase.DetailedMassImportResults(results as IMassImportManagerInternal.DetailedMassImportResults) :
+			return results is MassImportManagerBase.DetailedMassImportResults ?
+				new MassImportManagerBase.DetailedMassImportResults(results as MassImportManagerBase.DetailedMassImportResults) :
 				new MassImportManagerBase.MassImportResults(results);
 		}
 
-		private static IMassImportManagerInternal.MassImportResults ExecuteImport<T>(
-			IPipelineStage<T, IMassImportManagerInternal.MassImportResults> pipeline,
+		private static MassImportManagerBase.MassImportResults ExecuteImport<T>(
+			IPipelineStage<T, MassImportManagerBase.MassImportResults> pipeline,
 			T input, NativeLoadInfo settings,
 			ContextAndExecutorDto contextAndExecutor)
 		{
 			var logger = contextAndExecutor.MassImportContext.Logger;
-			var result = new IMassImportManagerInternal.MassImportResults();
+			var result = new MassImportManagerBase.MassImportResults();
 
 			var importTime = Stopwatch.StartNew();
 			try

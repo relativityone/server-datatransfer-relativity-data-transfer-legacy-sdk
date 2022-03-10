@@ -113,25 +113,13 @@ namespace Relativity.Core.Service
 
 			public MassImportResults() { }
 
-			public MassImportResults(IMassImportManagerInternal.MassImportResults source)
+			public MassImportResults(MassImportManagerBase.MassImportResults source)
 			{
 				FilesProcessed = source.FilesProcessed;
 				ArtifactsCreated = source.ArtifactsCreated;
 				ArtifactsUpdated = source.ArtifactsUpdated;
 				ExceptionDetail = source.ExceptionDetail;
 				RunID = source.RunID;
-			}
-
-			public virtual IMassImportManagerInternal.MassImportResults ToOldType()
-			{
-				return new IMassImportManagerInternal.MassImportResults()
-				{
-					FilesProcessed = this.FilesProcessed,
-					ArtifactsCreated = this.ArtifactsCreated,
-					ArtifactsUpdated = this.ArtifactsUpdated,
-					ExceptionDetail = this.ExceptionDetail,
-					RunID = this.RunID,
-				};
 			}
 		}
 
@@ -141,7 +129,9 @@ namespace Relativity.Core.Service
 			public int[] AffectedIDs { get; set; }
 			public Dictionary<string, List<int>> KeyFieldToArtifactIDMapping { get; set; }
 
-			public DetailedMassImportResults(IMassImportManagerInternal.DetailedMassImportResults source)
+			public DetailedMassImportResults() { }
+
+			public DetailedMassImportResults(MassImportManagerBase.DetailedMassImportResults source)
 			{
 				FilesProcessed = source.FilesProcessed;
 				ArtifactsCreated = source.ArtifactsCreated;
@@ -150,20 +140,6 @@ namespace Relativity.Core.Service
 				RunID = source.RunID;
 				AffectedIDs = source.AffectedIDs;
 				KeyFieldToArtifactIDMapping = source.KeyFieldToArtifactIDMapping;
-			}
-
-			public override IMassImportManagerInternal.MassImportResults ToOldType()
-			{
-				return new IMassImportManagerInternal.DetailedMassImportResults()
-				{
-					FilesProcessed = this.FilesProcessed,
-					ArtifactsCreated = this.ArtifactsCreated,
-					ArtifactsUpdated = this.ArtifactsUpdated,
-					ExceptionDetail = this.ExceptionDetail,
-					RunID = this.RunID,
-					AffectedIDs = this.AffectedIDs,
-					KeyFieldToArtifactIDMapping = this.KeyFieldToArtifactIDMapping,
-				};
 			}
 		}
 	}

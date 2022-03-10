@@ -12,14 +12,14 @@ namespace Relativity.Core.Service
 	public class MassImportManager : MassImportManagerBase
 	{
 		private bool CollectIDsOnCreate { get; set; }
-		private Lazy<IMassImportManagerInternal> _massImportManagerLazy;
+		private Lazy<MassImportManagerNew> _massImportManagerLazy;
 
 		public const string TEMP_TABLE_PREFIX_FOR_FOLDER_CREATION = "RELNATTMP_";
 
 		public MassImportManager(bool collectIDsOnCreate = false)
 		{
 			CollectIDsOnCreate = collectIDsOnCreate;
-			_massImportManagerLazy = new Lazy<IMassImportManagerInternal>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
+			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
 		}
 
 		protected IAPM APMClient
@@ -32,12 +32,12 @@ namespace Relativity.Core.Service
 
 		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval.ToOldType()));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval));
 		}
 
 		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval.ToOldType()));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval));
 		}
 		
 		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
@@ -52,12 +52,12 @@ namespace Relativity.Core.Service
 
 		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunNativeImport(context, settings, inRepository, includeExtractedTextEncoding, timekeeper, retval.ToOldType()));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunNativeImport(context, settings, inRepository, includeExtractedTextEncoding, timekeeper, retval));
 		}
 		
 		protected override MassImportResults AttemptRunObjectImport(Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval.ToOldType()));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval));
 		}
 		
 		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)
@@ -105,13 +105,13 @@ namespace Relativity.Core.Service
 
 		public MassImportResults PostImportDocumentLimitLogic(Core.BaseServiceContext sc, int workspaceId, MassImportResults importResults)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.PostImportDocumentLimitLogic(sc, workspaceId, importResults.ToOldType()));
+			return ConvertResults(_massImportManagerLazy.Value.PostImportDocumentLimitLogic(sc, workspaceId, importResults));
 		}
 
-		private MassImportResults ConvertResults(IMassImportManagerInternal.MassImportResults results)
+		private MassImportResults ConvertResults(MassImportManagerBase.MassImportResults results)
 		{
-			return results is IMassImportManagerInternal.DetailedMassImportResults ?
-				new MassImportManagerBase.DetailedMassImportResults(results as IMassImportManagerInternal.DetailedMassImportResults) :
+			return results is MassImportManagerBase.DetailedMassImportResults ?
+				new MassImportManagerBase.DetailedMassImportResults(results as MassImportManagerBase.DetailedMassImportResults) :
 				new MassImportManagerBase.MassImportResults(results);
 		}
 	}

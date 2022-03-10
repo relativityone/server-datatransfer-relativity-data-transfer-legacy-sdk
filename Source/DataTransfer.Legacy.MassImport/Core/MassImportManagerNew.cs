@@ -12,7 +12,7 @@ using Relativity.Telemetry.APM;
 
 namespace Relativity.MassImport.Core
 {
-	internal class MassImportManagerNew : IMassImportManagerInternal
+	internal class MassImportManagerNew
 	{
 		private readonly ILockHelper _lockHelper;
 		private bool CollectIDsOnCreate { get; set; }
@@ -53,7 +53,7 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
@@ -247,7 +247,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
@@ -476,19 +476,19 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding);
 			return MassImporter.ImportNatives(context, input);
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate);
 			return MassImporter.ImportObjects(context, input);
 		}
 
-		public IMassImportManagerInternal.MassImportResults PostImportDocumentLimitLogic(Relativity.Core.BaseServiceContext sc, int workspaceId, IMassImportManagerInternal.MassImportResults importResults)
+		public MassImportManagerBase.MassImportResults PostImportDocumentLimitLogic(Relativity.Core.BaseServiceContext sc, int workspaceId, MassImportManagerBase.MassImportResults importResults)
 		{
 			if (importResults.ArtifactsCreated != 0)
 			{
@@ -631,18 +631,6 @@ namespace Relativity.MassImport.Core
 			return SendImportAuditNotificationEmailNew(icc, isFatalError, importStats);
 		}
 
-		public IMassImportManagerInternal.MassImportResults RunObjectImportForAPI(ICoreContext icc, ObjectLoadInfo settings, Relativity.Data.MassImportOld.Objects importObjects)
-		{
-			// not needed for toggle on
-			throw new NotImplementedException();
-		}
-
-		public IMassImportManagerInternal.MassImportResults RunNativeImportForAPI(ICoreContext icc, NativeLoadInfo settings, Relativity.Data.MassImportOld.Native importNative)
-		{
-			// not needed for toggle on
-			throw new NotImplementedException();
-		}
-
 		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, ImportStatistics importStats)
 		{
 			string destinationPath = null;
@@ -707,14 +695,14 @@ namespace Relativity.MassImport.Core
 			return Relativity.Core.PermissionsHelper.HasAdminOperationPermission(context, Relativity.Core.Permission.AllowDesktopClientImport);
 		}
 
-		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(ImageLoadInfo settings, IMassImportManagerInternal.MassImportResults results, Data.ImportMeasurements importMeasurements)
+		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
 		{
 			var dict = CreateImportMetricCustomData(settings, results);
 			dict.Add(nameof(importMeasurements.DataGridFileSize), importMeasurements.DataGridFileSize);
 			return dict;
 		}
 
-		private Dictionary<string, object> CreateSqlImportMetricsCustomData(ImageLoadInfo settings, IMassImportManagerInternal.MassImportResults results, Data.ImportMeasurements importMeasurements)
+		private Dictionary<string, object> CreateSqlImportMetricsCustomData(ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
 		{
 			var dict = CreateImportMetricCustomData(settings, results);
 			dict.Add(nameof(settings.AuditLevel), settings.AuditLevel.ToString());
@@ -725,7 +713,7 @@ namespace Relativity.MassImport.Core
 			return dict;
 		}
 
-		private Dictionary<string, object> CreateImportMetricCustomData(ImageLoadInfo settings, IMassImportManagerInternal.MassImportResults results)
+		private Dictionary<string, object> CreateImportMetricCustomData(ImageLoadInfo settings, MassImportManagerBase.MassImportResults results)
 		{
 			return new Dictionary<string, object>()
 			{

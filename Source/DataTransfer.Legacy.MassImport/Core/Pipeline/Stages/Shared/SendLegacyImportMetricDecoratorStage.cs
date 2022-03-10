@@ -15,7 +15,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 	/// Dashboard in New Relic: "Import metrics".
 	/// </summary>
 	/// <typeparam name="T">Any input type</typeparam>
-	internal class SendLegacyImportMetricDecoratorStage<T> : DecoratorStage<T, IMassImportManagerInternal.MassImportResults>
+	internal class SendLegacyImportMetricDecoratorStage<T> : DecoratorStage<T, MassImportManagerBase.MassImportResults>
 		where T : IImportSettingsInput<NativeLoadInfo>
 	{
 		private readonly MassImportContext _context;
@@ -23,7 +23,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 		private readonly string _metricName;
 
 		public SendLegacyImportMetricDecoratorStage(
-			IPipelineStage<T, IMassImportManagerInternal.MassImportResults> importStage,
+			IPipelineStage<T, MassImportManagerBase.MassImportResults> importStage,
 			IPipelineExecutor pipelineExecutor,
 			MassImportContext context,
 			string metricName,
@@ -34,11 +34,11 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			_metricName = metricName;
 		}
 
-		public override IMassImportManagerInternal.MassImportResults Execute(T input)
+		public override MassImportManagerBase.MassImportResults Execute(T input)
 		{
 			var settings = input.Settings;
 
-			var returnValue = new IMassImportManagerInternal.MassImportResults(); // TODO comment why it is new
+			var returnValue = new MassImportManagerBase.MassImportResults(); // TODO comment why it is new
 
 			var importStopWatch = Stopwatch.StartNew();
 			try
@@ -71,7 +71,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 
 		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(
 			NativeLoadInfo settings,
-			IMassImportManagerInternal.MassImportResults results,
+			MassImportManagerBase.MassImportResults results,
 			Data.ImportMeasurements importMeasurements)
 		{
 			Dictionary<string, object> dict = CreateImportMetricCustomData(settings, results);
@@ -81,7 +81,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 
 		private Dictionary<string, object> CreateSqlImportMetricsCustomData(
 			NativeLoadInfo settings,
-			IMassImportManagerInternal.MassImportResults results,
+			MassImportManagerBase.MassImportResults results,
 			Data.ImportMeasurements importMeasurements)
 		{
 			Dictionary<string, object> dict = CreateImportMetricCustomData(settings, results);
@@ -100,7 +100,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 
 		private Dictionary<string, object> CreateImportMetricCustomData(
 			NativeLoadInfo settings,
-			IMassImportManagerInternal.MassImportResults results)
+			MassImportManagerBase.MassImportResults results)
 		{
 			return new Dictionary<string, object>
 			{
