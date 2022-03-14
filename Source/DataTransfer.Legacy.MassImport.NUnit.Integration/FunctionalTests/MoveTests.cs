@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Invariant.Services.Retry;
 using MassImport.NUnit.Integration.Assertions;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
@@ -13,19 +10,14 @@ using Relativity;
 using Relativity.Core.Service;
 using Relativity.MassImport;
 using Relativity.MassImport.Api;
-using Relativity.Services.LinkManager.Interfaces;
-using Relativity.Services.Objects.DataContracts;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	[TestFixture(false)]
-	[TestFixture(true)]
+	[TestFixture]
 	public class MoveTests : MassImportTestBase
 	{
-		private readonly bool _massImportImprovementsToggle;
-
 		private IMassImportManager _sut;
 		private int _rootFolderId;
 		private MassImportField _identifierField;
@@ -40,16 +32,9 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		private const string TestDestinationFolder = "TestDestinationFolder";
 		private const string TestSourceFolder = "TestSourceFolder";
 
-		public MoveTests(bool massImportImprovementsToggle)
-		{
-			_massImportImprovementsToggle = massImportImprovementsToggle;
-		}
-		
 		[OneTimeSetUp]
 		public async Task OneTimeSetUp()
 		{
-			SettingsHelper.SetToggle<Relativity.MassImport.Toggles.EnableMassImportImprovementsInMassImportManager>(_massImportImprovementsToggle);
-			
 			_rootFolderId = await FolderHelper.ReadRootFolderIdAsync(TestParameters, TestWorkspace)
 				.ConfigureAwait(false);
 			_identifierField =

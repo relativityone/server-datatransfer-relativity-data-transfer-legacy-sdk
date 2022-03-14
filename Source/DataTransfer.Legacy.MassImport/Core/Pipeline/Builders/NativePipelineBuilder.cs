@@ -14,7 +14,7 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 	{
 		public NativePipelineBuilder(IPipelineExecutor pipelineExecutor, IAPM apm) : base(pipelineExecutor, apm) { }
 
-		public IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildPipeline(MassImportContext context)
+		public IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildPipeline(MassImportContext context)
 		{
 			IStagingTableRepository stagingTableRepository = new NativeStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
@@ -35,7 +35,7 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 			return new ExecuteIfJobNotInitializedStage<NativeImportInput>(PipelineExecutor, jobStage, stagingTableRepository);
 		}
 
-		private IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildBatchExecutionStage(
+		private IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildBatchExecutionStage(
 			MassImportContext context,
 			IStagingTableRepository stagingTableRepository,
 			IMassImportMetricsService metricsService)
@@ -62,9 +62,9 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 				.AddNextStage(new CopyExtratedTextFilesToDataGridStage(context), PipelineExecutor);
 		}
 
-		private IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildImportStage(MassImportContext context)
+		private IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildImportStage(MassImportContext context)
 		{
-			IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> importStage = new ImportNativesStage(context);
+			IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> importStage = new ImportNativesStage(context);
 			importStage = ExecuteInTransactionDecoratorStage.New(importStage, PipelineExecutor, context);
 			importStage = RetryOnExceptionDecoratorStage.New(importStage, PipelineExecutor, context, actionName: "importing natives");
 			importStage = new SendLegacyImportMetricDecoratorStage<NativeImportInput>(

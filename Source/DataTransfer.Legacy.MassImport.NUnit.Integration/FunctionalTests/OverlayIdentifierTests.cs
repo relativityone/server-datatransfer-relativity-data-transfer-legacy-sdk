@@ -265,7 +265,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var populateStagingTablesStage = new PopulateStagingTablesStage<TableNames>(context, artifacts, settings, artifactManager);
 			void LoadStagingTablesAction(TableNames tableNames) => populateStagingTablesStage.Execute(tableNames.Native, tableNames.Code, tableNames.Objects);
 
-			IMassImportManagerInternal.MassImportResults internalResult;
+			MassImportManagerBase.MassImportResults internalResult;
 			if (settings.ArtifactTypeID == (int)ArtifactType.Document)
 			{
 				internalResult = MassImporter.ImportNativesForObjectManager(
