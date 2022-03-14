@@ -42,7 +42,7 @@ namespace Relativity.MassImport.Core
 			SendCounter(Constants.MassImportMetricsBucketNames.PreImportStagingTableDetails, correlationId, customData);
 		}
 
-		public void SendBatchCompleted(string correlationId, long importTimeInMilliseconds, string importType, string system, IMassImportManagerInternal.MassImportResults result, ImportMeasurements importMeasurements)
+		public void SendBatchCompleted(string correlationId, long importTimeInMilliseconds, string importType, string system, MassImportManagerBase.MassImportResults result, ImportMeasurements importMeasurements)
 		{
 			var customData = MetricCustomDataBuilder
 				.New()

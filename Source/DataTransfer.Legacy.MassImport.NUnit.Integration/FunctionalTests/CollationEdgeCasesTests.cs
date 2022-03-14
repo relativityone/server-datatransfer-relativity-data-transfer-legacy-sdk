@@ -11,27 +11,17 @@ using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	[TestFixture(false)]
-	[TestFixture(true)]
+	[TestFixture]
 	public class CollationEdgeCasesTests : MassImportTestBase
 	{
-		private readonly bool _massImportImprovementsToggle;
-
 		private int _rootFolderId;
 		private MassImportField _identifierField;
 
 		private IMassImportManager _sut;
 
-		public CollationEdgeCasesTests(bool massImportImprovementsToggle)
-		{
-			_massImportImprovementsToggle = massImportImprovementsToggle;
-		}
-
 		[OneTimeSetUp]
 		public async Task OneTimeSetUp()
 		{
-			SettingsHelper.SetToggle<Relativity.MassImport.Toggles.EnableMassImportImprovementsInMassImportManager>(_massImportImprovementsToggle);
-
 			_rootFolderId = await FolderHelper.ReadRootFolderIdAsync(TestParameters, TestWorkspace).ConfigureAwait(false);
 			_identifierField = await Helpers.FieldHelper.ReadIdentifierField(TestParameters, TestWorkspace).ConfigureAwait(false);
 		}

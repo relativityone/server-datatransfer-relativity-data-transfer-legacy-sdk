@@ -7,7 +7,6 @@ namespace MassImport.NUnit.Integration.Helpers
 {
 	public static class SettingsHelper
 	{
-		private const bool MASS_IMPORT_IMPROVEMENTS_TOGGLE_DEFAULT_VALUE = true;
 		private const int MASS_IMPORT_SQL_TIME_OUT_DEFAULT_VALUE = 60;
 		private const bool ENFORCE_DOCUMENT_LIMIT_DEFAULT_VALUE = false;
 		private const int DOCUMENT_LIMIT_DEFAULT_VALUE = 0;
@@ -19,7 +18,6 @@ namespace MassImport.NUnit.Integration.Helpers
 
 		public static void SetDefaultSettings()
 		{
-			SetToggle<MassImportImprovementsToggle>(MASS_IMPORT_IMPROVEMENTS_TOGGLE_DEFAULT_VALUE);
 			SetMassImportSqlTimeOut(MASS_IMPORT_SQL_TIME_OUT_DEFAULT_VALUE);
 			SetEnforceDocumentLimit(ENFORCE_DOCUMENT_LIMIT_DEFAULT_VALUE);
 			SetDefaultDocumentLimit(DOCUMENT_LIMIT_DEFAULT_VALUE);

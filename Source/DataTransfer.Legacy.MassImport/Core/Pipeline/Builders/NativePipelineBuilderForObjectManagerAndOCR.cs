@@ -16,12 +16,12 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 	{
 		public NativePipelineBuilderForObjectManager(IPipelineExecutor pipelineExecutor, IAPM apm) : base(pipelineExecutor, apm) { }
 
-		public IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildPipeline(MassImportContext context, Action<TableNames> populateStagingTablesAction)
+		public IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildPipeline(MassImportContext context, Action<TableNames> populateStagingTablesAction)
 		{
 			IStagingTableRepository stagingTableRepository = new NativeStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
 
-			IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> importStage = new Stages.Natives.ImportNativesStage(context);
+			IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> importStage = new Stages.Natives.ImportNativesStage(context);
 			importStage = ExecuteInTransactionDecoratorStage.New(importStage, PipelineExecutor, context);
 			importStage = RetryOnExceptionDecoratorStage.New(importStage, PipelineExecutor, context, actionName: "importing natives");
 
