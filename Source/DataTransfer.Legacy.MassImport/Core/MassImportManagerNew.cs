@@ -476,9 +476,9 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
-			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding);
+			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding, bulkFileSharePath);
 			return MassImporter.ImportNatives(context, input);
 		}
 

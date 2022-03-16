@@ -84,7 +84,7 @@ namespace Relativity.MassImport.NUnit.Core
 				throw new System.Exception("AttemptRunImageImport Failed");
 			}
 
-			protected override MassImportResults AttemptRunNativeImport(BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
+			protected override MassImportResults AttemptRunNativeImport(BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunNativeImport Failed");
 			}

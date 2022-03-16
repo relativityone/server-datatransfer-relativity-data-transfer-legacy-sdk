@@ -11,18 +11,19 @@ namespace Relativity.MassImport.Core.Pipeline.Input
 		public bool CollectCreatedIDs { get; private set; }
 		public IEnumerable<Data.DataGrid.DGImportFileInfo> DGImportFileInfo { get; set; }
 
-		private NativeImportInput(NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Relativity.Core.AuditAction importUpdateAuditAction, IDataGridInputReaderProvider dataGridInputReaderProvider, bool collectCreatedIDs) : base(includeExtractedTextEncoding, importUpdateAuditAction)
+		private NativeImportInput(NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Relativity.Core.AuditAction importUpdateAuditAction, IDataGridInputReaderProvider dataGridInputReaderProvider, bool collectCreatedIDs, string bulkFileSharePath = null) : base(includeExtractedTextEncoding, importUpdateAuditAction)
 		{
 			Settings = settings;
 			InRepository = inRepository;
 			DataGridInputReaderProvider = dataGridInputReaderProvider;
 			CollectCreatedIDs = collectCreatedIDs;
 			DGImportFileInfo = null;
+			BulkFileSharePath = bulkFileSharePath;	//TODO default value
 		}
 
-		public static NativeImportInput ForWebApi(NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding)
+		public static NativeImportInput ForWebApi(NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath)
 		{
-			return new NativeImportInput(settings, inRepository, includeExtractedTextEncoding, Relativity.Core.AuditAction.Update_Import, null, false);
+			return new NativeImportInput(settings, inRepository, includeExtractedTextEncoding, Relativity.Core.AuditAction.Update_Import, null, false, bulkFileSharePath);
 		}
 
 		public static NativeImportInput ForObjectManager(NativeLoadInfo settings, IDataGridInputReaderProvider dataGridInputReaderProvider)

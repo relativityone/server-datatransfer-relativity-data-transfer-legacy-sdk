@@ -24,7 +24,10 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					settings.BulkLoadFileFieldDelimiter = Relativity.Data.Config.BulkLoadFileFieldDelimiter;
 				}
 
-				_stagingTableRepository.BulkInsert(settings, _context.BaseContext.GetBcpSharePath());
+				//var bcp = _context.BaseContext.GetBcpSharePath();
+				var bcp = _context.BulkFileSharePath;
+
+				_stagingTableRepository.BulkInsert(settings, bcp);
 			}
 			else
 			{
