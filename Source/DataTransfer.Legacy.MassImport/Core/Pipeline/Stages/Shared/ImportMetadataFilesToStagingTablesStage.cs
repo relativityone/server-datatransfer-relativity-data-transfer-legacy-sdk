@@ -1,8 +1,8 @@
 ﻿using Relativity.MassImport.Data.StagingTables;
+using Castle.Core.Internal;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
-	using Castle.Core.Internal;
 
 	internal class ImportMetadataFilesToStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
 	{

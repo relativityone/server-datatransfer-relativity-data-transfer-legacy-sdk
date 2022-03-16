@@ -9,8 +9,6 @@ using Relativity.MassImport.Core.Pipeline.Stages.Shared;
 
 namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 {
-	using System;
-
 	[TestFixture]
 	public class RetryOnExceptionDecoratorStageTests
 	{
