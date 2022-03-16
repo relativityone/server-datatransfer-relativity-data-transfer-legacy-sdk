@@ -2,6 +2,8 @@
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
+	using Castle.Core.Internal;
+
 	internal class ImportMetadataFilesToStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
 	{
 		private readonly Pipeline.MassImportContext _context;
@@ -24,8 +26,9 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					settings.BulkLoadFileFieldDelimiter = Relativity.Data.Config.BulkLoadFileFieldDelimiter;
 				}
 
-				//var bcp = _context.BaseContext.GetBcpSharePath();
-				var bcp = _context.BulkFileSharePath;
+				var bcp = _context.BulkFileSharePath.IsNullOrEmpty() ?
+					_context.BaseContext.GetBcpSharePath() :
+					_context.BulkFileSharePath;
 
 				_stagingTableRepository.BulkInsert(settings, bcp);
 			}
