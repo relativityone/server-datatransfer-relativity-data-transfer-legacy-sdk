@@ -2,7 +2,6 @@
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
-
 	internal class ImportMetadataFilesToStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
 	{
 		private readonly Pipeline.MassImportContext _context;
