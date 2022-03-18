@@ -56,8 +56,7 @@ namespace Relativity.Core.Service.MassImport
 				baseContext,
 				settings,
 				Relativity.MassImport.Core.Constants.SystemNames.ObjectManager,
-				Relativity.MassImport.Core.Constants.ImportType.Natives,
-				""); //TODO
+				Relativity.MassImport.Core.Constants.ImportType.Natives);
 			var pipelineBuilder = new NativePipelineBuilderForObjectManager(contextAndExecutorDto.PipelineExecutor, APMClient);
 			var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext, loadStagingTablesAction);
 			var results = ExecuteImport(pipeline, input, input.Settings, contextAndExecutorDto);
@@ -70,8 +69,7 @@ namespace Relativity.Core.Service.MassImport
 				baseContext,
 				settings,
 				Relativity.MassImport.Core.Constants.SystemNames.ObjectManager,
-				Relativity.MassImport.Core.Constants.ImportType.Objects,
-				""); //TODO
+				Relativity.MassImport.Core.Constants.ImportType.Objects);
 			var pipelineBuilder = new ObjectsPipelineBuilderForObjectManagerAndRSAPI(contextAndExecutorDto.PipelineExecutor, APMClient);
 			var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext, loadStagingTablesAction);
 			var input = ObjectImportInput.ForObjectManager(settings, returnAffectedArtifactIDs);
@@ -88,8 +86,7 @@ namespace Relativity.Core.Service.MassImport
 					baseContext,
 					settings,
 					Relativity.MassImport.Core.Constants.SystemNames.RSAPI,
-					Relativity.MassImport.Core.Constants.ImportType.Natives,
-					""); //TODO
+					Relativity.MassImport.Core.Constants.ImportType.Natives);
 				var pipelineBuilder = new NativePipelineBuilderForObjectManager(contextAndExecutorDto.PipelineExecutor, APMClient);
 				var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext, loadStagingTablesAction);
 				var input = NativeImportInput.ForRsapi(settings, null, returnAffectedArtifactIDs);
@@ -101,8 +98,7 @@ namespace Relativity.Core.Service.MassImport
 					baseContext,
 					settings,
 					Relativity.MassImport.Core.Constants.SystemNames.RSAPI,
-					Relativity.MassImport.Core.Constants.ImportType.Objects,
-					""); //TODO
+					Relativity.MassImport.Core.Constants.ImportType.Objects);
 				var pipelineBuilder = new ObjectsPipelineBuilderForObjectManagerAndRSAPI(contextAndExecutorDto.PipelineExecutor, APMClient);
 				var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext, loadStagingTablesAction);
 				var input = ObjectImportInput.ForObjectManager(settings, returnAffectedArtifactIDs);
@@ -163,7 +159,7 @@ namespace Relativity.Core.Service.MassImport
 			NativeLoadInfo settings,
 			string clientName,
 			string importType,
-			string bulkFileSharePath)
+			string bulkFileSharePath = null)
 		{
 			var tableNames = new TableNames(settings.RunID);
 			settings.RunID = tableNames.RunId; // tableNames generates runID if it was empty
