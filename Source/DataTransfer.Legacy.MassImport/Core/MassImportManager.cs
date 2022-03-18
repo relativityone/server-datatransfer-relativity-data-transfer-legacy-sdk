@@ -30,14 +30,14 @@ namespace Relativity.Core.Service
 			}
 		}
 
-		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportResults retval)
+		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, bulkFileSharePath, timekeeper, retval));
 		}
 
-		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
+		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, bulkFileSharePath, retval));
 		}
 		
 		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)

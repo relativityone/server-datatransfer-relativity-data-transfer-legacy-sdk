@@ -79,7 +79,7 @@ namespace Relativity.MassImport.NUnit.Core
 				// empatee
 			}
 
-			protected override MassImportResults AttemptRunImageImport(BaseContext context, ImageLoadInfo settings, bool inRepository, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
+			protected override MassImportResults AttemptRunImageImport(BaseContext context, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunImageImport Failed");
 			}
@@ -94,7 +94,7 @@ namespace Relativity.MassImport.NUnit.Core
 				throw new System.Exception("AttemptRunObjectImport Failed");
 			}
 			
-			protected override MassImportResults AttemptRunProductionImageImport(BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
+			protected override MassImportResults AttemptRunProductionImageImport(BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunProductionImageImport Failed");
 			}
