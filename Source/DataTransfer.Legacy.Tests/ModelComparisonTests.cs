@@ -45,6 +45,10 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			{
 				modifier = -3;
 			}
+			else if (typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.ImageLoadInfo).FullName)
+			{
+				modifier = 1;
+			}
 
 			sourceProperties.Length.Should().BeGreaterThan(0, "to make sure we took fields in a correct way");
 			sourceProperties.Length.Should().Be(destinationProperties.Length + modifier, "{0} {1}", typeMap.SourceType, typeMap.DestinationType);
