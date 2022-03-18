@@ -1,5 +1,4 @@
 ﻿using Relativity.MassImport.Data.StagingTables;
-using Castle.Core.Internal;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
@@ -26,7 +25,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					settings.BulkLoadFileFieldDelimiter = Relativity.Data.Config.BulkLoadFileFieldDelimiter;
 				}
 
-				var bcp = _context.BulkFileSharePath.IsNullOrEmpty() ?
+				var bcp = string.IsNullOrEmpty(_context.BulkFileSharePath) ?
 					_context.BaseContext.GetBcpSharePath() :
 					_context.BulkFileSharePath;
 
