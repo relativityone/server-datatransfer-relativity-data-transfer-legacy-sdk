@@ -18,7 +18,7 @@ namespace Relativity.MassImport.Core.Pipeline.Input
 			DataGridInputReaderProvider = dataGridInputReaderProvider;
 			CollectCreatedIDs = collectCreatedIDs;
 			DGImportFileInfo = null;
-			BulkFileSharePath = bulkFileSharePath;	//TODO default value
+			BulkFileSharePath = bulkFileSharePath;
 		}
 
 		public static NativeImportInput ForWebApi(NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath)
