@@ -12,8 +12,6 @@ using Relativity.Telemetry.APM;
 
 namespace Relativity.MassImport.Core
 {
-	using Castle.Core.Internal;
-
 	internal class MassImportManagerNew
 	{
 		private readonly ILockHelper _lockHelper;
@@ -77,7 +75,7 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
-			var bulkFileShareFolderPath = bulkFileSharePath.IsNullOrEmpty() ?
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
 				context.GetBcpSharePath() :
 				bulkFileSharePath;
 
@@ -276,7 +274,7 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
-			var bulkFileShareFolderPath = bulkFileSharePath.IsNullOrEmpty() ?
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
 				context.GetBcpSharePath() :
 				bulkFileSharePath;
 
