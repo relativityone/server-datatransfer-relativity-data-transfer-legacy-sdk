@@ -12,7 +12,7 @@ namespace Relativity.MassImport.Core
 {
 	internal class ServerSideFolderGenerator
 	{
-		public void CreateFolders(ILockHelper lockHelper, kCura.Utility.Timekeeper timekeeper, Relativity.Core.BaseContext context, Int32 activeWorkspaceID, Folder folder, Relativity.NativeLoadInfo settings)
+		public void CreateFolders(ILockHelper lockHelper, kCura.Utility.Timekeeper timekeeper, Relativity.Core.BaseContext context, Int32 activeWorkspaceID, Folder folder, Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			// If settings.RootFolderID is 0, the folders have been created with an old version of the client. New clients pass -1 for unset and > 0 for set, which does not create folders on the client.
 			// Check here to see whether the settings object has a Root Folder ID less than zero.

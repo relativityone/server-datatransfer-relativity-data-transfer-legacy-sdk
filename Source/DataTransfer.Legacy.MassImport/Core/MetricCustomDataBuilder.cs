@@ -28,7 +28,7 @@ namespace Relativity.MassImport.Core
 			return this;
 		}
 
-		public MetricCustomDataBuilder WithSettings(NativeLoadInfo settings)
+		public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			// Import settings
 			_customData[nameof(settings.ExecutionSource)] = settings.ExecutionSource.ToString();
@@ -69,7 +69,7 @@ namespace Relativity.MassImport.Core
 			_customData[nameof(IsFolderNameMapped)] = IsFolderNameMapped;
 
 			// Object import
-			if (settings is ObjectLoadInfo settingsAsObjectLoadInfo)
+			if (settings is Relativity.MassImport.DTO.ObjectLoadInfo settingsAsObjectLoadInfo)
 			{
 				_customData[nameof(settingsAsObjectLoadInfo.ArtifactTypeID)] = settingsAsObjectLoadInfo.ArtifactTypeID;
 			}

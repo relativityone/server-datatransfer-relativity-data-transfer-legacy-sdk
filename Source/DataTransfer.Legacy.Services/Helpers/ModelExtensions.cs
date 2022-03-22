@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using ErrorFileKey = Relativity.MassImport.ErrorFileKey;
 using Field = Relativity.Core.DTO.Field;
@@ -9,6 +8,8 @@ using RelationalFieldPane = Relativity.Core.DTO.RelationalFieldPane;
 
 namespace Relativity.DataTransfer.Legacy.Services.Helpers
 {
+	using Relativity.Core.Service;
+
 	public static class ModelExtensions
 	{
 		public static IMapper Mapper { get; }
@@ -29,9 +30,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 			cfg.CreateMap<ImageImportStatistics, MassImport.ImageImportStatistics>();
 			cfg.CreateMap<ObjectImportStatistics, MassImport.ObjectImportStatistics>();
 			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ImageLoadInfo, ImageLoadInfo>();
-			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.NativeLoadInfo, NativeLoadInfo>();
-			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ObjectLoadInfo, ObjectLoadInfo>();
-			cfg.CreateMap<LoadRange, NativeLoadInfo.LoadRange>();
+			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.NativeLoadInfo, Relativity.MassImport.DTO.NativeLoadInfo>();
+			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ObjectLoadInfo, Relativity.MassImport.DTO.ObjectLoadInfo>();
+			cfg.CreateMap<LoadRange, Relativity.MassImport.DTO.NativeLoadInfo.LoadRange>();
 			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.FieldInfo, FieldInfo>();
 			cfg.CreateMap<Code, Core.DTO.Code>();
 			cfg.CreateMap<KeyboardShortcut, Core.DTO.KeyboardShortcut>();

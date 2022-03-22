@@ -29,7 +29,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 		private List<string> _tablesToDeleteInTearDown;
 
-		private protected abstract IChoicesImportService CreateSut(NativeLoadInfo settings);
+		private protected abstract IChoicesImportService CreateSut(Relativity.MassImport.DTO.NativeLoadInfo settings);
 
 		protected abstract Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, OverlayBehavior overlayBehavior);
 
@@ -96,7 +96,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField, MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Both,
@@ -138,7 +138,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(choiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Both,
@@ -181,7 +181,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -237,7 +237,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -294,7 +294,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -362,7 +362,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Overlay,
@@ -430,7 +430,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Append,
@@ -495,7 +495,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Overlay,
@@ -581,7 +581,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -691,7 +691,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(choiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Overlay,
@@ -746,7 +746,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(choiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = OverwriteType.Overlay,
@@ -798,7 +798,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField, MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,

@@ -81,7 +81,6 @@
     <None Include="Data\DataGeidWriteStrategy\FileSystemRecordBuilderTests.cs" />
     <None Include="Data\DataGridReaderTests.cs" />
     <None Include="Data\DataGridTempFileDataReaderTests.cs" />
-    <None Include="Data\HelperFixture.cs" />
     <None Include="Data\NativeSqlQueryTest.cs" />
     <None Include="Data\Native\ProcessMultiObjectFieldTests.cs" />
     <None Include="Data\Native\ProcessSingleObjectFieldTests.cs" />

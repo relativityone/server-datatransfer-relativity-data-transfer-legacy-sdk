@@ -193,9 +193,9 @@ namespace Relativity.MassImport.NUnit.Data
 			Assert.AreEqual(normalizedExpectedResult, normalizedResult, "Generated audit details differ from the expected values.");
 		}
 
-		private static ObjectLoadInfo InitializeSettings(string runId, int artifactTypeId, ImportAuditLevel auditLevel, OverlayBehavior overlayBehavior, OverwriteType overwriteType, FieldInfo[] mappedFields)
+		private static Relativity.MassImport.DTO.ObjectLoadInfo InitializeSettings(string runId, int artifactTypeId, ImportAuditLevel auditLevel, OverlayBehavior overlayBehavior, OverwriteType overwriteType, FieldInfo[] mappedFields)
 		{
-			var objectLoadInfo = new ObjectLoadInfo
+			var objectLoadInfo = new Relativity.MassImport.DTO.ObjectLoadInfo
 			{
 				RunID = runId,
 				ArtifactTypeID = artifactTypeId,
