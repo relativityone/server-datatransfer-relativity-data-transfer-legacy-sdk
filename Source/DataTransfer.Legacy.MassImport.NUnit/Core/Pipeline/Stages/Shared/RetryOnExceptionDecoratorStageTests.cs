@@ -32,10 +32,11 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 				.Returns(_loggerMock.Object);
 
 			_massImportContext = new MassImportContext(
-				 baseContext: null, // not used by ExecuteInTransactionDecoratorStage
+				baseContext: null, // not used by ExecuteInTransactionDecoratorStage
 				new LoggingContext("correlationId", "clientName", _loggerMock.Object),
 				jobDetails: null, // not used by ExecuteInTransactionDecoratorStage
-				caseSystemArtifactId: -1); // not used by ExecuteInTransactionDecoratorStage
+				caseSystemArtifactId: -1, // not used by ExecuteInTransactionDecoratorStage
+				string.Empty);
 
 			_sut = new RetryOnExceptionDecoratorStage<int, int>(
 				_stageMock.Object,

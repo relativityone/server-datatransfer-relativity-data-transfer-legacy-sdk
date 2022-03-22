@@ -50,14 +50,14 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId);
 		}
 
-		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportResults retval)
+		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunNativeImport(context, settings, inRepository, includeExtractedTextEncoding, timekeeper, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunNativeImport(context, settings, inRepository, includeExtractedTextEncoding, bulkFileSharePath, timekeeper, retval));
 		}
 		
-		protected override MassImportResults AttemptRunObjectImport(Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportResults retval)
+		protected override MassImportResults AttemptRunObjectImport(Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, bulkFileSharePath, retval));
 		}
 		
 		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)

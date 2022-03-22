@@ -484,15 +484,15 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
-			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding);
+			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding, bulkFileSharePath);
 			return MassImporter.ImportNatives(context, input);
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath, MassImportManagerBase.MassImportResults retval)
 		{
-			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate);
+			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate, bulkFileSharePath);
 			return MassImporter.ImportObjects(context, input);
 		}
 
