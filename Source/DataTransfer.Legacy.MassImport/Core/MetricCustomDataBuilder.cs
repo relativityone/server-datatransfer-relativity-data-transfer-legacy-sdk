@@ -77,7 +77,7 @@ namespace Relativity.MassImport.Core
 			return this;
 		}
 
-		public MetricCustomDataBuilder WithSettings(ImageLoadInfo settings)
+		public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.ImageLoadInfo settings)
 		{
 			_customData[nameof(settings.ExecutionSource)] = settings.ExecutionSource.ToString();
 			_customData[nameof(settings.AuditLevel)] = settings.AuditLevel.ToString();

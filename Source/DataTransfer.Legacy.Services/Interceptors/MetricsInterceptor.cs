@@ -372,21 +372,21 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 		private void PushImageLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ImageLoadInfo imageLoadInfo)
 		{
-			metrics.PushProperty("ImageLoadInfoMetrics", "1");
-			metrics.PushProperty(nameof(imageLoadInfo.DisableUserSecurityCheck), imageLoadInfo.DisableUserSecurityCheck);
-			metrics.PushProperty(nameof(imageLoadInfo.RunID), imageLoadInfo.RunID);
-			metrics.PushProperty(nameof(imageLoadInfo.Overlay), Enum.GetName(typeof(OverwriteType), imageLoadInfo.Overlay));
-			metrics.PushProperty(nameof(imageLoadInfo.Repository), imageLoadInfo.Repository);
-			metrics.PushProperty(nameof(imageLoadInfo.UseBulkDataImport), imageLoadInfo.UseBulkDataImport);
-			metrics.PushProperty(nameof(imageLoadInfo.UploadFullText), imageLoadInfo.UploadFullText);
-			metrics.PushProperty(nameof(imageLoadInfo.BulkFileName), imageLoadInfo.BulkFileName);
-			metrics.PushProperty(nameof(imageLoadInfo.DataGridFileName), imageLoadInfo.DataGridFileName);
-			metrics.PushProperty(nameof(imageLoadInfo.KeyFieldArtifactID), imageLoadInfo.KeyFieldArtifactID);
-			metrics.PushProperty(nameof(imageLoadInfo.DestinationFolderArtifactID), imageLoadInfo.DestinationFolderArtifactID);
-			metrics.PushProperty(nameof(imageLoadInfo.AuditLevel), Enum.GetName(typeof(ImportAuditLevel), imageLoadInfo.AuditLevel));
-			metrics.PushProperty(nameof(imageLoadInfo.OverlayArtifactID), imageLoadInfo.OverlayArtifactID);
-			metrics.PushProperty(nameof(imageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
-			metrics.PushProperty(nameof(imageLoadInfo.Billable), imageLoadInfo.Billable);
+			metrics.PushProperty("Relativity.MassImport.DTO.ImageLoadInfoMetrics", "1");
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.DisableUserSecurityCheck), imageLoadInfo.DisableUserSecurityCheck);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.RunID), imageLoadInfo.RunID);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.Overlay), Enum.GetName(typeof(OverwriteType), imageLoadInfo.Overlay));
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.Repository), imageLoadInfo.Repository);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.UseBulkDataImport), imageLoadInfo.UseBulkDataImport);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.UploadFullText), imageLoadInfo.UploadFullText);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.BulkFileName), imageLoadInfo.BulkFileName);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.DataGridFileName), imageLoadInfo.DataGridFileName);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.KeyFieldArtifactID), imageLoadInfo.KeyFieldArtifactID);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.DestinationFolderArtifactID), imageLoadInfo.DestinationFolderArtifactID);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.AuditLevel), Enum.GetName(typeof(ImportAuditLevel), imageLoadInfo.AuditLevel));
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.OverlayArtifactID), imageLoadInfo.OverlayArtifactID);
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
+			metrics.PushProperty(nameof(Relativity.MassImport.DTO.ImageLoadInfo.Billable), imageLoadInfo.Billable);
 		}
 	}
 }

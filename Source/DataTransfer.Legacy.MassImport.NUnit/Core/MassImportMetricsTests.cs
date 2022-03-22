@@ -222,7 +222,7 @@ namespace Relativity.MassImport.NUnit.Core
 
 			string runId = Guid.NewGuid().ToString();
 
-			var settings = new ImageLoadInfo
+			var settings = new Relativity.MassImport.DTO.ImageLoadInfo
 			{
 				RunID = runId,
 			};
@@ -330,7 +330,7 @@ namespace Relativity.MassImport.NUnit.Core
 		}
 
 		public bool VerifyCustomData(
-			ImageLoadInfo settings,
+			Relativity.MassImport.DTO.ImageLoadInfo settings,
 			string importType,
 			string system,
 			Dictionary<string, object> customData)
@@ -339,10 +339,10 @@ namespace Relativity.MassImport.NUnit.Core
 
 			string[] propertiesNotIncludedInCustomData =
 			{
-				nameof(ImageLoadInfo.RunID),
-				nameof(ImageLoadInfo.Repository),
-				nameof(ImageLoadInfo.BulkFileName),
-				nameof(ImageLoadInfo.DataGridFileName),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.RunID),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.Repository),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.BulkFileName),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.DataGridFileName),
 			};
 
 			VerifyAllPropertiesAreIncluded(settings, propertiesNotIncludedInCustomData, customData);

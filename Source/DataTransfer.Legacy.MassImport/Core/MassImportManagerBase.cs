@@ -7,8 +7,8 @@ namespace Relativity.Core.Service
 {
 	public abstract class MassImportManagerBase
 	{
-		protected abstract MassImportResults AttemptRunImageImport(Core.BaseContext context, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval);
 		protected abstract MassImportResults AttemptRunNativeImport(Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
 		protected abstract MassImportResults AttemptRunObjectImport(Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath, MassImportResults retval);
 
@@ -81,12 +81,12 @@ namespace Relativity.Core.Service
 			return caseSystemArtifactID;
 		}
 
-		public MassImportResults RunImageImport(Core.ICoreContext icc, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath = null)
+		public MassImportResults RunImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath = null)
 		{
 			return AttemptRun((results, timekeeper) => this.AttemptRunImageImport(icc.ChicagoContext, settings, inRepository, bulkFileSharePath, timekeeper, results));
 		}
 
-		public MassImportResults RunProductionImageImport(Core.ICoreContext icc, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath = null)
+		public MassImportResults RunProductionImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath = null)
 		{
 			return AttemptRun((results, timekeeper) => this.AttemptRunProductionImageImport(icc.ChicagoContext, settings, productionArtifactID, inRepository, bulkFileSharePath, results));
 		}

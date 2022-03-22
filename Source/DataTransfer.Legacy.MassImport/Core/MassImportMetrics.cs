@@ -27,7 +27,7 @@ namespace Relativity.MassImport.Core
 			SendCounter(Constants.MassImportMetricsBucketNames.JobStarted, settings.RunID, customData);
 		}
 
-		public void SendJobStarted(ImageLoadInfo settings, string importType, string system)
+		public void SendJobStarted(Relativity.MassImport.DTO.ImageLoadInfo settings, string importType, string system)
 		{
 			var customData = MetricCustomDataBuilder
 				.New()
