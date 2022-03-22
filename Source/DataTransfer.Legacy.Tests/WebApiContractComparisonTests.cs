@@ -83,46 +83,6 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		[Test]
 		[TestCaseSource(nameof(GetAllKeplerEndpoints))]
 		[Order(4)]
-		[Ignore("tmp")]
-		public void MakeSureEndpointsHasCorrectTypesOfParameters(MethodDefinition keplerMethod)
-		{
-			const string correlationIdParamName = "correlationID";
-
-			var webApiMethods = GetAllWebApiMethods(MapKeplerToWebApiServiceName(keplerMethod.DeclaringType.Name));
-			var webApiMethodParameters = webApiMethods.First(x => x.Name == MapKeplerToWebApiEndpointName(keplerMethod.Name)).Parameters;
-
-			var keplerMethodParameters = keplerMethod.Parameters;
-
-			var invalidParameters = new List<string>();
-
-			for (int i = 0; i < keplerMethodParameters.Count; i++)
-			{
-				if (i == keplerMethodParameters.Count - 1)
-				{
-					//correlationID is new parameter in Kepler endpoints
-					if (keplerMethodParameters[i].Name != correlationIdParamName || keplerMethodParameters[i].ParameterType.FullName != typeof(string).FullName)
-					{
-						invalidParameters.Add($"{keplerMethodParameters[i].ParameterType} {keplerMethodParameters[i]}");
-					}
-				}
-				else
-				{
-					if (keplerMethodParameters[i].ParameterType.FullName != webApiMethodParameters[i].ParameterType.FullName)
-					{
-						if (!MappingExists(keplerMethodParameters[i].ParameterType.FullName, webApiMethodParameters[i].ParameterType.FullName))
-						{
-							invalidParameters.Add($"{keplerMethodParameters[i].ParameterType} {keplerMethodParameters[i]}");
-						}
-					}
-				}
-			}
-
-			invalidParameters.Should().BeEmpty();
-		}
-
-		[Test]
-		[TestCaseSource(nameof(GetAllKeplerEndpoints))]
-		[Order(5)]
 		public void MakeSureEndpointsHasCorrectReturnType(MethodDefinition keplerMethod)
 		{
 			var webApiMethods = GetAllWebApiMethods(MapKeplerToWebApiServiceName(keplerMethod.DeclaringType.Name));
