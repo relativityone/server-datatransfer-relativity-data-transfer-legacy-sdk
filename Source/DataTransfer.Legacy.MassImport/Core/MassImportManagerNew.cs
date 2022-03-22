@@ -53,7 +53,7 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
@@ -75,9 +75,13 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
+				context.GetBcpSharePath() :
+				bulkFileSharePath;
+
 			if (settings.UseBulkDataImport)
 			{
-				settings.RunID = image.InitializeBulkTable(context.GetBcpSharePath());
+				settings.RunID = image.InitializeBulkTable(bulkFileShareFolderPath);
 			}
 			else
 			{
@@ -92,8 +96,8 @@ namespace Relativity.MassImport.Core
 			timekeeper.MarkEnd("TempFileInitialization");
 			if (image.HasDataGridWorkToDo && image.IsDataGridInputValid())
 			{
-				var loader = image.CreateDataGridReader(context.GetBcpSharePath(), this.CorrelationLogger);
-				image.WriteToDataGrid(loader, context.AppArtifactID, context.GetBcpSharePath(), this.CorrelationLogger);
+				var loader = image.CreateDataGridReader(bulkFileShareFolderPath, this.CorrelationLogger);
+				image.WriteToDataGrid(loader, context.AppArtifactID, bulkFileShareFolderPath, this.CorrelationLogger);
 				image.MapDataGridRecords(this.CorrelationLogger);
 			}
 
@@ -247,7 +251,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
@@ -270,9 +274,13 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
+				context.GetBcpSharePath() :
+				bulkFileSharePath;
+
 			if (settings.UseBulkDataImport)
 			{
-				settings.RunID = image.InitializeBulkTable(context.GetBcpSharePath());
+				settings.RunID = image.InitializeBulkTable(bulkFileShareFolderPath);
 			}
 			else
 			{
@@ -376,8 +384,8 @@ namespace Relativity.MassImport.Core
 
 					if (image.IsDataGridInputValid())
 					{
-						var loader = image.CreateDataGridReader(context.GetBcpSharePath(), this.CorrelationLogger);
-						image.WriteToDataGrid(loader, context.AppArtifactID, context.GetBcpSharePath(),
+						var loader = image.CreateDataGridReader(bulkFileShareFolderPath, this.CorrelationLogger);
+						image.WriteToDataGrid(loader, context.AppArtifactID, bulkFileShareFolderPath,
 							this.CorrelationLogger);
 						image.MapDataGridRecords(this.CorrelationLogger);
 					}
