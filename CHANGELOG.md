@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.16]
+- REL-658092 - added BulkFileSharePath property for images API and overwrite BCP path with value given in this new property.
+
 ## [0.2.15]
 - REL-658092 - added BulkFileSharePath property for API and overwrite BCP path with value given in this new property.
 
