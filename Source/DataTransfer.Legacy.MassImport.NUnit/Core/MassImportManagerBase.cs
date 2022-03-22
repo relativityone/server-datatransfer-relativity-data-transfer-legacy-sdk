@@ -68,7 +68,7 @@ namespace Relativity.MassImport.NUnit.Core
 		public void Mass_Object_Import_Exception_Check_Message_String()
 		{
 			var testMassImportManager = new MockMassImportManager();
-			_massImportResults = testMassImportManager.RunObjectImport(_mockContext.Object, default, false);
+			_massImportResults = testMassImportManager.RunObjectImport(_mockContext.Object, default, false, string.Empty);
 			Assert.IsTrue(_massImportResults.ExceptionDetail.ExceptionFullText.Contains(OBJECT_IMPORT_EXCEPTION_MESSAGE));
 		}
 
@@ -84,12 +84,12 @@ namespace Relativity.MassImport.NUnit.Core
 				throw new System.Exception("AttemptRunImageImport Failed");
 			}
 
-			protected override MassImportResults AttemptRunNativeImport(BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
+			protected override MassImportResults AttemptRunNativeImport(BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunNativeImport Failed");
 			}
 
-			protected override MassImportResults AttemptRunObjectImport(BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportResults retval)
+			protected override MassImportResults AttemptRunObjectImport(BaseContext context, ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunObjectImport Failed");
 			}
