@@ -25,7 +25,8 @@ namespace MassImport.NUnit.Integration.Core.Pipeline.Stages.Shared
 				this.CoreContext.ChicagoContext,
 				loggingContext,
 				jobDetails: null, // it is not used
-				caseSystemArtifactId: 0); // it is not used
+				caseSystemArtifactId: 0, // it is not used
+				string.Empty);
 			var executor = new PipelineExecutor();
 			var innerStage = new ReturnNumberOfOpenTransactionsStage(context);
 			_sut = new ExecuteInTransactionDecoratorStage<int, int>(innerStage, executor, context);
