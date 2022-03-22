@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using ErrorFileKey = Relativity.MassImport.ErrorFileKey;
 using Field = Relativity.Core.DTO.Field;
@@ -8,7 +9,6 @@ using RelationalFieldPane = Relativity.Core.DTO.RelationalFieldPane;
 
 namespace Relativity.DataTransfer.Legacy.Services.Helpers
 {
-	using Relativity.Core.Service;
 
 	public static class ModelExtensions
 	{
