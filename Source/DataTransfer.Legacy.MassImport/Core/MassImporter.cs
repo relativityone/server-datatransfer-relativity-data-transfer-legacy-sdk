@@ -24,8 +24,7 @@ namespace Relativity.Core.Service.MassImport
 				baseContext,
 				input.Settings,
 				Relativity.MassImport.Core.Constants.SystemNames.Kepler,
-				Relativity.MassImport.Core.Constants.ImportType.Natives,
-				input.BulkFileSharePath);
+				Relativity.MassImport.Core.Constants.ImportType.Natives);
 
 			var pipelineBuilder = new NativePipelineBuilder(contextAndExecutorDto.PipelineExecutor, APMClient);
 			var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext);
@@ -39,8 +38,7 @@ namespace Relativity.Core.Service.MassImport
 				baseContext,
 				input.Settings,
 				Relativity.MassImport.Core.Constants.SystemNames.Kepler,
-				Relativity.MassImport.Core.Constants.ImportType.Objects,
-				input.BulkFileSharePath);
+				Relativity.MassImport.Core.Constants.ImportType.Objects);
 
 			var pipelineBuilder = new ObjectsPipelineBuilder(contextAndExecutorDto.PipelineExecutor, APMClient);
 			var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext);
@@ -158,8 +156,7 @@ namespace Relativity.Core.Service.MassImport
 			BaseContext baseContext,
 			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			string clientName,
-			string importType,
-			string bulkFileSharePath = null)
+			string importType)
 		{
 			var tableNames = new TableNames(settings.RunID);
 			settings.RunID = tableNames.RunId; // tableNames generates runID if it was empty
@@ -170,8 +167,7 @@ namespace Relativity.Core.Service.MassImport
 				baseContext,
 				loggingContext,
 				jobDetails,
-				caseSystemArtifactID,
-				bulkFileSharePath);
+				caseSystemArtifactID);
 			var pipelineExecutor = CreatePipelineExecutor(loggingContext, massImportContext.ImportMeasurements);
 			return new ContextAndExecutorDto(massImportContext, pipelineExecutor);
 		}

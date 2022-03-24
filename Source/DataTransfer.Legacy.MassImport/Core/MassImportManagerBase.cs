@@ -7,10 +7,10 @@ namespace Relativity.Core.Service
 {
 	public abstract class MassImportManagerBase
 	{
-		protected abstract MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunObjectImport(Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunObjectImport(Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, MassImportResults retval);
 
 		public virtual int GetCaseAuditUserId(Core.BaseContext context, string onBehalfOfUserToken)
 		{
@@ -81,24 +81,24 @@ namespace Relativity.Core.Service
 			return caseSystemArtifactID;
 		}
 
-		public MassImportResults RunImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath = null)
+		public MassImportResults RunImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository)
 		{
-			return AttemptRun((results, timekeeper) => this.AttemptRunImageImport(icc.ChicagoContext, settings, inRepository, bulkFileSharePath, timekeeper, results));
+			return AttemptRun((results, timekeeper) => this.AttemptRunImageImport(icc.ChicagoContext, settings, inRepository, timekeeper, results));
 		}
 
-		public MassImportResults RunProductionImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath = null)
+		public MassImportResults RunProductionImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository)
 		{
-			return AttemptRun((results, timekeeper) => this.AttemptRunProductionImageImport(icc.ChicagoContext, settings, productionArtifactID, inRepository, bulkFileSharePath, results));
+			return AttemptRun((results, timekeeper) => this.AttemptRunProductionImageImport(icc.ChicagoContext, settings, productionArtifactID, inRepository, results));
 		}
 
-		public MassImportResults RunNativeImport(Core.ICoreContext icc, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath = null)
+		public MassImportResults RunNativeImport(Core.ICoreContext icc, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding)
 		{
-			return AttemptRun((results, timekeeper) => this.AttemptRunNativeImport(icc.ChicagoContext, settings, inRepository, includeExtractedTextEncoding, bulkFileSharePath, timekeeper, results));
+			return AttemptRun((results, timekeeper) => this.AttemptRunNativeImport(icc.ChicagoContext, settings, inRepository, includeExtractedTextEncoding, timekeeper, results));
 		}
 
-		public MassImportResults RunObjectImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath = null)
+		public MassImportResults RunObjectImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository)
 		{
-			return AttemptRun((results, timekeeper) => this.AttemptRunObjectImport(icc.ChicagoContext, settings, inRepository, bulkFileSharePath, results));
+			return AttemptRun((results, timekeeper) => this.AttemptRunObjectImport(icc.ChicagoContext, settings, inRepository, results));
 		}
 
 		[Serializable()]
