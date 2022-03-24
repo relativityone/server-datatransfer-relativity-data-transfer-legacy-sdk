@@ -139,7 +139,7 @@ FROM
 		/// <param name="overlayMergeValues"></param>
 		/// <returns>a SQL expression that will be used when modifying the CodeArtifact table</returns>
 		/// <remarks></remarks>
-		public static string GetFieldOverlaySwitchStatement(NativeLoadInfo settings, FieldTypeHelper.FieldType fieldType, bool? overlayMergeValues)
+		public static string GetFieldOverlaySwitchStatement(Relativity.MassImport.DTO.NativeLoadInfo settings, FieldTypeHelper.FieldType fieldType, bool? overlayMergeValues)
 		{
 			// This function is called only for multi choices/objects
 			if (fieldType == FieldTypeHelper.FieldType.Code || fieldType == FieldTypeHelper.FieldType.Object)

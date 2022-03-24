@@ -15,7 +15,7 @@ namespace Relativity.MassImport.Data.StagingTables
 		{
 		}
 
-		public override string Insert(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool excludeFolderPathForOldClient)
+		public override string Insert(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool excludeFolderPathForOldClient)
 		{
 			try
 			{
@@ -158,7 +158,7 @@ namespace Relativity.MassImport.Data.StagingTables
 			}
 		}
 
-		public override void CreateStagingTables(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool includeExtractedTextEncoding, bool excludeFolderPathForOldClient)
+		public override void CreateStagingTables(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool includeExtractedTextEncoding, bool excludeFolderPathForOldClient)
 		{
 			var metadataColumnClause = new System.Text.StringBuilder();
 			foreach (FieldInfo mappedField in settings.MappedFields)
@@ -186,7 +186,7 @@ namespace Relativity.MassImport.Data.StagingTables
 			this.CreateStagingTablesBase(columnDefinitionCache, settings.MappedFields, metadataColumnClause.ToString(), settings.KeyFieldArtifactID, settings.LoadImportedFullTextFromServer);
 		}
 
-		private FieldInfo GetFieldMappedToCell(NativeLoadInfo settings, NativeTempFileReader.Cell cell)
+		private FieldInfo GetFieldMappedToCell(Relativity.MassImport.DTO.NativeLoadInfo settings, NativeTempFileReader.Cell cell)
 		{
 			foreach (FieldInfo field in settings.MappedFields)
 			{
@@ -220,7 +220,7 @@ namespace Relativity.MassImport.Data.StagingTables
 			return new[] { param };
 		}
 
-		private FieldInfo GetIdentifierField(NativeLoadInfo settings)
+		private FieldInfo GetIdentifierField(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			foreach (FieldInfo mappedField in settings.MappedFields)
 			{

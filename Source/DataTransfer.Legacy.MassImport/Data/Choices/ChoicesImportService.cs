@@ -19,14 +19,14 @@ namespace Relativity.MassImport.Data.Choices
 		private readonly IToggleProvider _toggleProvider;
 		private readonly TableNames _tableNames;
 		private readonly IColumnDefinitionCache _columnDefinitionCache;
-		private readonly NativeLoadInfo _settings;
+		private readonly Relativity.MassImport.DTO.NativeLoadInfo _settings;
 
 		public ChoicesImportService(
 			BaseContext context,
 			IToggleProvider toggleProvider,
 			TableNames tableNames,
 			ImportMeasurements importMeasurements,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			IColumnDefinitionCache columnDefinitionCache,
 			int queryTimeoutInSeconds)
 		{

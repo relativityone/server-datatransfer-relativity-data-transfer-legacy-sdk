@@ -30,7 +30,7 @@ namespace Relativity.MassImport.Data
 		protected readonly int _artifactTypeID = 0;
 		private Relativity.Data.DataGridContext _dgContext;
 		private FieldInfo _fullTextField;
-		private NativeLoadInfo _settings;
+		private Relativity.MassImport.DTO.NativeLoadInfo _settings;
 		private FieldInfo _identifierField;
 		private const string _STATUS_COLUMN_NAME = "kCura_Import_Status";
 		private const bool _FILTER_BY_ORDER = false;
@@ -45,7 +45,7 @@ namespace Relativity.MassImport.Data
 		protected ObjectBase(
 			kCura.Data.RowDataGateway.BaseContext context,
 			IQueryExecutor queryExecutor,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			NativeImportSql importSql,
 			int artifactTypeID,
 			int importUpdateAuditAction,
@@ -83,7 +83,7 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Accessors
-		protected NativeLoadInfo Settings => _settings;
+		protected Relativity.MassImport.DTO.NativeLoadInfo Settings => _settings;
 
 		protected NativeImportSql ImportSql { get; set; }
 
@@ -591,7 +591,7 @@ WHERE
 			return IsDataGridInputValid(Settings);
 		}
 
-		public static bool IsDataGridInputValid(NativeLoadInfo settings)
+		public static bool IsDataGridInputValid(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			return !string.IsNullOrEmpty(settings.DataGridFileName) && SQLInjectionHelper.IsValidFileName(settings.DataGridFileName);
 		}

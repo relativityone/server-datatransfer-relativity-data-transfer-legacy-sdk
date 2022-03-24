@@ -4,7 +4,7 @@ using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
-	internal class ValidateSettingsStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>
+	internal class ValidateSettingsStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		public T Execute(T input)
 		{
@@ -17,7 +17,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			return input;
 		}
 
-		private static void ValidateRunId(NativeLoadInfo settings)
+		private static void ValidateRunId(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
@@ -25,7 +25,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			}
 		}
 
-		private static void ValidateMetadataFilesNames(NativeLoadInfo settings)
+		private static void ValidateMetadataFilesNames(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			if (settings.CodeFileName is null || !SQLInjectionHelper.IsValidFileName(settings.CodeFileName))
 			{
@@ -43,7 +43,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			}
 		}
 
-		public void ValidateDataGridInput(NativeLoadInfo settings)
+		public void ValidateDataGridInput(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			if (settings.HasDataGridWorkToDo && !ObjectBase.IsDataGridInputValid(settings))
 			{
