@@ -90,6 +90,8 @@ namespace Relativity.MassImport.DTO
 
         public bool Billable { get; set; }
 
+        public string BulkFileSharePath { get; set; }
+
         public bool HaveDataGridFields
         {
 	        get

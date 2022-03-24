@@ -7,7 +7,6 @@ namespace Relativity.MassImport.Core.Pipeline.Input
 		public Relativity.Core.AuditAction ImportUpdateAuditAction { get; private set; }
 		public bool IncludeExtractedTextEncoding { get; private set; }
 		public ColumnDefinitionCache ColumnDefinitionCache { get; set; }
-		public string BulkFileSharePath { get; set; }
 
 		public CommonInput(bool includeExtractedTextEncoding, Relativity.Core.AuditAction importUpdateAuditAction)
 		{

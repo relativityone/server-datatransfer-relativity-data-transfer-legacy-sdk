@@ -31,8 +31,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 				baseContext: null, // not used by SendMetricWithPreImportStagingTablesDetails
 				new LoggingContext("correlationId", "clientName", _loggerMock.Object),
 				new MassImportJobDetails(new TableNames(), clientSystemName: "test", importType: "test"),
-				caseSystemArtifactId: -1, // not used by SendMetricWithPreImportStagingTablesDetails
-				string.Empty
+				caseSystemArtifactId: -1 // not used by SendMetricWithPreImportStagingTablesDetails
 			);
 
 			_stagingTableRepositoryMock = new Mock<IStagingTableRepository>();

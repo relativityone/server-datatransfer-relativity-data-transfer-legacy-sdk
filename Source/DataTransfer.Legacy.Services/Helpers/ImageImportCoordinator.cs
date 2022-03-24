@@ -25,7 +25,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 
 		public MassImportManagerBase.MassImportResults RunImport(BaseServiceContext serviceContext, MassImportManager massImportManager)
 		{
-			return massImportManager.RunImageImport(serviceContext, _settings.Map<Relativity.MassImport.DTO.ImageLoadInfo>(), _inRepository, _settings.BulkFileSharePath);
+			return massImportManager.RunImageImport(serviceContext, _settings.Map<Relativity.MassImport.DTO.ImageLoadInfo>(), _inRepository);
 		}
 	}
 }

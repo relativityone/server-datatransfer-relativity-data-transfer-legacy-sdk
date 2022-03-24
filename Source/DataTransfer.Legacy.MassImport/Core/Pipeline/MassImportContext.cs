@@ -13,7 +13,6 @@ namespace Relativity.MassImport.Core.Pipeline
 		public Timekeeper Timekeeper { get; }
 		public MassImportJobDetails JobDetails { get; }
 		public int CaseSystemArtifactId { get; }
-		public string BulkFileSharePath { get; set; }
 
 		public ILog Logger => _loggingContext.Logger;
 
@@ -21,14 +20,12 @@ namespace Relativity.MassImport.Core.Pipeline
 			Relativity.Core.BaseContext baseContext,
 			LoggingContext loggingContext,
 			MassImportJobDetails jobDetails,
-			int caseSystemArtifactId,
-			string bulkFileSharePath)
+			int caseSystemArtifactId)
 		{
 			BaseContext = baseContext;
 			_loggingContext = loggingContext;
 			JobDetails = jobDetails;
 			CaseSystemArtifactId = caseSystemArtifactId;
-			BulkFileSharePath = bulkFileSharePath;
 
 			ImportMeasurements = new ImportMeasurements();
 			Timekeeper = new Timekeeper();
