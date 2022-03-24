@@ -53,7 +53,7 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
@@ -251,7 +251,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
@@ -455,7 +455,7 @@ namespace Relativity.MassImport.Core
 
 			var timekeeper = new Timekeeper();
 			timekeeper.MarkStart("Generate Errors");
-			var settings = new ImageLoadInfo();
+			var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 			settings.RunID = runID;
 			settings.KeyFieldArtifactID = keyFieldID;
 			var x = new Data.Image(icc.ChicagoContext.DBContext, settings).GenerateErrorFiles(caseArtifactID, writeHeader);
@@ -474,7 +474,7 @@ namespace Relativity.MassImport.Core
 			bool retval = (bool)icc.ChicagoContext.DBContext.ExecuteSqlStatementAsScalar(string.Format("SELECT CASE WHEN EXISTS(SELECT TOP 1 [DocumentIdentifier] FROM [Resource].[{0}] WHERE NOT [Status] = 0) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", Relativity.MassImport.Constants.IMAGE_TEMP_TABLE_PREFIX + runId));
 			if (!retval)
 			{
-				var settings = new ImageLoadInfo();
+				var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 				settings.RunID = runId;
 				settings.KeyFieldArtifactID = -1;
 				var x = new Data.Image(icc.ChicagoContext.DBContext, settings);
@@ -703,14 +703,14 @@ namespace Relativity.MassImport.Core
 			return Relativity.Core.PermissionsHelper.HasAdminOperationPermission(context, Relativity.Core.Permission.AllowDesktopClientImport);
 		}
 
-		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
+		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
 		{
 			var dict = CreateImportMetricCustomData(settings, results);
 			dict.Add(nameof(importMeasurements.DataGridFileSize), importMeasurements.DataGridFileSize);
 			return dict;
 		}
 
-		private Dictionary<string, object> CreateSqlImportMetricsCustomData(ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
+		private Dictionary<string, object> CreateSqlImportMetricsCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
 		{
 			var dict = CreateImportMetricCustomData(settings, results);
 			dict.Add(nameof(settings.AuditLevel), settings.AuditLevel.ToString());
@@ -721,7 +721,7 @@ namespace Relativity.MassImport.Core
 			return dict;
 		}
 
-		private Dictionary<string, object> CreateImportMetricCustomData(ImageLoadInfo settings, MassImportManagerBase.MassImportResults results)
+		private Dictionary<string, object> CreateImportMetricCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results)
 		{
 			return new Dictionary<string, object>()
 			{

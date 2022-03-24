@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.18]
+- REL-661511 - cloned ImageLoadInfo dto from the relativity core.
+
 ## [0.2.17]
 - REL-661435 - cloned NativeLoadInfo and ObjectLoadInfo dtos from the relativity core.
 
