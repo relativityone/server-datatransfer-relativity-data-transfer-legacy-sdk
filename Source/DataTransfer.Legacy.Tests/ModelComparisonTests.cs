@@ -39,7 +39,6 @@ namespace Relativity.DataTransfer.Legacy.Tests
 
 			//original ObjectLoadInfo and NativeLoadInfo has three additional getters
 			//which return values from different properties based on some conditions - no need to rewrite them
-			//NativeLoadInfo model has one more property for bulk import to overwrite the bcp path
 			int modifier = 0;
 			if (typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.ObjectLoadInfo).FullName
 				|| typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.NativeLoadInfo).FullName)
