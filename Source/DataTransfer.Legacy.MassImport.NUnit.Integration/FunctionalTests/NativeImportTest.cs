@@ -25,7 +25,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			const bool inRepository = true;
 			const bool includeExtractedTextEncoding = false;
-			NativeLoadInfo nativeLoadInfo = await this.CreateSampleNativeLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
+			Relativity.MassImport.DTO.NativeLoadInfo nativeLoadInfo = await this.CreateSampleNativeLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
 			MassImportManager massImportManager = new MassImportManager();
 
 			// Act
@@ -36,7 +36,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
 		}
 
-		private async Task<NativeLoadInfo> CreateSampleNativeLoadInfoAsync(int numberOfArtifactsToCreate)
+		private async Task<Relativity.MassImport.DTO.NativeLoadInfo> CreateSampleNativeLoadInfoAsync(int numberOfArtifactsToCreate)
 		{
 			string fieldDelimiter = "þþKþþ";
 			FieldInfo[] fields =
@@ -85,7 +85,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			this._expectedFieldValues = RandomHelper.GetFieldValues(fields, numberOfArtifactsToCreate);
 			string dataFileContent = GetMetadata(fieldDelimiter, _expectedFieldValues);
 
-			return new NativeLoadInfo
+			return new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				AuditLevel = ImportAuditLevel.FullAudit,
 				Billable = true,

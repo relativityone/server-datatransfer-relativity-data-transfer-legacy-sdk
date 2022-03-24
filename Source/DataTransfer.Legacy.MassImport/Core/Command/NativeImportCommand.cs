@@ -24,7 +24,7 @@ namespace Relativity.MassImport.Core.Command
 			Native native, 
 			IDataGridInputReaderProvider dataGridInputReaderProvider, 
 			int auditUserId, 
-			NativeLoadInfo settings, 
+			Relativity.MassImport.DTO.NativeLoadInfo settings, 
 			bool inRepository, 
 			bool includeExtractedTextEncoding, 
 			NativeImportInput input,
@@ -59,7 +59,7 @@ namespace Relativity.MassImport.Core.Command
 		protected bool IsOverlayOrBoth { get; private set; }
 		protected bool MoveDocumentsInAppendOverlay { get; private set; }
 		protected Native Native { get; private set; }
-		protected NativeLoadInfo Settings { get; private set; }
+		protected Relativity.MassImport.DTO.NativeLoadInfo Settings { get; private set; }
 		protected NativeImportInput Input { get; private set; }
 		private IDataGridInputReaderProvider DataGridInputReaderProvider { get; set; }
 

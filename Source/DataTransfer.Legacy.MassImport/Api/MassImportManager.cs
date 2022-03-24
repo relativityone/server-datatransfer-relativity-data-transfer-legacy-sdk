@@ -154,7 +154,7 @@ namespace Relativity.MassImport.Api
 			}
 			else
 			{
-				var objectSettings = (ObjectLoadInfo)settings;
+				var objectSettings = (Relativity.MassImport.DTO.ObjectLoadInfo)settings;
 				internalResult = MassImporter.ImportObjectsForObjectManager(_context, objectSettings, true, LoadStagingTablesAction);
 			}
 

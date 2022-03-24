@@ -31,7 +31,7 @@ namespace Relativity.MassImport.Data.StagingTables
 
 		public abstract void CreateStagingTables(
 			ColumnDefinitionCache columnDefinitionCache,
-			NativeLoadInfo settings, bool includeExtractedTextEncoding,
+			Relativity.MassImport.DTO.NativeLoadInfo settings, bool includeExtractedTextEncoding,
 			bool excludeFolderPathForOldClient);
 
 		public void TruncateStagingTables(
@@ -57,7 +57,7 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			Context.ExecuteNonQuerySQLStatement(sql, QueryTimeout);
 		}
 
-		public string BulkInsert(NativeLoadInfo settings, string bulkFileSharePath)
+		public string BulkInsert(Relativity.MassImport.DTO.NativeLoadInfo settings, string bulkFileSharePath)
 		{
 			try
 			{
@@ -94,7 +94,7 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			return TableNames.RunId;
 		}
 
-		public abstract string Insert(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool excludeFolderPathForOldClient);
+		public abstract string Insert(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool excludeFolderPathForOldClient);
 
 		public IDictionary<int, int> ReadNumberOfChoicesPerCodeTypeId()
 		{
@@ -295,7 +295,7 @@ END
 			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout));
 		}
 
-		private string GetBulkInsertQuery(NativeLoadInfo settings, string bulkFileSharePath, string bulkFileName, string tableName)
+		private string GetBulkInsertQuery(Relativity.MassImport.DTO.NativeLoadInfo settings, string bulkFileSharePath, string bulkFileName, string tableName)
 		{
 			if (string.IsNullOrWhiteSpace(bulkFileSharePath))
 			{

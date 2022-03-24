@@ -48,7 +48,7 @@ namespace Relativity.Core.Service.MassImport
 			return result;
 		}
 
-		public static MassImportManagerBase.MassImportResults ImportNativesForObjectManager(BaseContext baseContext, NativeLoadInfo settings, Action<TableNames> loadStagingTablesAction, DataGridReader dataGridReader)
+		public static MassImportManagerBase.MassImportResults ImportNativesForObjectManager(BaseContext baseContext, Relativity.MassImport.DTO.NativeLoadInfo settings, Action<TableNames> loadStagingTablesAction, DataGridReader dataGridReader)
 		{
 			IDataGridInputReaderProvider dataGridInputReaderProvider = dataGridReader is null ? null : new DataGridInputReaderProvider(dataGridReader);
 			var input = NativeImportInput.ForObjectManager(settings, dataGridInputReaderProvider);
@@ -63,7 +63,7 @@ namespace Relativity.Core.Service.MassImport
 			return results;
 		}
 
-		public static MassImportManagerBase.MassImportResults ImportObjectsForObjectManager(BaseContext baseContext, ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
+		public static MassImportManagerBase.MassImportResults ImportObjectsForObjectManager(BaseContext baseContext, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
 		{
 			var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
 				baseContext,
@@ -77,7 +77,7 @@ namespace Relativity.Core.Service.MassImport
 			return results;
 		}
 
-		public static MassImportManagerBase.MassImportResults ImportObjectsForRSAPI(BaseContext baseContext, ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
+		public static MassImportManagerBase.MassImportResults ImportObjectsForRSAPI(BaseContext baseContext, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
 		{
 			MassImportManagerBase.MassImportResults results;
 			if (settings.ArtifactTypeID == (int)ArtifactType.Document)
@@ -112,7 +112,7 @@ namespace Relativity.Core.Service.MassImport
 
 		private static MassImportManagerBase.MassImportResults ExecuteImport<T>(
 			IPipelineStage<T, MassImportManagerBase.MassImportResults> pipeline,
-			T input, NativeLoadInfo settings,
+			T input, Relativity.MassImport.DTO.NativeLoadInfo settings,
 			ContextAndExecutorDto contextAndExecutor)
 		{
 			var logger = contextAndExecutor.MassImportContext.Logger;
@@ -156,7 +156,7 @@ namespace Relativity.Core.Service.MassImport
 
 		private static ContextAndExecutorDto CreateMassImportContextAndPipelineExecutor(
 			BaseContext baseContext,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			string clientName,
 			string importType,
 			string bulkFileSharePath = null)
