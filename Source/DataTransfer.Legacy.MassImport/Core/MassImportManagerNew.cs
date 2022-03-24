@@ -75,9 +75,9 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
-			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
 				context.GetBcpSharePath() :
-				bulkFileSharePath;
+				settings.BulkFileSharePath;
 
 			if (settings.UseBulkDataImport)
 			{
@@ -274,9 +274,9 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
-			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
 				context.GetBcpSharePath() :
-				bulkFileSharePath;
+				settings.BulkFileSharePath;
 
 			if (settings.UseBulkDataImport)
 			{
