@@ -14,7 +14,7 @@ namespace Relativity.MassImport.Data.StagingTables
 		{
 		}
 
-		public override string Insert(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool excludeFolderPathForOldClient)
+		public override string Insert(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool excludeFolderPathForOldClient)
 		{
 			string importNativeFileName = System.IO.Path.Combine(settings.Repository, settings.DataFileName);
 			string importCodeFileName = System.IO.Path.Combine(settings.Repository, settings.CodeFileName);
@@ -129,7 +129,7 @@ namespace Relativity.MassImport.Data.StagingTables
 			return this.TableNames.RunId;
 		}
 
-		public override void CreateStagingTables(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool includeExtractedTextEncoding, bool excludeFolderPathForOldClient)
+		public override void CreateStagingTables(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool includeExtractedTextEncoding, bool excludeFolderPathForOldClient)
 		{
 			var metadataColumnClause = new System.Text.StringBuilder();
 			foreach (FieldInfo mappedField in settings.MappedFields)

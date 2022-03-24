@@ -61,7 +61,7 @@ namespace Relativity.MassImport.Data
 		public Native(
 			Relativity.Core.BaseContext context, 
 			IQueryExecutor queryExecutor,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,

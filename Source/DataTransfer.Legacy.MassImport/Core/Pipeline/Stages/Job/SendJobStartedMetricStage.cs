@@ -3,7 +3,7 @@ using Relativity.MassImport.Core.Pipeline.Input.Interface;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Job
 {
-	internal class SendJobStartedMetricStage<T> : IPipelineStage<T> where T : IImportSettingsInput<NativeLoadInfo>
+	internal class SendJobStartedMetricStage<T> : IPipelineStage<T> where T : IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly MassImportContext _context;
 		private readonly IMassImportMetricsService _metricsService;

@@ -17,7 +17,7 @@ namespace Relativity.MassImport.Core
 			_apm = apm;
 		}
 
-		public void SendJobStarted(NativeLoadInfo settings, string importType, string system)
+		public void SendJobStarted(Relativity.MassImport.DTO.NativeLoadInfo settings, string importType, string system)
 		{
 			var customData = MetricCustomDataBuilder
 				.New()

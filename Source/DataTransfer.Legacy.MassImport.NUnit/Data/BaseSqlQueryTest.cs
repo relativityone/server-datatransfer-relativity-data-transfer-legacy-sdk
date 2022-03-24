@@ -55,7 +55,7 @@ namespace Relativity.MassImport.NUnit.Data
 			return true;
 		}
 
-		protected ObjectLoadInfo InitializeSettings()
+		protected Relativity.MassImport.DTO.ObjectLoadInfo InitializeSettings()
 		{
 			const int keyFieldArtifactId = 0;
 			var keyField = new FieldInfo();
@@ -65,7 +65,7 @@ namespace Relativity.MassImport.NUnit.Data
 			SingleObjectField = new FieldInfo();
 			SingleObjectField.DisplayName = SingleObjectFieldName;
 			SingleObjectField.ArtifactID = SingleObjectArtifactId;
-			var objectLoadInfo = new ObjectLoadInfo();
+			var objectLoadInfo = new Relativity.MassImport.DTO.ObjectLoadInfo();
 			objectLoadInfo.RunID = RunId;
 			objectLoadInfo.MappedFields = new FieldInfo[] { keyField, SingleObjectField };
 			objectLoadInfo.KeyFieldArtifactID = keyField.ArtifactID;

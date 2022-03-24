@@ -61,7 +61,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 		public void ShouldNotExecuteQueryWhenChoiceFieldsNotMapped()
 		{
 			// arrange
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				MappedFields = new[]
 				{
@@ -91,7 +91,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 				.Setup(x => x[_singleChoiceField.ArtifactID])
 				.Returns(new ColumnDefinitionInfo { OverlayMergeValues = overlayMergeValues });
 
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
 				MappedFields = new[]
@@ -123,7 +123,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 				.Setup(x => x[_multiChoiceField.ArtifactID])
 				.Returns(new ColumnDefinitionInfo { OverlayMergeValues = overlayMergeValues });
 
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				Overlay = OverwriteType.Append,
 				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
@@ -157,7 +157,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 				.Setup(x => x[_multiChoiceField.ArtifactID])
 				.Returns(new ColumnDefinitionInfo { OverlayMergeValues = overlayMergeValues });
 
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				Overlay = OverwriteType.Overlay,
 				OverlayBehavior = overlayBehavior,
@@ -191,7 +191,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 				.Setup(x => x[_multiChoiceField.ArtifactID])
 				.Returns(new ColumnDefinitionInfo { OverlayMergeValues = overlayMergeValues });
 
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				Overlay = OverwriteType.Overlay,
 				OverlayBehavior = overlayBehavior,
@@ -226,7 +226,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 				.Setup(x => x[_multiChoiceField.ArtifactID])
 				.Returns(new ColumnDefinitionInfo { OverlayMergeValues = false });
 
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				OverlayBehavior = OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
@@ -262,7 +262,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 				.Setup(x => x[_singleChoiceField.ArtifactID])
 				.Returns(new ColumnDefinitionInfo { OverlayMergeValues = false });
 
-			var setting = new NativeLoadInfo
+			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
 				MappedFields = new[]
@@ -281,7 +281,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 			_baseContextMock.Verify(x => x.ExecuteNonQuerySQLStatement(It.Is<string>(actual => actual.IsEqualIgnoringWhitespaces(expectedQuery)), QueryTimeoutInSeconds));
 		}
 
-		private ChoicesImportService CreateSut(NativeLoadInfo settings)
+		private ChoicesImportService CreateSut(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			var tableNames = new TableNames(RunId);
 			var importMeasurements = new ImportMeasurements();

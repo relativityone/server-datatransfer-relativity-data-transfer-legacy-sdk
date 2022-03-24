@@ -4,7 +4,7 @@ using Relativity.MassImport.Data.SqlFramework;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 {
-	internal class CreateFoldersStage<T> : Framework.IPipelineStage<T> where T : Input.Interface.IImportSettingsInput<NativeLoadInfo>
+	internal class CreateFoldersStage<T> : Framework.IPipelineStage<T> where T : Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly MassImportContext _context;
 
