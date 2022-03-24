@@ -30,12 +30,12 @@ namespace Relativity.Core.Service
 			}
 		}
 
-		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportResults retval)
+		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportResults retval)
 		{
 			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, bulkFileSharePath, timekeeper, retval));
 		}
 
-		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval)
+		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportResults retval)
 		{
 			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, bulkFileSharePath, retval));
 		}
