@@ -32,5 +32,7 @@ namespace Relativity.MassImport.DTO
 		public ExecutionSource ExecutionSource { get; set; } = ExecutionSource.Unknown;
 
 		public bool Billable { get; set; } = true;
-    }
+
+		public string BulkFileSharePath { get; set; }
+	}
 }

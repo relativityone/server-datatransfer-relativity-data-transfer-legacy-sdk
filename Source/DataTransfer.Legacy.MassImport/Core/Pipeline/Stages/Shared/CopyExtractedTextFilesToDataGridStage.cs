@@ -31,14 +31,18 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			IDataGridInputReaderProvider dataGridReaderProvider= input.DataGridInputReaderProvider ?? native;
 			if (dataGridReaderProvider.IsDataGridInputValid())
 			{
+				var bulkFileSharePath = string.IsNullOrEmpty(input.Settings.BulkFileSharePath)
+					? _context.BaseContext.GetBcpSharePath()
+					: input.Settings.BulkFileSharePath;
+
 				if (input.Settings.HasDataGridWorkToDo)
 				{
 					try
 					{
 						_context.Logger.LogDebug("Starting DataGrid Import");
 						input.DGImportFileInfo = native.DGRelativityRepository.ImportFileInfos;
-						DataGridReader loader = dataGridReaderProvider.CreateDataGridInputReader(_context.BaseContext.GetBcpSharePath(), _context.Logger);
-						native.WriteToDataGrid(loader, _context.BaseContext.AppArtifactID, _context.BaseContext.GetBcpSharePath(), _context.Logger);
+						DataGridReader loader = dataGridReaderProvider.CreateDataGridInputReader(bulkFileSharePath, _context.Logger);
+						native.WriteToDataGrid(loader, _context.BaseContext.AppArtifactID, bulkFileSharePath, _context.Logger);
 						native.MapDataGridRecords(_context.Logger);
 					}
 					catch (Exception ex)
@@ -48,7 +52,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 				}
 
 				// This file gets created even if we do not have DataGrid work, so clean it up if valid. 
-				dataGridReaderProvider.CleanupDataGridInput(_context.BaseContext.GetBcpSharePath(), _context.Logger);
+				dataGridReaderProvider.CleanupDataGridInput(bulkFileSharePath, _context.Logger);
 				_context.Logger.LogDebug("Finished DataGrid Import");
 			}
 

@@ -53,7 +53,7 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
@@ -75,9 +75,9 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
-			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
 				context.GetBcpSharePath() :
-				bulkFileSharePath;
+				settings.BulkFileSharePath;
 
 			if (settings.UseBulkDataImport)
 			{
@@ -251,7 +251,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string bulkFileSharePath, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
@@ -274,9 +274,9 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
-			var bulkFileShareFolderPath = string.IsNullOrEmpty(bulkFileSharePath) ?
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
 				context.GetBcpSharePath() :
-				bulkFileSharePath;
+				settings.BulkFileSharePath;
 
 			if (settings.UseBulkDataImport)
 			{
@@ -484,15 +484,15 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string bulkFileSharePath, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
-			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding, bulkFileSharePath);
+			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding);
 			return MassImporter.ImportNatives(context, input);
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, string bulkFileSharePath, MassImportManagerBase.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
-			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate, bulkFileSharePath);
+			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate);
 			return MassImporter.ImportObjects(context, input);
 		}
 
