@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.19]
+- REL-662147 - used property from cloned NativeLoadInfo and ImageLoadInfo DTOs instead of the passed value as property through the context.
+
 ## [0.2.18]
 - REL-661511 - cloned ImageLoadInfo dto from the relativity core.
 
