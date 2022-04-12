@@ -27,11 +27,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
         }
 
         [Test]
-        public void CreateDeadlockRetryPolicy_ReturnsPolicy_WhichRetriesOnDeadlockException()
+        public void CreateDeadlockExceptionRetryPolicy_ReturnsPolicy_WhichRetriesOnDeadlockException()
         {
             // arrange
             SqlException deadlockException = SqlExceptionCreator.NewSqlException(SQL_DEADLOCK_ERROR_NUMBER);
-            var retryPolicy = _sut.CreateDeadlockRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+            var retryPolicy = _sut.CreateDeadlockExceptionRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
 
 
             int numberOfCalls = 0;
@@ -59,14 +59,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
         }
 
         [Test]
-        public void CreateDeadlockRetryPolicy_ReturnsPolicy_WhichRetriesOnCreateFailedExceptionCausedByDeadlock()
+        public void CreateDeadlockExceptionRetryPolicy_ReturnsPolicy_WhichRetriesOnCreateFailedExceptionCausedByDeadlock()
         {
             // arrange
             SqlException deadlockException = SqlExceptionCreator.NewSqlException(SQL_DEADLOCK_ERROR_NUMBER);
             DeadlockException secondException = new DeadlockException("second", deadlockException);
-            CreateFailedException thirdException = new CreateFailedException("fourth", secondException);
+            CreateFailedException thirdException = new CreateFailedException("third", secondException);
 
-            var retryPolicy = _sut.CreateDeadlockRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+            var retryPolicy = _sut.CreateDeadlockExceptionRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
 
             int numberOfCalls = 0;
             int ThrowDeadlockTwice()
@@ -93,7 +93,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
         }
 
         [Test]
-        public void CreateDeadlockRetryPolicy_ReturnsPolicy_WhichRetriesOnDeadlockExceptionInTheMiddleOfTheExceptionChain()
+        public void CreateDeadlockExceptionRetryPolicy_ReturnsPolicy_WhichRetriesOnDeadlockExceptionInTheMiddleOfTheExceptionChain()
         {
             // arrange
             Exception firstException = new Exception("base");
@@ -101,7 +101,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
             Exception thirdException = new Exception("third", deadlockException);
             Exception fourthException = new Exception("fourth", thirdException);
 
-            var retryPolicy = _sut.CreateDeadlockRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+            var retryPolicy = _sut.CreateDeadlockExceptionRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
 
             int numberOfCalls = 0;
             int ThrowDeadlockTwice()
@@ -128,12 +128,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
         }
 
         [Test]
-        public void CreateDeadlockRetryPolicy_ReturnsPolicy_WhichNotRetryOnDeadlockException()
+        public void CreateDeadlockExceptionRetryPolicy_ReturnsPolicy_WhichNotRetryOnNonDeadlockException()
         {
             // arrange
             SqlException nonDeadlockException = SqlExceptionCreator.NewSqlException(SQL_INVALID_STATEMENT_ERROR_NUMBER);
 
-            var retryPolicy = _sut.CreateDeadlockRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+            var retryPolicy = _sut.CreateDeadlockExceptionRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
 
             int numberOfCalls = 0;
             int ThrowDeadlockTwice()
@@ -154,6 +154,108 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
             int expectedNumberOfCalls = 1;
             Assert.That(numberOfCalls, Is.EqualTo(expectedNumberOfCalls));
             _loggerMock.Verify(x => x.LogWarning(nonDeadlockException, "Will not retry - exception was not caused by SQL deadlock."));
+        }
+
+        [Test]
+        public void CreateDeadlockExceptionAndResultRetryPolicy_ReturnsPolicy_WhichRetriesOnMessageWithDeadlock()
+        {
+            // arrange
+            SqlException deadlockException = SqlExceptionCreator.NewSqlException(SQL_DEADLOCK_ERROR_NUMBER);
+            DeadlockException secondException = new DeadlockException("second", deadlockException);
+            CreateFailedException thirdException = new CreateFailedException("third", secondException);
+
+            var retryPolicy = _sut.CreateDeadlockExceptionAndResultRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+
+            int numberOfCalls = 0;
+            object ReturnDeadlockTwice()
+            {
+                numberOfCalls++;
+                if (numberOfCalls < 3)
+                {
+                    return thirdException.ToString();
+                }
+
+                return numberOfCalls;
+            }
+
+            // act
+            object actualNumberOfCalls = retryPolicy.Execute(ReturnDeadlockTwice);
+
+            // assert
+            int expectedNumberOfCalls = 3;
+            Assert.That(actualNumberOfCalls, Is.EqualTo(expectedNumberOfCalls));
+            _loggerMock.Verify(x => x.LogWarning(
+                null,
+                It.Is<string>(message => message.Contains("Deadlock occured when executing")),
+                It.IsAny<object[]>()));
+        }
+
+        [Test]
+        public void CreateDeadlockExceptionAndResultRetryPolicy_ReturnsPolicy_WhichRetriesOnDeadlockExceptionAndMessageWithDeadlock()
+        {
+            // arrange
+            SqlException deadlockException = SqlExceptionCreator.NewSqlException(SQL_DEADLOCK_ERROR_NUMBER);
+            DeadlockException secondException = new DeadlockException("second", deadlockException);
+            CreateFailedException thirdException = new CreateFailedException("third", secondException);
+
+            var retryPolicy = _sut.CreateDeadlockExceptionAndResultRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+
+            int numberOfCalls = 0;
+            object ReturnDeadlockTwice()
+            {
+                numberOfCalls++;
+                if (numberOfCalls < 2)
+                {
+                    throw thirdException;
+                }
+                if (numberOfCalls < 3)
+                {
+                    return thirdException.ToString();
+                }
+
+                return numberOfCalls;
+            }
+
+            // act
+            object actualNumberOfCalls = retryPolicy.Execute(ReturnDeadlockTwice);
+
+            // assert
+            int expectedNumberOfCalls = 3;
+            Assert.That(actualNumberOfCalls, Is.EqualTo(expectedNumberOfCalls));
+            _loggerMock.Verify(x => x.LogWarning(
+                thirdException,
+                It.Is<string>(message => message.Contains("Deadlock occured when executing")),
+                It.IsAny<object[]>()));
+            _loggerMock.Verify(x => x.LogWarning(
+                null,
+                It.Is<string>(message => message.Contains("Deadlock occured when executing")),
+                It.IsAny<object[]>()));
+        }
+
+        [Test]
+        public void CreateDeadlockExceptionAndResultRetryPolicy_ReturnsPolicy_WhichNotRetryOnMessageWithoutDeadlock()
+        {
+            // arrange
+            const string expectedResponse = "response"; 
+            var retryPolicy = _sut.CreateDeadlockExceptionAndResultRetryPolicy(maxNumberOfRetries: 3, backoffBase: 0);
+
+            int numberOfCalls = 0;
+            object ReturnStringForFirstCallAndIntForSecond()
+            {
+                numberOfCalls++;
+                if (numberOfCalls < 2)
+                {
+                    return expectedResponse;
+                }
+
+                return numberOfCalls;
+            }
+
+            // act
+            object actualResponse = retryPolicy.Execute(ReturnStringForFirstCallAndIntForSecond);
+
+            // assert
+            Assert.That(actualResponse, Is.EqualTo(expectedResponse));
         }
 
         /// <summary>
