@@ -3,6 +3,7 @@ using Polly.Retry;
 using Relativity.API;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -20,21 +21,56 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
             _logger = logger;
         }
 
-        public RetryPolicy CreateDeadlockRetryPolicy([CallerMemberName] string callerName = "")
+        /// <summary>
+        /// This policy retries deadlock exceptions.
+        /// </summary>
+        public RetryPolicy CreateDeadlockExceptionRetryPolicy([CallerMemberName] string callerName = "")
         {
-            return CreateDeadlockRetryPolicy(DefaultMaxNumberOfRetries, DefaultBackoffBase, callerName);
+            return CreateDeadlockExceptionRetryPolicy(DefaultMaxNumberOfRetries, DefaultBackoffBase, callerName);
         }
 
-        public RetryPolicy CreateDeadlockRetryPolicy(int maxNumberOfRetries, int backoffBase, [CallerMemberName] string callerName = "")
+        /// <summary>
+        /// This policy retries deadlock exceptions.
+        /// </summary>
+        public RetryPolicy CreateDeadlockExceptionRetryPolicy(int maxNumberOfRetries, int backoffBase, [CallerMemberName] string callerName = "")
         {
             return Policy
-    .Handle<Exception>(IsDeadlockException)
-    .WaitAndRetry(maxNumberOfRetries, GetExponentialBackoffSleepDurationProvider(backoffBase), OnRetry);
+                .Handle<Exception>(IsDeadlockException)
+                .WaitAndRetry(maxNumberOfRetries, GetExponentialBackoffSleepDurationProvider(backoffBase), OnRetry);
 
             void OnRetry(Exception ex, TimeSpan waitTime, int retryNumber, Context context)
             {
                 _logger.LogWarning(ex, "Deadlock occured when executing '{callerName}'. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
                     callerName,
+                    retryNumber,
+                    maxNumberOfRetries,
+                    waitTime);
+            }
+        }
+
+        /// <summary>
+        /// This policy retries deadlock exceptions or results which contain word "deadlock".
+        /// </summary>
+        public RetryPolicy<object> CreateDeadlockExceptionAndResultRetryPolicy([CallerMemberName] string callerName = "")
+        {
+            return CreateDeadlockExceptionAndResultRetryPolicy(DefaultMaxNumberOfRetries, DefaultBackoffBase, callerName);
+        }
+
+        /// <summary>
+        /// This policy retries deadlock exceptions or results which contain word "deadlock".
+        /// </summary>
+        public RetryPolicy<object> CreateDeadlockExceptionAndResultRetryPolicy(int maxNumberOfRetries, int backoffBase, [CallerMemberName] string callerName = "")
+        {
+            return Policy
+                .Handle<Exception>(IsDeadlockException)
+                .OrResult<object>(IsDeadlockErrorMessage)
+                .WaitAndRetry(maxNumberOfRetries, GetExponentialBackoffSleepDurationProvider(backoffBase), OnRetry);
+
+            void OnRetry(DelegateResult<object> result, TimeSpan waitTime, int retryNumber, Context context)
+            {
+                _logger.LogWarning(result.Exception, "Deadlock occured when executing '{callerName}'. Result: '{result}'. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+                    callerName,
+                    result.Result,
                     retryNumber,
                     maxNumberOfRetries,
                     waitTime);
@@ -48,13 +84,27 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 
         private bool IsDeadlockException(Exception exception)
         {
-            Exception lastException = exception;
             var exceptions = GetAllExceptionsInChain(exception);
             bool isDeadlock = exceptions.Any(kCura.Data.RowDataGateway.Helper.IsDeadLock);
 
-            _logger.LogWarning(exception, "Will not retry - exception was not caused by SQL deadlock.");
+            if (!isDeadlock)
+            {
+                _logger.LogWarning(exception, "Will not retry - exception was not caused by SQL deadlock.");
+            }
 
             return isDeadlock;
+        }
+
+        private bool IsDeadlockErrorMessage(object result)
+        {
+            const string expectedMessagePart = "deadlock";
+
+            if (result is string resultAsString)
+            {
+                return CultureInfo.InvariantCulture.CompareInfo.IndexOf(resultAsString, expectedMessagePart, CompareOptions.IgnoreCase) >= 0;
+            }
+
+            return false;
         }
 
         private static IEnumerable<Exception> GetAllExceptionsInChain(Exception exception)
