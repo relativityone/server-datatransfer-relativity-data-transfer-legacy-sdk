@@ -37,8 +37,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<object> CreateEncodedAsync(int workspaceID, Code code, string correlationID)
 		{
 			code.Name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(code.Name)));
-			var result = _retryPolicyFactory.CreateDeadlockRetryPolicy().Execute(() => _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false));
-
+			var result = _retryPolicyFactory.CreateDeadlockExceptionAndResultRetryPolicy().Execute(() => _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false));
+			
 			return Task.FromResult(result);
 		}
 
