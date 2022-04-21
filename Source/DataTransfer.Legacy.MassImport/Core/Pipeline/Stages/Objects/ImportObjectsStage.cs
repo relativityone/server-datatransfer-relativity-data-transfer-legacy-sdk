@@ -54,12 +54,12 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 
 			_lockHelper.Lock(_context.BaseContext, MassImportManagerLockKey.LockType.Objects, () =>
 			{
-				importObject.CreateAssociatedObjects(_context.BaseContext.UserID, auditUserId,
+				importObject.CreateAssociatedObjects(_context.BaseContext.AclUserID, auditUserId,
 					_context.BaseContext.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(),
 					Relativity.Core.Config.AuditingEnabled);
 				if (isAppendOrBoth)
 				{
-					artifactsCreated = importObject.CreateObjects(_context.BaseContext.UserID, auditUserId,
+					artifactsCreated = importObject.CreateObjects(_context.BaseContext.AclUserID, auditUserId,
 						_context.BaseContext.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(),
 						Relativity.Core.Config.AuditingEnabled);
 				}
@@ -78,7 +78,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			bool isOverlayOrBoth = isOverlay || isAppendOrOverlay;
 			if (isOverlayOrBoth)
 			{
-				artifactsUpdated = importObject.UpdateObjectMetadata(_context.BaseContext.UserID, auditUserId, _context.BaseContext.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), Relativity.Core.Config.AuditingEnabled);
+				artifactsUpdated = importObject.UpdateObjectMetadata(_context.BaseContext.AclUserID, auditUserId, _context.BaseContext.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), Relativity.Core.Config.AuditingEnabled);
 			}
 
 			importObject.UpdateFullTextFromFileShareLocation();
@@ -136,10 +136,10 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 
 			if (!settings.DisableUserSecurityCheck)
 			{
-				sql.Add(new PrintSectionQuery(importObject.ManageCheckAddingPermissions(_context.BaseContext.UserID), nameof(importObject.ManageCheckAddingPermissions)));
+				sql.Add(new PrintSectionQuery(importObject.ManageCheckAddingPermissions(_context.BaseContext.AclUserID), nameof(importObject.ManageCheckAddingPermissions)));
 				if (settings.Overlay == Relativity.MassImport.OverwriteType.Both || settings.Overlay == Relativity.MassImport.OverwriteType.Overlay)
 				{
-					sql.Add(new PrintSectionQuery(importObject.ManageUpdateOverlayPermissions(_context.BaseContext.UserID), nameof(importObject.ManageUpdateOverlayPermissions)));
+					sql.Add(new PrintSectionQuery(importObject.ManageUpdateOverlayPermissions(_context.BaseContext.AclUserID), nameof(importObject.ManageUpdateOverlayPermissions)));
 				}
 			}
 
