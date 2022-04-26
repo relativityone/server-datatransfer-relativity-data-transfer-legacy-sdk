@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.22]
+- REL-664388 - Respect preview user in MassImport
+
+## [0.2.21]
+- REL-658054 - added RetryPolicyFactory.CreateDeadlockExceptionAndResultRetryPolicy which handles deadlock exceptions returned as error message from function. Used that policy in CodeService.
+
+## [0.2.20]
+- REL-658054 - RetryPolicyFactory.CreateDeadlockRetryPolicy checks if any exception in a chain was caused by deadlock.
+
 ## [0.2.19]
 - REL-662147 - used property from cloned NativeLoadInfo and ImageLoadInfo DTOs instead of the passed value as property through the context.
 

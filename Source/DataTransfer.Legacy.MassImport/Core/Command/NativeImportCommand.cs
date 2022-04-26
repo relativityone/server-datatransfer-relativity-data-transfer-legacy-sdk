@@ -84,7 +84,7 @@ namespace Relativity.MassImport.Core.Command
 					{
 						Native.ImportMeasurements.StopMeasure(nameof(MassImportManagerLockKey.LockType.DocumentOrImageOrProductionImage));
 						artifactsCreated = this.Execute(
-							() => Native.CreateDocuments(this.Context.UserID, AuditUserId,
+							() => Native.CreateDocuments(this.Context.AclUserID, AuditUserId,
 								this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(),
 								Relativity.Core.Config.AuditingEnabled, IncludeExtractedTextEncoding),
 							"CreateDocuments");
@@ -92,7 +92,7 @@ namespace Relativity.MassImport.Core.Command
 				}
 			});
 
-			this.Execute(() => Native.PopulateArtifactIdOnInitialTempTable(this.Context.UserID, IsOverlay), "PopulateArtifactIdOnInitialTempTable");
+			this.Execute(() => Native.PopulateArtifactIdOnInitialTempTable(this.Context.AclUserID, IsOverlay), "PopulateArtifactIdOnInitialTempTable");
 			PopulateCodeArtifactTable();
 			PopulateObjectsListTable();
 			int artifactsUpdated = UpdateDocumentMetadata();
@@ -140,10 +140,10 @@ namespace Relativity.MassImport.Core.Command
 
 			if (!Settings.DisableUserSecurityCheck)
 			{
-				sql.Add(new PrintSectionQuery(Native.ManageCheckAddingPermissions(this.Context.UserID), nameof(Native.ManageCheckAddingPermissions)));
+				sql.Add(new PrintSectionQuery(Native.ManageCheckAddingPermissions(this.Context.AclUserID), nameof(Native.ManageCheckAddingPermissions)));
 				if (IsOverlayOrBoth)
 				{
-					sql.Add(new PrintSectionQuery(Native.ManageUpdateOverlayPermissions(this.Context.UserID), nameof(Native.ManageUpdateOverlayPermissions)));
+					sql.Add(new PrintSectionQuery(Native.ManageUpdateOverlayPermissions(this.Context.AclUserID), nameof(Native.ManageUpdateOverlayPermissions)));
 				}
 			}
 
@@ -177,7 +177,7 @@ namespace Relativity.MassImport.Core.Command
 					case Relativity.MassImport.OverwriteType.Both:
 					case Relativity.MassImport.OverwriteType.Overlay:
 						{
-							this.Execute(() => Native.DeleteExistingNativeFiles(this.Context.UserID, Relativity.Core.Config.AuditingEnabled, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination()), "DeleteExistingNativeFiles");
+							this.Execute(() => Native.DeleteExistingNativeFiles(this.Context.AclUserID, Relativity.Core.Config.AuditingEnabled, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination()), "DeleteExistingNativeFiles");
 							break;
 						}
 				}
@@ -196,7 +196,7 @@ namespace Relativity.MassImport.Core.Command
 
 		protected void CreateAssociateObjects()
 		{
-			this.Execute(() => Native.CreateAssociatedObjects(this.Context.UserID, AuditUserId, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), Relativity.Core.Config.AuditingEnabled), "CreateAssociatedObjects");
+			this.Execute(() => Native.CreateAssociatedObjects(this.Context.AclUserID, AuditUserId, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), Relativity.Core.Config.AuditingEnabled), "CreateAssociatedObjects");
 		}
 
 		protected void ManageOffTableExtractedTextFields()
@@ -224,7 +224,7 @@ namespace Relativity.MassImport.Core.Command
 			int updatedDocumentsCount = 0;
 			if (IsOverlayOrBoth)
 			{
-				updatedDocumentsCount = this.Execute(() => Native.UpdateDocumentMetadata(this.Context.UserID, AuditUserId, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), Relativity.Core.Config.AuditingEnabled, IncludeExtractedTextEncoding), "UpdateDocumentMetadata");
+				updatedDocumentsCount = this.Execute(() => Native.UpdateDocumentMetadata(this.Context.AclUserID, AuditUserId, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), Relativity.Core.Config.AuditingEnabled, IncludeExtractedTextEncoding), "UpdateDocumentMetadata");
 			}
 
 			return updatedDocumentsCount;
