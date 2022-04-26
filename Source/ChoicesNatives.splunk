@@ -1,0 +1,21 @@
+// Choices statistics. 
+// Groups number of choice fields into ranges. Display statisics for each range.
+
+index = "rel_logging_prod" "Properties.SubSystem"="DataTransfer.Legacy" "Properties.EndpointCalled" = "BulkImportNativeAsync" "Properties.bucketName"="Relativity.MassImport.StagingTableDetailsBeforeImport"
+| eval numberOfChoiceFields = 0 
+| foreach Properties.customData.NumberOfChoices_* [eval numberOfChoiceFields = numberOfChoiceFields + 1 | eval maxNumberOfChoicesPerField = max('<<FIELD>>')] 
+| eval numberOfChoiceFieldsGrouped = case(
+numberOfChoiceFields <= 10, "1-10", 
+numberOfChoiceFields > 10 and numberOfChoiceFields <= 50, "11-50", 
+numberOfChoiceFields > 50 and numberOfChoiceFields <= 100, "51-100", 
+numberOfChoiceFields > 100 and numberOfChoiceFields <= 150, "101-150", 
+numberOfChoiceFields > 150 and numberOfChoiceFields <= 200, "151-200", 
+numberOfChoiceFields > 200, "> 200")
+| chart 
+max(Properties.customData.NumberOfChoices) as MaxTotalNumberOfChoicesInGroup
+max(maxNumberOfChoicesPerField) as MaxNumberOfChoicesPerFieldInGroup
+avg(Properties.customData.NumberOfChoices) as AvgTotalNumberOfChoicesInGroup
+count as RangeCount
+over numberOfChoiceFieldsGrouped
+| eval NumberOfChoiceFieldsGroupedLabel = numberOfChoiceFieldsGrouped." (".(RangeCount).")"
+| table NumberOfChoiceFieldsGroupedLabel, MaxTotalNumberOfChoicesInGroup, MaxNumberOfChoicesPerFieldInGroup, AvgTotalNumberOfChoicesInGroup

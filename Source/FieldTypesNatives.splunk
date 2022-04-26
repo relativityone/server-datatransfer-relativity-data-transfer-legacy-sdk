@@ -1,0 +1,23 @@
+// Fields statistics. 
+// Groups number of fields into ranges. Display statisics for each range.
+
+index = "rel_logging_prod" "Properties.SubSystem"="DataTransfer.Legacy" "Properties.EndpointCalled" = "BulkImportNativeAsync" "Properties.bucketName"="Relativity.MassImport.JobStarted"
+| convert num(Properties.customData.MappedFields) as MappedFieldsNumber
+| eval FieldCount = case(
+MappedFieldsNumber <= 10, "1-10", 
+MappedFieldsNumber > 10 and MappedFieldsNumber <= 50, "11-50", 
+MappedFieldsNumber > 50 and MappedFieldsNumber <= 100, "51-100", 
+MappedFieldsNumber > 100 and MappedFieldsNumber <= 150, "101-150", 
+MappedFieldsNumber > 150 and MappedFieldsNumber <= 200, "151-200", 
+MappedFieldsNumber > 200, "> 200")
+| chart 
+avg(Properties.customData.NumberOfDataGridFields) as DataGrid,
+avg(Properties.customData.NumberOfFullTextFields) as FullText,
+avg(Properties.customData.NumberOfSingleObjectFields) as SingleObject,
+avg(Properties.customData.NumberOfMultiObjectFields) as MultiObject,
+avg(Properties.customData.NumberOfSingleChoiceFields) as SingleChoice,
+avg(Properties.customData.NumberOfMultiChoiceFields) as MultiChoice,
+count as RangeCount
+over FieldCount
+| eval FieldCountLabel = FieldCount." (".(RangeCount).")"
+| table FieldCountLabel, DataGrid, FullText, OffTableText, SingleObject, MultiObject, SingleChoice, MultiChoice
