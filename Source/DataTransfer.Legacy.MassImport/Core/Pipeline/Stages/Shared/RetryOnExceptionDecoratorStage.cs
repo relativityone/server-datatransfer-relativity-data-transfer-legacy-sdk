@@ -67,18 +67,34 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 				.WaitAndRetry(
 					_numberOfRetries,
 					sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(_exponentialWaitTimeBase, retryAttempt)),
-					onRetry: (exception, span) =>
+					onRetry: (exception, waitTime, retryNumber, context) =>
 					{
 						_context.ImportMeasurements.IncrementCounter($"Retry-'{_actionName}'");
 
 						var convertedException = exception as MassImportExecutionException;
 						if (convertedException != null && convertedException.IsDeadlock())
 						{
-							_context.Logger.LogError(exception, "Deadlock occurred while {action}.", _actionName);
+							_context.Logger.LogWarning(exception, "Deadlock occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+								_actionName,
+								retryNumber,
+								_numberOfRetries,
+								waitTime);
 						}
 						else if (convertedException != null && convertedException.IsTimeout())
 						{
-							_context.Logger.LogError(exception, "Timeout occurred while {action}.", _actionName);
+							_context.Logger.LogWarning(exception, "Timeout occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+								_actionName,
+								retryNumber,
+								_numberOfRetries,
+								waitTime);
+						}
+						else
+						{
+							_context.Logger.LogWarning(exception, "Retryable error while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+								_actionName,
+								retryNumber,
+								_numberOfRetries,
+								waitTime);
 						}
 					});
 		}
@@ -88,7 +104,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			bool isRetryAbleException = exception.IsRetryable();
 			if (!isRetryAbleException)
 			{
-				_context.Logger.LogError(exception, "Error occurred while {action}", _actionName);
+				_context.Logger.LogError(exception, "Non Retryable Error occurred while {action}", _actionName);
 			}
 			return isRetryAbleException;
 		}
