@@ -90,7 +90,7 @@ namespace Relativity.MassImport.Core
 			}
 
 			timekeeper.MarkEnd("TempFileInitialization");
-			if (image.HasDataGridWorkToDo && image.IsDataGridInputValid())
+			if (image.IsDataGridInputValid())
 			{
 				var loader = image.CreateDataGridReader(context.GetBcpSharePath(), this.CorrelationLogger);
 				image.WriteToDataGrid(loader, context.AppArtifactID, context.GetBcpSharePath(), this.CorrelationLogger);
