@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.24]
+- REL-665917 - Remove temp DataGrid files when there is no datagrid data to import in images
+
 ## [0.2.23]
 - REL-666446 - Change log level to Warning and add more info about retries values in logs
 
