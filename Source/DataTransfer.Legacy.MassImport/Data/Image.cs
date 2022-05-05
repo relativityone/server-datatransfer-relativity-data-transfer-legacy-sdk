@@ -832,6 +832,12 @@ WHERE
 					return;
 				}
 
+				if (loader == null)
+				{
+					correlationLogger.LogError("DataGridReader is null. {HasDataGridWorkToDo}", HasDataGridWorkToDo);
+					throw new ArgumentNullException(nameof(loader));
+				}
+
 				using (var mappingReader = CreateDataGridMappingDataReader())
 				{
 					string indexName = DataGridHelper.GetWriteIndexName(appID, (int)Relativity.ArtifactType.Document, Relativity.Data.Config.DataGridConfiguration.DataGridIndexPrefix);
