@@ -28,7 +28,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					_context.BaseContext.GetBcpSharePath() :
 					settings.BulkFileSharePath;
 
-				_stagingTableRepository.BulkInsert(settings, bulkFileSharePath);
+				_stagingTableRepository.BulkInsert(settings, bulkFileSharePath, _context.Logger);
 			}
 			else
 			{
