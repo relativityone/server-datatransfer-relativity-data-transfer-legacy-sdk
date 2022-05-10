@@ -85,6 +85,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 
 		[TestCase(MassImportErrorCategory.TimeoutCategory)]
 		[TestCase(MassImportErrorCategory.DeadlockCategory)]
+		[TestCase(MassImportErrorCategory.BcpCategory)]
 		public void ShouldRetryWhenFirstCallFailed(string errorCategory)
 		{
 			// arrange
@@ -104,14 +105,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			Assert.That(counter.Key, Is.EqualTo($"Retry-'{ActionName}'"));
 			Assert.That(counter.Value, Is.EqualTo(1));
 
-			if (errorCategory == MassImportErrorCategory.TimeoutCategory)
-			{
-				_loggerMock.Verify(x => x.LogWarning(expectedException, "Timeout occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
-			}
-			else if (errorCategory == MassImportErrorCategory.DeadlockCategory)
-			{
-				_loggerMock.Verify(x => x.LogWarning(expectedException, "Deadlock occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
-			}
+			_loggerMock.Verify(x => x.LogWarning(expectedException, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", errorCategory, ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
 		}
 
 		[Test]
@@ -133,7 +127,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			Assert.That(counter.Key, Is.EqualTo($"Retry-'{ActionName}'"));
 			Assert.That(counter.Value, Is.EqualTo(1));
 
-			_loggerMock.Verify(x => x.LogWarning(retryableException, "Deadlock occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
+			_loggerMock.Verify(x => x.LogWarning(retryableException, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", MassImportErrorCategory.DeadlockCategory, ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
 			_loggerMock.Verify(x => x.LogError(nonRetryableException, "Non Retryable Error occurred while {action}", ActionName));
 		}
 
@@ -154,7 +148,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			Assert.That(counter.Key, Is.EqualTo($"Retry-'{ActionName}'"));
 			Assert.That(counter.Value, Is.EqualTo(NumberOfRetries));
 
-			_loggerMock.Verify(x => x.LogWarning(expectedException, "Deadlock occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()), Times.Exactly(NumberOfRetries));
+			_loggerMock.Verify(x => x.LogWarning(expectedException, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", MassImportErrorCategory.DeadlockCategory, ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()), Times.Exactly(NumberOfRetries));
 		}
 
 		/// <summary>

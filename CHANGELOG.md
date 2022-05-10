@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.27]
+- REL-680339 - Add retires for NoBcpDirectoryException
+
 ## [0.2.26]
 - REL-677115 - Use Polly as retry policy and log exceptions as warning
 
