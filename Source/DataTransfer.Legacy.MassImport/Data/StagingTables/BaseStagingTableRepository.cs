@@ -9,6 +9,9 @@ using Relativity.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data.StagingTables
 {
+	using Relativity.Logging;
+	using Relativity.MassImport.DTO;
+
 	internal abstract class BaseStagingTableRepository : IStagingTableRepository
 	{
 		private int? _timeoutValue;
@@ -57,19 +60,19 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			Context.ExecuteNonQuerySQLStatement(sql, QueryTimeout);
 		}
 
-		public string BulkInsert(NativeLoadInfo settings, string bulkFileSharePath)
+		public string BulkInsert(NativeLoadInfo settings, string bulkFileSharePath, ILog logger)
 		{
 			try
 			{
 				ImportMeasurements.SqlBulkImportTime.Start();
 				string sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.DataFileName, TableNames.Native);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger);
 
 				sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.CodeFileName, TableNames.Code);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger);
 
 				sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.ObjectFileName, TableNames.Objects);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger);
 			}
 			catch (ExecuteSQLStatementFailedException ex)
 			{
@@ -290,9 +293,9 @@ END
 			return info.GetColumnDescription(mappedField);
 		}
 
-		private void ExecuteBulkLoadWithRetryOnSqlTemporaryError(string sqlText)
+		private void ExecuteBulkLoadWithRetryOnSqlTemporaryError(string sqlText, ILog logger)
 		{
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout));
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout), logger);
 		}
 
 		private string GetBulkInsertQuery(NativeLoadInfo settings, string bulkFileSharePath, string bulkFileName, string tableName)

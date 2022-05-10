@@ -77,7 +77,7 @@ namespace Relativity.MassImport.Core
 
 			if (settings.UseBulkDataImport)
 			{
-				settings.RunID = image.InitializeBulkTable(context.GetBcpSharePath());
+				settings.RunID = image.InitializeBulkTable(bulkFileShareFolderPath, this.CorrelationLogger);
 			}
 			else
 			{
@@ -272,7 +272,7 @@ namespace Relativity.MassImport.Core
 
 			if (settings.UseBulkDataImport)
 			{
-				settings.RunID = image.InitializeBulkTable(context.GetBcpSharePath());
+				settings.RunID = image.InitializeBulkTable(bulkFileShareFolderPath, this.CorrelationLogger);
 			}
 			else
 			{

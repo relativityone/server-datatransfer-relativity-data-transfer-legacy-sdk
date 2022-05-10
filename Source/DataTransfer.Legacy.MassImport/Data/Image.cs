@@ -148,11 +148,11 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Temp Table Manipulation
-		public string InitializeBulkTable(string bulkFileShareFolderPath)
+		public string InitializeBulkTable(string bulkFileShareFolderPath, ILog logger)
 		{
 			ImportMeasurements.StartMeasure();
 			CreateMassImportImageTempTables(Settings.UploadFullText, Settings.OverlayArtifactID);
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => BulkImportImageFile(bulkFileShareFolderPath, Settings.BulkFileName));
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => BulkImportImageFile(bulkFileShareFolderPath, Settings.BulkFileName), logger);
 			ImportMeasurements.StopMeasure();
 
 			return _tableNames.RunId;
