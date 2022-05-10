@@ -5,6 +5,8 @@ using System.Text;
 
 namespace Relativity.MassImport.Core.Pipeline.Errors
 {
+	using Relativity.Core.Exception;
+
 	internal class MassImportExceptionHandler
 	{
 		public static MassImportExecutionException CreateMassImportExecutionException(Exception exception,
@@ -60,6 +62,10 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 			else if (allExceptions.Any(ex => ex is SqlException))
 			{
 				return MassImportErrorCategory.SqlCategory;
+			}
+			else if (allExceptions.Any(ex => ex is NoBcpDirectoryException))
+			{
+				return MassImportErrorCategory.BcpCategory;
 			}
 
 			return MassImportErrorCategory.UnknownCategory;

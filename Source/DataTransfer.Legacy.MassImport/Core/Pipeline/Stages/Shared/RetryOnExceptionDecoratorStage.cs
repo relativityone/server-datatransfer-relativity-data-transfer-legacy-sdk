@@ -71,18 +71,10 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					{
 						_context.ImportMeasurements.IncrementCounter($"Retry-'{_actionName}'");
 
-						var convertedException = exception as MassImportExecutionException;
-						if (convertedException != null && convertedException.IsDeadlock())
+						if (exception is MassImportExecutionException convertedException)
 						{
-							_context.Logger.LogWarning(exception, "Deadlock occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
-								_actionName,
-								retryNumber,
-								_numberOfRetries,
-								waitTime);
-						}
-						else if (convertedException != null && convertedException.IsTimeout())
-						{
-							_context.Logger.LogWarning(exception, "Timeout occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+							_context.Logger.LogWarning(exception, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+								convertedException.ErrorCategory,
 								_actionName,
 								retryNumber,
 								_numberOfRetries,
