@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.25]
+- REL-665898 - Splunk queries field statistics
+
 ## [0.2.24]
 - REL-665917 - Remove temp DataGrid files when there is no datagrid data to import in images
 

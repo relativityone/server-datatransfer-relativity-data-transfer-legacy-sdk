@@ -29,6 +29,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.MassImp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataTransfer.Legacy.MassImport.NUnit.Integration", "DataTransfer.Legacy.MassImport.NUnit.Integration\DataTransfer.Legacy.MassImport.NUnit.Integration.csproj", "{4FA7E652-D120-4CF4-8DB3-DA8F9CF069D5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "metrics", "metrics", "{FC5BCFAD-B29D-4546-9C3D-AF79DECF7B87}"
+	ProjectSection(SolutionItems) = preProject
+		..\docs\ChoicesNatives.splunk = ..\docs\ChoicesNatives.splunk
+		..\docs\FieldTypesNatives.splunk = ..\docs\FieldTypesNatives.splunk
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -78,6 +84,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{FC5BCFAD-B29D-4546-9C3D-AF79DECF7B87} = {F691B12D-E37F-4782-B5BA-DEAD72758C1F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DC4F0CF0-8990-4A06-9A09-2C213E3FB286}
