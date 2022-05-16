@@ -11,6 +11,8 @@ using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 {
+	using Relativity.Services.Objects.Exceptions;
+
 	[TestFixture]
 	public class UnhandledExceptionInterceptorTests
 	{
@@ -34,8 +36,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		public void ShouldLogErrorAndThrowServiceExceptionWithInnerWhenExecutingMethodThrows()
 		{
 			FluentActions.Invoking(() => _interceptedObject.Execute()).Should().Throw<ServiceException>()
-				.WithMessage("Error during call Execute. InnerExceptionType: System.Exception, InnerExceptionMessage: *")
+				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.Execute)}. InnerExceptionType: System.Exception, InnerExceptionMessage: *")
 				.WithInnerException<Exception>();
+		}
+
+		[Test]
+		public void ShouldLogErrorAndThrowPermissionDeniedExceptionWithInnerWhenExecutingMethodThrows()
+		{
+			FluentActions.Invoking(() => _interceptedObject.ExecuteWithPermissionException()).Should().Throw<PermissionDeniedException>()
+				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithPermissionException)}. InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: You do not have permission to view this item (ArtifactID=12345678)")
+				.WithInnerException<Relativity.Core.Exception.Permission>();
 		}
 	}
 }
