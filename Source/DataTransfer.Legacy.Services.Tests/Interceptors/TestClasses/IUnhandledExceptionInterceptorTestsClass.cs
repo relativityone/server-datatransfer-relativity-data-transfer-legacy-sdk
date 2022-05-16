@@ -11,6 +11,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 	public interface IUnhandledExceptionInterceptorTestsClass
 	{
 		void Execute();
+		void ExecuteWithPermissionException();
 	}
 
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
@@ -20,6 +21,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		public void Execute()
 		{
 			throw Any.Exception();
+		}
+
+		public void ExecuteWithPermissionException()
+		{
+			throw new Relativity.Core.Exception.Permission("You do not have permission to view this item (ArtifactID=12345678)");
 		}
 	}
 }

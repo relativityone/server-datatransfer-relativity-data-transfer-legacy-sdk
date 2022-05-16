@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Relativity.API;
 using Relativity.Services.Exceptions;
+using Relativity.Services.Objects.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
@@ -27,15 +28,20 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				base.Intercept(invocation);
 			}
+			catch (Core.Exception.Permission permissionException)
+			{
+				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
+			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, "There was an error during call {method} - {message}", invocation.Method.Name, serviceException.Message);
+				Logger.LogError(serviceException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
 				throw;
 			}
 			catch (Exception e)
 			{
-				Logger.LogError(e, "There was an error during call {method} - {message}", invocation.Method.Name, e.Message);
-				throw new ServiceException($"Error during call {invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
+				Logger.LogError(e, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
+				throw new ServiceException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}
 		}
 
@@ -46,15 +52,20 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				await base.Continuation(task, invocation);
 			}
+			catch (Core.Exception.Permission permissionException)
+			{
+				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
+			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, "There was an error during custom continuation of call {method} - {message}", invocation.Method.Name, serviceException.Message);
+				Logger.LogError(serviceException, "There was an error during custom continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
 				throw;
 			}
 			catch (Exception e)
 			{
-				Logger.LogError(e, "There was an error during custom continuation of call {method} - {message}", invocation.Method.Name, e.Message);
-				throw new ServiceException($"Error during custom continuation of call {invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
+				Logger.LogError(e, "There was an error during custom continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
+				throw new ServiceException($"Error during custom continuation of call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}
 		}
 
@@ -65,15 +76,20 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				return await base.Continuation(task, invocation);
 			}
+			catch (Core.Exception.Permission permissionException)
+			{
+				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
+			}
 			catch (ServiceException serviceException)
 			{
-				Logger.LogError(serviceException, "There was an error during continuation of call {method} - {message}", invocation.Method.Name, serviceException.Message);
+				Logger.LogError(serviceException, "There was an error during continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
 				throw;
 			}
 			catch (Exception e)
 			{
-				Logger.LogError(e, "There was an error during continuation of call {method} - {message}", invocation.Method.Name, e.Message);
-				throw new ServiceException($"Error during custom continuation of call {invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
+				Logger.LogError(e, "There was an error during continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
+				throw new ServiceException($"Error during custom continuation of call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}
 		}
 	}
