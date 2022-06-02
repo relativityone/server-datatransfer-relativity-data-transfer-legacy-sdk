@@ -24,8 +24,7 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 		private static readonly string[] _retryableErrorCategories =
 		{
 			TimeoutCategory,
-			DeadlockCategory,
-			BcpCategory,
+			DeadlockCategory
 		};
 	}
 }
