@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.29]
+- REL-683467 - Add more retires for NoBcpDirectoryException
+
 ## [0.2.28]
 - REL-669697 - Catch Relativity.Core.Exception.Permission and throw as PermissionDeniedException to stop automatic retries in Import API
 
