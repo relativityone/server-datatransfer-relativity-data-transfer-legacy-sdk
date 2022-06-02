@@ -55,5 +55,7 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 		public bool IsDeadlock() => ErrorCategory == MassImportErrorCategory.DeadlockCategory;
 
 		public bool IsTimeout() => ErrorCategory == MassImportErrorCategory.TimeoutCategory;
+
+		public bool IsBcp() => ErrorCategory == MassImportErrorCategory.BcpCategory;
 	}
 }
