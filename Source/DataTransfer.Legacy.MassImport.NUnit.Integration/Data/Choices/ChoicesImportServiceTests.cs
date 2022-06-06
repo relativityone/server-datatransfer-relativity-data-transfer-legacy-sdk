@@ -31,11 +31,11 @@ namespace MassImport.NUnit.Integration.Data.Choices
 				QueryTimeoutInSeconds);
 		}
 
-		protected override Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, OverlayBehavior overlayBehavior)
+		protected override Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
 		{
 			var columnDefinitionInfo = new ColumnDefinitionInfo
 			{
-				OverlayMergeValues = overlayBehavior == OverlayBehavior.MergeAll
+				OverlayMergeValues = overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
 			};
 
 			_columnDefinitionCacheMock.Setup(x => x[choiceField.ArtifactID]).Returns(columnDefinitionInfo);

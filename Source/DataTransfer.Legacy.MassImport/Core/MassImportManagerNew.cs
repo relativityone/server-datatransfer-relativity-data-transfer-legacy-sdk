@@ -112,7 +112,7 @@ namespace Relativity.MassImport.Core
 						"SELECT TOP 1 ColumnName FROM ArtifactViewField INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[ArtifactID] = " +
 						settings.KeyFieldArtifactID).ToString();
 					image.ImportMeasurements.StopMeasure(nameof(image.SetOutsideFieldName));
-					if (settings.Overlay == OverwriteType.Overlay)
+					if (settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay)
 					{
 						image.ManageOverwriteErrors();
 					}
@@ -121,7 +121,7 @@ namespace Relativity.MassImport.Core
 					image.ManageRedactionErrors();
 					switch (settings.Overlay)
 					{
-						case OverwriteType.Append:
+						case Relativity.MassImport.DTO.OverwriteType.Append:
 						{
 							image.ManageAppendErrors();
 							if (Relativity.Core.Config.EnforceDocumentLimit)
@@ -137,7 +137,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Overlay:
+						case Relativity.MassImport.DTO.OverwriteType.Overlay:
 						{
 							image.PopulateArtifactIdOnInitialTempTable(context.UserID, true);
 							image.UpdateDocumentMetadata(context.UserID, context.RequestOrigination,
@@ -147,7 +147,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Both:
+						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							if (Relativity.Core.Config.EnforceDocumentLimit)
 							{
@@ -168,8 +168,8 @@ namespace Relativity.MassImport.Core
 
 					switch (settings.Overlay)
 					{
-						case OverwriteType.Overlay:
-						case OverwriteType.Both:
+						case Relativity.MassImport.DTO.OverwriteType.Overlay:
+						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							image.DeleteExistingImageFiles(context.UserID, Relativity.Core.Config.AuditingEnabled,
 								context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination());
@@ -306,7 +306,7 @@ namespace Relativity.MassImport.Core
 
 					switch (settings.Overlay)
 					{
-						case OverwriteType.Append:
+						case Relativity.MassImport.DTO.OverwriteType.Append:
 						{
 							image.ManageAppendErrors();
 							if (Relativity.Core.Config.EnforceDocumentLimit)
@@ -322,7 +322,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Overlay:
+						case Relativity.MassImport.DTO.OverwriteType.Overlay:
 						{
 							image.ImportMeasurements.StartMeasure(nameof(image.SetOutsideFieldName));
 							image.SetOutsideFieldName = context.DBContext.ExecuteSqlStatementAsScalar(
@@ -335,7 +335,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Both:
+						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							if (Relativity.Core.Config.CloudInstance)
 							{
@@ -505,7 +505,7 @@ namespace Relativity.MassImport.Core
 				if (docLimit != 0 & newDocumentCount > docLimit)
 				{
 					string errorMessage = "The document import was canceled. The import would have exceeded the document limit for the workspace.";
-					importResults.ExceptionDetail = new SoapExceptionDetail(new System.Exception(errorMessage));
+					importResults.ExceptionDetail = new Relativity.MassImport.DTO.SoapExceptionDetail(new System.Exception(errorMessage));
 				}
 			}
 
@@ -618,7 +618,7 @@ namespace Relativity.MassImport.Core
 			return null;
 		}
 
-		public bool AuditImport(Relativity.Core.BaseServiceContext icc, string runID, bool isFatalError, ImportStatistics importStats)
+		public bool AuditImport(Relativity.Core.BaseServiceContext icc, string runID, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
 		{
 			var context = icc.ChicagoContext;
 			var auditor = new ImportAuditor(context.DBContext, CorrelationLogger);
@@ -639,7 +639,7 @@ namespace Relativity.MassImport.Core
 			return SendImportAuditNotificationEmailNew(icc, isFatalError, importStats);
 		}
 
-		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, ImportStatistics importStats)
+		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
 		{
 			string destinationPath = null;
 			try

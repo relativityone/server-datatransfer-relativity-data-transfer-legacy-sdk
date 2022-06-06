@@ -93,7 +93,7 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.DisposeRunTempTables(icc, runId);
 		}
 
-		public bool AuditImport(Core.BaseServiceContext icc, string runID, bool isFatalError, ImportStatistics importStats)
+		public bool AuditImport(Core.BaseServiceContext icc, string runID, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
 		{
 			return _massImportManagerLazy.Value.AuditImport(icc, runID, isFatalError, importStats);
 		}

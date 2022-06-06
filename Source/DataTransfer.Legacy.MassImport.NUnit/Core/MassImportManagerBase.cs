@@ -31,7 +31,7 @@ namespace Relativity.MassImport.NUnit.Core
 			{
 				BulkFileName = "",
 				UploadFullText = false,
-				Overlay = MassImport.OverwriteType.Both,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Both,
 				DestinationFolderArtifactID = 0,
 				Repository = "",
 				UseBulkDataImport = false,
