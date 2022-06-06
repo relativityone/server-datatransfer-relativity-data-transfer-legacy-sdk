@@ -369,7 +369,7 @@ SELECT
 							{
 								string identifier = GetStringValue(reader[2]);
 								string documentIdentifier = GetStringValue(reader[1]);
-								errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}{0}{4}\"", "\",\"", GetIntegerValue(reader[0]), GetStringValue(reader[1]), identifier, Relativity.MassImport.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(5), identifier, GetStringValue(reader[7]), int.Parse(GetIntegerValue(reader[8])), documentIdentifier, reader[9] == null ? null : GetStringValue(reader[9]))));
+								errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}{0}{4}\"", "\",\"", GetIntegerValue(reader[0]), GetStringValue(reader[1]), identifier, Relativity.MassImport.DTO.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(5), identifier, GetStringValue(reader[7]), int.Parse(GetIntegerValue(reader[8])), documentIdentifier, reader[9] == null ? null : GetStringValue(reader[9]))));
 								string newRecordMarker = GetIntegerValue(reader[4]) == "0" ? "Y" : string.Empty;
 								errorRows.WriteLine(string.Format("{0},{1},{2},{3},,,", identifier, _tableNames.RunId, GetStringValue(reader[6]), newRecordMarker));
 							}
@@ -453,7 +453,7 @@ SELECT
 			ImportMeasurements.StartMeasure();
 			string sqlFormat = ImportSql.DeleteExistingImageFiles();
 			string auditString = "";
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(14, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.Append(" WHERE" + Environment.NewLine);
@@ -473,7 +473,7 @@ SELECT
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
 			string sqlFormat = ImportSql.CreateImageFileRows();
 			string auditString = "";
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(13, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.Append(" WHERE" + Environment.NewLine);
@@ -514,7 +514,7 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string sqlFormat = ImportSql.CreateProductionImageFileRows();
 			string auditString = "";
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(15, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.AppendFormat(" WHERE{0}", Environment.NewLine);
@@ -547,12 +547,12 @@ SELECT
 				formatString = formatString.Replace("/* HasPermissionsToAddCheck */", HasPermissionsToaddCheck());
 			}
 
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				if (Settings.UploadFullText)
 				{
 					formatString = formatString.Replace("/* InsertAuditRecords */", ImportSql.CreateWhenExtractedTextIsEnabledAuditClause());
-					string fullTextOverlayDetail = Settings.AuditLevel == ImportAuditLevel.FullAudit ? GetFullTextOverlayDetail() : "''";
+					string fullTextOverlayDetail = Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit ? GetFullTextOverlayDetail() : "''";
 					formatString = formatString.Replace("/* FullTextOverlayDetail */", fullTextOverlayDetail);
 					formatString = formatString.Replace("/* DetailsValueColumnName */", extractedTextEncodingColumnName);
 				}
@@ -622,7 +622,7 @@ END
 		public void UpdateDocumentMetadata(int userID, string reqOrig, string recOrig, bool performAudit)
 		{
 			string sqlFormat;
-			if (performAudit && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (performAudit && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sqlFormat = ImportSql.UpdateAuditClause();
 				if (Settings.UploadFullText)
@@ -630,7 +630,7 @@ END
 					ImportMeasurements.StartMeasure();
 
 					string fullTextColumnDefinition = FullTextField.EnableDataGrid ? string.Empty : ",[FullText] = CASE WHEN ISNULL([ExtractedTextEncodingPageCode], '-1') <> '-1' THEN ISNULL([FullText], N'') ELSE [FullText] END ";
-					string auditDetailsClause = Settings.AuditLevel == ImportAuditLevel.FullAudit ? GenerateAuditDetailsClause() : "''";
+					string auditDetailsClause = Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit ? GenerateAuditDetailsClause() : "''";
 
 					string toRun = string.Format(sqlFormat, TableNameImageTemp, auditDetailsClause, "Document", DocumentIdentifierFieldColumnName, fullTextColumnDefinition);
 					var parameters = new SqlParameter[3];

@@ -102,11 +102,11 @@ namespace Relativity.MassImport.Data
 			sql.Add(GetInsertDocumentsSqlStatement());
 			sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
 
-			if (performAudit && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				if (includeExtractedTextEncoding)
 				{
-					string fullTextOverlayDetail = this.Settings.AuditLevel == ImportAuditLevel.FullAudit ? this.GetExtractedTextDetail(exrtactedTextCodePageColumnName) : "''";
+					string fullTextOverlayDetail = this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit ? this.GetExtractedTextDetail(exrtactedTextCodePageColumnName) : "''";
 					sql.Add(this.ImportSql.CreateAuditClauseWithEnabledExtractedText(this._tableNames, ObjectBase.TopFieldArtifactID, fullTextOverlayDetail, recordOrigination, recordOrigination));
 				}
 				else
@@ -230,7 +230,7 @@ namespace Relativity.MassImport.Data
 			sql.Add(this.ImportSql.InsertAssociatedObjects(this._tableNames, associatedObjectTable, idFieldColumnName, field));
 			sql.Add(this.ImportSql.InsertAncestorsOfAssociateObjects(this._tableNames, field.ArtifactID.ToString(), this.ColumnDefinitionCache.TopLevelParentArtifactId.ToString()));
 			
-			if (performAudit && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sql.Add(this.ImportSql.CreateAuditClause(this._tableNames, field.ArtifactID, requestOrigination, recordOrigination));
 			}
@@ -336,12 +336,12 @@ namespace Relativity.MassImport.Data
 				// Insert to AuditRecord using OUTPUT INTO
 				if (performAudit)
 				{
-					if (this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+					if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 					{
 						sqlFormat = sqlFormat.Replace("/* UpdateAuditRecordsMerge */", this.ImportSql.UpdateAuditClauseMerge(this.ImportUpdateAuditAction, auditDetailsClause));
 					}
 
-					if (this.Settings.AuditLevel == ImportAuditLevel.FullAudit)
+					if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 					{
 						sqlFormat = sqlFormat.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
 					}
@@ -350,12 +350,12 @@ namespace Relativity.MassImport.Data
 			// Insert to AuditRecord using regular INSERT
 			else if (performAudit)
 			{
-				if (this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+				if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 				{
 					sqlFormat = sqlFormat.Replace("/* UpdateAuditRecordsInsert */", this.ImportSql.UpdateAuditClauseInsert(this._tableNames.Native, this.ImportUpdateAuditAction, auditDetailsClause));
 				}
 
-				if (this.Settings.AuditLevel == ImportAuditLevel.FullAudit)
+				if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 				{
 					sqlFormat = sqlFormat.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
 				}
@@ -507,7 +507,7 @@ WHERE
 			string sqlFormat = this.ImportSql.DeleteExistingNativeFiles();
 			string auditInnerString = string.Empty;
 
-			if (auditEnabled && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sqlFormat = this.ImportSql.AuditWrapper(sqlFormat);
 				auditInnerString = Relativity.MassImport.Data.Helper.GenerateOutputDeletedIntoClause(17, userID, requestOrig, recordOrig);
@@ -529,7 +529,7 @@ WHERE
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string sqlFormat = this.ImportSql.CreateNativeFileRows();
 			string auditString = "";
-			if (auditEnabled && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new StringBuilder(Relativity.MassImport.Data.Helper.GenerateAuditInsertClause(16, userID, requestOrig, recordOrig, this._tableNames.Native));
 				sb.AppendFormat("WHERE{0}", Environment.NewLine);
