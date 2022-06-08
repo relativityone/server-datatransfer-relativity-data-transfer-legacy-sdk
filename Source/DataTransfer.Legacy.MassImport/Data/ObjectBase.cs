@@ -333,7 +333,7 @@ namespace Relativity.MassImport.Data
 			if (associatedParentId != (int) ArtifactType.Case)
 			{
 				// Child object! WHOA
-				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : ImportStatus.ErrorAssociatedObjectIsChild);
+				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild);
 				string childObjectCreations = string.Format("SELECT DISTINCT [DocumentIdentifier] FROM [Resource].[{0}] WHERE [ObjectTypeID] = @artifactTypeID AND [ObjectArtifactID] = -1", _tableNames.Objects);
 				string produceLineErrors = string.Format("UPDATE [Resource].[{0}] SET [kCura_Import_Status] = [kCura_Import_Status] | {1}, [kCura_Import_ErrorData] = '{4}' WHERE [{2}] in ({3})", 
 					_tableNames.Native, (object)errorStatusCode, IdentifierField.GetColumnName(), childObjectCreations, fieldName);
