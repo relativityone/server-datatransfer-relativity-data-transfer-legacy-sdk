@@ -77,7 +77,7 @@ namespace Relativity.MassImport.DTO
 				}
 			}
 
-			if ((status & (long)ImportStatus.DataGridExceptionOccurred) > 0L && !string.IsNullOrEmpty(dataGridException))
+			if ((status & (long)Relativity.MassImport.DTO.ImportStatus.DataGridExceptionOccurred) > 0L && !string.IsNullOrEmpty(dataGridException))
 				retval.Append(ConvertToMessageLineInCell(dataGridException));
 			return retval.ToString().TrimEnd('\n');
 		}
@@ -108,7 +108,7 @@ namespace Relativity.MassImport.DTO
 		{
 			get
 			{
-				// Note to developers (about ImportStatus.SecurityAdd): This error can also be caused by the FolderCache within WebAPI.
+				// Note to developers (about Relativity.MassImport.DTO.ImportStatus.SecurityAdd): This error can also be caused by the FolderCache within WebAPI.
 				// If you have recently deleted folders in Relativity and then are trying to add them again by importing documents in the RDC, 
 				// and you get this error, then your problem is probably caused by folder caching.  To fix this problem, you must do an iisreset.
 				// Or, wait until the cache times out.

@@ -152,7 +152,7 @@ SELECT @@ROWCOUNT
 		[kCura_Import_ID]
 		FROM [Resource].[{tableNames.Native}] N
 		WHERE
-			N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+			N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 			AND
 			N.[{textIdentifierColumn}] IS NOT NULL {keyFieldCheck}
 			AND
@@ -191,7 +191,7 @@ SELECT @@ROWCOUNT
 		[kCura_Import_ID] = MIN([kCura_Import_ID])
 		FROM [Resource].[{tableNames.Native}] N
 		WHERE
-			N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+			N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 			AND
 			N.[{textIdentifierColumn}] IS NOT NULL
 			AND

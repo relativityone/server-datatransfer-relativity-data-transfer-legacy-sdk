@@ -38,7 +38,7 @@ namespace Relativity.MassImport.Data
 		private TableNames _tableNames;
 		private DataGridImportHelper _dgImportHelper;
 		private Relativity.Data.DataGridMappingMultiDictionary _dataGridMappings;
-		private static readonly string _PENDING_STATUS = ((long)ImportStatus.Pending).ToString();
+		private static readonly string _PENDING_STATUS = ((long)Relativity.MassImport.DTO.ImportStatus.Pending).ToString();
 		#endregion
 
 		#region Constructors
@@ -417,7 +417,7 @@ SELECT
 
 			ImportMeasurements.StartMeasure();
 
-			long combinedStatus = (long)(ImportStatus.InvalidImageFormat | ImportStatus.FileSpecifiedDne | ImportStatus.IdentifierOverlap);
+			long combinedStatus = (long)(Relativity.MassImport.DTO.ImportStatus.InvalidImageFormat | Relativity.MassImport.DTO.ImportStatus.FileSpecifiedDne | Relativity.MassImport.DTO.ImportStatus.IdentifierOverlap);
 			string sql = $"SELECT [Location] FROM [Resource].[{ this.TableNameImageTemp }] WHERE [Status] > 1 AND ([Status] & {combinedStatus} = 0)";
 
 			var dt = _context.ExecuteSqlStatementAsDataTable(sql);
@@ -457,7 +457,7 @@ SELECT
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(14, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.Append(" WHERE" + Environment.NewLine);
-				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)ImportStatus.Pending);
+				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				auditString = sb.ToString();
 			}
 
@@ -477,7 +477,7 @@ SELECT
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(13, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.Append(" WHERE" + Environment.NewLine);
-				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)Relativity.MassImport.ImportStatus.Pending);
+				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				auditString = sb.ToString();
 			}
 
@@ -518,7 +518,7 @@ SELECT
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(15, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.AppendFormat(" WHERE{0}", Environment.NewLine);
-				sb.AppendFormat("{0}[{1}].[Status] = {3}{2}", "\t", TableNameImageTemp, Environment.NewLine, (long)Relativity.MassImport.ImportStatus.Pending);
+				sb.AppendFormat("{0}[{1}].[Status] = {3}{2}", "\t", TableNameImageTemp, Environment.NewLine, (long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				auditString = sb.ToString();
 			}
 
@@ -594,7 +594,7 @@ End
 		{
 			return $@"
 IF @HasPermissionToAdd = 0 BEGIN
-	UPDATE [Resource].[{{0}}] SET [Status] = [Status] + { (long)ImportStatus.SecurityAdd } WHERE NOT EXISTS(SELECT ArtifactID FROM [Document] (NOLOCK) WHERE [Document].[{{2}}] = [{{0}}].[DocumentIdentifier])
+	UPDATE [Resource].[{{0}}] SET [Status] = [Status] + { (long)Relativity.MassImport.DTO.ImportStatus.SecurityAdd } WHERE NOT EXISTS(SELECT ArtifactID FROM [Document] (NOLOCK) WHERE [Document].[{{2}}] = [{{0}}].[DocumentIdentifier])
 END
 ";
 		}

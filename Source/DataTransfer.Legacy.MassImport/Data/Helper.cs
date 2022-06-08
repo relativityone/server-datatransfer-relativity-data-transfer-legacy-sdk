@@ -260,7 +260,7 @@ SELECT
 	[kCura_Import_ErrorData]
 FROM [Resource].[{ tableName }]
 WHERE
-	NOT [kCura_Import_Status] = { (long) ImportStatus.Pending }
+	NOT [kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 ORDER BY
 	kCura_Import_OriginalLineNumber";
 

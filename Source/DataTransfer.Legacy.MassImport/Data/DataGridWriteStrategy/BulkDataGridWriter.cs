@@ -97,12 +97,12 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 			return errorMessages.ToString();
 		}
 
-		public static List<Relativity.MassImport.ImportStatus> GetResultValidationStatuses(DataGridWriteResult result)
+		public static List<Relativity.MassImport.DTO.ImportStatus> GetResultValidationStatuses(DataGridWriteResult result)
 		{
-			var retval = new List<Relativity.MassImport.ImportStatus>();
+			var retval = new List<Relativity.MassImport.DTO.ImportStatus>();
 			if (result.ResultStatus == DataGridResult.Status.ValidationError && (result.ResultsErrorMessage ?? "") == DataGridHelper.INVALID_RECORD_DATAGRIDID_MESSAGE)
 			{
-				retval.Add(Relativity.MassImport.ImportStatus.DataGridInvalidDocumentIDError);
+				retval.Add(Relativity.MassImport.DTO.ImportStatus.DataGridInvalidDocumentIDError);
 			}
 
 			if (result.FieldWriteResults != null)
@@ -113,11 +113,11 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 					{
 						if ((fieldResult.ResultsErrorMessage ?? "") == DataGridHelper.INVALID_FIELD_NAME_MESSAGE)
 						{
-							retval.Add(Relativity.MassImport.ImportStatus.DataGridInvalidFieldNameError);
+							retval.Add(Relativity.MassImport.DTO.ImportStatus.DataGridInvalidFieldNameError);
 						}
 						else if ((fieldResult.ResultsErrorMessage ?? "") == DataGridHelper.INVALID_FIELD_TOO_MUCH_DATA_MESSAGE)
 						{
-							retval.Add(Relativity.MassImport.ImportStatus.DataGridFieldMaxSizeExceeded);
+							retval.Add(Relativity.MassImport.DTO.ImportStatus.DataGridFieldMaxSizeExceeded);
 						}
 					}
 				}
