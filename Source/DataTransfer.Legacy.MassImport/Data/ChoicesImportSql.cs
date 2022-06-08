@@ -91,7 +91,7 @@ WHERE
 		WHERE
 			ArtifactID = Z.[AssociatedArtifactID]
 			AND
-			N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+			N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	);";
 		}
 
@@ -111,7 +111,7 @@ AS
 		N.[{KeyColumnName}] = C.[DocumentIdentifier]
 	WHERE
 		C.[CodeTypeID] = {codeTypeId}
-		AND N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+		AND N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 )
 
 INSERT INTO {codeMappingTable} ([CodeArtifactID], [AssociatedArtifactID])

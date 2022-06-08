@@ -77,7 +77,7 @@ namespace Relativity.MassImport.DTO
 				}
 			}
 
-			if ((status & (long)ImportStatus.DataGridExceptionOccurred) > 0L && !string.IsNullOrEmpty(dataGridException))
+			if ((status & (long)Relativity.MassImport.DTO.ImportStatus.DataGridExceptionOccurred) > 0L && !string.IsNullOrEmpty(dataGridException))
 				retval.Append(ConvertToMessageLineInCell(dataGridException));
 			return retval.ToString().TrimEnd('\n');
 		}

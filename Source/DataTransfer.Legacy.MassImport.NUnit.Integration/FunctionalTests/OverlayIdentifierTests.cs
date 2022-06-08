@@ -118,7 +118,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsCreated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier}"));
 		}
 
 		[TestCase(OverwriteType.Append)]
@@ -143,7 +143,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsCreated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier}"));
 		}
 
 		[TestCase(OverwriteType.Overlay)]
@@ -189,7 +189,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsUpdated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier}"));
 		}
 
 		[Test]
@@ -223,7 +223,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsCreated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyOverlayIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyOverlayIdentifier}"));
 		}
 
 		private MassImportArtifact CreateMassImportArtifact(string identifier, string uniqueId) =>

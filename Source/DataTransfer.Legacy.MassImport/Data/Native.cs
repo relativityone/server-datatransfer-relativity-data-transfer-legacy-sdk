@@ -440,7 +440,7 @@ INNER JOIN [Resource].[{ _tableNames.Native }] Tmp ON
 WHERE
 	Tmp.[kCura_Import_IsNew] = 0
 	AND
-	Tmp.[kCura_Import_Status] = { (long) ImportStatus.Pending }
+	Tmp.[kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 
 INSERT [{ textTable }] (
 	[ArtifactID],
@@ -453,7 +453,7 @@ FROM
 WHERE
 	NOT Tmp.[{ mappedField.GetColumnName() }] IS NULL
 	AND
-	Tmp.[kCura_Import_Status] = { (long) ImportStatus.Pending }
+	Tmp.[kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 ";
 			return singleFieldSql;
 		}
@@ -533,7 +533,7 @@ WHERE
 			{
 				var sb = new StringBuilder(Relativity.MassImport.Data.Helper.GenerateAuditInsertClause(16, userID, requestOrig, recordOrig, this._tableNames.Native));
 				sb.AppendFormat("WHERE{0}", Environment.NewLine);
-				sb.AppendFormat("{0}[{1}].[kCura_Import_Status] = {3}{2}", "\t", this._tableNames.Native, Environment.NewLine, (object)(long)ImportStatus.Pending);
+				sb.AppendFormat("{0}[{1}].[kCura_Import_Status] = {3}{2}", "\t", this._tableNames.Native, Environment.NewLine, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				sb.AppendFormat("{0}AND{1}", "\t", Environment.NewLine);
 				sb.AppendFormat("{0}NOT ISNULL([kCura_Import_FileGuid], '') = ''{1}", "\t", Environment.NewLine);
 				auditString = sb.ToString();

@@ -232,7 +232,7 @@ FROM
 					using (var errorFile = new System.IO.StreamWriter(System.IO.Path.Combine(defaultLocation, errorFileName)))
 					{
 						while (reader.Read())
-							errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}\"", "\",\"", reader.GetInt32(0), ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(1), reader.GetString(2), "", -1, reader.GetString(2), reader.IsDBNull(3) ? null : reader.GetString(3), reader.IsDBNull(4) ? null : reader.GetString(4)), reader.GetString(2)));
+							errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}\"", "\",\"", reader.GetInt32(0), Relativity.MassImport.DTO.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(1), reader.GetString(2), "", -1, reader.GetString(2), reader.IsDBNull(3) ? null : reader.GetString(3), reader.IsDBNull(4) ? null : reader.GetString(4)), reader.GetString(2)));
 					}
 				}
 			}
@@ -260,7 +260,7 @@ SELECT
 	[kCura_Import_ErrorData]
 FROM [Resource].[{ tableName }]
 WHERE
-	NOT [kCura_Import_Status] = { (long) ImportStatus.Pending }
+	NOT [kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 ORDER BY
 	kCura_Import_OriginalLineNumber";
 
