@@ -12,7 +12,7 @@ namespace Relativity.MassImport.Data
 			// and some references do not correspond to fields in temp tables used here
 			// so we correct or/and remove those references below
 			string associatedObjectSqlFormat = base.VerifyExistenceOfAssociatedMultiObjects(tableNames, importedIdentifierColumn, idFieldColumnName,  associatedObjectTable, field);
-			return associatedObjectSqlFormat.Replace($"AND [{tableNames.Objects}].[{field.GetColumnName()}] IS NOT NULL", "");
+			return associatedObjectSqlFormat.Replace($"AND [{tableNames.Native}].[{field.GetColumnName()}] IS NOT NULL", "");
 		}
 
 		public override InlineSqlQuery PopulatePartTable(TableNames tableNames, string objectTable, int topFieldArtifactID, string keyField)

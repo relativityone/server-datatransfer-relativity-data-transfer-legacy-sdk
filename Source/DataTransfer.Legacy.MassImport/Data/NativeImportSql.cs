@@ -1065,38 +1065,21 @@ WHERE
 	");
 		}
 
-		/*public virtual string VerifyExistenceOfAssociatedMultiObjects()
-		{
-			return $@"//craete errors for associated multi objects that do not exist
-UPDATE [Resource].[{{0}}]
-SET 
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAssociatedObjectIsMissing}
-
-WHERE [{{0}}].[{{2}}] IN (SELECT [{{0}}].[{{2}}]
-	FROM [Resource].[{{0}}] INNER JOIN
-		[Resource].[{{1}}] ON [{{1}}].[DocumentIdentifier] = [{{0}}].[{{2}}]
-	WHERE NOT EXISTS(SELECT [{{3}}] FROM [{{5}}] WHERE [{{1}}].ObjectArtifactID = [{{5}}].[ArtifactID])
-	AND [{{1}}].FieldID = {{6}}
-	AND [{{0}}].[{{4}}] IS NOT NULL
-	AND [kCura_Import_Status] {"& "}{(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing} = 0)
-";
-		}*/
-
 		public virtual string VerifyExistenceOfAssociatedMultiObjects(TableNames tableNames, string importedIdentifierColumn, string idFieldColumnName, string associatedObjectTable, FieldInfo field)
 		{
 			return $@"/*craete errors for associated multi objects that do not exist*/
 UPDATE N
 SET 
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAssociatedObjectIsMissing},
-	[kCura_Import_ErrorData] = {field.GetColumnName()}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
+	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
 FROM [Resource].[{tableNames.Native}] N
 WHERE N.[{importedIdentifierColumn}] IN (SELECT [{tableNames.Native}].[{importedIdentifierColumn}]
 	FROM [Resource].[{tableNames.Native}] INNER JOIN
 		[Resource].[{tableNames.Objects}] ON [{tableNames.Objects}].[DocumentIdentifier] = [{tableNames.Native}].[{importedIdentifierColumn}]
 	WHERE NOT EXISTS(SELECT [{idFieldColumnName}] FROM [{associatedObjectTable}] WHERE [{tableNames.Objects}].ObjectArtifactID = [{associatedObjectTable}].[ArtifactID])
 	AND [{tableNames.Objects}].FieldID = {field.ArtifactID}
-	AND [{tableNames.Objects}].[{field.GetColumnName()}] IS NOT NULL
-	AND [kCura_Import_Status] {"& "}{(long)ImportStatus.ErrorAssociatedObjectIsMissing} = 0)
+	AND [{tableNames.Native}].[{field.GetColumnName()}] IS NOT NULL
+	AND [kCura_Import_Status] {"& "}{(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing} = 0)
 ";
 		}
 
