@@ -38,9 +38,9 @@ namespace Relativity.MassImport.Core.Command
 			Settings = settings;
 			InRepository = inRepository;
 			IncludeExtractedTextEncoding = includeExtractedTextEncoding;
-			IsAppend = settings.Overlay == Relativity.MassImport.OverwriteType.Append;
-			IsOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Overlay;
-			IsAppendOrOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Both;
+			IsAppend = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Append;
+			IsOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay;
+			IsAppendOrOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Both;
 			IsOverlayOrBoth = IsOverlay || IsAppendOrOverlay;
 			IsAppendOrBoth = IsAppend || IsAppendOrOverlay;
 			MoveDocumentsInAppendOverlay = IsOverlayOrBoth & settings.MoveDocumentsInAppendOverlayMode;
@@ -174,8 +174,8 @@ namespace Relativity.MassImport.Core.Command
 			{
 				switch (Settings.Overlay)
 				{
-					case Relativity.MassImport.OverwriteType.Both:
-					case Relativity.MassImport.OverwriteType.Overlay:
+					case Relativity.MassImport.DTO.OverwriteType.Both:
+					case Relativity.MassImport.DTO.OverwriteType.Overlay:
 						{
 							this.Execute(() => Native.DeleteExistingNativeFiles(this.Context.AclUserID, Relativity.Core.Config.AuditingEnabled, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination()), "DeleteExistingNativeFiles");
 							break;

@@ -27,12 +27,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 		private static void ConfigureParameterTypesMapping(IMapperConfigurationExpression cfg)
 		{
 			cfg.CreateMap<ExportStatistics, MassImport.ExportStatistics>();
-			cfg.CreateMap<ImageImportStatistics, MassImport.ImageImportStatistics>();
-			cfg.CreateMap<ObjectImportStatistics, MassImport.ObjectImportStatistics>();
+			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ImageImportStatistics, Relativity.MassImport.DTO.ImageImportStatistics >();
+			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ObjectImportStatistics, Relativity.MassImport.DTO.ObjectImportStatistics >();
 			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ImageLoadInfo, Relativity.MassImport.DTO.ImageLoadInfo>();
 			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.NativeLoadInfo, Relativity.MassImport.DTO.NativeLoadInfo>();
 			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.ObjectLoadInfo, Relativity.MassImport.DTO.ObjectLoadInfo>();
-			cfg.CreateMap<LoadRange, Relativity.MassImport.DTO.NativeLoadInfo.LoadRange>();
+			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.LoadRange, Relativity.MassImport.DTO.NativeLoadInfo.LoadRange>();
 			cfg.CreateMap<DataTransfer.Legacy.SDK.ImportExport.V1.Models.FieldInfo, FieldInfo>();
 			cfg.CreateMap<Code, Core.DTO.Code>();
 			cfg.CreateMap<KeyboardShortcut, Core.DTO.KeyboardShortcut>();
@@ -52,7 +52,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 			cfg.CreateMap<ExternalIO.IoResponse, IoResponse>();
 			cfg.CreateMap<MassImportManagerBase.MassImportResults, MassImportResults>();
 			cfg.CreateMap<ProductionInfo, DataTransfer.Legacy.SDK.ImportExport.V1.Models.ProductionInfo>();
-			cfg.CreateMap<SoapExceptionDetail, DataTransfer.Legacy.SDK.ImportExport.V1.Models.SoapExceptionDetail>();
+			cfg.CreateMap<Relativity.MassImport.DTO.SoapExceptionDetail, DataTransfer.Legacy.SDK.ImportExport.V1.Models.SoapExceptionDetail>();
 		}
 
 		public static T Map<T>(this object t1)

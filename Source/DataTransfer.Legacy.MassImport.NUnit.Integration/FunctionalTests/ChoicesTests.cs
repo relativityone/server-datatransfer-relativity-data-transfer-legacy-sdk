@@ -6,7 +6,7 @@ using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity;
 using Relativity.Core.Service;
-using Relativity.MassImport;
+using Relativity.MassImport.DTO;
 using Relativity.MassImport.Api;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
