@@ -121,7 +121,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private static MassImportResults CreateResultWithException(string exceptionMessage)
 		{
-			var soapExceptionDetail = new SoapExceptionDetail(new Exception(exceptionMessage));
+			var soapExceptionDetail = new Relativity.MassImport.DTO.SoapExceptionDetail(new Exception(exceptionMessage));
 			return new MassImportResults
 			{
 				ExceptionDetail = soapExceptionDetail.Map<SDK.ImportExport.V1.Models.SoapExceptionDetail>()

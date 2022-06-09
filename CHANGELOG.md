@@ -4,7 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [0.9.0] - 07-24-2023
 
-### Changed
+## [0.2.29]
+- REL-683467 - Add more retires for NoBcpDirectoryException
 
 - [REL-857911](https://jira.kcura.com/browse/REL-857911) - relativity-data-transfer-legacy-sdk - Backported from [REL-658054](https://jira.kcura.com/browse/REL-658054) ticket from Server 2022 release 
 

@@ -15,7 +15,7 @@ WITH dgImportFileInfoFull AS
 	SELECT P.[ArtifactID], DG.[FieldArtifactId], DG.[FileLocation], DG.[FileSize], DG.[Checksum], DG.[ImportId]
 	FROM @dgImportFileInfo AS DG
 	JOIN [Resource].[{tableName}] AS P ON P.[kCura_Import_ID] = DG.[ImportId]
-	WHERE P.[{statusColumnName}] = {(long)ImportStatus.Pending}
+	WHERE P.[{statusColumnName}] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 )
 MERGE INTO DataGridFileMapping AS T
 USING dgImportFileInfoFull AS S

@@ -35,13 +35,13 @@ namespace Relativity.MassImport.NUnit.Data
 		[Test]
 		public void ShouldGenerateCorrectAuditDetails(
 			[Values(true, false)] bool performAudit,
-			[Values(ImportAuditLevel.FullAudit, ImportAuditLevel.NoAudit, ImportAuditLevel.NoSnapshot)] ImportAuditLevel auditLevel,
-			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll, OverlayBehavior.UseRelativityDefaults)] OverlayBehavior overlayBehavior)
+			[Values(ImportAuditLevel.FullAudit, ImportAuditLevel.NoAudit, ImportAuditLevel.NoSnapshot)] Relativity.MassImport.DTO.ImportAuditLevel auditLevel,
+			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll, OverlayBehavior.UseRelativityDefaults)] Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
 		{
 			// ARRANGE
 			string expectedDetailsClause, expectedMapClause;
 
-			if (performAudit && auditLevel == ImportAuditLevel.FullAudit)
+			if (performAudit && auditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 			{
 				expectedDetailsClause = Resources.AuditDetailsBuilderTests_detailsClause_Audit;
 				expectedMapClause = Resources.AuditDetailsBuilderTests_mapClause_Audit;
@@ -57,7 +57,7 @@ namespace Relativity.MassImport.NUnit.Data
 				ARTIFACT_TYPE_ID,
 				auditLevel,
 				overlayBehavior,
-				OverwriteType.Append,
+				Relativity.MassImport.DTO.OverwriteType.Append,
 				new FieldInfo[]
 				{
 					new FieldInfo {DisplayName = "Boolean Field", Type = FieldTypeHelper.FieldType.Boolean, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID},
@@ -93,9 +93,9 @@ namespace Relativity.MassImport.NUnit.Data
 			var settings = InitializeSettings(
 				RUN_ID,
 				ARTIFACT_TYPE_ID,
-				ImportAuditLevel.NoAudit,
-				OverlayBehavior.MergeAll,
-				OverwriteType.Append,
+				Relativity.MassImport.DTO.ImportAuditLevel.NoAudit,
+				Relativity.MassImport.DTO.OverlayBehavior.MergeAll,
+				Relativity.MassImport.DTO.OverwriteType.Append,
 				null);
 
 			_builder = new AuditDetailsBuilder(
@@ -117,7 +117,7 @@ namespace Relativity.MassImport.NUnit.Data
 
 		[Test]
 		public void ShouldGenerateAuditDetailsForMultiCodeField(
-			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll)] OverlayBehavior overlayBehavior)
+			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll)] Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
 		{
 			// ARRANGE
 			_columnDefinitionCacheMock.Setup(x => x[It.IsAny<int>()]).Returns(new ColumnDefinitionInfo { OverlayMergeValues = false });
@@ -125,9 +125,9 @@ namespace Relativity.MassImport.NUnit.Data
 			var settings = InitializeSettings(
 				RUN_ID,
 				ARTIFACT_TYPE_ID,
-				ImportAuditLevel.FullAudit,
+				Relativity.MassImport.DTO.ImportAuditLevel.FullAudit,
 				overlayBehavior,
-				OverwriteType.Append,
+				Relativity.MassImport.DTO.OverwriteType.Append,
 				new FieldInfo[]
 				{
 					new FieldInfo {DisplayName = "MultiCode Field", Type = FieldTypeHelper.FieldType.MultiCode, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
@@ -145,10 +145,10 @@ namespace Relativity.MassImport.NUnit.Data
 			var results = _builder.GenerateAuditDetails(true, false);
 
 			// ASSERT
-			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, overlayBehavior == OverlayBehavior.MergeAll
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
 				? Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_MergeAll
 				: Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_ReplaceAll);
-			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, overlayBehavior == OverlayBehavior.MergeAll
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
 				? Resources.AuditDetailsBuilderTests_MultiCode_mapClause_MergeAll
 				: Resources.AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll);
 		}
@@ -160,9 +160,9 @@ namespace Relativity.MassImport.NUnit.Data
 			var settings = InitializeSettings(
 				RUN_ID,
 				ARTIFACT_TYPE_ID,
-				ImportAuditLevel.FullAudit,
-				OverlayBehavior.MergeAll,
-				OverwriteType.Overlay,
+				Relativity.MassImport.DTO.ImportAuditLevel.FullAudit,
+				Relativity.MassImport.DTO.OverlayBehavior.MergeAll,
+				Relativity.MassImport.DTO.OverwriteType.Overlay,
 				new FieldInfo[]
 				{
 					new FieldInfo {DisplayName = "Auto Create Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID, Category = FieldCategory.AutoCreate},
@@ -193,7 +193,7 @@ namespace Relativity.MassImport.NUnit.Data
 			Assert.AreEqual(normalizedExpectedResult, normalizedResult, "Generated audit details differ from the expected values.");
 		}
 
-		private static Relativity.MassImport.DTO.ObjectLoadInfo InitializeSettings(string runId, int artifactTypeId, ImportAuditLevel auditLevel, OverlayBehavior overlayBehavior, OverwriteType overwriteType, FieldInfo[] mappedFields)
+		private static Relativity.MassImport.DTO.ObjectLoadInfo InitializeSettings(string runId, int artifactTypeId, Relativity.MassImport.DTO.ImportAuditLevel auditLevel, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior, Relativity.MassImport.DTO.OverwriteType overwriteType, FieldInfo[] mappedFields)
 		{
 			var objectLoadInfo = new Relativity.MassImport.DTO.ObjectLoadInfo
 			{

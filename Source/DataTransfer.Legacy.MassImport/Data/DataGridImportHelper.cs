@@ -175,7 +175,7 @@ SET
 	[{1}] = [{1}] | @dataGridErrorFlag";
 
 			string batchErrorUpdateSql = string.Format(errorSql, tableName, statusColumnName);
-			context.ExecuteNonQuerySQLStatement(batchErrorUpdateSql, new[] { new System.Data.SqlClient.SqlParameter("@dataGridError", errorMessage), new System.Data.SqlClient.SqlParameter("@dataGridErrorFlag", (int)Relativity.MassImport.ImportStatus.DataGridExceptionOccurred) });
+			context.ExecuteNonQuerySQLStatement(batchErrorUpdateSql, new[] { new System.Data.SqlClient.SqlParameter("@dataGridError", errorMessage), new System.Data.SqlClient.SqlParameter("@dataGridErrorFlag", (int)Relativity.MassImport.DTO.ImportStatus.DataGridExceptionOccurred) });
 		}
 
 		private static void FlagDataGridErrors(kCura.Data.RowDataGateway.BaseContext context, IEnumerable<long> objectImportIDs, Relativity.MassImport.ImportStatus errorFlag, string tableName, string statusColumnName)
@@ -214,7 +214,7 @@ WHERE
 	[{0}].[kCura_Import_ID] IN ({1})";
 
 			string batchErrorUpdateSql = string.Format(errorSql, tableName, string.Join(",", objectImportIDs), statusColumnName);
-			context.ExecuteNonQuerySQLStatement(batchErrorUpdateSql, new[] { new System.Data.SqlClient.SqlParameter("@dataGridError", errorMessage), new System.Data.SqlClient.SqlParameter("@dataGridErrorFlag", (int)Relativity.MassImport.ImportStatus.DataGridExceptionOccurred) });
+			context.ExecuteNonQuerySQLStatement(batchErrorUpdateSql, new[] { new System.Data.SqlClient.SqlParameter("@dataGridError", errorMessage), new System.Data.SqlClient.SqlParameter("@dataGridErrorFlag", (int)Relativity.MassImport.DTO.ImportStatus.DataGridExceptionOccurred) });
 		}
 		#endregion
 
