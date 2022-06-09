@@ -38,7 +38,7 @@ namespace Relativity.DataTransfer.Legacy.Tests.Helpers
 			_generators.Add(typeof(MassImportManagerBase.MassImportResults), () => AutoFaker.Generate<MassImportManagerBase.MassImportResults>());
 			_generators.Add(typeof(ProductionInfo), () => AutoFaker.Generate<ProductionInfo>());
 			_generators.Add(typeof(Field.ObjectsFieldParameters), () => AutoFaker.Generate<Field.ObjectsFieldParameters>());
-			_generators.Add(typeof(SoapExceptionDetail), () => AutoFaker.Generate<SoapExceptionDetail>());
+			_generators.Add(typeof(Relativity.MassImport.DTO.SoapExceptionDetail), () => AutoFaker.Generate<Relativity.MassImport.DTO.SoapExceptionDetail>());
 			_generators.Add(typeof(Core.DTO.KeyboardShortcut), () => AutoFaker.Generate<Core.DTO.KeyboardShortcut>());
 			_generators.Add(typeof(RelationalFieldPane), () => AutoFaker.Generate<RelationalFieldPane>());
         }

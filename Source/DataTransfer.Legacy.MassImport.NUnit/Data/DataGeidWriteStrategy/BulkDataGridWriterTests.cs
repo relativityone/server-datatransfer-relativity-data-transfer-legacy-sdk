@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Relativity.Data;
-using Relativity.Data.MassImportOld.DataGridWriteStrategy;
 using Relativity.DataGrid;
 using Relativity.DataGrid.Helpers;
 using Relativity.Logging;
+using Relativity.MassImport.Data.DataGridWriteStrategy;
 
 namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 {
@@ -108,7 +108,7 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 				}
 			};
 			var statuses = BulkDataGridWriter.GetResultValidationStatuses(results);
-			CollectionAssert.AreEquivalent(new[] { ImportStatus.DataGridFieldMaxSizeExceeded }, statuses);
+			CollectionAssert.AreEquivalent(new[] { Relativity.MassImport.DTO.ImportStatus.DataGridFieldMaxSizeExceeded }, statuses);
 		}
 
 		[Test]
@@ -148,7 +148,7 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 				}
 			};
 			var statuses = BulkDataGridWriter.GetResultValidationStatuses(results);
-			CollectionAssert.AreEquivalent(new[] { ImportStatus.DataGridInvalidFieldNameError }, statuses);
+			CollectionAssert.AreEquivalent(new[] { Relativity.MassImport.DTO.ImportStatus.DataGridInvalidFieldNameError }, statuses);
 		}
 
 		[Test]
@@ -180,7 +180,7 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 				}
 			};
 			var statuses = BulkDataGridWriter.GetResultValidationStatuses(results);
-			CollectionAssert.AreEquivalent(new [] { ImportStatus.DataGridInvalidDocumentIDError }, statuses);
+			CollectionAssert.AreEquivalent(new [] { Relativity.MassImport.DTO.ImportStatus.DataGridInvalidDocumentIDError }, statuses);
 		}
 
 		[Test]
@@ -188,7 +188,7 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 		{
 			var results = new DataGridWriteResult() { DataGridID = "5", ResultStatus = DataGridResult.Status.ValidationError, ResultsErrorMessage = DataGridHelper.INVALID_RECORD_DATAGRIDID_MESSAGE, FieldWriteResults = new List<DataGridWriteResult.FieldResult>() { { new DataGridWriteResult.FieldResult() { FieldNamespace = "Fields", FieldIdentifier = "1", ResultStatus = DataGridResult.Status.Verified } }, { new DataGridWriteResult.FieldResult() { FieldNamespace = "Fields", FieldIdentifier = "2", ResultStatus = DataGridResult.Status.ValidationError, ResultsErrorMessage = DataGridHelper.INVALID_FIELD_TOO_MUCH_DATA_MESSAGE } }, { new DataGridWriteResult.FieldResult() { FieldNamespace = "Fields", FieldIdentifier = "3", ResultStatus = DataGridResult.Status.ValidationError, ResultsErrorMessage = DataGridHelper.INVALID_FIELD_NAME_MESSAGE } } } };
 			var statuses = BulkDataGridWriter.GetResultValidationStatuses(results);
-			CollectionAssert.AreEquivalent(new[] { Relativity.MassImport.ImportStatus.DataGridFieldMaxSizeExceeded, Relativity.MassImport.ImportStatus.DataGridInvalidFieldNameError, Relativity.MassImport.ImportStatus.DataGridInvalidDocumentIDError }, statuses);
+			CollectionAssert.AreEquivalent(new[] { Relativity.MassImport.DTO.ImportStatus.DataGridFieldMaxSizeExceeded, Relativity.MassImport.DTO.ImportStatus.DataGridInvalidFieldNameError, Relativity.MassImport.DTO.ImportStatus.DataGridInvalidDocumentIDError }, statuses);
 		}
 		#endregion
 
