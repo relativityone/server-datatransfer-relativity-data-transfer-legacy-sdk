@@ -44,7 +44,8 @@ WHERE
 			return $@"/*create errors for associated objects that do not exist*/
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
+	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
 FROM [Resource].[{tableNames.Native}] N
 WHERE
 	N.[{field.GetColumnName()}] IS NOT NULL
