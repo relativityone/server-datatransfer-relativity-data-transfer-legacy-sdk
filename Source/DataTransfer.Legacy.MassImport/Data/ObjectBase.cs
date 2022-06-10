@@ -315,15 +315,13 @@ namespace Relativity.MassImport.Data
 		public virtual void VerifyExistenceOfAssociatedObjectsForMultiObjectByArtifactId(FieldInfo field, int userID, int? auditUserId)
 		{
 			string importedIdentifierColumn = IdentifierField.GetColumnName();
-			string associatedObjectSqlFormat = ImportSql.VerifyExistenceOfAssociatedMultiObjects();
-
 			string objectTypeName = ColumnDefinitionCache[field.ArtifactID].ObjectTypeName;
 			string associatedObjectTable = Relativity.Data.FieldHelper.GetColumnName(objectTypeName);
 			string idFieldColumnName = ColumnDefinitionCache[field.ArtifactID].ColumnName;
 
 			// create errors for associated objects that do not exist
-			associatedObjectSqlFormat = string.Format(associatedObjectSqlFormat, _tableNames.Native, _tableNames.Objects, importedIdentifierColumn, idFieldColumnName, field.GetColumnName(), associatedObjectTable, (object)field.ArtifactID);
-			ExecuteNonQuerySQLStatement(associatedObjectSqlFormat, new SqlParameter[] { new SqlParameter("@userID", userID), new SqlParameter("@auditUserID", auditUserId.Value) });
+			string query = ImportSql.VerifyExistenceOfAssociatedMultiObjects(_tableNames, importedIdentifierColumn, idFieldColumnName, associatedObjectTable, field);
+			ExecuteNonQuerySQLStatement(query);
 		}
 
 		private void CheckForChildAssociatedObjects(int artifactTypeID, string fieldName, int fieldArtifactId)

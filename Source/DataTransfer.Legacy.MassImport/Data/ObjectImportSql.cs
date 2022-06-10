@@ -6,14 +6,13 @@ namespace Relativity.MassImport.Data
 	// Replaces .resx file
 	internal class ObjectImportSql : NativeImportSql
 	{
-		public override string VerifyExistenceOfAssociatedMultiObjects()
+		public override string VerifyExistenceOfAssociatedMultiObjects(TableNames tableNames, string importedIdentifierColumn, string idFieldColumnName, string associatedObjectTable, FieldInfo field)
 		{
 			// *AK: "VerifyExistenceOfAssociatedMultiObjects" sql script was written for ImportAPI
 			// and some references do not correspond to fields in temp tables used here
 			// so we correct or/and remove those references below
-			string associatedObjectSqlFormat = base.VerifyExistenceOfAssociatedMultiObjects();
-			associatedObjectSqlFormat = associatedObjectSqlFormat.Replace("[{1}].ArtifactID", "[{1}].ObjectArtifactID");
-			return associatedObjectSqlFormat.Replace("AND [{0}].[{4}] IS NOT NULL", "");
+			string associatedObjectSqlFormat = base.VerifyExistenceOfAssociatedMultiObjects(tableNames, importedIdentifierColumn, idFieldColumnName,  associatedObjectTable, field);
+			return associatedObjectSqlFormat.Replace($"AND [{tableNames.Native}].[{field.GetColumnName()}] IS NOT NULL", "");
 		}
 
 		public override InlineSqlQuery PopulatePartTable(TableNames tableNames, string objectTable, int topFieldArtifactID, string keyField)

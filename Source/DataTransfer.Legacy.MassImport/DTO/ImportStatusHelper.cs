@@ -94,21 +94,11 @@ namespace Relativity.MassImport.DTO
 			return formattedMessage;
 		}
 
-		/// <summary>
-		/// 		''' Get the appropriate message for the ImportStatus
-		/// 		''' </summary>
-		/// 		''' <param name="status">an enumerated value indicating which import status message to display</param>
-		/// 		''' <returns>the text of the message</returns>
-		public static string GetImportStatusMessage(ImportStatus status)
-		{
-			return SimpleImportStatusErrorMessageDictionary[status];
-		}
-
 		private static Dictionary<ImportStatus, string> SimpleImportStatusErrorMessageDictionary
 		{
 			get
 			{
-				// Note to developers (about Relativity.MassImport.DTO.ImportStatus.SecurityAdd): This error can also be caused by the FolderCache within WebAPI.
+				// Note to developers (about ImportStatus.SecurityAdd): This error can also be caused by the FolderCache within WebAPI.
 				// If you have recently deleted folders in Relativity and then are trying to add them again by importing documents in the RDC, 
 				// and you get this error, then your problem is probably caused by folder caching.  To fix this problem, you must do an iisreset.
 				// Or, wait until the cache times out.
@@ -137,7 +127,7 @@ namespace Relativity.MassImport.DTO
 						{ ImportStatus.ErrorAssociatedObjectIsDocument, "An object field references a document which does not exist. Review the following destination field(s): '{0}'" }, 
 						{ ImportStatus.ErrorOverwriteMultipleKey, "This record's Overlay Identifier is shared by multiple documents in the case, and cannot be imported" }, 
 						{ ImportStatus.ErrorTags, "This document contains tags that can't be overwritten" }, 
-						{ ImportStatus.ErrorAssociatedObjectIsMissing, "An object field references an artifact ID which doesn't exist for the object." }, 
+						{ ImportStatus.ErrorAssociatedObjectIsMissing, "An object field ({0}) references an ArtifactID ({1}) which doesn't exist for the object type ({2})" }, 
 						{ ImportStatus.DataGridFieldMaxSizeExceeded, "This document has a Data Grid field containing data that exceeds the maximum size threshold. Relativity skipped this document's Data Grid upload." }, 
 						{ ImportStatus.DataGridInvalidDocumentIDError, "The document DataGridID has an invalid value." }, 
 						{ ImportStatus.DataGridInvalidFieldNameError, "The field name has an invalid value." }, 
