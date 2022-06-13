@@ -35,7 +35,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Performance
 
 		private const int ImportObjectType = (int)Relativity.DataExchange.Service.ArtifactType.Document;
 		private const int MaxItemsToFetch = 5000;
-		private const int NumberOfDocuments = 1000;
+		private const int NumberOfDocuments = 400;
 		private const int NumberOfCustomFields = 25;
 		private const int CustomFieldLength = 255;
 		private const string FieldDelimiter = "þþKþþ";

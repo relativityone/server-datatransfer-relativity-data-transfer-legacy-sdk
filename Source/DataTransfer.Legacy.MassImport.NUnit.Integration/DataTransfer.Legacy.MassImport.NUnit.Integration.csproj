@@ -84,5 +84,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
   </ItemGroup>
 </Project>
