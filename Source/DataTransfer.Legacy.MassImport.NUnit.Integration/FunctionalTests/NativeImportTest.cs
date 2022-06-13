@@ -5,9 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
-using Relativity;
 using Relativity.Core.Service;
-using Relativity.MassImport;
+using Relativity.MassImport.DTO;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -25,7 +24,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			const bool inRepository = true;
 			const bool includeExtractedTextEncoding = false;
-			Relativity.MassImport.DTO.NativeLoadInfo nativeLoadInfo = await this.CreateSampleNativeLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
+			NativeLoadInfo nativeLoadInfo = await this.CreateSampleNativeLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
 			MassImportManager massImportManager = new MassImportManager();
 
 			// Act
@@ -36,15 +35,15 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
 		}
 
-		private async Task<Relativity.MassImport.DTO.NativeLoadInfo> CreateSampleNativeLoadInfoAsync(int numberOfArtifactsToCreate)
+		private async Task<NativeLoadInfo> CreateSampleNativeLoadInfoAsync(int numberOfArtifactsToCreate)
 		{
 			string fieldDelimiter = "þþKþþ";
-			FieldInfo[] fields =
+			Relativity.FieldInfo[] fields =
 			{
-				new FieldInfo
+				new Relativity.FieldInfo
 				{
 					ArtifactID = 1003667,
-					Category = FieldCategory.Identifier,
+					Category = Relativity.FieldCategory.Identifier,
 					CodeTypeID = 0,
 					DisplayName = WellKnownFields.ControlNumber,
 					EnableDataGrid = false,
@@ -52,12 +51,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					ImportBehavior = null,
 					IsUnicodeEnabled = true,
 					TextLength = 255,
-					Type = FieldTypeHelper.FieldType.Varchar,
+					Type = Relativity.FieldTypeHelper.FieldType.Varchar,
 				},
-				new FieldInfo
+				new Relativity.FieldInfo
 				{
 					ArtifactID = 1034247,
-					Category = FieldCategory.AutoCreate,
+					Category = Relativity.FieldCategory.AutoCreate,
 					CodeTypeID = 0,
 					DisplayName = WellKnownFields.SupportedByViewer,
 					EnableDataGrid = false,
@@ -65,12 +64,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					ImportBehavior = null,
 					IsUnicodeEnabled = false,
 					TextLength = 0,
-					Type = FieldTypeHelper.FieldType.Boolean,
+					Type = Relativity.FieldTypeHelper.FieldType.Boolean,
 				},
-				new FieldInfo
+				new Relativity.FieldInfo
 				{
 					ArtifactID = 1034248,
-					Category = FieldCategory.AutoCreate,
+					Category = Relativity.FieldCategory.AutoCreate,
 					CodeTypeID = 0,
 					DisplayName = WellKnownFields.RelativityNativeType,
 					EnableDataGrid = false,
@@ -78,14 +77,14 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					ImportBehavior = null,
 					IsUnicodeEnabled = false,
 					TextLength = 255,
-					Type = FieldTypeHelper.FieldType.Varchar,
+					Type = Relativity.FieldTypeHelper.FieldType.Varchar,
 				},
 			};
 
 			this._expectedFieldValues = RandomHelper.GetFieldValues(fields, numberOfArtifactsToCreate);
 			string dataFileContent = GetMetadata(fieldDelimiter, _expectedFieldValues);
 
-			return new Relativity.MassImport.DTO.NativeLoadInfo
+			return new NativeLoadInfo
 			{
 				AuditLevel = ImportAuditLevel.FullAudit,
 				Billable = true,

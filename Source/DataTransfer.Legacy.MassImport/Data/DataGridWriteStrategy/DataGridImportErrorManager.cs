@@ -20,7 +20,7 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 			_fieldErrors = new Dictionary<int, List<int>>();
 		}
 
-		public async Task AddValidationStatuses(int artifactId, IEnumerable<ImportStatus> statuses)
+		public async Task AddValidationStatuses(int artifactId, IEnumerable<Relativity.MassImport.DTO.ImportStatus> statuses)
 		{
 			var identity = await _mappings.LookupRecordByArtifactID(artifactId);
 			foreach (ImportStatus status in statuses)

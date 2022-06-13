@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.31]
+- REL-691656 - Improve error message for bad associative object type error
+
+## [0.2.30]
+- REL-691656 - Copy ImportStatus enum to DataTransfer.Legacy
+
 ## [0.2.29]
 - REL-683467 - Add more retires for NoBcpDirectoryException
 
