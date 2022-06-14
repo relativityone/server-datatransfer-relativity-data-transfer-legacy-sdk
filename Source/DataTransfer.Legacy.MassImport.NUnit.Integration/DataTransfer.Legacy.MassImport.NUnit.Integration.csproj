@@ -82,7 +82,7 @@
     <PackageReference Include="Relativity.Services.DataContracts" Version="13.6.0" />
     <PackageReference Include="Relativity.Services.Interfaces" Version="13.6.0" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
-    <PackageReference Include="Relativity.Kepler" Version="2.9.2" />
+    <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.Kepler.Client" Version="2.9.2" />
     <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
@@ -103,5 +103,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
   </ItemGroup>
 </Project>
