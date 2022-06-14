@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using kCura.Data.RowDataGateway;
-using Microsoft.VisualBasic.CompilerServices;
-using Relativity.Core.AgentJobManagement;
 using Relativity.Logging;
 
 namespace Relativity.MassImport.Data.SqlFramework
@@ -249,7 +247,7 @@ namespace Relativity.MassImport.Data.SqlFramework
 						}
 						catch (Exception ex)
 						{
-							throw new ExecuteSQLStatementFailedException($"Failed to release the {_resource} app lock due to an unexpected connection or transaction state.", ex);
+							throw new AppLockException($"Failed to release the {_resource} app lock due to an unexpected connection or transaction state.", ex);
 						}
 					}
 				}
@@ -282,7 +280,7 @@ namespace Relativity.MassImport.Data.SqlFramework
 					break;
 			}
 
-			throw new ExecuteSQLStatementFailedException($"Failed to acquire app lock for {_resource}. The status of {returnedValue} ({errorMessage}) is returned.");
+			throw new AppLockException($"Failed to acquire app lock for {_resource}. The status of {returnedValue} ({errorMessage}) is returned.", returnedValue);
 		}
 
 		private void HandleReleaseError(int returnedValue)

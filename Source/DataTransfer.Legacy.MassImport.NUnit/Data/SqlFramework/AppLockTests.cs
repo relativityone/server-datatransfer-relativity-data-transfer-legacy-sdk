@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using kCura.Data.RowDataGateway;
 using Moq;
 using NUnit.Framework;
-using Relativity.Data.JobQueueing;
 using Relativity.Logging;
 using Relativity.MassImport.Data.SqlFramework;
 
@@ -110,9 +106,35 @@ namespace Relativity.MassImport.NUnit.Data.SqlFramework
 					});
 
 			// Act && Assert
-			Assert.Throws<ExecuteSQLStatementFailedException>(() =>
+			Assert.Throws<AppLockException>(() =>
 			{
 				new AppLock(_contextMock.Object, "testResource", (c) => true, (c) => true, _loggerMock.Object);
+			});
+		}
+
+		[Test]
+		public void ShouldThrowAnExceptionWhenReleasingLockEndsWithException()
+		{
+			// Arrange
+			int callsCount = 0;
+			_contextMock
+				.Setup(m => m.ExecuteNonQuerySQLStatement(It.IsAny<string>(), It.IsAny<IEnumerable<SqlParameter>>()))
+				.Callback<string, IEnumerable<SqlParameter>>(
+					(sql, parameters) =>
+					{
+						if (callsCount > 0)
+						{
+							throw new Exception("TestException");
+						}
+						parameters.ToArray()[1].Value = 0;
+						callsCount++;
+					});
+
+			var applock = new AppLock(_contextMock.Object, "testResource", (c) => true, (c) => true, _loggerMock.Object);
+			// Act && Assert
+			Assert.Throws<AppLockException>(() =>
+			{
+				applock.Dispose();
 			});
 		}
 
