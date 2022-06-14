@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.33]
+- REL-671246 - Add retries for any error in AppLock
+
 ## [0.2.32]
 - REL-686998 - Remove usage of IFileSystemManager from tests
 
