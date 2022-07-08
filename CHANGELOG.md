@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.34]
+- DEVOPS-159751 - changed metrics logging level from Warning to Information
+- DEVOPS-159751 - send field details metrics once per import job instead of sending it for each batch
+
 ## [0.2.33]
 - REL-671246 - Add retries for any error in AppLock
 

@@ -23,6 +23,7 @@
 			public const string JobStarted = "Relativity.MassImport.JobStarted";
 			public const string BatchCompleted = "Relativity.MassImport.BatchImportTime";
 			public const string PreImportStagingTableDetails = "Relativity.MassImport.StagingTableDetailsBeforeImport";
+			public const string FieldDetails = "Relativity.MassImport.FieldDetails";
 		}
 	}
 }
