@@ -10,5 +10,6 @@ namespace Relativity.MassImport.Core
 		void SendJobStarted(ImageLoadInfo settings, string importType, string system);
 		void SendPreImportStagingTableStatistics(string correlationId, Dictionary<string, object> customData);
 		void SendBatchCompleted(string correlationId, long importTimeInMilliseconds, string importType, string system, MassImportManagerBase.MassImportResults result, ImportMeasurements importMeasurements);
+		void SendFieldDetails(string correlationId, FieldInfo field);
 	}
 }
