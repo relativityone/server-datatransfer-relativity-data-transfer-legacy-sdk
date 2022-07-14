@@ -514,13 +514,7 @@ WHERE
 			}
 
 			sqlFormat = sqlFormat.Replace("/*NativeImportAuditIntoClause*/", auditInnerString);
-
-			string sqlCheck = this.ImportSql.CheckForExistingNativeFiles();
-
-			while (Convert.ToInt32(this.Context.ExecuteSqlStatementAsScalar(string.Format(sqlCheck, this._tableNames.Native))) == 1)
-			{
-				this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native, Convert.ToInt32(Relativity.Data.Config.WebConfigSettings["MassDeleteBatchAmount"]), this.QueryTimeout));
-			}
+			this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native), this.QueryTimeout);
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
