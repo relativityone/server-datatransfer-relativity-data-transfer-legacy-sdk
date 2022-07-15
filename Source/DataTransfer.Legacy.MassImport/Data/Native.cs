@@ -504,6 +504,7 @@ WHERE
 		public void DeleteExistingNativeFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig)
 		{
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			this.ImportMeasurements.StartMeasure();
 			string sqlFormat = this.ImportSql.DeleteExistingNativeFiles();
 			string auditInnerString = string.Empty;
 
@@ -514,13 +515,8 @@ WHERE
 			}
 
 			sqlFormat = sqlFormat.Replace("/*NativeImportAuditIntoClause*/", auditInnerString);
-
-			string sqlCheck = this.ImportSql.CheckForExistingNativeFiles();
-
-			while (Convert.ToInt32(this.Context.ExecuteSqlStatementAsScalar(string.Format(sqlCheck, this._tableNames.Native))) == 1)
-			{
-				this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native, Convert.ToInt32(Relativity.Data.Config.WebConfigSettings["MassDeleteBatchAmount"]), this.QueryTimeout));
-			}
+			this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native), this.QueryTimeout);
+			this.ImportMeasurements.StopMeasure();
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
