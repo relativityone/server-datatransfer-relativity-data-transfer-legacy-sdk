@@ -504,6 +504,7 @@ WHERE
 		public void DeleteExistingNativeFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig)
 		{
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			this.ImportMeasurements.StartMeasure();
 			string sqlFormat = this.ImportSql.DeleteExistingNativeFiles();
 			string auditInnerString = string.Empty;
 
@@ -515,6 +516,7 @@ WHERE
 
 			sqlFormat = sqlFormat.Replace("/*NativeImportAuditIntoClause*/", auditInnerString);
 			this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native), this.QueryTimeout);
+			this.ImportMeasurements.StopMeasure();
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
