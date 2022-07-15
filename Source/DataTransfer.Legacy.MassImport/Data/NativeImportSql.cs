@@ -426,33 +426,14 @@ WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {fieldArtifactId};
 ");
 		}
 
-		public string CheckForExistingNativeFiles()
-		{
-			return $@"/*
-  Format replace:
-  ---------------
-  0: native temp table
-*/
-SELECT 1 WHERE EXISTS (
-    SELECT 1 FROM [Resource].[{{0}}]
-    WHERE [kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
-    AND   EXISTS (
-        SELECT 1 FROM EDDSDBO.[File] WHERE [Type] = 0 AND DocumentArtifactID = ArtifactID
-    )
-)
-";
-		}
-
 		public string DeleteExistingNativeFiles()
 		{
 			return $@"/*
   Format replace:
   ---------------
   0: native temp table
-  1: MassDeleteBatchAmount
 */
 	DELETE
-		TOP ({{1}})
 	FROM
 		[File]
 	/*NativeImportAuditIntoClause*/
