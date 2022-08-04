@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.35]
+- REL 682882 - Improve delete natives query
+
 ## [0.2.34]
 - DEVOPS-159751 - changed metrics logging level from Warning to Information
 - DEVOPS-159751 - send field details metrics once per import job instead of sending it for each batch
