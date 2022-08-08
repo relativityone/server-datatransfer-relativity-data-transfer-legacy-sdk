@@ -15,9 +15,9 @@
     <dependencies>
       <group targetFramework=".NETFramework4.6.2">
 		<dependency id="kCura" version="14.2.7" />
-        <dependency id="Relativity.Core" version="52.3.15" />
-        <dependency id="Relativity.Logging.Interfaces" version="2019.10.2" />
-		<dependency id="Relativity.Telemetry.APM" version="2019.10.1" />
+        <dependency id="Relativity.Core" version="52.3.17" />
+        <dependency id="Relativity.Logging.Interfaces" version="3000.4.0" />
+		<dependency id="Relativity.Telemetry.APM" version="2019.10.8" />
       </group>
     </dependencies>
   </metadata>

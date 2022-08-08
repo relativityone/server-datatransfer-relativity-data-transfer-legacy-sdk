@@ -38,7 +38,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Windsor" Version="3.3.0" />
-    <PackageReference Include="kCura" Version="14.2.2" />
+    <PackageReference Include="kCura" Version="14.2.7" />
     <PackageReference Include="Mono.Cecil" Version="0.9.6.1" />
     <PackageReference Include="Invariant.Services.Interfaces" Version="7.1.80.7" />
     <PackageReference Include="Invariant.Services.Interfaces.Private" Version="7.1.80.7" />
@@ -48,13 +48,13 @@
     <PackageReference Include="Relativity.AmbientData" version="0.1.2" />
     <PackageReference Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" Version="3000.1.0" />
     <PackageReference Include="Relativity.API" Version="17.4.1" />
-    <PackageReference Include="Relativity.DataGrid" Version="16.4.11" />
-    <PackageReference Include="Relativity.Logging" Version="2019.10.2" />
-    <PackageReference Include="Relativity.Logging.Interfaces" Version="2019.10.2" />
+    <PackageReference Include="Relativity.DataGrid" Version="17.1.2" />
+    <PackageReference Include="Relativity.Logging" Version="3000.4.0" />
+    <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
     <PackageReference Include="Relativity.SecretCatalog" Version="1.0.19" />
     <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
     <PackageReference Include="Relativity.ServiceBus.Patterns" Version="2.4.3" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.8" />
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="3003.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="1.0.328" />
     <PackageReference Include="Relativity.Authentication" Version="11.3.1.22" />
@@ -77,8 +77,8 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
     <PackageReference Include="Polly" Version="5.7.0" />
-    <PackageReference Include="Relativity.Core" Version="47.11.21" />
-    <PackageReference Include="Relativity.Logging.Interfaces" Version="2019.10.2" />
+    <PackageReference Include="Relativity.Core" Version="52.3.17" />
+    <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
     <PackageReference Include="Relativity.Services.DataContracts" Version="13.6.0" />
     <PackageReference Include="Relativity.Services.Interfaces" Version="13.6.0" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
