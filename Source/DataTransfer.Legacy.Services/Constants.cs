@@ -1,0 +1,19 @@
+﻿namespace Relativity.DataTransfer.Legacy.Services
+{
+	internal static class Constants
+	{
+		internal class MassImportMetricsBucketNames
+		{
+			public const string REQUIRED_WORKSPACE_DOCUMENT_COUNT_RDC = "Required.Workspace.DocumentCount.RDC";
+			public const string REQUIRED_WORKSPACE_DOCUMENT_COUNT_IMPORTAPI = "Required.Workspace.DocumentCount.ImportAPI";
+			public const string REQUIRED_WORKSPACE_DOCUMENT_COUNT_RIP = "Required.Workspace.DocumentCount.RIP";
+			public const string REQUIRED_WORKSPACE_DOCUMENT_COUNT_PROCESSING = "Required.Workspace.DocumentCount.Processing";
+			public const string REQUIRED_WORKSPACE_DOCUMENT_COUNT_UNKNOWN = "Required.Workspace.DocumentCount.Unknown";
+			public const string REQUIRED_WORKSPACE_FILE_COUNT_RDC = "Required.Workspace.DocumentCount.RDC";
+			public const string REQUIRED_WORKSPACE_FILE_COUNT_IMPORTAPI = "Required.Workspace.DocumentCount.ImportAPI";
+			public const string REQUIRED_WORKSPACE_FILE_COUNT_RIP = "Required.Workspace.DocumentCount.RIP";
+			public const string REQUIRED_WORKSPACE_FILE_COUNT_PROCESSING = "Required.Workspace.DocumentCount.Processing";
+			public const string REQUIRED_WORKSPACE_FILE_COUNT_UNKNOWN = "Required.Workspace.DocumentCount.Unknown";
+		}
+	}
+}

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core;
@@ -8,6 +9,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.Telemetry.MetricsCollection;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
@@ -44,7 +46,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
 			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
@@ -54,7 +56,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			IImportCoordinator coordinator =
 				new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
@@ -64,7 +66,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			IImportCoordinator coordinator =
 				new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
@@ -72,11 +74,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
 			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
-		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator)
+		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator, ExecutionSource executionSource)
 		{
 			var serviceContext = GetBaseServiceContext(workspaceID);
 			var massImportManager = new MassImportManager();
@@ -115,6 +117,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 			{
 				results = massImportManager.PostImportDocumentLimitLogic(serviceContext, workspaceID, results);
 			}
+
+			LogTelemetryMetricsForImport(serviceContext, results, executionSource, workspaceID);
 
 			return results.Map<MassImportResults>();
 		}
@@ -169,6 +173,83 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
 			return Task.FromResult(result);
+		}
+
+		private void LogTelemetryMetricsForImport(BaseServiceContext serviceContext, MassImportManagerBase.MassImportResults results, ExecutionSource executionSource, int workspaceID)
+		{
+			long documentsCreated = results.ArtifactsCreated;
+			Guid workspaceGuid = RetrieveWorkspaceGuid(workspaceID, serviceContext);
+			if (documentsCreated > 0)
+			{
+				switch (executionSource)
+				{
+					case ExecutionSource.Rdc:
+					{
+						Client.MetricsClient.LogPointInTimeLong( Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_RDC, workspaceGuid, documentsCreated);
+						break;
+					}
+					case ExecutionSource.ImportAPI:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_IMPORTAPI, workspaceGuid, documentsCreated);
+						break;
+					}
+					case ExecutionSource.RIP:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_RIP, workspaceGuid, documentsCreated);
+						break;
+					}
+					case ExecutionSource.Processing:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_PROCESSING, workspaceGuid, documentsCreated);
+						break;
+					}
+					case ExecutionSource.Unknown:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_UNKNOWN, workspaceGuid, documentsCreated);
+						break;
+					}
+				}
+			}
+
+			long filesCreated = results.FilesProcessed;
+			if (filesCreated > 0)
+			{
+				switch (executionSource)
+				{
+					case ExecutionSource.Rdc:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_RDC, workspaceGuid, filesCreated);
+						break;
+					}
+					case ExecutionSource.ImportAPI:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_IMPORTAPI, workspaceGuid, filesCreated);
+						break;
+					}
+					case ExecutionSource.RIP:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_RIP, workspaceGuid, filesCreated);
+						break;
+					}
+					case ExecutionSource.Processing:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_PROCESSING, workspaceGuid, filesCreated);
+						break;
+					}
+					case ExecutionSource.Unknown:
+					{
+						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_UNKNOWN, workspaceGuid, filesCreated);
+						break;
+					}
+				}
+			}
+
+		}
+
+		private Guid RetrieveWorkspaceGuid(int workspaceID, BaseServiceContext serviceContext)
+		{
+			ArtifactGuidManager artifactGuidManager = new ArtifactGuidManager(serviceContext);
+			return artifactGuidManager.GetGuidsByArtifactID(workspaceID).SingleOrDefault();
 		}
 	}
 }
