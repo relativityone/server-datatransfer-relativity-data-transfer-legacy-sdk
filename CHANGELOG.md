@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.36]
+- REL-697865 - restore metrics concerning files created count and documnets created count(BulkImportService -> LogTelemetryMetricsForImport) 
+
 ## [0.2.35]
-- REL 682882 - Improve delete natives query
+- REL-682882 - Improve delete natives query
 
 ## [0.2.34]
 - DEVOPS-159751 - changed metrics logging level from Warning to Information

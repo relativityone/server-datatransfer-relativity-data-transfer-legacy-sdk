@@ -248,7 +248,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private Guid RetrieveWorkspaceGuid(int workspaceID, BaseServiceContext serviceContext)
 		{
-			ArtifactGuidManager artifactGuidManager = new ArtifactGuidManager(serviceContext);
+			ArtifactGuidManager artifactGuidManager = new ArtifactGuidManager(serviceContext.GetMasterDbServiceContext());
 			return artifactGuidManager.GetGuidsByArtifactID(workspaceID).SingleOrDefault();
 		}
 	}
