@@ -42,7 +42,7 @@
     <PackageReference Include="Relativity.Core" Version="52.3.17" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.3.0" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.8" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
