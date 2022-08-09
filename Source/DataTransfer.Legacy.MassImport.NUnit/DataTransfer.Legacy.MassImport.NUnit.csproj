@@ -58,9 +58,9 @@
     <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
     <PackageReference Include="Relativity.Services.Interfaces" Version="13.6.0" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.8" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
     <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
-    <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
+    <PackageReference Include="Relativity.Logging.Interfaces" Version="2019.10.2" />
     <PackageReference Include="kCura.Relativity.Client" Version="11.3.1.22" />
     <PackageReference Include="kCura.EventHandler" Version="17.1.9" />
     <PackageReference Include="Relativity.API" Version="17.4.1" />
