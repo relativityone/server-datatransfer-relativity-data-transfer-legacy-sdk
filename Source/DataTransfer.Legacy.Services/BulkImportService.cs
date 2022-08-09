@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private const string FileSecurityWarning =
 			@"##InsufficientPermissionsForImportException##You do not have permission to run this import because it uses referential links to files. You must either log in as a system administrator or change the settings to upload files to run this import.";
 
-		private static Dictionary<int, Guid> _workspaceGuidCache = new Dictionary<int, Guid>();
+		private static ConcurrentDictionary<int, Guid> _workspaceGuidCache = new ConcurrentDictionary<int, Guid>();
 
 		private readonly MassImportManager _massImportManager;
 
@@ -251,11 +252,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private static Guid RetrieveWorkspaceGuid(int workspaceID, BaseServiceContext serviceContext)
 		{
-			if (!BulkImportService._workspaceGuidCache.ContainsKey(workspaceID))
-			{
-				ArtifactGuidManager artifactGuidManager = new ArtifactGuidManager(serviceContext.GetMasterDbServiceContext());
-				BulkImportService._workspaceGuidCache.Add(workspaceID, artifactGuidManager.GetGuidsByArtifactID(workspaceID).SingleOrDefault());
-			}
+			ArtifactGuidManager artifactGuidManager = new ArtifactGuidManager(serviceContext.GetMasterDbServiceContext());
+			BulkImportService._workspaceGuidCache.TryAdd(workspaceID, artifactGuidManager.GetGuidsByArtifactID(workspaceID).SingleOrDefault());
 
 			return BulkImportService._workspaceGuidCache[workspaceID];
 		}
