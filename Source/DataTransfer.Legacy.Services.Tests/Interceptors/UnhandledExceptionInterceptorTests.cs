@@ -55,5 +55,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithBaseException)}. InnerExceptionType: Relativity.Core.Exception.BaseException, InnerExceptionMessage: ArtifactID 1234567 does not exist.")
 				.WithInnerException<Relativity.Core.Exception.BaseException>();
 		}
+
+		[Test]
+		public void ShouldLogErrorAndThrowServiceExceptionWithInnerWhenExecutingMethodThrowsBaseExceptionAndMessageIsNotArtifactIDDoesNotExist()
+		{
+			FluentActions.Invoking(() => _interceptedObject.ExecuteWithBaseExceptionDifferentMessage()).Should().Throw<ServiceException>()
+				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithBaseExceptionDifferentMessage)}. InnerExceptionType: Relativity.Core.Exception.BaseException, InnerExceptionMessage: *")
+				.WithInnerException<Relativity.Core.Exception.BaseException>();
+		}
 	}
 }

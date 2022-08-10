@@ -13,6 +13,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		void Execute();
 		void ExecuteWithPermissionException();
 		void ExecuteWithBaseException();
+		void ExecuteWithBaseExceptionDifferentMessage();
 	}
 
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
@@ -32,6 +33,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		public void ExecuteWithBaseException()
 		{
 			throw new Relativity.Core.Exception.BaseException("ArtifactID 1234567 does not exist.");
+		}
+
+		public void ExecuteWithBaseExceptionDifferentMessage()
+		{
+			throw new Relativity.Core.Exception.BaseException("Some message");
 		}
 	}
 }
