@@ -47,5 +47,21 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithPermissionException)}. InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: You do not have permission to view this item (ArtifactID=12345678)")
 				.WithInnerException<Relativity.Core.Exception.Permission>();
 		}
+
+		[Test]
+		public void ShouldLogErrorAndThrowNotFoundExceptionWithInnerWhenExecutingMethodThrows()
+		{
+			FluentActions.Invoking(() => _interceptedObject.ExecuteWithBaseException()).Should().Throw<NotFoundException>()
+				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithBaseException)}. InnerExceptionType: Relativity.Core.Exception.BaseException, InnerExceptionMessage: ArtifactID 1234567 does not exist.")
+				.WithInnerException<Relativity.Core.Exception.BaseException>();
+		}
+
+		[Test]
+		public void ShouldLogErrorAndThrowServiceExceptionWithInnerWhenExecutingMethodThrowsBaseExceptionAndMessageIsNotArtifactIDDoesNotExist()
+		{
+			FluentActions.Invoking(() => _interceptedObject.ExecuteWithBaseExceptionDifferentMessage()).Should().Throw<ServiceException>()
+				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithBaseExceptionDifferentMessage)}. InnerExceptionType: Relativity.Core.Exception.BaseException, InnerExceptionMessage: *")
+				.WithInnerException<Relativity.Core.Exception.BaseException>();
+		}
 	}
 }
