@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.38]
+- REL-714384  Rethrow BaseException as NotFoundException in UnhandledExceptionInterceptor
+
 ## [0.2.37]
 - REL-717154 - MassImport nuget for OM, correct dependencies version
 
