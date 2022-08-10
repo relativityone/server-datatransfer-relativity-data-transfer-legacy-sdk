@@ -12,6 +12,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 	{
 		void Execute();
 		void ExecuteWithPermissionException();
+		void ExecuteWithBaseException();
+		void ExecuteWithBaseExceptionDifferentMessage();
 	}
 
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
@@ -26,6 +28,16 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		public void ExecuteWithPermissionException()
 		{
 			throw new Relativity.Core.Exception.Permission("You do not have permission to view this item (ArtifactID=12345678)");
+		}
+
+		public void ExecuteWithBaseException()
+		{
+			throw new Relativity.Core.Exception.BaseException("ArtifactID 1234567 does not exist.");
+		}
+
+		public void ExecuteWithBaseExceptionDifferentMessage()
+		{
+			throw new Relativity.Core.Exception.BaseException("Some message");
 		}
 	}
 }
