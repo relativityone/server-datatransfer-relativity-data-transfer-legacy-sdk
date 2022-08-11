@@ -26,6 +26,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		private Mock<IRelativityPermissionHelper> _relativityPermissionHelperMock;
 		private Mock<IAPILog> _loggerMock;
 		private Mock<IMetricsContext> _metricsMock;
+		private Mock<ISnowflakeMetrics> _snowflakeMetricsMock;
 		private IBulkImportService _uut;
 
 		[SetUp]
@@ -34,6 +35,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			_serviceContextFactoryMock = new Mock<IServiceContextFactory>();
 			_communicationModeStorageMock = new Mock<ICommunicationModeStorage>();
 			_relativityPermissionHelperMock = new Mock<IRelativityPermissionHelper>();
+			_snowflakeMetricsMock = new Mock<ISnowflakeMetrics>();
 			_loggerMock = new Mock<IAPILog>();
 			_metricsMock = new Mock<IMetricsContext>();
 
@@ -42,6 +44,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			container.Register(Component.For<IServiceContextFactory>().Instance(_serviceContextFactoryMock.Object));
 			container.Register(Component.For<ICommunicationModeStorage>().Instance(_communicationModeStorageMock.Object));
 			container.Register(Component.For<IRelativityPermissionHelper>().Instance(_relativityPermissionHelperMock.Object));
+			container.Register(Component.For<ISnowflakeMetrics>().Instance(_snowflakeMetricsMock.Object));
 			container.Register(Component.For<ToggleCheckInterceptor>());
 			container.Register(Component.For<PermissionCheckInterceptor>());
 			container.Register(Component.For<LogInterceptor>());

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core;
@@ -11,7 +8,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.Telemetry.MetricsCollection;
+using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
@@ -35,15 +32,16 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private const string FileSecurityWarning =
 			@"##InsufficientPermissionsForImportException##You do not have permission to run this import because it uses referential links to files. You must either log in as a system administrator or change the settings to upload files to run this import.";
 
-		private static ConcurrentDictionary<int, Guid> _workspaceGuidCache = new ConcurrentDictionary<int, Guid>();
-
 		private readonly MassImportManager _massImportManager;
 
+		private readonly ISnowflakeMetrics _metrics;
 
-		public BulkImportService(IServiceContextFactory serviceContextFactory) 
+
+		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics) 
 			: base(serviceContextFactory)
 		{
 			_massImportManager = new MassImportManager();
+			_metrics = metrics;
 		}
 
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
@@ -122,7 +120,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 				results = massImportManager.PostImportDocumentLimitLogic(serviceContext, workspaceID, results);
 			}
 
-			LogTelemetryMetricsForImport(serviceContext, results, executionSource, workspaceID);
+			_metrics.LogTelemetryMetricsForImport(serviceContext, results, executionSource, workspaceID);
 
 			return results.Map<MassImportResults>();
 		}
@@ -179,83 +177,5 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		private void LogTelemetryMetricsForImport(BaseServiceContext serviceContext, MassImportManagerBase.MassImportResults results, ExecutionSource executionSource, int workspaceID)
-		{
-			long documentsCreated = results.ArtifactsCreated;
-			Guid workspaceGuid = RetrieveWorkspaceGuid(workspaceID, serviceContext);
-			if (documentsCreated > 0)
-			{
-				switch (executionSource)
-				{
-					case ExecutionSource.Rdc:
-					{
-						Client.MetricsClient.LogPointInTimeLong( Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_RDC, workspaceGuid, documentsCreated);
-						break;
-					}
-					case ExecutionSource.ImportAPI:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_IMPORTAPI, workspaceGuid, documentsCreated);
-						break;
-					}
-					case ExecutionSource.RIP:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_RIP, workspaceGuid, documentsCreated);
-						break;
-					}
-					case ExecutionSource.Processing:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_PROCESSING, workspaceGuid, documentsCreated);
-						break;
-					}
-					case ExecutionSource.Unknown:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_DOCUMENT_COUNT_UNKNOWN, workspaceGuid, documentsCreated);
-						break;
-					}
-				}
-			}
-
-			long filesCreated = results.FilesProcessed;
-			if (filesCreated > 0)
-			{
-				switch (executionSource)
-				{
-					case ExecutionSource.Rdc:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_RDC, workspaceGuid, filesCreated);
-						break;
-					}
-					case ExecutionSource.ImportAPI:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_IMPORTAPI, workspaceGuid, filesCreated);
-						break;
-					}
-					case ExecutionSource.RIP:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_RIP, workspaceGuid, filesCreated);
-						break;
-					}
-					case ExecutionSource.Processing:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_PROCESSING, workspaceGuid, filesCreated);
-						break;
-					}
-					case ExecutionSource.Unknown:
-					{
-						Client.MetricsClient.LogPointInTimeLong(Constants.MassImportMetricsBucketNames.REQUIRED_WORKSPACE_FILE_COUNT_UNKNOWN, workspaceGuid, filesCreated);
-						break;
-					}
-				}
-			}
-
-		}
-
-		private static Guid RetrieveWorkspaceGuid(int workspaceID, BaseServiceContext serviceContext)
-		{
-			ArtifactGuidManager artifactGuidManager = new ArtifactGuidManager(serviceContext.GetMasterDbServiceContext());
-			BulkImportService._workspaceGuidCache.TryAdd(workspaceID, artifactGuidManager.GetGuidsByArtifactID(workspaceID).SingleOrDefault());
-
-			return BulkImportService._workspaceGuidCache[workspaceID];
-		}
 	}
 }
