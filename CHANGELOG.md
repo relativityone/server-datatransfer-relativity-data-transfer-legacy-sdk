@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.39]
+- REL-697865 - restore metrics concerning files created count and documnets created count(BulkImportService -> LogTelemetryMetricsForImport) 
+
 ## [0.2.38]
 - REL-714384  Rethrow BaseException as NotFoundException in UnhandledExceptionInterceptor
 
