@@ -8,6 +8,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
@@ -33,18 +34,21 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private readonly MassImportManager _massImportManager;
 
+		private readonly ISnowflakeMetrics _metrics;
 
-		public BulkImportService(IServiceContextFactory serviceContextFactory) 
+
+		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics) 
 			: base(serviceContextFactory)
 		{
 			_massImportManager = new MassImportManager();
+			_metrics = metrics;
 		}
 
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
 			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
@@ -54,7 +58,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			IImportCoordinator coordinator =
 				new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
@@ -64,7 +68,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			IImportCoordinator coordinator =
 				new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
@@ -72,11 +76,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
 			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
-			var result = BulkImport(workspaceID, coordinator);
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
 			return Task.FromResult(result);
 		}
 
-		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator)
+		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator, ExecutionSource executionSource)
 		{
 			var serviceContext = GetBaseServiceContext(workspaceID);
 			var massImportManager = new MassImportManager();
@@ -115,6 +119,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 			{
 				results = massImportManager.PostImportDocumentLimitLogic(serviceContext, workspaceID, results);
 			}
+
+			_metrics.LogTelemetryMetricsForImport(serviceContext, results, executionSource, workspaceID);
 
 			return results.Map<MassImportResults>();
 		}
@@ -170,5 +176,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
 			return Task.FromResult(result);
 		}
+
 	}
 }
