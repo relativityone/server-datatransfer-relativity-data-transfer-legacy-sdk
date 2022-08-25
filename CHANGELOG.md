@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.40]
+- REL-730175 - Catch Core.Exception.Permission and rethrow as known PermissionDeniedException
+
 ## [0.2.39]
 - REL-697865 - restore metrics concerning files created count and documnets created count(BulkImportService -> LogTelemetryMetricsForImport) 
 
