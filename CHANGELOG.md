@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.41]
+- REL-596735 - Fixed issue with importing RDOs which uses reserved SQL keywords as an identifier field name
+
 ## [0.2.40]
 - REL-730175 - Catch Core.Exception.Permission and rethrow as known PermissionDeniedException
 
