@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,7 +30,7 @@ namespace MassImport.NUnit.Integration
 		}
 
 		[OneTimeSetUp]
-		public async Task OneTimeSetupAsync()
+		public async Task OneTimeBaseSetupAsync()
 		{
 			TestWorkspace = await OneTimeSetup.TestWorkspaceAsync.ConfigureAwait(false);
 			SettingsHelper.SetDefaultSettings();
@@ -44,6 +44,25 @@ namespace MassImport.NUnit.Integration
 			Assert.AreEqual(expectedArtifactsCreated, result.ArtifactsCreated, "Invalid number of created artifacts");
 			Assert.AreEqual(expectedArtifactsUpdated, result.ArtifactsUpdated, "Invalid number of updated artifacts");
 		}
+
+        protected string GetMetadata(string fieldDelimiter, DataTable fieldValues)
+        {
+            StringBuilder metadataBuilder = new StringBuilder();
+            string postfix = $"{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
+
+            for (int i = 0; i < fieldValues.Rows.Count; i++)
+            {
+                string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}1003697{fieldDelimiter}";
+                metadataBuilder.Append(prefix);
+
+                string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
+                metadataBuilder.Append(values);
+
+                metadataBuilder.Append(postfix);
+            }
+
+            return metadataBuilder.ToString();
+        }
 
 		private void SetupCoreContextMock()
 		{
