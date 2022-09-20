@@ -498,6 +498,17 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
+		public void ManageHasPDFs()
+		{
+			ImportMeasurements.StartMeasure();
+			ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasPDF");
+			string sqlFormat = ImportSql.ManageHasPDFs();
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
+			ImportMeasurements.StopMeasure();
+			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
+		}
+
 		public void UpdateImageCount()
 		{
 			ImportMeasurements.StartMeasure();

@@ -661,6 +661,45 @@ SELECT
 		/// Format replace:
 		/// ---------------
 		/// 0: img temp table
+		/// 1: CodeArtifact partition table name for HasPDFs
+		/// </summary>
+		public string ManageHasPDFs()
+		{
+			return $@"
+		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = 'HasPDF')
+
+		DELETE FROM
+		[{{1}}]
+		WHERE
+		EXISTS(
+			SELECT
+			ArtifactID
+			FROM
+			[Resource].[{{0}}]
+			WHERE
+			[{{0}}].ArtifactID = [{{1}}].[AssociatedArtifactID]
+			AND
+			[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+		)
+
+		INSERT INTO [{{1}}] (
+		[CodeArtifactID],
+		[AssociatedArtifactID]
+		) SELECT
+			@hasImagesCodeArtifactID,
+			ArtifactID
+			FROM
+			[Document]
+			WHERE
+			EXISTS(
+				SELECT ArtifactID FROM [Resource].[{{0}}] WHERE [{{0}}].ArtifactID = [Document].[ArtifactID] AND [{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
+";
+		}
+
+		/// <summary>
+		/// Format replace:
+		/// ---------------
+		/// 0: img temp table
 		/// 1: artifact tmp table
 		/// 2: extractedTextColumnName
 		/// </summary>
