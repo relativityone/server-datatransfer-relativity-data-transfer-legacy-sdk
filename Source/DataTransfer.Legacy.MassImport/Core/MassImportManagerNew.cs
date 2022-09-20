@@ -172,7 +172,7 @@ namespace Relativity.MassImport.Core
 						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							image.DeleteExistingImageFiles(context.UserID, Relativity.Core.Config.AuditingEnabled,
-								context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination());
+								context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), settings.HasPDF);
 
 							break;
 						}
@@ -187,7 +187,7 @@ namespace Relativity.MassImport.Core
 						image.ManageHasImages();
 					}
 					image.CreateImageFileRows(context.UserID, Relativity.Core.Config.AuditingEnabled,
-						context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), inRepository);
+						context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), inRepository, settings.HasPDF);
 					image.UpdateImageCount();
 					image.UpdateArtifactAuditColumns(context.UserID);
 

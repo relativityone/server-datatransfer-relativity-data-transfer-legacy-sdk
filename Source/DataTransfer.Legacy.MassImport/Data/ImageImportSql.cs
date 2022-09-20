@@ -178,6 +178,47 @@ INSERT INTO [File](
 		}
 
 		/// <summary>
+		/// Format replace:
+		/// ---------------
+		/// 0: img temp table
+		/// 1: InRepository
+		/// </summary>
+		public string CreatePDFFileRows()
+		{
+			return $@"
+INSERT INTO [File](
+	[Guid],
+	[DocumentArtifactID],
+	[Filename],
+	[Order],
+	[Type],
+	[Rotation],
+	[Identifier],
+	[Location],
+	[Size],
+	[InRepository],
+	[Billable]
+)	SELECT
+		[Guid],
+		[ArtifactID],
+		[Filename],
+		[Order],
+		6,
+		-1,
+		[FileIdentifier],
+		[Location],
+		[FileSize],
+		{{1}},
+		{{2}}
+	FROM
+		[Resource].[{{0}}] tmp
+	WHERE
+		tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+
+/*ImageInsertAuditRecords*/";
+		}
+
+		/// <summary>
 		/// Format:
 		/// -------
 		/// 0: table name
@@ -467,6 +508,33 @@ WHILE @rowsAffected > 0 BEGIN
 			SELECT TOP 1000 [Guid]
 			FROM [File]
 			WHERE [Type] = 1
+				AND
+				EXISTS(SELECT ArtifactID FROM [Resource].[{{0}}] WHERE ArtifactID = [DocumentArtifactID] AND [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
+		)
+	SET @rowsAffected = @@ROWCOUNT
+END
+
+/*ImageInsertAuditRecords*/";
+		}
+
+		/// <summary>
+		/// Format replace:
+		/// ---------------
+		/// 0: img temp table
+		/// </summary>
+		public string DeleteExistingPDFFiles()
+		{
+			return $@"
+DECLARE @rowsAffected INT SET @rowsAffected = 1
+WHILE @rowsAffected > 0 BEGIN
+
+	DELETE FROM
+		[File]
+	WHERE
+		[Guid] IN (
+			SELECT TOP 1000 [Guid]
+			FROM [File]
+			WHERE [Type] = 6
 				AND
 				EXISTS(SELECT ArtifactID FROM [Resource].[{{0}}] WHERE ArtifactID = [DocumentArtifactID] AND [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
 		)

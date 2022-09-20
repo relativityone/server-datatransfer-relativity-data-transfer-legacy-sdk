@@ -448,10 +448,18 @@ SELECT
 			ImportMeasurements.StopMeasure();
 		}
 
-		public void DeleteExistingImageFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig)
+		public void DeleteExistingImageFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool hasPDF)
 		{
 			ImportMeasurements.StartMeasure();
-			string sqlFormat = ImportSql.DeleteExistingImageFiles();
+			string sqlFormat;
+			if (hasPDF)
+			{
+				sqlFormat = ImportSql.DeleteExistingPDFFiles();
+			}
+			else
+			{
+				sqlFormat = ImportSql.DeleteExistingImageFiles();
+			}
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -466,12 +474,20 @@ SELECT
 			ImportMeasurements.StopMeasure();
 		}
 
-		public void CreateImageFileRows(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool inRepository)
+		public void CreateImageFileRows(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool inRepository, bool pdf)
 		{
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
-			string sqlFormat = ImportSql.CreateImageFileRows();
+			string sqlFormat;
+			if (pdf)
+			{
+				sqlFormat = ImportSql.CreatePDFFileRows();
+			}
+			else
+			{
+				sqlFormat = ImportSql.CreateImageFileRows();
+			}
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
