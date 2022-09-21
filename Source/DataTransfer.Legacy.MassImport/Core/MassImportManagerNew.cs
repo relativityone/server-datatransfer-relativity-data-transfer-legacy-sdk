@@ -178,14 +178,7 @@ namespace Relativity.MassImport.Core
 						}
 					}
 
-					if (settings.HasPDF == true)
-					{
-						image.ManageHasPDFs();
-					}
-					else
-					{
-						image.ManageHasImages();
-					}
+					image.ManageHasImages();
 					image.CreateImageFileRows(context.UserID, Relativity.Core.Config.AuditingEnabled,
 						context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), inRepository, settings.HasPDF);
 					image.UpdateImageCount();

@@ -451,14 +451,11 @@ SELECT
 		public void DeleteExistingImageFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool hasPDF)
 		{
 			ImportMeasurements.StartMeasure();
-			string sqlFormat;
+			string sqlFormat = ImportSql.DeleteExistingImageFiles();
+			var fileType = 1;
 			if (hasPDF)
 			{
-				sqlFormat = ImportSql.DeleteExistingPDFFiles();
-			}
-			else
-			{
-				sqlFormat = ImportSql.DeleteExistingImageFiles();
+				fileType = 6;
 			}
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
@@ -470,7 +467,7 @@ SELECT
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp), QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, fileType), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 		}
 
@@ -479,15 +476,13 @@ SELECT
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
-			string sqlFormat;
+			string sqlFormat = ImportSql.CreateImageFileRows();
+			var fileType = 1;
 			if (pdf)
 			{
-				sqlFormat = ImportSql.CreatePDFFileRows();
+				fileType = 6;
 			}
-			else
-			{
-				sqlFormat = ImportSql.CreateImageFileRows();
-			}
+
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -498,29 +493,23 @@ SELECT
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0), new SqlParameter[] { parameter }, QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0, fileType), new SqlParameter[] { parameter }, QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
 		public void ManageHasImages()
 		{
+			var codeTypeName = "HasImages";
+			if (Settings.HasPDF)
+			{
+				codeTypeName = "HasPDF";
+			}
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasImages");
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
 			string sqlFormat = ImportSql.ManageHasImages();
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
-			ImportMeasurements.StopMeasure();
-			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
-		}
-
-		public void ManageHasPDFs()
-		{
-			ImportMeasurements.StartMeasure();
-			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasPDF");
-			string sqlFormat = ImportSql.ManageHasPDFs();
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
