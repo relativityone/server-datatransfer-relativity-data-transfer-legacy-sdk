@@ -448,15 +448,11 @@ SELECT
 			ImportMeasurements.StopMeasure();
 		}
 
-		public void DeleteExistingImageFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool hasPDF)
+		public void DeleteExistingImageFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig)
 		{
 			ImportMeasurements.StartMeasure();
 			string sqlFormat = ImportSql.DeleteExistingImageFiles();
-			var fileType = 1;
-			if (hasPDF)
-			{
-				fileType = 6;
-			}
+			int fileType = GetFileType(Settings.HasPDF);
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -471,17 +467,13 @@ SELECT
 			ImportMeasurements.StopMeasure();
 		}
 
-		public void CreateImageFileRows(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool inRepository, bool pdf)
+		public void CreateImageFileRows(int userID, bool auditEnabled, string requestOrig, string recordOrig, bool inRepository)
 		{
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
 			string sqlFormat = ImportSql.CreateImageFileRows();
-			var fileType = 1;
-			if (pdf)
-			{
-				fileType = 6;
-			}
+			int fileType = GetFileType(Settings.HasPDF);
 
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
@@ -498,13 +490,10 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
+
 		public void ManageHasImages()
 		{
-			var codeTypeName = "HasImages";
-			if (Settings.HasPDF)
-			{
-				codeTypeName = "HasPDF";
-			}
+			string codeTypeName = Settings.HasPDF ? "HasPDF" : "HasImages";
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
@@ -964,6 +953,11 @@ WHERE
 			var columnExistParameters = new[] { new SqlParameter("@columnName", SqlDbType.VarChar) { Value = FullTextField.GetColumnName() } };
 			bool doesColumnExist = _context.ExecuteSqlStatementAsScalar<int>(ImportSql.DoesColumnExistOnDocumentTable(), columnExistParameters) > 0;
 			return doesColumnExist;
+		}
+
+		private static int GetFileType(bool hasPDF)
+		{
+			return hasPDF ? 6 : 1;
 		}
 		#endregion
 	}
