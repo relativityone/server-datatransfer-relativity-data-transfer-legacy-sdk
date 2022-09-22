@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Xml.Linq;
 using kCura.Data.RowDataGateway;
 using kCura.Utility;
 using Relativity.Data.MassImport;
@@ -23,6 +22,10 @@ namespace Relativity.MassImport.Data
 		#region Members
 		public const string ExtractedTextCodePageColumnName = "ExtractedTextEncodingPageCode";
 		public const string FullTextColumnName = "FullText";
+		private const string HasImagesCodeTypeName = "HasImages";
+		private const string HasPDFCodeTypeName = "HasPDF";
+		private const int ImageFileType = 1;
+		private const int PDFFileType = 6;
 		private BaseContext _context;
 		private string _documentIdentifierFieldColumnName = "";
 		private int _keyFieldID;
@@ -493,7 +496,7 @@ SELECT
 
 		public void ManageHasImages()
 		{
-			string codeTypeName = Settings.HasPDF ? "HasPDF" : "HasImages";
+			string codeTypeName = Settings.HasPDF ? HasPDFCodeTypeName : HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
@@ -957,7 +960,7 @@ WHERE
 
 		private static int GetFileType(bool hasPDF)
 		{
-			return hasPDF ? 6 : 1;
+			return hasPDF ? PDFFileType : ImageFileType;
 		}
 		#endregion
 	}
