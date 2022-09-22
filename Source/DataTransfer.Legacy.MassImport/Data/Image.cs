@@ -22,10 +22,6 @@ namespace Relativity.MassImport.Data
 		#region Members
 		public const string ExtractedTextCodePageColumnName = "ExtractedTextEncodingPageCode";
 		public const string FullTextColumnName = "FullText";
-		private const string HasImagesCodeTypeName = "HasImages";
-		private const string HasPDFCodeTypeName = "HasPDF";
-		private const int ImageFileType = 1;
-		private const int PDFFileType = 6;
 		private BaseContext _context;
 		private string _documentIdentifierFieldColumnName = "";
 		private int _keyFieldID;
@@ -493,10 +489,9 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
-
 		public void ManageHasImages()
 		{
-			string codeTypeName = Settings.HasPDF ? HasPDFCodeTypeName : HasImagesCodeTypeName;
+			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
@@ -960,7 +955,7 @@ WHERE
 
 		private static int GetFileType(bool hasPDF)
 		{
-			return hasPDF ? PDFFileType : ImageFileType;
+			return hasPDF ? Core.Constants.FileTypes.PDFFileType : Core.Constants.FileTypes.ImageFileType;
 		}
 		#endregion
 	}
