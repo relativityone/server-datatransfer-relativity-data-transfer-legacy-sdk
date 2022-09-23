@@ -744,25 +744,18 @@ namespace Relativity.MassImport.Core
 
 		private bool IsPDFImportSupported(BaseContext context)
 		{
-			var retVal = false;
-			var pdfCodeID = 0;
-
 			try
 			{
-				pdfCodeID = Relativity.Data.CodeType.GetCodeTypeID(context.DBContext, Constants.CodeTypeNames.HasPDFCodeTypeName);
+				if (Relativity.Data.CodeType.GetCodeTypeID(context.DBContext, Constants.CodeTypeNames.HasPDFCodeTypeName) > 0)
+				{
+					return true;
+				}
 			}
 			catch (Exception ex)
 			{
 				_logger.LogWarning(ex, "Failed to get ID of the code with name: 'Has PDF'");
 			}
-			finally
-			{
-				if (pdfCodeID > 0)
-				{
-					retVal = true;
-				}
-			}
-			return retVal;
+			return false;
 		}
 	}
 }
