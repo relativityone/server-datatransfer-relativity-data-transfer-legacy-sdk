@@ -8,10 +8,8 @@ using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity;
 using Relativity.Core.Service;
-using Relativity.MassImport.Api;
 using Relativity.MassImport.DTO;
 using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
-using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using ImageLoadInfo = Relativity.MassImport.DTO.ImageLoadInfo;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
@@ -21,16 +19,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 	[TestFixture]
 	public class ImageImportTest : MassImportTestBase
 	{
-		private int _rootFolderId;
-		private MassImportField _identifierField;
 		private DataTable _expectedFieldValues;
-
-		[OneTimeSetUp]
-		public async Task OneTimeSetUp()
-		{
-			_rootFolderId = await FolderHelper.ReadRootFolderIdAsync(TestParameters, TestWorkspace).ConfigureAwait(false);
-			_identifierField = await FieldHelper.ReadIdentifierField(TestParameters, TestWorkspace).ConfigureAwait(false);
-		}
 
 		[TearDown]
 		public async Task TearDownAsync()
