@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.42]
+- REL-710543 - Add support for pdf files in images and production import
+
 ## [0.2.41]
 - REL-596735 - Fixed issue with importing RDOs which uses reserved SQL keywords as an identifier field name
 

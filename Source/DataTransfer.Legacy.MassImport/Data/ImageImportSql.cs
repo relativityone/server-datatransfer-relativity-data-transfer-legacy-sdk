@@ -141,6 +141,8 @@ END";
 		/// ---------------
 		/// 0: img temp table
 		/// 1: InRepository
+		/// 2: Billable
+		/// 3: Type: 1 - image, 6 - pdf
 		/// </summary>
 		public string CreateImageFileRows()
 		{
@@ -162,7 +164,7 @@ INSERT INTO [File](
 		[ArtifactID],
 		[Filename],
 		[Order],
-		1,
+		{{3}},
 		-1,
 		[FileIdentifier],
 		[Location],
@@ -453,6 +455,7 @@ LEFT JOIN [ImportExtractedText] T ON
 		/// Format replace:
 		/// ---------------
 		/// 0: img temp table
+		/// 1: Type: 1 - image, 6 - pdf
 		/// </summary>
 		public string DeleteExistingImageFiles()
 		{
@@ -466,7 +469,7 @@ WHILE @rowsAffected > 0 BEGIN
 		[Guid] IN (
 			SELECT TOP 1000 [Guid]
 			FROM [File]
-			WHERE [Type] = 1
+			WHERE [Type] = {{1}}
 				AND
 				EXISTS(SELECT ArtifactID FROM [Resource].[{{0}}] WHERE ArtifactID = [DocumentArtifactID] AND [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
 		)
@@ -623,11 +626,12 @@ SELECT
 		/// ---------------
 		/// 0: img temp table
 		/// 1: CodeArtifact partition table name for HasImages
+		/// 2: CodeType Name: HasImages or HasPDF
 		/// </summary>
 		public string ManageHasImages()
 		{
 			return $@"
-		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = 'HasImages')
+		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = '{{2}}')
 
 		DELETE FROM
 		[{{1}}]

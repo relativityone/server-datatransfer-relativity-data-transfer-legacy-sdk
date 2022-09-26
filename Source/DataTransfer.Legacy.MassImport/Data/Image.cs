@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Xml.Linq;
 using kCura.Data.RowDataGateway;
 using kCura.Utility;
 using Relativity.Data.MassImport;
@@ -452,6 +451,7 @@ SELECT
 		{
 			ImportMeasurements.StartMeasure();
 			string sqlFormat = ImportSql.DeleteExistingImageFiles();
+			int fileType = GetFileType(Settings.HasPDF);
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -462,7 +462,7 @@ SELECT
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp), QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, fileType), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 		}
 
@@ -472,6 +472,8 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
 			string sqlFormat = ImportSql.CreateImageFileRows();
+			int fileType = GetFileType(Settings.HasPDF);
+
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -482,18 +484,19 @@ SELECT
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0), new SqlParameter[] { parameter }, QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0, fileType), new SqlParameter[] { parameter }, QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
 		public void ManageHasImages()
 		{
+			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasImages");
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
 			string sqlFormat = ImportSql.ManageHasImages();
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
@@ -948,6 +951,11 @@ WHERE
 			var columnExistParameters = new[] { new SqlParameter("@columnName", SqlDbType.VarChar) { Value = FullTextField.GetColumnName() } };
 			bool doesColumnExist = _context.ExecuteSqlStatementAsScalar<int>(ImportSql.DoesColumnExistOnDocumentTable(), columnExistParameters) > 0;
 			return doesColumnExist;
+		}
+
+		private static int GetFileType(bool hasPDF)
+		{
+			return hasPDF ? Core.Constants.FileTypes.PDFFileType : Core.Constants.FileTypes.ImageFileType;
 		}
 		#endregion
 	}
