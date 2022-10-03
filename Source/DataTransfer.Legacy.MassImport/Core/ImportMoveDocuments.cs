@@ -6,6 +6,8 @@ using System.Linq;
 
 namespace Relativity.MassImport.Core
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal class ImportMoveDocuments
 	{
 		private Relativity.Core.BaseContext _context;
@@ -164,7 +166,7 @@ namespace Relativity.MassImport.Core
 
 		private int DropTempJoinTable()
 		{
-			return _context.DBContext.ExecuteNonQuerySQLStatement(GetDropJoinTableSqlClause(), Relativity.Data.Config.MassImportSqlTimeout);
+			return _context.DBContext.ExecuteNonQuerySQLStatement(GetDropJoinTableSqlClause(), InstanceSettings.MassImportSqlTimeout);
 		}
 		#endregion
 

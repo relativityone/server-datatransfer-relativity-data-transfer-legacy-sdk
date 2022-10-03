@@ -9,6 +9,7 @@ using Relativity.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data.StagingTables
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
 	using Relativity.Logging;
 	using Relativity.MassImport.DTO;
 
@@ -129,7 +130,7 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			{
 				if (!_timeoutValue.HasValue)
 				{
-					_timeoutValue = Relativity.Data.Config.MassImportSqlTimeout;
+					_timeoutValue = InstanceSettings.MassImportSqlTimeout;
 				}
 
 				return _timeoutValue.Value;

@@ -7,6 +7,8 @@ using Relativity.Data.MassImport;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal class Folder
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
@@ -17,7 +19,7 @@ namespace Relativity.MassImport.Data
 		{
 			_context = context;
 			_tableNames = tableNames;
-			_queryTimeout = Relativity.Data.Config.MassImportSqlTimeout;
+			_queryTimeout = InstanceSettings.MassImportSqlTimeout;
 		}
 
 		public DataTable GetFolderPathsForFoldersWithoutIDs(int workspaceID)

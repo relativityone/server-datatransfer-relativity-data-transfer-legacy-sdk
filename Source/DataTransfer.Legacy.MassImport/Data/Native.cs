@@ -11,6 +11,8 @@ using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLoc
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal class Native : ObjectBase
 	{
 		#region Members
@@ -465,7 +467,7 @@ WHERE
 				.Where(f => f.Type == FieldTypeHelper.FieldType.OffTableText)
 				.Select(f => this.CreateOffTableExtractedTextSql(f)))
 			{
-				this.Context.ExecuteNonQuerySQLStatement(offTableSqlStatement, Relativity.Data.Config.MassImportSqlTimeout);
+				this.Context.ExecuteNonQuerySQLStatement(offTableSqlStatement, InstanceSettings.MassImportSqlTimeout);
 			}
 			this.ImportMeasurements.StopMeasure();
 		}

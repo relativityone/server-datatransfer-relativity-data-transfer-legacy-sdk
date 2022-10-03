@@ -9,6 +9,8 @@ using Relativity.Toggles;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal class ImportObjectsStage : Framework.IPipelineStage<Input.ObjectImportInput, MassImportManagerBase.MassImportResults>
 	{
 		private readonly MassImportContext _context;
@@ -184,7 +186,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 				_context.ImportMeasurements,
 				settings,
 				columnDefinitionCache,
-				Relativity.Data.Config.MassImportSqlTimeout);
+				InstanceSettings.MassImportSqlTimeout);
 		}
 	}
 }

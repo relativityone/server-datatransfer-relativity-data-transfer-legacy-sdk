@@ -20,6 +20,8 @@ using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
@@ -114,7 +116,7 @@ namespace Relativity.MassImport.Data
 			{
 				if (!_timeoutValue.HasValue)
 				{
-					_timeoutValue = Relativity.Data.Config.MassImportSqlTimeout;
+					_timeoutValue = InstanceSettings.MassImportSqlTimeout;
 				}
 				return _timeoutValue.Value;
 			}

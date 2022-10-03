@@ -17,6 +17,8 @@ using ILog = Relativity.Logging.ILog;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal class Image
 	{
 		#region Members
@@ -125,7 +127,7 @@ namespace Relativity.MassImport.Data
 			{
 				if (!_queryTimeout.HasValue)
 				{
-					_queryTimeout = Relativity.Data.Config.MassImportSqlTimeout;
+					_queryTimeout = InstanceSettings.MassImportSqlTimeout;
 				}
 
 				return _queryTimeout.Value;

@@ -6,6 +6,8 @@ using Relativity.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+
 	internal class AuditDetailsBuilder
 	{
 		private kCura.Data.RowDataGateway.BaseContext Context { get; }
@@ -250,7 +252,7 @@ namespace Relativity.MassImport.Data
 			{
 				if (!_timeoutValue.HasValue)
 				{
-					_timeoutValue = Relativity.Data.Config.MassImportSqlTimeout;
+					_timeoutValue = InstanceSettings.MassImportSqlTimeout;
 				}
 				return _timeoutValue.Value;
 			}
