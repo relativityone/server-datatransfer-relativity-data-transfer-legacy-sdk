@@ -6,11 +6,13 @@ using kCura.Data.RowDataGateway;
 using kCura.Utility;
 using Relativity.Data.MassImport;
 using Relativity.MassImport.Data.Cache;
-using DataTransfer.Legacy.MassImport.Data.Cache;
-using Relativity.Logging;
 
 namespace Relativity.MassImport.Data.StagingTables
 {
+	using DataTransfer.Legacy.MassImport.Data.Cache;
+	using Relativity.Logging;
+	using Relativity.MassImport.DTO;
+
 	internal abstract class BaseStagingTableRepository : IStagingTableRepository
 	{
 		private int? _timeoutValue;
