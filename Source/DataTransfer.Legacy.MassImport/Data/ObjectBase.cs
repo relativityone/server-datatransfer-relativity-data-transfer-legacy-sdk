@@ -17,11 +17,10 @@ using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;

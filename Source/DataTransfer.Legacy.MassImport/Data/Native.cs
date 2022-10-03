@@ -4,15 +4,13 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using Relativity.Core.Service;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLockKey;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class Native : ObjectBase
 	{
 		#region Members

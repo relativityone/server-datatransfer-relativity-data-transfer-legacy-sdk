@@ -4,11 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using Microsoft.SqlServer.Server;
 using Relativity.Data.MassImport;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class Folder
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;

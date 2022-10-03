@@ -3,12 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class Helper
 	{
 		public static string GenerateAuditInsertClause(int auditActionID, int userID, string requestOrigination, string recordOrigination, string artifactIdSourceTable)

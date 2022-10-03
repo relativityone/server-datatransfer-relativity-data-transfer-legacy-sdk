@@ -3,11 +3,10 @@ using System.Linq;
 using System.Text;
 using Relativity.Data.MassImport;
 using Relativity.MassImport.Data.Cache;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class AuditDetailsBuilder
 	{
 		private kCura.Data.RowDataGateway.BaseContext Context { get; }

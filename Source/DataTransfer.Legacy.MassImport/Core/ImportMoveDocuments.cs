@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Core
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class ImportMoveDocuments
 	{
 		private Relativity.Core.BaseContext _context;
