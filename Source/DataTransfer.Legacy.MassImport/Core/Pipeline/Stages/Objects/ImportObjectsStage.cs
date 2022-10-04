@@ -6,6 +6,7 @@ using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.Choices;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.Toggles;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 {
@@ -184,7 +185,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 				_context.ImportMeasurements,
 				settings,
 				columnDefinitionCache,
-				Relativity.Data.Config.MassImportSqlTimeout);
+				InstanceSettings.MassImportSqlTimeout);
 		}
 	}
 }

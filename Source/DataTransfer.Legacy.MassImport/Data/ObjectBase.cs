@@ -17,6 +17,7 @@ using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
@@ -114,7 +115,7 @@ namespace Relativity.MassImport.Data
 			{
 				if (!_timeoutValue.HasValue)
 				{
-					_timeoutValue = Relativity.Data.Config.MassImportSqlTimeout;
+					_timeoutValue = InstanceSettings.MassImportSqlTimeout;
 				}
 				return _timeoutValue.Value;
 			}

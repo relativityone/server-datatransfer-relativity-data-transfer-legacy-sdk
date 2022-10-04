@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using Microsoft.SqlServer.Server;
 using Relativity.Data.MassImport;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
@@ -17,7 +18,7 @@ namespace Relativity.MassImport.Data
 		{
 			_context = context;
 			_tableNames = tableNames;
-			_queryTimeout = Relativity.Data.Config.MassImportSqlTimeout;
+			_queryTimeout = InstanceSettings.MassImportSqlTimeout;
 		}
 
 		public DataTable GetFolderPathsForFoldersWithoutIDs(int workspaceID)

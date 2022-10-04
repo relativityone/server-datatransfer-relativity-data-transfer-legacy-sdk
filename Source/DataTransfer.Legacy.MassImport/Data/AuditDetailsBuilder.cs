@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using Relativity.Data.MassImport;
 using Relativity.MassImport.Data.Cache;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
@@ -250,7 +251,7 @@ namespace Relativity.MassImport.Data
 			{
 				if (!_timeoutValue.HasValue)
 				{
-					_timeoutValue = Relativity.Data.Config.MassImportSqlTimeout;
+					_timeoutValue = InstanceSettings.MassImportSqlTimeout;
 				}
 				return _timeoutValue.Value;
 			}

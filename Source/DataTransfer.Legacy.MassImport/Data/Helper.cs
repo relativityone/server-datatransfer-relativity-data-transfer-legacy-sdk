@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
@@ -86,7 +86,7 @@ FROM
 			END ";
 
 			string combinedStatement = string.Join(Environment.NewLine, statements);
-			context.ExecuteNonQuerySQLStatement(combinedStatement, Relativity.Data.Config.MassImportSqlTimeout);
+			context.ExecuteNonQuerySQLStatement(combinedStatement, InstanceSettings.MassImportSqlTimeout);
 		}
 
 		public static Hashtable GetFieldCollationLookup(kCura.Data.RowDataGateway.BaseContext context, string artifactTypeTableName)
@@ -101,7 +101,7 @@ FROM
 		{
 			string sqlQuery = "SELECT ArtifactID, FieldCategoryID, FieldTypeID, CodeTypeID, DisplayName, MaxLength, ImportBehavior, EnableDataGrid FROM [Field] WHERE FieldCategoryID = @fieldCategory AND FieldArtifactTypeID = @artifactType";
 			var parameters = new[] { new System.Data.SqlClient.SqlParameter("@artifactType", artifactTypeID), new System.Data.SqlClient.SqlParameter("@fieldCategory", Convert.ToInt32(category)) };
-			var retval = context.ExecuteSqlStatementAsDataTable(sqlQuery, parameters, Relativity.Data.Config.MassImportSqlTimeout)
+			var retval = context.ExecuteSqlStatementAsDataTable(sqlQuery, parameters, InstanceSettings.MassImportSqlTimeout)
 				.Select()
 				.Select(row => CreateFieldInfo(row))
 				.ToList();
@@ -277,7 +277,7 @@ BEGIN
 END";
 
 			string combinedStatement = string.Join(Environment.NewLine, statements);
-			context.ExecuteNonQuerySQLStatement(combinedStatement, Relativity.Data.Config.MassImportSqlTimeout);
+			context.ExecuteNonQuerySQLStatement(combinedStatement, InstanceSettings.MassImportSqlTimeout);
 		}
 	}
 }

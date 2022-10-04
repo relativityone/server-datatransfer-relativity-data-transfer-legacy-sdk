@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Core
 {
@@ -164,7 +165,7 @@ namespace Relativity.MassImport.Core
 
 		private int DropTempJoinTable()
 		{
-			return _context.DBContext.ExecuteNonQuerySQLStatement(GetDropJoinTableSqlClause(), Relativity.Data.Config.MassImportSqlTimeout);
+			return _context.DBContext.ExecuteNonQuerySQLStatement(GetDropJoinTableSqlClause(), InstanceSettings.MassImportSqlTimeout);
 		}
 		#endregion
 

@@ -4,10 +4,10 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using Relativity.Core.Service;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLockKey;
+using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
@@ -465,7 +465,7 @@ WHERE
 				.Where(f => f.Type == FieldTypeHelper.FieldType.OffTableText)
 				.Select(f => this.CreateOffTableExtractedTextSql(f)))
 			{
-				this.Context.ExecuteNonQuerySQLStatement(offTableSqlStatement, Relativity.Data.Config.MassImportSqlTimeout);
+				this.Context.ExecuteNonQuerySQLStatement(offTableSqlStatement, InstanceSettings.MassImportSqlTimeout);
 			}
 			this.ImportMeasurements.StopMeasure();
 		}
