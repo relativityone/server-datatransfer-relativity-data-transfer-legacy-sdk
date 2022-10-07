@@ -39,6 +39,7 @@ namespace Relativity.MassImport.Data
 		private DataGridImportHelper _dgImportHelper;
 		private Relativity.Data.DataGridMappingMultiDictionary _dataGridMappings;
 		private static readonly string _PENDING_STATUS = ((long)Relativity.MassImport.DTO.ImportStatus.Pending).ToString();
+
 		#endregion
 
 		#region Constructors
@@ -487,13 +488,21 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
-		public void ManageHasImages()
+		/// <summary>
+		/// Add or updates the records in DB related to HasImage for particular document.
+		/// </summary>
+		/// <param name="isProductionImagesImport">Flag indicating whether update 'HasImages' is because of images import or productions import.
+		/// The behaviour for these two scenario is different. </param>
+		public void ManageHasImages(bool isProductionImagesImport = false)
 		{
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasImages");
-			string sqlFormat = ImportSql.ManageHasImages();
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
+			string sqlFormat = isProductionImagesImport
+				? ImportSql.ManageHasImagesForProductionImport()
+				: ImportSql.ManageHasImagesForImagesImport();
+
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
