@@ -362,6 +362,7 @@ namespace Relativity.MassImport.Core
 						}
 					}
 
+					image.ManageHasImages(true);
 					image.ImportMeasurements.StartMeasure(nameof(productionManager
 						.UpdateImportStatusForFilesAlreadyInProduction));
 					productionManager.UpdateImportStatusForFilesAlreadyInProduction(context, productionArtifactID,

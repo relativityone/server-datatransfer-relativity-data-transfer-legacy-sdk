@@ -621,6 +621,42 @@ SELECT
 )";
 		}
 
+
+		/// <summary>
+		/// Format replace:
+		/// ---------------
+		/// 0: img temp table
+		/// 1: CodeArtifact partition table name for HasImages
+		/// </summary>
+		public string ManageHasImagesForProductionImport()
+		{
+			return $@"
+		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'No' AND [CodeType].[Name] = 'HasImages')
+
+		INSERT INTO [{{1}}] (
+		[CodeArtifactID],
+		[AssociatedArtifactID]
+		) SELECT
+			@hasImagesCodeArtifactID,
+			ArtifactID
+			FROM
+			[Document]
+			WHERE
+			EXISTS(
+				SELECT
+					ArtifactID 
+				FROM [Resource].[{{0}}]
+				WHERE [{{0}}].ArtifactID = [Document].[ArtifactID] AND [{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+				AND NOT EXISTS (
+							SELECT 1
+							FROM [{{1}}]
+							WHERE [{{1}}].[AssociatedArtifactID] = [{{0}}].[ArtifactID]
+								)
+					)
+";
+		}
+
+
 		/// <summary>
 		/// Format replace:
 		/// ---------------
@@ -628,7 +664,7 @@ SELECT
 		/// 1: CodeArtifact partition table name for HasImages
 		/// 2: CodeType Name: HasImages or HasPDF
 		/// </summary>
-		public string ManageHasImages()
+		public string ManageHasImagesForImagesImport()
 		{
 			return $@"
 		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = '{{2}}')

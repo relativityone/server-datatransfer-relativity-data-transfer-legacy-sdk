@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.44]
+- REL-743070 - Add setting hasImages to 'No' in production import
+
 ## [0.2.43]
 - REL-748487 - Put the default value of MassImportSqlTimeout setting into MassImport code
 
