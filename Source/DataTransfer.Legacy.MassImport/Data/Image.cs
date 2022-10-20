@@ -306,7 +306,6 @@ SELECT
 				fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
 				if (!HasDataGridWorkToDo && !string.IsNullOrWhiteSpace(fullTextColumnCollation))
 				{
-					fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
 					fullTextColumnSql = string.Format("[FullText] {0}VARCHAR(MAX) COLLATE {1},", extractedTextUnicodeMarker, fullTextColumnCollation);
 				}
 			}
