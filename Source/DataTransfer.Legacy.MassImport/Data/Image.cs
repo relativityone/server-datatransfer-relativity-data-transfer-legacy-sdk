@@ -18,7 +18,6 @@ using ILog = Relativity.Logging.ILog;
 namespace Relativity.MassImport.Data
 {
 	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class Image
 	{
 		#region Members
@@ -118,7 +117,7 @@ namespace Relativity.MassImport.Data
 
 		private ImageImportSql ImportSql { get; set; }
 
-		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid || DoesFullTextColumnText();
+		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid && DoesFullTextColumnText();
 		#endregion
 
 		#region Public Accessors
@@ -305,7 +304,7 @@ SELECT
 			{
 				string collationString = string.IsNullOrEmpty(fullTextColumnCollation) ? string.Empty : string.Format(" COLLATE {0}", fullTextColumnCollation);
 				fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
-				if (!string.IsNullOrWhiteSpace(fullTextColumnCollation))
+				if (!HasDataGridWorkToDo && !string.IsNullOrWhiteSpace(fullTextColumnCollation))
 				{
 					fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
 					fullTextColumnSql = string.Format("[FullText] {0}VARCHAR(MAX) COLLATE {1},", extractedTextUnicodeMarker, fullTextColumnCollation);
@@ -728,7 +727,7 @@ WHERE
 
 		public DataGridReader CreateDataGridReader(string bulkFileShareFolderPath, ILog correlationLogger)
 		{
-			correlationLogger.LogVerbose("Starting CreateDataGridTempFileReader");
+			correlationLogger.LogWarning("Starting CreateDataGridTempFileReader {HasDataGridWorkToDo}", HasDataGridWorkToDo);
 			if (!HasDataGridWorkToDo)
 			{
 				return null;
@@ -755,7 +754,7 @@ WHERE
 			};
 
 			string dataGridFilePath = System.IO.Path.Combine(bulkFileShareFolderPath, Settings.DataGridFileName);
-			correlationLogger.LogDebug("CreateDataGridTempFileReader: DataGridFilePath is: {DataGridFilePath}", dataGridFilePath);
+			correlationLogger.LogWarning("CreateDataGridTempFileReader: DataGridFilePath is: {DataGridFilePath}", dataGridFilePath);
 			var reader = new DataGridTempFileDataReader(options, _FIELDTERMINATOR, Relativity.Constants.ENDLINETERMSTRING, dataGridFilePath, correlationLogger);
 			var mismatchedFields = new List<FieldInfo>();
 
@@ -765,19 +764,22 @@ WHERE
 			{
 				mismatchedFields.Add(FullTextField);
 			}
+			correlationLogger.LogWarning("CreateDataGridTempFileReader {HasRows}", reader.HasRows);
 
 			var sqlTempReader = new DataGridSqlTempReader(_context);
 			var loader = new DataGridReader(_dgContext, _context.Clone(), options, reader, correlationLogger, mismatchedFields, sqlTempReader);
 			ImportMeasurements.DataGridImportTime.Stop();
-			correlationLogger.LogVerbose("Ending CreateDataGridTempFileReader");
+			correlationLogger.LogWarning("Ending CreateDataGridTempFileReader");
 			return loader;
 		}
 
 		public void UpdateDgFieldMappingRecords(IEnumerable<DGImportFileInfo> dgImportFileInfoList, ILog correlationLogger)
 		{
+			correlationLogger.LogWarning("Begin of UpdateDgFieldMappingRecords {count}", dgImportFileInfoList.Count());
 			if (dgImportFileInfoList.Any())
 			{
 				ImportMeasurements.StartMeasure();
+				correlationLogger.LogWarning("UpdateDgFieldMappingRecordsSql {_tableNames.Image}", _tableNames.Image);
 				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status");
 
 				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
@@ -785,6 +787,8 @@ WHERE
 				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
 
 				var filter = new HashSet<int>();
+				correlationLogger.LogWarning("Before ExecuteSQLStatementAsReader");
+
 				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
 				{
 					while (reader.Read())
@@ -792,6 +796,7 @@ WHERE
 						filter.Add(Convert.ToInt32(reader[0]));
 					}
 				}
+				correlationLogger.LogWarning("After ExecuteSQLStatementAsReader");
 
 				var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
 				foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))
@@ -816,9 +821,10 @@ WHERE
 						}
 					}
 				}
-
+				correlationLogger.LogWarning("After TryDeleteBulk");
 				ImportMeasurements.StopMeasure();
 			}
+			correlationLogger.LogWarning("End of UpdateDgFieldMappingRecords");
 		}
 
 		private bool AreRowsInSqlFile()
@@ -837,6 +843,7 @@ WHERE
 
 		public void WriteToDataGrid(DataGridReader loader, int appID, string bulkFileShareFolderPath, ILog correlationLogger)
 		{
+			correlationLogger.LogWarning("Starting WriteToDataGrid {bulkFileShareFolderPath}", bulkFileShareFolderPath);
 			try
 			{
 				ImportMeasurements.StartMeasure();
@@ -865,18 +872,20 @@ WHERE
 				CleanupDataGridInput(bulkFileShareFolderPath, correlationLogger);
 				ImportMeasurements.StopMeasure();
 				ImportMeasurements.DataGridImportTime.Stop();
+				correlationLogger.LogWarning("Ending WriteToDataGrid");
 			}
 		}
 
 		protected virtual void CleanupDataGridInput(string bulkFileShareFolderPath, ILog correlationLogger)
 		{
 			string dataGridFilePath = System.IO.Path.Combine(bulkFileShareFolderPath, Settings.DataGridFileName);
-			correlationLogger.LogDebug("Deleting {dataGridTempFile}", dataGridFilePath);
+			correlationLogger.LogWarning("Deleting {dataGridTempFile}", dataGridFilePath);
 			File.Instance.Delete(dataGridFilePath);
 		}
 
 		public void MapDataGridRecords(ILog correlationLogger)
 		{
+			correlationLogger.LogWarning("Starting MapDataGridRecords");
 			if (!HasDataGridWorkToDo)
 			{
 				return;
@@ -886,6 +895,7 @@ WHERE
 			string tempTableName = GetTempTableName();
 			_dgImportHelper.UpdateErrors(tempTableName, _STATUS_COLUMN_NAME, _FILTER_BY_ORDER, correlationLogger);
 			ImportMeasurements.StopMeasure();
+			correlationLogger.LogWarning("Ending MapDataGridRecords {tempTableName}", tempTableName);
 		}
 
 		public string GetTempTableName()
