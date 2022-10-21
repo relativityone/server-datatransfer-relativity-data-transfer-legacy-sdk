@@ -6,6 +6,9 @@ using Relativity.MassImport.Data.SqlFramework;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Toggles;
+	using Relativity.Toggles;
+
 	internal class Objects : ObjectBase
 	{
 		#region Constructors
@@ -62,7 +65,15 @@ namespace Relativity.MassImport.Data
 				keyFieldCheck));
 
 			sql.Add(GetInsertObjectsSqlStatement());
-			sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+
+			if (!ToggleProvider.Current.IsEnabled<UseLegacyInsertAncestorsQueryToggle>())
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+			}
+			else
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjectsLegacy(this._tableNames));
+			}
 
 			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{

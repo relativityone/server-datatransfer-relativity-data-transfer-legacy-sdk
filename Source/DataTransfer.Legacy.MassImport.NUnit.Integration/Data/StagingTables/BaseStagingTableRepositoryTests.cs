@@ -11,7 +11,7 @@ using Relativity.MassImport.Data.StagingTables;
 
 namespace MassImport.NUnit.Integration.Data.StagingTables
 {
-	public abstract class BaseStagingTableRepositoryTests : EmptyWorkspaceTestBase
+	internal abstract class BaseStagingTableRepositoryTests : EmptyWorkspaceTestBase
 	{
 		protected TableNames TableNames { get; private set; }
 

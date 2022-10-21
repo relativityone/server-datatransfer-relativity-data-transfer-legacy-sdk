@@ -9,7 +9,7 @@ using Relativity.MassImport.Data.Choices;
 namespace MassImport.NUnit.Integration.Data.Choices
 {
 	[TestFixture]
-	public class ChoicesImportServiceTests : ChoicesImportServiceTestBase
+	internal class ChoicesImportServiceTests : ChoicesImportServiceTestBase
 	{
 		private Mock<IColumnDefinitionCache> _columnDefinitionCacheMock;
 

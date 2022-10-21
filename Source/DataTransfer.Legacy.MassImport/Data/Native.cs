@@ -11,6 +11,9 @@ using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Toggles;
+	using Relativity.Toggles;
+
 	internal class Native : ObjectBase
 	{
 		#region Members
@@ -100,7 +103,15 @@ namespace Relativity.MassImport.Data
 				ObjectBase.TopFieldArtifactID));
 
 			sql.Add(GetInsertDocumentsSqlStatement());
-			sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+
+			if (!ToggleProvider.Current.IsEnabled<UseLegacyInsertAncestorsQueryToggle>())
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+			}
+			else
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjectsLegacy(this._tableNames));
+			}
 
 			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
