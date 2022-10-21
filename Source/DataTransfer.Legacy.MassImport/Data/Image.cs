@@ -117,7 +117,7 @@ namespace Relativity.MassImport.Data
 
 		private ImageImportSql ImportSql { get; set; }
 
-		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid || DoesFullTextColumnText();
+		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid && DoesFullTextColumnText();
 		#endregion
 
 		#region Public Accessors
@@ -304,9 +304,8 @@ SELECT
 			{
 				string collationString = string.IsNullOrEmpty(fullTextColumnCollation) ? string.Empty : string.Format(" COLLATE {0}", fullTextColumnCollation);
 				fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
-				if (!string.IsNullOrWhiteSpace(fullTextColumnCollation))
+				if (!HasDataGridWorkToDo && !string.IsNullOrWhiteSpace(fullTextColumnCollation))
 				{
-					fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
 					fullTextColumnSql = string.Format("[FullText] {0}VARCHAR(MAX) COLLATE {1},", extractedTextUnicodeMarker, fullTextColumnCollation);
 				}
 			}
@@ -723,7 +722,7 @@ WHERE
 
 		public DataGridReader CreateDataGridReader(string bulkFileShareFolderPath, ILog correlationLogger)
 		{
-			correlationLogger.LogVerbose("Starting CreateDataGridTempFileReader");
+			correlationLogger.LogVerbose("Starting CreateDataGridReader");
 			if (!HasDataGridWorkToDo)
 			{
 				return null;
@@ -780,6 +779,7 @@ WHERE
 				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
 
 				var filter = new HashSet<int>();
+
 				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
 				{
 					while (reader.Read())
@@ -811,7 +811,6 @@ WHERE
 						}
 					}
 				}
-
 				ImportMeasurements.StopMeasure();
 			}
 		}
