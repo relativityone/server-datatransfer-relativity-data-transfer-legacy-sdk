@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.45]
+- REL-759042 - Fix extracted text image import on a broken workspace
+
 ## [0.2.44]
 - REL-743070 - Add setting hasImages to 'No' in production import
 
