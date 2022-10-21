@@ -847,6 +847,7 @@ WHERE
 
 				if (loader == null)
 				{
+					correlationLogger.LogError("DataGridReader is null. {HasDataGridWorkToDo}", HasDataGridWorkToDo);
 					throw new ArgumentNullException(nameof(loader));
 				}
 
