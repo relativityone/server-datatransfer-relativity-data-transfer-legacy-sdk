@@ -3,12 +3,11 @@ using System.Data.SqlClient;
 using System.Text;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Toggles;
-	using Relativity.Toggles;
-
 	internal class Objects : ObjectBase
 	{
 		#region Constructors
