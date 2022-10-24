@@ -49,7 +49,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			// Assert
 			var document = await GetDocumentByControlNumber(ConrolNumber).ConfigureAwait(false);
 
-			var hasImagesField =ChoiceHelper.GetChoiceField(document, WellKnownFields.HasImages);
+			var hasImagesField = ChoiceHelper.GetChoiceField(document, WellKnownFields.HasImages);
 
 			Assert.That(hasImagesField.Name, Is.EqualTo("No"));
 
@@ -108,7 +108,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			{
 				string controlNumber = string.Join(",", fieldValues.Rows[i].ItemArray.First().ToString());
 				string anyFileSize = "81697";
-				string postfix = $@",0,0,{anyFileSize},{this.TestWorkspace.DefaultFileRepository}EDDS{workspaceID}\RV_0b64d846-7187-4c70-bf4a-6aa606110b67\\1cf413e8-296f-49ed-b936-658399b3c4a0,.\001\{controlNumber},,-1,þþKþþ{Environment.NewLine}";
+				string postfix = $@",0,0,{anyFileSize},{this.TestWorkspace.DefaultFileRepository}EDDS{workspaceID}\RV_0b64d846-7187-4c70-bf4a-6aa606110b67\1cf413e8-296f-49ed-b936-658399b3c4a0,.\001\{controlNumber},,þþKþþ{Environment.NewLine}";
 				var prefix = $"1,0,0,0,{i},";
 				sb.Append(prefix);
 				sb.Append(controlNumber);
@@ -116,7 +116,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				sb.Append(controlNumber);
 				sb.Append(",");
 				sb.Append(@"1cf413e8-296f-49ed-b936-658399b3c4a0,");
-				sb.Append(controlNumber);
+				sb.Append("FileNameThatShouldBeShorterThen200chars");
 				sb.Append(postfix);
 
 				ConrolNumber = controlNumber;
