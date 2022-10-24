@@ -153,46 +153,42 @@ INSERT INTO ArtifactAncestry(
 			var sql = new SerialSqlQuery();
 			
 			sql.Add(new InlineSqlQuery($@"
-DROP TABLE IF EXISTS [Resource].[{tableNames.ParentAncestors}], [Resource].[{tableNames.NewAncestors}];
+DROP TABLE IF EXISTS [{tableNames.ParentAncestors}], [{tableNames.NewAncestors}];
 "));
 			
 			// add parent as the new record ancestor
 			sql.Add(new InlineSqlQuery($@"
 SELECT P.ArtifactID, PARENT.ParentArtifactID
-INTO [Resource].[{tableNames.NewAncestors}]
+INTO [{tableNames.NewAncestors}]
 FROM [Resource].[{tableNames.Part}] P
 JOIN [Resource].[{tableNames.Parent}] PARENT ON P.[kCura_Import_ID] = PARENT.[kCura_Import_ID]
 WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = 0;
 "));
 
 			sql.Add(new InlineSqlQuery($@"
-ALTER TABLE [Resource].[{tableNames.NewAncestors}] ADD PRIMARY KEY(ArtifactID);
+ALTER TABLE [{tableNames.NewAncestors}] ADD PRIMARY KEY(ArtifactID);
 "));
 
 			// add all parent ancestors as the new record ancestors
 			sql.Add(new InlineSqlQuery($@"
 SELECT N.ArtifactID, A.AncestorArtifactID
-INTO [Resource].[{tableNames.ParentAncestors}]
-FROM [Resource].[{tableNames.NewAncestors}] N
+INTO [{tableNames.ParentAncestors}]
+FROM [{tableNames.NewAncestors}] N
 JOIN [EDDSDBO].ArtifactAncestry A ON A.ArtifactID = N.ParentArtifactID;
 "));
 
 			sql.Add(new InlineSqlQuery($@"
-ALTER TABLE [Resource].[{tableNames.ParentAncestors}] ADD PRIMARY KEY(ArtifactID,AncestorArtifactID);
+ALTER TABLE [{tableNames.ParentAncestors}] ADD PRIMARY KEY(ArtifactID,AncestorArtifactID);
 "));
 
 			// insert all ancestors for the new record
 			sql.Add(new InlineSqlQuery($@"
 INSERT INTO [EDDSDBO].ArtifactAncestry(ArtifactID, AncestorArtifactID)
-SELECT ArtifactID, ParentArtifactID FROM [Resource].[{tableNames.NewAncestors}]
+SELECT ArtifactID, ParentArtifactID FROM [{tableNames.NewAncestors}]
 UNION ALL
-SELECT ArtifactID, AncestorArtifactID FROM [Resource].[{tableNames.ParentAncestors}];
+SELECT ArtifactID, AncestorArtifactID FROM [{tableNames.ParentAncestors}];
 "));
-
-			sql.Add(new InlineSqlQuery($@"
-DROP TABLE [Resource].[{tableNames.ParentAncestors}], [Resource].[{tableNames.NewAncestors}];
-"));
-			
+		
 			return sql;
 		}
 

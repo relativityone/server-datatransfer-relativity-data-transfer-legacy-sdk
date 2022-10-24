@@ -15,8 +15,8 @@ namespace Relativity.Data.MassImport
 		private const string NATIVE_TEMP_TABLE_OBJECTS_PREFIX = "RELNATTMPOBJ_";
 		private const string NATIVE_TEMP_TABLE_MAP_PREFIX = "RELNATTMPMAP_";
 		private const string COLUMN_DEFINTION_TABLE_PREFIX = "RELCOLUMNDEF_";
-		private const string PARENT_ANCESTORS_TABLE_PREFIX = "RELNATPARENTACENSTORS_";
-		private const string NEW_ANCESTORS_TABLE_PREFIX = "RELNATNEWANCESTORS_";
+		private const string PARENT_ANCESTORS_TABLE_PREFIX = "#RELNATPARENTANCESTORS_";
+		private const string NEW_ANCESTORS_TABLE_PREFIX = "#RELNATNEWANCESTORS_";
 
 		public TableNames() : this(null)
 		{
@@ -53,8 +53,6 @@ namespace Relativity.Data.MassImport
 		public string ParentAncestors => PARENT_ANCESTORS_TABLE_PREFIX + RunId;
 
 		public string NewAncestors => NEW_ANCESTORS_TABLE_PREFIX + RunId;
-
-		//public string ParentAncestors => 
 
 		public string RunId { get; private set; }
 

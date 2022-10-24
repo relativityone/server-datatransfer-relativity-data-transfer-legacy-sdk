@@ -65,13 +65,13 @@ namespace Relativity.MassImport.Data
 
 			sql.Add(GetInsertObjectsSqlStatement());
 
-			if (!ToggleProvider.Current.IsEnabled<UseLegacyInsertAncestorsQueryToggle>())
+			if (ToggleProvider.Current.IsEnabled<UseLegacyInsertAncestorsQueryToggle>())
 			{
-				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjectsLegacy(this._tableNames));
 			}
 			else
 			{
-				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjectsLegacy(this._tableNames));
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
 			}
 
 			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
