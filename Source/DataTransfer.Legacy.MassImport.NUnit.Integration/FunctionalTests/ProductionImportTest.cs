@@ -47,7 +47,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			MassImportManagerBase.MassImportResults result = massImportManager.RunProductionImageImport(this.CoreContext.ChicagoContext, imageLoadInfo, productionSetArtifactId, inRepository);
 
 			// Assert
-			var document = await GetDocumentByControlNumber(ConrolNumber);
+			var document = await GetDocumentByControlNumber(ConrolNumber).ConfigureAwait(false);
 
 			var hasImagesField =ChoiceHelper.GetChoiceField(document, WellKnownFields.HasImages);
 
