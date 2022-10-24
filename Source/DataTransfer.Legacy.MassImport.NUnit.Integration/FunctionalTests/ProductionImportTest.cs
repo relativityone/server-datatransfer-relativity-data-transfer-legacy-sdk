@@ -41,7 +41,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			
 
 			MassImportManager massImportManager = new MassImportManager();
-			var productionSetArtifactId = await ProductionHelper.CreateProductionSet(this.TestParameters, this.TestWorkspace.WorkspaceId);
+			var productionSetArtifactId = await ProductionHelper.CreateProductionSet(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false);
 
 			// Act
 			MassImportManagerBase.MassImportResults result = massImportManager.RunProductionImageImport(this.CoreContext.ChicagoContext, imageLoadInfo, productionSetArtifactId, inRepository);
