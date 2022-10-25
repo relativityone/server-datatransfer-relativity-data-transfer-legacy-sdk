@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [0.2.46]
+## [0.2.47]
 - REL-754154 - Insert ancestors query optimization
+
+## [0.2.46]
+- REL-759042 - Fix failing functional tests
 
 ## [0.2.45]
 - REL-759042 - Fix extracted text image import on a broken workspace
