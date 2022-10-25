@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.47]
+- REL-765639 - Add workspace creation for compatibility tests
+
 ## [0.2.46]
 - REL-759042 - Fix failing functional tests
 
