@@ -27,20 +27,20 @@ namespace MassImport.NUnit.Integration.FunctionalTests
         public async Task OneTimeSetUpAsync()
         {
             // create 'Orders' RDO
-            _ordersArtifactTypeId = await RdoHelper.CreateObjectTypeAsync(TestParameters, TestWorkspace, ObjectTypeName);
-            var ordersIdentifierField = await FieldHelper.ReadIdentifierField(TestParameters, TestWorkspace, _ordersArtifactTypeId);
+            _ordersArtifactTypeId = await RdoHelper.CreateObjectTypeAsync(TestParameters, TestWorkspace, ObjectTypeName).ConfigureAwait(false); ;
+            var ordersIdentifierField = await FieldHelper.ReadIdentifierField(TestParameters, TestWorkspace, _ordersArtifactTypeId).ConfigureAwait(false); ;
             _ordersIdentifierField = await FieldHelper.RenameIdentifierField(
                 TestParameters,
                 TestWorkspace,
                 _ordersArtifactTypeId,
                 ordersIdentifierField.ArtifactID,
-                newName: IdentifierFieldName);
+                newName: IdentifierFieldName).ConfigureAwait(false); ;
             _ordersSelfReferenceField = await FieldHelper.CreateMultiObjectField(
                 TestParameters,
                 TestWorkspace,
                 fieldName: SelfReferenceFieldName,
                 destinationRdoArtifactTypeId: _ordersArtifactTypeId,
-                associativeRdoArtifactTypeId: _ordersArtifactTypeId);
+                associativeRdoArtifactTypeId: _ordersArtifactTypeId).ConfigureAwait(false); ;
         }
 
         [TearDown]
