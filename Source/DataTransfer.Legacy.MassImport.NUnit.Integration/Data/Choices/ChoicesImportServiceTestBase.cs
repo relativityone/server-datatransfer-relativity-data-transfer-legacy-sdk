@@ -19,7 +19,7 @@ using Relativity.Toggles;
 namespace MassImport.NUnit.Integration.Data.Choices
 {
 	[TestFixture]
-	public abstract class ChoicesImportServiceTestBase : EmptyWorkspaceTestBase
+	internal abstract class ChoicesImportServiceTestBase : EmptyWorkspaceTestBase
 	{
 		protected const int QueryTimeoutInSeconds = 5;
 
