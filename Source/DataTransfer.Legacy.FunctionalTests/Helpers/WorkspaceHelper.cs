@@ -51,7 +51,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Helpers
 
         private static string GetTestWorkspaceName()
         {
-            return $"MassImport ({DateTime.Now:MM-dd HH.mm.ss.fff})";
+            return $"CompatibilityTests ({DateTime.Now:MM-dd HH.mm.ss.fff})";
         }
 
         private static async Task<WorkspaceRequest> CreateWorkspaceRequestAsync(IntegrationTestParameters parameters)
