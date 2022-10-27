@@ -19,6 +19,7 @@ namespace Relativity.MassImport.NUnit.Core
 
         private Mock<IAPM> _apmMock;
         private Mock<ILog> _loggerMock;
+        private Mock<ICounterMeasure> _counterMock;
 
         private MassImportMetrics _sut;
 
@@ -29,6 +30,19 @@ namespace Relativity.MassImport.NUnit.Core
             _loggerMock = new Mock<ILog>();
 
             _sut = new MassImportMetrics(_loggerMock.Object, _apmMock.Object);
+
+            _counterMock = new Mock<ICounterMeasure>();
+            _apmMock.Setup(x => x.CountOperation(
+                It.IsAny<string>(),
+                It.IsAny<Guid>(),
+                It.IsAny<string>(),
+                It.IsAny<string>(),
+                It.IsAny<bool>(),
+                It.IsAny<int?>(),
+
+                It.IsAny<Dictionary<string, object>>(),
+                It.IsAny<IEnumerable<ISink>>()))
+                .Returns(_counterMock.Object);
         }
 
         [Test]
@@ -69,6 +83,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y)),
                 It.IsAny<IEnumerable<ISink>>()
                 ));
+            _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
@@ -161,6 +176,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(expectedFieldsDetails, y)),
                 It.IsAny<IEnumerable<ISink>>()
             ));
+            _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
@@ -207,6 +223,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y)),
                 It.IsAny<IEnumerable<ISink>>()
             ));
+            _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
@@ -242,6 +259,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y)),
                 It.IsAny<IEnumerable<ISink>>()
             ));
+            _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
@@ -277,6 +295,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(customData, y)),
                 It.IsAny<IEnumerable<ISink>>()
             ));
+            _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedPreImportStagingTableDetailsMetricName,
@@ -332,6 +351,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(expectedCustomData, y)),
                 It.IsAny<IEnumerable<ISink>>()
             ));
+            _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedFieldDetailsMetricName,
