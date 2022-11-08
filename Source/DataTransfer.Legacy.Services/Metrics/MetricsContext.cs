@@ -20,6 +20,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		public MetricsContext(IEnumerable<IMetricsPublisher> metricsPublishers)
 		{
 			_metricsPublishers = metricsPublishers;
+			_metrics.Add(Constants.MetricsAttributes.R1TeamIDAttribute, Constants.Application.OwnerTeamId);
 		}
 
 		/// <inheritdoc /> 
