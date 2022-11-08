@@ -15,5 +15,21 @@
 			public const string REQUIRED_WORKSPACE_FILE_COUNT_PROCESSING = "Required.Workspace.FileCount.Processing";
 			public const string REQUIRED_WORKSPACE_FILE_COUNT_UNKNOWN = "Required.Workspace.FileCount.Unknown";
 		}
+
+		internal class MetricsAttributes
+		{
+			/// <summary>
+			/// Team ID attribute.
+			/// </summary>
+			public const string R1TeamIDAttribute = "r1.team.id";
+		}
+
+		internal class Application
+		{
+			/// <summary>
+			///  ID of 'Holy Data Acquisition' team.
+			/// </summary>
+			public const string OwnerTeamId = "PTCI-4941411";
+		}
 	}
 }

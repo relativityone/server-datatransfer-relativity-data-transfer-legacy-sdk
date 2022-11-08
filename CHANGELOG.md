@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.50]
+- REL-765588 - Add r1 team id for RelEye
+
 ## [0.2.49]
 - REL-766933 - Fix sending Count APM metrics to New Relic
 
