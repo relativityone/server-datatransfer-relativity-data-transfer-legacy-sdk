@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.2.51]
-- REL-772566 - Add r1 team id for MassImport
+- REL-772566 - Add r1 team id for RelEye for MassImport part
 
 ## [0.2.50]
 - REL-765588 - Add r1 team id for RelEye
