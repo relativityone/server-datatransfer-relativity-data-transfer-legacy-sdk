@@ -365,6 +365,7 @@ namespace Relativity.MassImport.NUnit.Core
             AssertThatDictionaryContainsKeyValuePair(customData, "ImportType", importType);
             AssertThatDictionaryContainsKeyValuePair(customData, "System", system);
             AssertThatDictionaryContainsKeyValuePair(customData, "MassImportImprovementsToggle", true);
+            AssertThatDictionaryContainsKeyValuePair(customData, "r1.team.id", "PTCI-4941411");
         }
 
         private void VerifyAllPropertiesAreIncluded<T>(
