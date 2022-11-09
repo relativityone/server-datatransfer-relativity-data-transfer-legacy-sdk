@@ -4,6 +4,7 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DataTransfer.Legacy.MassImport.Core;
 
 namespace Relativity.DataTransfer.Legacy.Services.Metrics
 {
@@ -20,7 +21,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		public MetricsContext(IEnumerable<IMetricsPublisher> metricsPublishers)
 		{
 			_metricsPublishers = metricsPublishers;
-			_metrics.Add(Constants.MetricsAttributes.R1TeamIDAttribute, Constants.Application.OwnerTeamId);
+			_metrics.Add(TelemetryConstants.MetricsAttributes.R1TeamIDAttribute, TelemetryConstants.Application.OwnerTeamId);
 		}
 
 		/// <inheritdoc /> 
