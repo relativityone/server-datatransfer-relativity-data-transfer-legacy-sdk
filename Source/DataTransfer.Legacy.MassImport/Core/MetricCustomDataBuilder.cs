@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Relativity.Core.Service;
 using Relativity.MassImport.Data;
+using TelemetryConstants = DataTransfer.Legacy.MassImport.Core.TelemetryConstants;
 
 namespace Relativity.MassImport.Core
 {
@@ -25,7 +26,7 @@ namespace Relativity.MassImport.Core
             _customData["ImportType"] = importType;
             _customData["System"] = system;
             _customData["MassImportImprovementsToggle"] = true;
-
+            _customData[TelemetryConstants.MetricsAttributes.R1TeamIDAttribute] = TelemetryConstants.Application.OwnerTeamId;
             return this;
         }
 
