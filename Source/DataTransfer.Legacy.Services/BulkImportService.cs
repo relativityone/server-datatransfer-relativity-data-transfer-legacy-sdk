@@ -61,7 +61,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
+		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID,
+			SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository,
+			string correlationID)
 		{
 			IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
 			var runSettings = new RunSettings(
