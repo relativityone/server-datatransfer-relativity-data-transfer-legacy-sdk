@@ -308,7 +308,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(nativeLoadInfo.MoveDocumentsInAppendOverlayMode), nativeLoadInfo.MoveDocumentsInAppendOverlayMode.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), nativeLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(nativeLoadInfo.Billable), nativeLoadInfo.Billable.ToString());
-		}
+            metrics.PushProperty(nameof(nativeLoadInfo.OverrideReferentialLinksRestriction), nativeLoadInfo.OverrideReferentialLinksRestriction);
+        }
 
 		private void PushImageLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ImageLoadInfo imageLoadInfo)
 		{
@@ -328,6 +329,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(imageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(imageLoadInfo.Billable), imageLoadInfo.Billable);
 			metrics.PushProperty(nameof(imageLoadInfo.HasPDF), imageLoadInfo.HasPDF);
-		}
+            metrics.PushProperty(nameof(imageLoadInfo.OverrideReferentialLinksRestriction), imageLoadInfo.OverrideReferentialLinksRestriction);
+        }
 	}
 }
