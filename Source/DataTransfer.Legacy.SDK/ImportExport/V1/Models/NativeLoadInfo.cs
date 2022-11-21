@@ -60,7 +60,9 @@
 
 		public string BulkFileSharePath { get; set; }
 
-		public override string ToString()
+        public bool OverrideReferentialLinksRestriction { get; set; }
+
+        public override string ToString()
 		{
 			return this.ToSafeString();
 		}

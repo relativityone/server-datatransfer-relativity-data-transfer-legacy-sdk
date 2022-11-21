@@ -40,6 +40,8 @@
 
 		public bool HasPDF { get; set; }
 
+        public bool OverrideReferentialLinksRestriction { get; set; }
+
 		public override string ToString()
 		{
 			return this.ToSafeString();
