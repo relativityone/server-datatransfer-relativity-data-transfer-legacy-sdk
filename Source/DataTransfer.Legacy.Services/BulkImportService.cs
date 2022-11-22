@@ -48,7 +48,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
 			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
-			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource), settings.OverrideReferentialLinksRestriction);
 			return Task.FromResult(result);
 		}
 
@@ -58,7 +58,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			IImportCoordinator coordinator =
 				new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
-			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource), settings.OverrideReferentialLinksRestriction);
 			return Task.FromResult(result);
 		}
 
@@ -68,7 +68,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			IImportCoordinator coordinator =
 				new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
-			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource), settings.OverrideReferentialLinksRestriction);
 			return Task.FromResult(result);
 		}
 
@@ -76,11 +76,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
 			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
-			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource));
+			var result = BulkImport(workspaceID, coordinator, (ExecutionSource)((int)settings.ExecutionSource), settings.OverrideReferentialLinksRestriction);
 			return Task.FromResult(result);
 		}
 
-		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator, ExecutionSource executionSource)
+		private MassImportResults BulkImport(int workspaceID, IImportCoordinator coordinator, ExecutionSource executionSource, bool overrideReferentialLinksRestriction)
 		{
 			var serviceContext = GetBaseServiceContext(workspaceID);
 			var massImportManager = new MassImportManager();
@@ -108,7 +108,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 					return CreateResultWithException(AuditLevelWarningNonAdminsCanNoSnapshot);
 				}
 
-				if (coordinator.ImportHasLinkedFiles() && Config.RestrictReferentialFileLinksOnImport)
+				if (coordinator.ImportHasLinkedFiles() && Config.RestrictReferentialFileLinksOnImport && !overrideReferentialLinksRestriction)
 				{
 					return CreateResultWithException(FileSecurityWarning);
 				}
