@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.54]
+- REL-789615 - Add cache with result for all BulkImport methods - allows to retry this methods
+
 ## [0.2.53]
 - REL-769990 - Rethrow WorkspaceStatusException as NotFoundException in PermissionCheckInterceptor
 

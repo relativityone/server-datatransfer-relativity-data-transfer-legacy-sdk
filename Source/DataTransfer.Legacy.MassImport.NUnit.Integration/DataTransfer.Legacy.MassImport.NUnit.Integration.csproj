@@ -47,7 +47,7 @@
     <PackageReference Include="Newtonsoft.Json" Version="6.0.8" />
     <PackageReference Include="Relativity.AmbientData" version="0.1.2" />
     <PackageReference Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" Version="3000.1.0" />
-    <PackageReference Include="Relativity.API" Version="17.4.1" />
+    <PackageReference Include="Relativity.API" Version="17.11.2" />
     <PackageReference Include="Relativity.DataGrid" Version="17.1.2" />
     <PackageReference Include="Relativity.Logging" Version="2019.10.2" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
