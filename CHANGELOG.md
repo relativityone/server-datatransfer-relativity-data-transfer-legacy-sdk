@@ -4,8 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.56]
+- REL-789615 - Change MassResult serialization and order of temp tables cleanup
+
 ## [0.2.55]
-- REL-789615 - Change exception type to ServiceException with message
+- REL-789615 - Change exception type to ConflictException with message
 
 ## [0.2.54]
 - REL-789615 - Add cache with result for all BulkImport methods - allows to retry this methods
