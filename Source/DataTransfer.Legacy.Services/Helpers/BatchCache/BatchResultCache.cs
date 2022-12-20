@@ -141,18 +141,36 @@ END
 				return;
 			}
 
+			//			var query = $@"
+			//UPDATE [Resource].[{tableName}] 
+			//SET 
+			//	[FinishedOn] = @finishedOn,
+			//	[RunResult] = '{serialized}'
+			//WHERE [BatchID] = '{batchID}'
+			//";
+
+			//			var parameters = new List<SqlParameter>
+			//			{
+			//				new SqlParameter("@finishedOn", DateTime.Now)
+			//			};
+
 			var query = $@"
 UPDATE [Resource].[{tableName}] 
 SET 
 	[FinishedOn] = @finishedOn,
-	[RunResult] = '{serialized}'
+	[RunResult] = @serialized
 WHERE [BatchID] = '{batchID}'
 ";
 
 			var parameters = new List<SqlParameter>
 			{
-				new SqlParameter("@finishedOn", DateTime.Now)
+				new SqlParameter("@finishedOn", DateTime.Now),
+				new SqlParameter("@serialized", SqlDbType.NVarChar)
+				{
+					Value = serialized
+				},
 			};
+
 
 			var result = _sqlExecutor.ExecuteNonQuerySQLStatement(workspaceID, query, parameters);
 			if (result != 1)
