@@ -197,8 +197,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
-			_batchResultCache.Cleanup(workspaceID, runID);
 			var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
+			_batchResultCache.Cleanup(workspaceID, runID);
 			return Task.FromResult(result);
 		}
 
