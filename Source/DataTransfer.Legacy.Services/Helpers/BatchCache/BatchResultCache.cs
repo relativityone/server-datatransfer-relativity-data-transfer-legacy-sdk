@@ -141,19 +141,6 @@ END
 				return;
 			}
 
-			//			var query = $@"
-			//UPDATE [Resource].[{tableName}] 
-			//SET 
-			//	[FinishedOn] = @finishedOn,
-			//	[RunResult] = '{serialized}'
-			//WHERE [BatchID] = '{batchID}'
-			//";
-
-			//			var parameters = new List<SqlParameter>
-			//			{
-			//				new SqlParameter("@finishedOn", DateTime.Now)
-			//			};
-
 			var query = $@"
 UPDATE [Resource].[{tableName}] 
 SET 
