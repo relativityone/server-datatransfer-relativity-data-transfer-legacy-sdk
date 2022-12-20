@@ -8,9 +8,9 @@ using System.Data.SqlClient;
 using System.Data;
 using FluentAssertions;
 using Newtonsoft.Json;
-using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Exceptions;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache;
+using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 {
@@ -125,7 +125,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 
 			// Act && Assert
 			_sut.Invoking(x => x.GetCreateOrThrow(WorkspaceID, runID, batchID))
-				.Should().Throw<BatchInProgressException>();
+				.Should().Throw<ConflictException>().WithMessage("Batch In Progress");
 			
 			// Assert
 			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
@@ -151,7 +151,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 
 			// Act && Assert
 			_sut.Invoking(x => x.GetCreateOrThrow(WorkspaceID, runID, batchID))
-				.Should().Throw<BatchException>().WithMessage("Empty result");
+				.Should().Throw<ServiceException>().WithMessage("Batch result is empty");
 			
 			// Assert
 			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
@@ -177,7 +177,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 
 			// Act && Assert
 			_sut.Invoking(x => x.GetCreateOrThrow(WorkspaceID, runID, batchID))
-				.Should().Throw<BatchException>().WithMessage("Failed to deserialize result").WithInnerException<JsonReaderException>();
+				.Should().Throw<ServiceException>().WithMessage("Failed to deserialize batch result").WithInnerException<JsonReaderException>();
 
 			// Assert
 			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);

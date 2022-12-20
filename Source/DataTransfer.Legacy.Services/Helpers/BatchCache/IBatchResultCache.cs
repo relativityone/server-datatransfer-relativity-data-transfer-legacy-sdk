@@ -1,5 +1,5 @@
-﻿using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Exceptions;
-using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+﻿using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+using Relativity.Services.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 {
@@ -8,7 +8,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 		/// <summary>
 		/// If batch not exists then new entry is created and null returned.
 		/// If batch exists and is finished then existing result is returned.
-		/// If batch exists and is not finished yet then <see cref="BatchInProgressException"/> is thrown.
+		/// If batch exists and is not finished yet then <see cref="ConflictException"/> is thrown.
 		/// </summary>
 		/// <param name="workspaceID"></param>
 		/// <param name="runID"></param>
