@@ -6,9 +6,9 @@ using System.Linq;
 using kCura.Utility;
 using Newtonsoft.Json;
 using Relativity.API;
-using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Exceptions;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.SQL;
+using Relativity.Services.Exceptions;
 using DateTime = System.DateTime;
 
 namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
@@ -68,14 +68,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 			if (result.FinishedOn.HasValue == false)
 			{
 				_logger.LogError("Result exists but it is not finished yet {runID}, {@result}", runID, result);
-				throw new BatchInProgressException();
+				throw new ConflictException("Batch In Progress");
 			}
 
 			if (string.IsNullOrEmpty(result.SerializedResult))
 			{
 				_logger.LogError("Expected to deserialize result but it is empty {runID}, {@result}", runID, result);
 
-				throw new BatchException("Empty result");
+				throw new ServiceException("Batch result is empty");
 			}
 
 			try
@@ -86,7 +86,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Failed to deserialize {runID} MassImportResults: {result}", runID, result.SerializedResult);
-				throw new BatchException("Failed to deserialize result", ex);
+				throw new ServiceException("Failed to deserialize batch result", ex);
 			}
 		}
 
