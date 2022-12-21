@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.57]
+- REL-790064 - Update DataGrid to version 17.3.1 with CAL integration
+
 ## [0.2.56]
 - REL-789615 - Change MassResult serialization and order of temp tables cleanup
 

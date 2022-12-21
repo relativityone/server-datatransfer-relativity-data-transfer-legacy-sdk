@@ -49,7 +49,7 @@
     <PackageReference Include="Moq.AutoMock" Version="1.2.0.120" />
     <!-- -->
     <PackageReference Include="Polly" Version="5.7.0" />
-    <PackageReference Include="Relativity.DataGrid" Version="17.1.2" />
+    <PackageReference Include="Relativity.DataGrid" Version="17.3.1" />
     <PackageReference Include="Combinatorics" Version="1.1.0.19" />
     <PackageReference Include="CompareNETObjects" Version="3.09.0" />
     <PackageReference Include="Relativity.ApplicationBase" Version="11.3.1.22" />
