@@ -33,12 +33,12 @@ namespace Relativity.MassImport.Data
 			return false;
 		}
 
-		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, ILog logger)
+		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, ILog logger, ImportMeasurements importMeasurements)
 		{
-			RetryOnBulkLoadSqlTemporaryError(f, Relativity.Data.Config.MassImportOnFileLockRetryCount, Relativity.Data.Config.MassImportOnFileLockRetryWaitTimeInMilliseconds, logger);
+			RetryOnBulkLoadSqlTemporaryError(f, Relativity.Data.Config.MassImportOnFileLockRetryCount, Relativity.Data.Config.MassImportOnFileLockRetryWaitTimeInMilliseconds, logger, importMeasurements);
 		}
 
-		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, int retryCount, int retryWaitTimeInMilliseconds, ILog logger)
+		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, int retryCount, int retryWaitTimeInMilliseconds, ILog logger, ImportMeasurements importMeasurements)
 		{
 			var policy =  Policy
 				.Handle<Exception>(IsRetryableBulkLoadError)
@@ -47,6 +47,7 @@ namespace Relativity.MassImport.Data
 					waitTime =>  TimeSpan.FromMilliseconds(retryWaitTimeInMilliseconds),
 					onRetry: (exception, waitTime, retryNumber, context) =>
 					{
+						importMeasurements.IncrementCounter("Retry-'BulkInsert'");
 						logger.LogWarning(exception, "Error occured when executing BulkInsert. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
 							retryNumber,
 							retryCount,

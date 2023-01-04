@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.58]
+- REL-795902 - Add metrics with number of retires executed for bulk insert
+
 ## [0.2.57]
 - REL-790064 - Update DataGrid to version 17.3.1 with CAL integration
 
