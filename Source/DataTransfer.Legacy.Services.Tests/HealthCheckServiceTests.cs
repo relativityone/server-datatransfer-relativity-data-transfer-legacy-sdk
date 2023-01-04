@@ -58,6 +58,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
 			container.Register(Component.For<ILibraryApplicationManager>().Instance(_libraryApplicationManager.Object));
 			container.Register(Component.For<IHealthCheckService>().ImplementedBy<HealthCheckService>());
+			container.Register(Component.For<ITraceGenerator>().ImplementedBy<CoreTraceGenerator>());
 
 			_uut = container.Resolve<IHealthCheckService>();
 		}

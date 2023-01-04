@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core;
@@ -7,6 +8,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
 
 namespace Relativity.DataTransfer.Legacy.Services
@@ -20,54 +22,104 @@ namespace Relativity.DataTransfer.Legacy.Services
 	public class ExportService : BaseService, IExportService
 	{
 		private static readonly string[] DynamicallyLoadedDllPaths = {Config.DynamicallyLoadedStandardSearchDLLs, Config.DynamicallyLoadedClientSearchDLLs};
+		private readonly ITraceGenerator _traceGenerator;
 
-		public ExportService(IServiceContextFactory serviceContextFactory) 
+		public ExportService(IServiceContextFactory serviceContextFactory, ITraceGenerator traceGenerator) 
 			: base(serviceContextFactory)
 		{
+			this._traceGenerator = traceGenerator ?? throw new ArgumentNullException(nameof(traceGenerator));
+
+			ActivityListener listener = new ActivityListener()
+			{
+				ShouldListenTo = _ => true,
+				Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
+			};
+
+			ActivitySource.AddActivityListener(listener);
 		}
 
 		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
-			var result = InitializeExport(workspaceID, (int) ArtifactType.Document,
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Export.InitializeSearchExport", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = InitializeExport(workspaceID, (int)ArtifactType.Document,
 						e => e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs,
 							startAtRecord).Map<InitializationResults>());
-			return Task.FromResult(result);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<InitializationResults> InitializeFolderExportAsync(int workspaceID, int viewArtifactID,
 			int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID,
 			string correlationID)
 		{
-			var result = InitializeExport(workspaceID, artifactTypeID,
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Export.InitializeFolderExport", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = InitializeExport(workspaceID, artifactTypeID,
 				e => e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders,
 					DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>());
-			return Task.FromResult(result);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID,
 			int[] avfIds, int startAtRecord, string correlationID)
 		{
-			var result = InitializeExport(workspaceID, (int) ArtifactType.Document,
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Export.InitializeProductionExport", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = InitializeExport(workspaceID, (int)ArtifactType.Document,
 				e => e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds,
 					startAtRecord).Map<InitializationResults>());
-			return Task.FromResult(result);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<ExportDataWrapper> RetrieveResultsBlockForProductionStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter,
 			char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int productionId, int index, string correlationID)
 		{
-			var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Export.RetrieveResultsBlockForProductionStartingFromIndex", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
 					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index);
-			return Task.FromResult(result);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<ExportDataWrapper> RetrieveResultsBlockStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter, char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int index, string correlationID)
 		{
-			var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Export.RetrieveResultsBlockStartingFromIndex", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
 					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index);
-			return Task.FromResult(result);
+				return Task.FromResult(result);
+			}
 		}
 
 		private InitializationResults InitializeExport(int workspaceID, int artifactTypeID, Func<Core.Export, InitializationResults> initialization)
@@ -106,8 +158,16 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> HasExportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientExport);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Export.HasExportPermissions", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientExport);
+				return Task.FromResult(result);
+			}
 		}
 	}
 }

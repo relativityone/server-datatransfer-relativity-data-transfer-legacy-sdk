@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core;
@@ -37,68 +38,110 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private readonly ISnowflakeMetrics _metrics;
 		private readonly IBatchResultCache _batchResultCache;
+		private readonly ITraceGenerator _traceGenerator;
 
-
-		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics, IBatchResultCache batchResultCache) 
+		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics, IBatchResultCache batchResultCache, ITraceGenerator traceGenerator) 
 			: base(serviceContextFactory)
 		{
 			_massImportManager = new MassImportManager();
 			_metrics = metrics;
 			_batchResultCache = batchResultCache;
+
+			this._traceGenerator = traceGenerator ?? throw new ArgumentNullException(nameof(traceGenerator));
+
+			ActivityListener listener = new ActivityListener()
+			{
+				ShouldListenTo = _ => true,
+				Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
+			};
+
+			ActivitySource.AddActivityListener(listener);
 		}
 
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
-			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
-			var runSettings = new RunSettings(
-				workspaceID,
-				(ExecutionSource)((int)settings.ExecutionSource),
-				settings.OverrideReferentialLinksRestriction,
-				settings.RunID,
-				settings.BulkFileName);
-			var result = BulkImport(runSettings, coordinator);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.Image", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
+				var runSettings = new RunSettings(
+					workspaceID,
+					(ExecutionSource)((int)settings.ExecutionSource),
+					settings.OverrideReferentialLinksRestriction,
+					settings.RunID,
+					settings.BulkFileName);
+				var result = BulkImport(runSettings, coordinator);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
 		{
-			IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
-			var runSettings = new RunSettings(
-				workspaceID,
-				(ExecutionSource)((int)settings.ExecutionSource),
-				settings.OverrideReferentialLinksRestriction,
-				settings.RunID,
-				settings.BulkFileName);
-			var result = BulkImport(runSettings, coordinator);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.ProductionImage", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
+				var runSettings = new RunSettings(
+					workspaceID,
+					(ExecutionSource)((int)settings.ExecutionSource),
+					settings.OverrideReferentialLinksRestriction,
+					settings.RunID,
+					settings.BulkFileName);
+				var result = BulkImport(runSettings, coordinator);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
 		{
-			IImportCoordinator coordinator = new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
-			var runSettings = new RunSettings(
-				workspaceID,
-				(ExecutionSource)((int)settings.ExecutionSource),
-				settings.OverrideReferentialLinksRestriction,
-				settings.RunID,
-				settings.DataFileName);
-			var result = BulkImport(runSettings, coordinator);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.ImportNative", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				IImportCoordinator coordinator = new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
+				var runSettings = new RunSettings(
+					workspaceID,
+					(ExecutionSource)((int)settings.ExecutionSource),
+					settings.OverrideReferentialLinksRestriction,
+					settings.RunID,
+					settings.DataFileName);
+				var result = BulkImport(runSettings, coordinator);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
-			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
-			var runSettings = new RunSettings(
-				workspaceID,
-				(ExecutionSource)((int)settings.ExecutionSource),
-				settings.OverrideReferentialLinksRestriction,
-				settings.RunID,
-				settings.DataFileName);
-			var result = BulkImport(runSettings, coordinator);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.Objects", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
+				var runSettings = new RunSettings(
+					workspaceID,
+					(ExecutionSource)((int)settings.ExecutionSource),
+					settings.OverrideReferentialLinksRestriction,
+					settings.RunID,
+					settings.DataFileName);
+				var result = BulkImport(runSettings, coordinator);
+				return Task.FromResult(result);
+			}
 		}
 
 		private MassImportResults BulkImport(RunSettings runSettings, IImportCoordinator coordinator)
@@ -164,46 +207,94 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>();
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.GenerateImageErrorFiles", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>();
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			// there was a issue in image load logic, if there was no any correct image imported
-			// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
-			if (string.IsNullOrEmpty(runID))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.ImageRunHasErrors", ActivityKind.Server))
 			{
-				return Task.FromResult(false);
-			}
+				_traceGenerator.SetSystemTags(activity);
 
-			var result = _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID);
-			return Task.FromResult(result);
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				// there was a issue in image load logic, if there was no any correct image imported
+				// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
+				if (string.IsNullOrEmpty(runID))
+				{
+					return Task.FromResult(false);
+				}
+
+				var result = _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>();
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.GenerateNonImageErrorFiles", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>();
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<bool> NativeRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.NativeRunHasErrors", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
-			var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
-			_batchResultCache.Cleanup(workspaceID, runID);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.DisposeTempTables", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
+				_batchResultCache.Cleanup(workspaceID, runID);
+				return Task.FromResult(result);
+			}
 		}
 
 		public Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
-			return Task.FromResult(result);
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.HasImportPermissions", ActivityKind.Server))
+			{
+				_traceGenerator.SetSystemTags(activity);
+
+				activity?.SetTag("job.id", correlationID);
+				activity?.SetTag("r1.workspace.id", workspaceID);
+
+				var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
+				return Task.FromResult(result);
+			}
 		}
 	}
 }

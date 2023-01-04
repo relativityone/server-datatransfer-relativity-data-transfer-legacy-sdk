@@ -66,6 +66,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			container.Register(Component.For<ISqlExecutor>().Instance(_sqlExecutorMock.Object));
 			container.Register(Component.For<ISqlRetryPolicy>().Instance(_sqlRetryPolicyMock.Object));
 			container.Register(Component.For<IBulkImportService>().ImplementedBy<BulkImportService>());
+			container.Register(Component.For<ITraceGenerator>().ImplementedBy<CoreTraceGenerator>());
 
 			_uut = container.Resolve<IBulkImportService>();
 		}

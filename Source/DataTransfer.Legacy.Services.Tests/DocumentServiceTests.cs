@@ -49,6 +49,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
 				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
 			container.Register(Component.For<IDocumentService>().ImplementedBy<DocumentService>());
+			container.Register(Component.For<ITraceGenerator>().ImplementedBy<CoreTraceGenerator>());
 
 			_uut = container.Resolve<IDocumentService>();
 		}
