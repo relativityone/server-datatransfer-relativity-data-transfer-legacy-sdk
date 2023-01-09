@@ -94,22 +94,5 @@ namespace Relativity.MassImport.NUnit.Core
 			IEnumerable<Tuple<int, int>> expected = new[] {Tuple.Create(10, 2), Tuple.Create(11, 3)};
 			CollectionAssert.AreEqual(expected, actual, "The folder mappings do not match.");
 		}
-
-		[Description("This documents current behaviour https://jira.kcura.com/browse/REL-718348")]
-		[Test]
-		public void SqlDataRecordEnumerable_GetImportMapping_WillThrowKeyNotFoundException()
-		{
-			var node = new Relativity.MassImport.Core.FolderNode();
-
-			node.Add(@"a", 10);
-			node.Add(@"A\C", 11);
-
-			IEnumerable<Relativity.MassImport.Core.FolderNode> folderNodes = node.Descendants();
-			IEnumerable<FolderArtifactIDMapping> mappings = new List<FolderArtifactIDMapping>()
-			{
-				new FolderArtifactIDMapping(-2, 2, true)
-			};
-			Assert.Throws<KeyNotFoundException>(() => folderNodes.GetImportMapping(mappings).ToArray());
-		}
 	}
 }
