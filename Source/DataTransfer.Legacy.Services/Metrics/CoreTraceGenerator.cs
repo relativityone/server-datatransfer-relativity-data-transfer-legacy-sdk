@@ -31,7 +31,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 				options.Headers = $"apikey=VzUDvGtIZJ_KlQmq0ihOnsp1o52Tcr";
 				options.Protocol = OtlpExportProtocol.HttpProtobuf;
 			})
-			.AddHttpClientInstrumentation()
 			.Build();
 		}
 

@@ -67,6 +67,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 				activity?.SetTag("job.id", correlationID);
 				activity?.SetTag("r1.workspace.id", workspaceID);
+				activity?.SetTag("import.customer_application_name", settings.ExecutionSource);
 
 				IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
 				var runSettings = new RunSettings(
@@ -75,7 +76,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.OverrideReferentialLinksRestriction,
 					settings.RunID,
 					settings.BulkFileName);
+				
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Image - Settings created."));
+
 				var result = BulkImport(runSettings, coordinator);
+
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Image - BulkImport executed."));
+
 				return Task.FromResult(result);
 			}
 		}
@@ -88,6 +95,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 				activity?.SetTag("job.id", correlationID);
 				activity?.SetTag("r1.workspace.id", workspaceID);
+				activity?.SetTag("import.customer_application_name", settings.ExecutionSource);
 
 				IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
 				var runSettings = new RunSettings(
@@ -96,7 +104,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.OverrideReferentialLinksRestriction,
 					settings.RunID,
 					settings.BulkFileName);
+				
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ProductionImage - Settings created."));
+
 				var result = BulkImport(runSettings, coordinator);
+
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ProductionImage - BulkImport executed."));
+
 				return Task.FromResult(result);
 			}
 		}
@@ -109,6 +123,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 				activity?.SetTag("job.id", correlationID);
 				activity?.SetTag("r1.workspace.id", workspaceID);
+				activity?.SetTag("import.customer_application_name", settings.ExecutionSource);
 
 				IImportCoordinator coordinator = new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
 				var runSettings = new RunSettings(
@@ -117,7 +132,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.OverrideReferentialLinksRestriction,
 					settings.RunID,
 					settings.DataFileName);
+
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ImportNative - Settings created."));
+
 				var result = BulkImport(runSettings, coordinator);
+
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ImportNative - BulkImport executed."));
+
 				return Task.FromResult(result);
 			}
 		}
@@ -131,6 +152,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 				activity?.SetTag("job.id", correlationID);
 				activity?.SetTag("r1.workspace.id", workspaceID);
+				activity?.SetTag("import.customer_application_name", settings.ExecutionSource);
 
 				IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
 				var runSettings = new RunSettings(
@@ -139,7 +161,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.OverrideReferentialLinksRestriction,
 					settings.RunID,
 					settings.DataFileName);
+
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Objects - Settings created."));
+
 				var result = BulkImport(runSettings, coordinator);
+
+				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Objects - BulkImport Executed."));
+
 				return Task.FromResult(result);
 			}
 		}

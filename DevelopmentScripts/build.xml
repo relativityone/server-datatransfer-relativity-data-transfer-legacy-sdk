@@ -24,7 +24,6 @@
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.Api.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.Instrumentation.Http.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Core.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Core.Api.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Google.Protobuf.dll</Assembly>
@@ -42,6 +41,10 @@
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Primitives.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Collections.Immutable.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.ComponentModel.Annotations.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Diagnostics.DiagnosticSource.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Memory.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Runtime.CompilerServices.Unsafe.dll</Assembly>
+			
         </Assemblies>
         <ResourceFiles />
         <CustomPages />
