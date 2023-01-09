@@ -35,8 +35,8 @@
     <PackageReference Include="Relativity.EventHandler" Version="17.0.2" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.SecretCatalog" Version="1.0.18" />
-    <PackageReference Include="Relativity.Services.DataContracts" Version="11.2.172.14" />
-    <PackageReference Include="Relativity.Services.Interfaces" Version="11.2.172.14" />
+    <PackageReference Include="Relativity.Services.DataContracts" Version="13.8.1" />
+    <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="11.2.172.14" />
     <PackageReference Include="Relativity.Services.Layout.Interfaces" Version="1.1.46" />
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="9.4.74" />

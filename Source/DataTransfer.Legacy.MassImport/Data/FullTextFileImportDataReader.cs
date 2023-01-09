@@ -8,13 +8,28 @@ using System.Text;
 
 namespace Relativity.MassImport.Data
 {
+	using DataTransfer.Legacy.MassImport.Data;
+	using DataTransfer.Legacy.MassImport.Toggles;
+	using kCura.Utility;
+	using Polly;
+	using Relativity.Logging;
+	using Relativity.Storage;
+	using Relativity.Toggles;
+	using DataTable = System.Data.DataTable;
+	using DateTime = System.DateTime;
+	using Type = System.Type;
+
 	internal class FullTextFileImportDataReader : DbDataReader
 	{
 		private readonly IEnumerator<DataRow> _rows;
+		private readonly IStorageAccess<string> _storageAccess;
+		private const int NumberOfRetries = 5;
+		private const int ExponentialWaitTimeBase = 2;
 
 		public FullTextFileImportDataReader(DataTable filePathResults)
 		{
 			_rows = filePathResults.AsEnumerable().GetEnumerator();
+			_storageAccess = StorageAccessProvider.GetStorageAccess();
 		}
 
 		public override bool Read()
@@ -28,12 +43,39 @@ namespace Relativity.MassImport.Data
 		{
 			if (i == 1)
 			{
-				return kCura.Utility.File.Instance.ReadFileAsString(Convert.ToString(_rows.Current[i]));
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				{
+					return kCura.Utility.File.Instance.ReadFileAsString(Convert.ToString(_rows.Current[i]));
+				}
+				else
+				{
+					Policy
+						.Handle<Exception>()
+						.WaitAndRetry(
+							NumberOfRetries,
+							sleepDurationProvider: retryAttempt => TimeSpan.FromSeconds(Math.Pow(ExponentialWaitTimeBase, retryAttempt)),
+							onRetry: (exception, waitTime, retryNumber, context) =>
+							{
+								Log.Logger.LogWarning(exception,
+									"Error occurred while reading file with Storage Access (CAL). Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+									retryNumber,
+									NumberOfRetries,
+									waitTime);
+							});
+					StorageStream stream = _storageAccess.OpenFileAsync(Convert.ToString(_rows.Current[i]), OpenBehavior.OpenExisting, ReadWriteMode.ReadOnly).GetAwaiter().GetResult();
+					StreamReader reader = new StreamReader(stream);
+					return reader.ReadToEnd();
+				}
 			}
 			else
 			{
 				return _rows.Current[i];
 			}
+		}
+
+		private static Func<int, TimeSpan> GetExponentialBackoffSleepDurationProvider(int backoffBase)
+		{
+			return retryNumber => TimeSpan.FromSeconds(Math.Pow(backoffBase, retryNumber));
 		}
 
 		public override bool IsDBNull(int i)

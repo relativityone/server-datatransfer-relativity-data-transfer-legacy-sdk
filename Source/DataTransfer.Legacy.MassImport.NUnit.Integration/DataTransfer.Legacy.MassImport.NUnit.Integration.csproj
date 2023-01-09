@@ -49,7 +49,7 @@
     <PackageReference Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" Version="3000.1.0" />
     <PackageReference Include="Relativity.API" Version="17.11.2" />
     <PackageReference Include="Relativity.DataGrid" Version="17.3.1" />
-    <PackageReference Include="Relativity.Logging" Version="2019.10.2" />
+    <PackageReference Include="Relativity.Logging" Version="3000.4.0" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
     <PackageReference Include="Relativity.Productions.SDK" Version="12.1.13" />
     <PackageReference Include="Relativity.SecretCatalog" Version="1.0.19" />
@@ -65,7 +65,7 @@
     <PackageReference Include="kCura.EDDS.DocumentCompareGateway" Version="11.3.1.22" />
     <PackageReference Include="Relativity.ApplicationBase.InvariantApi" Version="11.3.1.22" />
     <PackageReference Include="kCura.Imaging" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.Services.Interfaces.Helpers" Version="13.5.0" />
+    <PackageReference Include="Relativity.Services.Interfaces.Helpers" Version="13.8.1" />
     <PackageReference Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" Version="3001.2.4" />
     <PackageReference Include="System.Wrapper" Version="11.3.1.22" />
     <PackageReference Include="kCura.SearchProvider" Version="13.1.0" />
@@ -79,8 +79,8 @@
     <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
     <PackageReference Include="Polly" Version="5.7.0" />
     <PackageReference Include="Relativity.Core" Version="52.3.17" />
-    <PackageReference Include="Relativity.Services.DataContracts" Version="13.6.0" />
-    <PackageReference Include="Relativity.Services.Interfaces" Version="13.6.0" />
+    <PackageReference Include="Relativity.Services.DataContracts" Version="13.8.1" />
+    <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.Kepler.Client" Version="2.9.2" />
