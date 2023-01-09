@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
-using kCura.Utility;
 using kCura.Utility.Extensions;
 using Microsoft.SqlServer.Server;
-using Relativity.Core;
 using Relativity.Core.Service;
-using Relativity.Logging;
 using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Core
 {
 	internal class ServerSideFolderGenerator
 	{
-		public void CreateFolders(ILockHelper lockHelper, Timekeeper timekeeper, BaseContext context, int activeWorkspaceID, Folder folder, DTO.NativeLoadInfo settings, ILog logger)
+		public void CreateFolders(ILockHelper lockHelper, kCura.Utility.Timekeeper timekeeper, Relativity.Core.BaseContext context, Int32 activeWorkspaceID, Folder folder, Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			// If settings.RootFolderID is 0, the folders have been created with an old version of the client. New clients pass -1 for unset and > 0 for set, which does not create folders on the client.
 			// Check here to see whether the settings object has a Root Folder ID less than zero.
@@ -58,7 +55,7 @@ namespace Relativity.MassImport.Core
 						List<FolderNode> folderNodes = rootNode.Descendants().ToList();
 						if (folderNodes.Count > 0)
 						{
-							List<SqlDataRecord> folderCandidates = folderNodes.GetFolderCandidates().ToList();
+							IEnumerable<SqlDataRecord> folderCandidates = folderNodes.GetFolderCandidates();
 
 							List<FolderArtifactIDMapping> folderArtifactIdMappings =
 								folder.CreateMissingFolders(folderCandidates, settings.RootFolderID,
@@ -74,19 +71,10 @@ namespace Relativity.MassImport.Core
 									"''", string.Empty);
 							}
 
-							try
-							{
-								List<SqlDataRecord> importMap = folderNodes.GetImportMapping(folderArtifactIdMappings).ToList();
-								folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID, settings.RootFolderID);
-							}
-							catch (KeyNotFoundException ex)
-							{
-								logger.LogError(ex, "Failed to CreateFolders folderNodes: {nodesCount} folderCandidates: {candidatesCount} folderArtifactIdMappings: {mappingsCount}",
-									folderNodes.Count , folderCandidates.Count, folderArtifactIdMappings.Count);
-								logger.LogError(ex, "folderArtifactIdMappings: {@mappings}", folderArtifactIdMappings);
-								logger.LogError(ex, "folderNodes: {@nodes}", folderNodes.Select(x=>$"TempArtifactId: {x.TempArtifactID}, LeafIds: {string.Join(",", x.LeafIDs)}"));
-								throw;
-							}
+							IEnumerable<SqlDataRecord> importMap =
+								folderNodes.GetImportMapping(folderArtifactIdMappings);
+							folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID,
+								settings.RootFolderID);
 						}
 						else
 						{
