@@ -54,7 +54,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 
 			container.Register(Component.For<RetryPolicyFactory>());
 
-			StorageAccessProvider.InitializeStorageAccess(container.Resolve<IHelper>());
+			StorageAccessProvider.InitializeStorageAccess(container);
 		}
 	}
 }

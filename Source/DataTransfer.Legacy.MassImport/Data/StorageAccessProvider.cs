@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DataTransfer.Legacy.MassImport.Data
+﻿namespace DataTransfer.Legacy.MassImport.Data
 {
+	using Castle.Windsor;
 	using Relativity.API;
 	using Relativity.MassImport.Api;
 	using Relativity.Storage;
@@ -16,16 +11,16 @@ namespace DataTransfer.Legacy.MassImport.Data
 	{
 		private const string ServiceName = "data-transfer-legacy";
 		private static IStorageAccess<string> _storageAccess;
-		private static IHelper _helper;
+		private static IWindsorContainer _container;
 
-		public static void InitializeStorageAccess(IHelper helper)
+		public static void InitializeStorageAccess(IWindsorContainer container)
 		{
-			_helper = helper;
+			_container = container;
 		}
 
 		public static IStorageAccess<string> GetStorageAccess()
 		{
-			if (_helper == null)
+			if (_container == null)
 			{
 				throw new MassImportException("Storage Access is not initialized");
 			}
@@ -34,7 +29,7 @@ namespace DataTransfer.Legacy.MassImport.Data
 			{
 				var serviceDetails = new ApplicationDetails(ServiceName);
 				const StorageAccessPermissions permissions = StorageAccessPermissions.GenericRead;
-				_storageAccess =  _helper.GetStorageAccessorAsync(permissions, serviceDetails).GetAwaiter().GetResult();
+				_storageAccess =  _container.Resolve<IHelper>().GetStorageAccessorAsync(permissions, serviceDetails).GetAwaiter().GetResult();
 			}
 
 			return _storageAccess;
