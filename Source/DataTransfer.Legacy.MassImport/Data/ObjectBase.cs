@@ -21,6 +21,10 @@ using DataTransfer.Legacy.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data
 {
+	using System.Data.Common;
+	using DataTransfer.Legacy.MassImport.Toggles;
+	using Relativity.Toggles;
+
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
@@ -468,7 +472,17 @@ WHERE
 				ImportMeasurements.StartMeasure();
 				var filePathResults = ExecuteSqlStatementAsDataTable(string.Format("SELECT [kCura_Import_ID], [{0}] FROM [Resource].[{1}] WHERE [kCura_Import_Status] = {2} AND [{0}] IS NOT NULL", 
 					FullTextFieldColumnName, _tableNames.Native, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending));
-				var reader = new FullTextFileImportDataReader(filePathResults);
+
+				DbDataReader reader;
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				{
+					reader = new FullTextFileImportDataReader(filePathResults);
+				}
+				else
+				{
+					reader = new FullTextFileImportCALDataReader(filePathResults);
+				}
+				
 				var parameters = new kCura.Data.RowDataGateway.SqlBulkCopyParameters() { EnableStreaming = true, DestinationTableName = $"[Resource].[{_tableNames.FullText}]" };
 				Context.ExecuteBulkCopy(reader, parameters);
 				ImportMeasurements.StopMeasure();

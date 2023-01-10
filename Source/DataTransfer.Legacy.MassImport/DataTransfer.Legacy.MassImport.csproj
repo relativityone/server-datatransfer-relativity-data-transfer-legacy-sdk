@@ -113,6 +113,7 @@
     <None Include="Core\ServerSideFolderGenerator.cs" />
     <None Include="Core\SqlDataRecordEnumerable.cs" />
     <None Include="Core\VerboseLoggingTimeKeeper.cs" />
+    <None Include="Data\FullTextFileImportCALDataReader.cs" />
     <None Include="Data\SqlFramework\AppLock.cs" />
     <None Include="Data\SqlFramework\ActionSqlQuery.cs" />
     <None Include="Data\AssociatedObjectsValidationSql.cs" />
