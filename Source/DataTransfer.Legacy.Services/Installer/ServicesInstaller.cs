@@ -10,10 +10,11 @@ using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.Telemetry.APM;
+using DataTransfer.Legacy.MassImport.Data;
 
 namespace Relativity.DataTransfer.Legacy.Services.Installer
 {
-    public class ServicesInstaller : IWindsorInstaller
+	public class ServicesInstaller : IWindsorInstaller
 	{
 		public void Install(IWindsorContainer container, IConfigurationStore store)
 		{
@@ -50,6 +51,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<ISqlRetryPolicy>().ImplementedBy<SqlRetryPolicy>().LifestyleTransient());
 
 			container.Register(Component.For<RetryPolicyFactory>());
+
+			StorageAccessProvider.InitializeStorageAccess(container);
 		}
 	}
 }

@@ -5,16 +5,42 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Text;
+using DataTransfer.Legacy.MassImport.Data;
+using Polly;
+using Relativity.Logging;
+using Relativity.Storage;
+using DataTable = System.Data.DataTable;
+using DateTime = System.DateTime;
+using Type = System.Type;
 
 namespace Relativity.MassImport.Data
 {
-	internal class FullTextFileImportDataReader : DbDataReader
+	internal class FullTextFileImportCALDataReader : DbDataReader
 	{
 		private readonly IEnumerator<DataRow> _rows;
+		private readonly IStorageAccess<string> _storageAccess;
+		private const int NumberOfRetries = 5;
+		private const int ExponentialWaitTimeBase = 2;
+		private readonly Policy _retryPolicy;
 
-		public FullTextFileImportDataReader(DataTable filePathResults)
+		public FullTextFileImportCALDataReader(DataTable filePathResults)
 		{
 			_rows = filePathResults.AsEnumerable().GetEnumerator();
+			_storageAccess = StorageAccessProvider.GetStorageAccess();
+
+			_retryPolicy = Policy
+				.Handle<Exception>()
+				.WaitAndRetry(
+					NumberOfRetries,
+					sleepDurationProvider: GetExponentialBackoffSleepDurationProvider(ExponentialWaitTimeBase),
+					onRetry: (exception, waitTime, retryNumber, context) =>
+					{
+						Log.Logger.LogWarning(exception,
+							"Error occurred while reading file with Storage Access (CAL). Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+							retryNumber,
+							NumberOfRetries,
+							waitTime);
+					});
 		}
 
 		public override bool Read()
@@ -28,12 +54,30 @@ namespace Relativity.MassImport.Data
 		{
 			if (i == 1)
 			{
-				return kCura.Utility.File.Instance.ReadFileAsString(Convert.ToString(_rows.Current[i]));
+				StorageStream stream = null;
+
+				try
+				{
+					stream = _retryPolicy.Execute(() =>
+						_storageAccess.OpenFileAsync(Convert.ToString(_rows.Current[i]), OpenBehavior.OpenExisting,
+							ReadWriteMode.ReadOnly).GetAwaiter().GetResult());
+					StreamReader reader = new StreamReader(stream);
+					return reader.ReadToEnd();
+				}
+				finally
+				{
+					stream?.Dispose();
+				}
 			}
 			else
 			{
 				return _rows.Current[i];
 			}
+		}
+
+		private static Func<int, TimeSpan> GetExponentialBackoffSleepDurationProvider(int backoffBase)
+		{
+			return retryNumber => TimeSpan.FromSeconds(Math.Pow(backoffBase, retryNumber));
 		}
 
 		public override bool IsDBNull(int i)
@@ -48,10 +92,10 @@ namespace Relativity.MassImport.Data
 				throw new IndexOutOfRangeException(nameof(i));
 			}
 
-			FileStream stream = null;
+			StorageStream stream = null;
 			try
 			{
-				stream = new FileStream(Convert.ToString(_rows.Current[i]), FileMode.Open, FileAccess.Read, FileShare.Read, 32 * 1024, FileOptions.SequentialScan);
+				stream = _storageAccess.OpenFileAsync(Convert.ToString(_rows.Current[i]), OpenBehavior.OpenExisting, ReadWriteMode.ReadOnly).GetAwaiter().GetResult();
 				var reader = new StreamReader(stream, Encoding.UTF8, true, 32 * 1024, false);
 				stream = null;
 				return reader;

@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.61]
+- REL-797246 - Use CAL to read Extracted Text files
+
 ## [0.2.60]
 - REL-718348 - Revert provious changes
 
