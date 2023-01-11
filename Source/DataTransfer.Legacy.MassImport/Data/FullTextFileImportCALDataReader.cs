@@ -5,17 +5,16 @@ using System.Data;
 using System.Data.Common;
 using System.IO;
 using System.Text;
+using DataTransfer.Legacy.MassImport.Data;
+using Polly;
+using Relativity.Logging;
+using Relativity.Storage;
+using DataTable = System.Data.DataTable;
+using DateTime = System.DateTime;
+using Type = System.Type;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data;
-	using Polly;
-	using Relativity.Logging;
-	using Relativity.Storage;
-	using DataTable = System.Data.DataTable;
-	using DateTime = System.DateTime;
-	using Type = System.Type;
-
 	internal class FullTextFileImportCALDataReader : DbDataReader
 	{
 		private readonly IEnumerator<DataRow> _rows;
@@ -55,9 +54,20 @@ namespace Relativity.MassImport.Data
 		{
 			if (i == 1)
 			{
-				StorageStream stream = _retryPolicy.Execute(() => _storageAccess.OpenFileAsync(Convert.ToString(_rows.Current[i]), OpenBehavior.OpenExisting, ReadWriteMode.ReadOnly).GetAwaiter().GetResult());
-				StreamReader reader = new StreamReader(stream);
-				return reader.ReadToEnd();
+				StorageStream stream = null;
+
+				try
+				{
+					stream = _retryPolicy.Execute(() =>
+						_storageAccess.OpenFileAsync(Convert.ToString(_rows.Current[i]), OpenBehavior.OpenExisting,
+							ReadWriteMode.ReadOnly).GetAwaiter().GetResult());
+					StreamReader reader = new StreamReader(stream);
+					return reader.ReadToEnd();
+				}
+				finally
+				{
+					stream?.Dispose();
+				}
 			}
 			else
 			{

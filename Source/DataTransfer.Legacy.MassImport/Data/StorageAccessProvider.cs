@@ -1,12 +1,12 @@
-﻿namespace DataTransfer.Legacy.MassImport.Data
-{
-	using Castle.Windsor;
-	using Relativity.API;
-	using Relativity.MassImport.Api;
-	using Relativity.Storage;
-	using Relativity.Storage.Extensions;
-	using Relativity.Storage.Extensions.Models;
+﻿using Castle.Windsor;
+using Relativity.API;
+using Relativity.MassImport.Api;
+using Relativity.Storage;
+using Relativity.Storage.Extensions;
+using Relativity.Storage.Extensions.Models;
 
+namespace DataTransfer.Legacy.MassImport.Data
+{
 	public static class StorageAccessProvider
 	{
 		private const string ServiceName = "data-transfer-legacy";

@@ -10,12 +10,10 @@ using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.Telemetry.APM;
+using DataTransfer.Legacy.MassImport.Data;
 
 namespace Relativity.DataTransfer.Legacy.Services.Installer
 {
-	using global::DataTransfer.Legacy.MassImport.Data;
-	using Relativity.Storage.Extensions;
-
 	public class ServicesInstaller : IWindsorInstaller
 	{
 		public void Install(IWindsorContainer container, IConfigurationStore store)

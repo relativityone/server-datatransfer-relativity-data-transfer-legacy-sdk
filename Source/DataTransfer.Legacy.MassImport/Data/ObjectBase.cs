@@ -18,13 +18,12 @@ using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 using DataTransfer.Legacy.MassImport.Data.Cache;
+using System.Data.Common;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
-	using System.Data.Common;
-	using DataTransfer.Legacy.MassImport.Toggles;
-	using Relativity.Toggles;
-
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
@@ -477,6 +476,7 @@ WHERE
 				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
 				{
 					reader = new FullTextFileImportDataReader(filePathResults);
+					Log.Logger.LogWarning("CAL is disabled");
 				}
 				else
 				{
