@@ -12,6 +12,7 @@ namespace DataTransfer.Legacy.MassImport.Data
 		private const string ServiceName = "data-transfer-legacy";
 		private static IStorageAccess<string> _storageAccess;
 		private static IWindsorContainer _container;
+		private static readonly object _lockObject = new object();
 
 		public static void InitializeStorageAccess(IWindsorContainer container)
 		{
@@ -25,11 +26,15 @@ namespace DataTransfer.Legacy.MassImport.Data
 				throw new MassImportException("Storage Access is not initialized");
 			}
 
-			if (_storageAccess == null)
+			lock (_lockObject)
 			{
-				var serviceDetails = new ApplicationDetails(ServiceName);
-				const StorageAccessPermissions permissions = StorageAccessPermissions.GenericRead;
-				_storageAccess =  _container.Resolve<IHelper>().GetStorageAccessorAsync(permissions, serviceDetails).GetAwaiter().GetResult();
+				if (_storageAccess == null)
+				{
+					var serviceDetails = new ApplicationDetails(ServiceName);
+					const StorageAccessPermissions permissions = StorageAccessPermissions.GenericRead;
+					_storageAccess = _container.Resolve<IHelper>().GetStorageAccessorAsync(permissions, serviceDetails)
+						.GetAwaiter().GetResult();
+				}
 			}
 
 			return _storageAccess;
