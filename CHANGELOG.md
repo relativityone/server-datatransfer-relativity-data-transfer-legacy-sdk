@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+## [0.2.62]
+- REL-718348 - Add logging in case of KeyNotFoundException in folder creation with functional tests
 
 ## [0.2.61]
 - REL-797246 - Use CAL to read Extracted Text files
