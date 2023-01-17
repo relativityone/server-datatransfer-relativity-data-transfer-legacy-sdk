@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
@@ -16,6 +17,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 	public class NativeImportTest : MassImportTestBase
 	{
 		private DataTable _expectedFieldValues;
+		private string[] _expectedFolders;
 
 		[TearDown]
 		public async Task TearDownAsync()
@@ -41,6 +43,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			// Assert
 			this.ThenTheImportWasSuccessful(result, expectedArtifactsCreated, expectedArtifactsUpdated);
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
+			Validator.ThenTheFoldersHaveCorrectValues(this.TestWorkspace, this._expectedFolders);
 		}
 
 		private async Task<NativeLoadInfo> CreateSampleNativeLoadInfoAsync(int numberOfArtifactsToCreate)
@@ -90,7 +93,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			};
 
 			this._expectedFieldValues = RandomHelper.GetFieldValues(fields, numberOfArtifactsToCreate);
-			string dataFileContent = GetMetadata(fieldDelimiter, _expectedFieldValues);
+			this._expectedFolders = GetFolders(numberOfArtifactsToCreate);
+			string dataFileContent = GetMetadata(fieldDelimiter, _expectedFieldValues, _expectedFolders);
 
 			return new NativeLoadInfo
 			{
@@ -121,5 +125,15 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				UseBulkDataImport = true,
 			};
 		}
-    }
+
+		private string[] GetFolders(int numberOfArtifactsToCreate)
+		{
+			var folders = new List<string>();
+			for (int i = 0; i < numberOfArtifactsToCreate; i++)
+			{
+				folders.Add($"Folder{i}");
+			}
+			return folders.ToArray();
+		}
+	}
 }
