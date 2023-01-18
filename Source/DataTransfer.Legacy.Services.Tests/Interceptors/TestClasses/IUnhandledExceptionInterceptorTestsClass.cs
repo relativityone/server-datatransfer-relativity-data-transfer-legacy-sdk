@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 	{
 		void Execute();
 		void ExecuteWithPermissionException();
+		void ExecuteWithInsufficientAccessControlListPermissions();
 		void ExecuteWithBaseException();
 		void ExecuteWithBaseExceptionDifferentMessage();
 	}
@@ -28,6 +29,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		public void ExecuteWithPermissionException()
 		{
 			throw new Relativity.Core.Exception.Permission("You do not have permission to view this item (ArtifactID=12345678)");
+		}
+
+		public void ExecuteWithInsufficientAccessControlListPermissions()
+		{
+			throw new Relativity.Core.Exception.InsufficientAccessControlListPermissions("Insufficient Permissions! Please ask your Relativity Administrator to allow you import permission.");
 		}
 
 		public void ExecuteWithBaseException()
