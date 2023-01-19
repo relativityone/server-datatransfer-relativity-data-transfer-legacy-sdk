@@ -526,6 +526,8 @@ SELECT
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string sqlFormat = ImportSql.CreateProductionImageFileRows();
+			int fileType = GetProducedFileType(Settings.HasPDF);
+
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -541,7 +543,7 @@ SELECT
 			var productionIdXmlParam = new SqlParameter("@prodIdXml", SqlDbType.Xml);
 			productionIdXmlParam.Value = "<productionid>" + productionArtifactID + "</productionid>";
 
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0), new SqlParameter[] { productionIdParam, productionIdXmlParam }, QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0, fileType), new SqlParameter[] { productionIdParam, productionIdXmlParam }, QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
@@ -966,6 +968,11 @@ WHERE
 		private static int GetFileType(bool hasPDF)
 		{
 			return hasPDF ? Core.Constants.FileTypes.PDFFileType : Core.Constants.FileTypes.ImageFileType;
+		}
+
+		private static int GetProducedFileType(bool hasPDF)
+		{
+			return hasPDF ? Core.Constants.FileTypes.ProducedPDFFileType : Core.Constants.FileTypes.ProducedImageFileType;
 		}
 		#endregion
 	}

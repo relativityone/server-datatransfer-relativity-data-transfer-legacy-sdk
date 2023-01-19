@@ -373,6 +373,8 @@ END
 		/// ---------------
 		/// 0: img temp table
 		/// 1: inRepository Flag
+		/// 2: isBillable Flag
+		/// 3: Type: 3 - image, 8 - pdf
 		/// </summary>
 		public string CreateProductionImageFileRows()
 		{
@@ -395,7 +397,7 @@ INSERT INTO [File](
 		[ArtifactID],
 		[Filename],
 		[Order],
-		3,
+		{{3}},
 		-1,
 		LEFT(CAST(@prodID AS NVARCHAR(50)) + '_' + [FileIdentifier], 255),
 		[Location],
