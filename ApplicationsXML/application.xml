@@ -188,6 +188,16 @@
       <Name>System.Text.Json.dll</Name>
       <Notes />
     </Assembly>
+    <Assembly>
+    <Keywords />
+      <Name>System.Threading.Tasks.Extensions.dll</Name>
+      <Notes />
+    </Assembly>
+	<Assembly>
+    <Keywords />
+      <Name>System.Numerics.Vectors.dll</Name>
+      <Notes />
+    </Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />
