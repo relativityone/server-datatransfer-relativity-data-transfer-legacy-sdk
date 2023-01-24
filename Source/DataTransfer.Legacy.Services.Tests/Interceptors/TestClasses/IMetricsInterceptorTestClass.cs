@@ -4,6 +4,9 @@
 
 using System;
 using Castle.Core;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
 
@@ -25,14 +28,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 	public class MetricsInterceptorTestClass : IMetricsInterceptorTestClass
 	{
 		private readonly IMetricsContext _metricsContext;
+		private readonly IRelEyeMetricsService _relEyeMetricsService;
+		private readonly IEventsBuilder _eventsBuilder;
 
 		/// <summary> 
 		/// Initializes a new instance of the <see cref="MetricsInterceptorTestClass"/> class. 
 		/// </summary> 
 		/// <param name="metricsContext">metricsContext.</param> 
-		public MetricsInterceptorTestClass(IMetricsContext metricsContext)
+		public MetricsInterceptorTestClass(IMetricsContext metricsContext, IRelEyeMetricsService relEyeMetricsService, IEventsBuilder eventsBuilder)
 		{
 			this._metricsContext = metricsContext;
+			this._relEyeMetricsService = relEyeMetricsService;
+			this._eventsBuilder = eventsBuilder;
 		}
 
 		/// <summary> 
@@ -43,7 +50,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		/// <inheritdoc /> 
 		public void Run()
 		{
+			const int workspaceID = 12345;
 			this._metricsContext.PushProperty("TestMetric", "TestValue");
+			EventGeneralStatistics @event = this._eventsBuilder.BuildGeneralStatisticsEvent("some runID", workspaceID);
+			this._relEyeMetricsService.PublishEvent(@event);
 		}
 	}
 }

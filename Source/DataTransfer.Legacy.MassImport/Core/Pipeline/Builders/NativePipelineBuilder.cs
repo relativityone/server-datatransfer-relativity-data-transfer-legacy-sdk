@@ -1,4 +1,6 @@
-﻿using Relativity.Core.Service;
+﻿using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
+using Relativity.Core.Service;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Framework.Stages;
 using Relativity.MassImport.Core.Pipeline.Input;
@@ -18,16 +20,18 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 		{
 			IStagingTableRepository stagingTableRepository = new NativeStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
+			IRelEyeMetricsService relEyeMetricsService = CreateRelEyeMetricsService();
+			IEventsBuilder eventsBuilder = CreateEventsBuilder();
 
-			var pipeline = BuildJobInitializationStage(context, stagingTableRepository, metricsService)
-				.AddNextStage(BuildBatchExecutionStage(context, stagingTableRepository, metricsService), PipelineExecutor);
+			var pipeline = BuildJobInitializationStage(context, stagingTableRepository, metricsService, relEyeMetricsService, eventsBuilder)
+				.AddNextStage(BuildBatchExecutionStage(context, stagingTableRepository, metricsService, relEyeMetricsService, eventsBuilder), PipelineExecutor);
 
 			return pipeline;
 		}
 
-		private IPipelineStage<NativeImportInput> BuildJobInitializationStage(MassImportContext context, IStagingTableRepository stagingTableRepository, IMassImportMetricsService metricsService)
+		private IPipelineStage<NativeImportInput> BuildJobInitializationStage(MassImportContext context, IStagingTableRepository stagingTableRepository, IMassImportMetricsService metricsService, IRelEyeMetricsService relEyeMetricsService, IEventsBuilder eventsBuilder)
 		{
-			var jobStage = new SendJobStartedMetricStage<NativeImportInput>(context, metricsService)
+			var jobStage = new SendJobStartedMetricStage<NativeImportInput>(context, metricsService, relEyeMetricsService, eventsBuilder)
 				.AddNextStage(new PopulateCacheStage<NativeImportInput>(context), PipelineExecutor)
 				.AddNextStage(new LoadColumnDefinitionCacheStage<NativeImportInput>(context), PipelineExecutor)
 				.AddNextStage(new CreateStagingTablesStage<NativeImportInput>(stagingTableRepository), PipelineExecutor);
@@ -38,7 +42,9 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 		private IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildBatchExecutionStage(
 			MassImportContext context,
 			IStagingTableRepository stagingTableRepository,
-			IMassImportMetricsService metricsService)
+			IMassImportMetricsService metricsService,
+			IRelEyeMetricsService relEyeMetricsService,
+			IEventsBuilder eventsBuilder)
 		{
 			var batchStage = BuildPreImportStage(context, stagingTableRepository, metricsService)
 				.AddNextStage(BuildImportStage(context), PipelineExecutor);

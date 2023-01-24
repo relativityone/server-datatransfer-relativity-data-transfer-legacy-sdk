@@ -11,6 +11,8 @@ using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.Telemetry.APM;
 using DataTransfer.Legacy.MassImport.Data;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 
 namespace Relativity.DataTransfer.Legacy.Services.Installer
 {
@@ -51,7 +53,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<ISqlRetryPolicy>().ImplementedBy<SqlRetryPolicy>().LifestyleTransient());
 
 			container.Register(Component.For<RetryPolicyFactory>());
-
+			container.Register(Component.For<ITelemetryPublisher>().ImplementedBy<ApmTelemetryPublisher>().LifestyleTransient());
+			container.Register(Component.For<IRelEyeMetricsService>().ImplementedBy<RelEyeMetricsService>().LifestyleTransient());
+			container.Register(Component.For<IEventsBuilder>().ImplementedBy<EventsBuilder>().LifestyleTransient());
 			StorageAccessProvider.InitializeStorageAccess(container);
 		}
 	}

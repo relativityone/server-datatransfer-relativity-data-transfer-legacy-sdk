@@ -1,4 +1,6 @@
 ﻿using System;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using Relativity.Core.Service;
 using Relativity.Data.MassImport;
 using Relativity.MassImport.Core.Pipeline.Framework;
@@ -22,12 +24,14 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 		{
 			IStagingTableRepository stagingTableRepository = new ObjectsStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
+			IRelEyeMetricsService relEyeMetricsService = CreateRelEyeMetricsService();
+			IEventsBuilder eventsBuilder = CreateEventsBuilder();
 
 			IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> importStage = new Stages.Objects.ImportObjectsStage(context, new LockHelper(new AppLockProvider()));
 			importStage = ExecuteInTransactionDecoratorStage.New(importStage, PipelineExecutor, context);
 			importStage = RetryOnExceptionDecoratorStage.New(importStage, PipelineExecutor, context, actionName: "importing Objects");
 
-			var pipeline = new SendJobStartedMetricStage<ObjectImportInput>(context, metricsService)
+			var pipeline = new SendJobStartedMetricStage<ObjectImportInput>(context, metricsService, relEyeMetricsService, eventsBuilder)
 				.AddNextStage(new PopulateCacheStage<ObjectImportInput>(context), PipelineExecutor)
 				.AddNextStage(new LoadColumnDefinitionCacheStage<ObjectImportInput>(context), PipelineExecutor)
 				.AddNextStage(new CreateStagingTablesStage<ObjectImportInput>(stagingTableRepository), PipelineExecutor)

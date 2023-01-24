@@ -5,13 +5,16 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
+using RelEyeAttributes = global::DataTransfer.Legacy.MassImport.RelEyeTelemetry.Constants.AttributeNames;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
@@ -21,16 +24,22 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	public class MetricsInterceptor : InterceptorBase
 	{
 		private readonly Func<IMetricsContext> _metricsContextFactory;
+		private readonly IRelEyeMetricsService _relEyeMetricsService;
+		private readonly IEventsBuilder _eventsBuilder;
 		private Stopwatch _stopwatch;
 
 		/// <summary> 
 		/// Initializes a new instance of the <see cref="MetricsInterceptor"/> class. 
 		/// </summary> 
 		/// <param name="logger"></param> 
-		/// <param name="metricsContextFactory"></param> 
-		public MetricsInterceptor(IAPILog logger, Func<IMetricsContext> metricsContextFactory) : base(logger)
+		/// <param name="metricsContextFactory"></param>
+		/// <param name="relEyeMetricsService"></param>
+		/// <param name="eventsBuilder"></param> 
+		public MetricsInterceptor(IAPILog logger, Func<IMetricsContext> metricsContextFactory, IRelEyeMetricsService relEyeMetricsService, IEventsBuilder eventsBuilder) : base(logger)
 		{
 			_metricsContextFactory = metricsContextFactory;
+			_relEyeMetricsService = relEyeMetricsService ?? throw new ArgumentNullException(nameof(relEyeMetricsService));
+			_eventsBuilder = eventsBuilder ?? throw new ArgumentNullException(nameof(eventsBuilder));
 		}
 
 		/// <inheritdoc /> 
@@ -63,7 +72,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				return;
 			}
-
+			
+			var arguments = InterceptorHelper.GetFunctionArgumentsFrom(invocation);
 			var generalMetrics = _metricsContextFactory.Invoke();
 			generalMetrics.PushProperty("GeneralMetrics", "1");
 			for (var i = 0; i < parameters.Length; i++)
@@ -88,6 +98,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				{
 					var exportStatistics = (ExportStatistics) invocationArgument;
 					PushExportStatisticsMetrics(generalMetrics, exportStatistics);
+					arguments.TryGetValue("correlationID", out string correlationID);
+					arguments.TryGetValue("workspaceID", out string workspaceIDString);
+					int.TryParse(workspaceIDString, out int workspaceID);
+					EventGeneralStatistics @event = _eventsBuilder.BuildGeneralStatisticsEvent(correlationID, workspaceID);
+					AddAttributesToStatisticsEvent(@event, exportStatistics);
+					_relEyeMetricsService.PublishEvent(@event);
 					continue;
 				}
 
@@ -95,6 +111,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				{
 					var objectImportStatistics = (ObjectImportStatistics) invocationArgument;
 					PushObjectImportStatisticsMetrics(generalMetrics, objectImportStatistics);
+					arguments.TryGetValue("runID", out string runID);
+					arguments.TryGetValue("workspaceID", out string workspaceIDString);
+					int.TryParse(workspaceIDString, out int workspaceID);
+					EventGeneralStatistics @event = _eventsBuilder.BuildGeneralStatisticsEvent(runID, workspaceID);
+					AddAttributesToStatisticsEvent(@event, objectImportStatistics);
+					_relEyeMetricsService.PublishEvent(@event);
 					continue;
 				}
 
@@ -102,6 +124,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				{
 					var imageImportStatistics = (ImageImportStatistics) invocationArgument;
 					PushImageImportStatisticsMetrics(generalMetrics, imageImportStatistics);
+					arguments.TryGetValue("runID", out string runID);
+					arguments.TryGetValue("workspaceID", out string workspaceIDString);
+					int.TryParse(workspaceIDString, out int workspaceID);
+					EventGeneralStatistics @event = _eventsBuilder.BuildGeneralStatisticsEvent(runID, workspaceID);
+					AddAttributesToStatisticsEvent(@event, imageImportStatistics);
+					_relEyeMetricsService.PublishEvent(@event);
 					continue;
 				}
 
@@ -329,7 +357,33 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(imageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(imageLoadInfo.Billable), imageLoadInfo.Billable);
 			metrics.PushProperty(nameof(imageLoadInfo.HasPDF), imageLoadInfo.HasPDF);
-            metrics.PushProperty(nameof(imageLoadInfo.OverrideReferentialLinksRestriction), imageLoadInfo.OverrideReferentialLinksRestriction);
-        }
+			metrics.PushProperty(nameof(imageLoadInfo.OverrideReferentialLinksRestriction), imageLoadInfo.OverrideReferentialLinksRestriction);
+		}
+
+		private void AddAttributesToStatisticsEvent(EventGeneralStatistics eventGeneral, ObjectImportStatistics objectImportStatistics)
+		{
+			eventGeneral.Attributes[RelEyeAttributes.DocumentsCreatedCount] = objectImportStatistics.NumberOfDocumentsCreated;
+			eventGeneral.Attributes[RelEyeAttributes.DocumentsUpdatedCount] = objectImportStatistics.NumberOfDocumentsUpdated;
+			eventGeneral.Attributes[RelEyeAttributes.ChoicesCreatedCount] = objectImportStatistics.NumberOfChoicesCreated;
+			eventGeneral.Attributes[RelEyeAttributes.FoldersCreatedCount] = objectImportStatistics.NumberOfFoldersCreated;
+			eventGeneral.Attributes[RelEyeAttributes.ErrorsCount] = objectImportStatistics.NumberOfErrors;
+			eventGeneral.Attributes[RelEyeAttributes.WarningsCount] = objectImportStatistics.NumberOfWarnings;
+			eventGeneral.Attributes[RelEyeAttributes.FilesLoadedCount] = objectImportStatistics.NumberOfFilesLoaded;
+		}
+
+		private void AddAttributesToStatisticsEvent(EventGeneralStatistics eventGeneral, ImageImportStatistics imageImportStatistics)
+		{
+			eventGeneral.Attributes[RelEyeAttributes.DocumentsCreatedCount] = imageImportStatistics.NumberOfDocumentsCreated;
+			eventGeneral.Attributes[RelEyeAttributes.DocumentsUpdatedCount] = imageImportStatistics.NumberOfDocumentsUpdated;
+			eventGeneral.Attributes[RelEyeAttributes.ErrorsCount] = imageImportStatistics.NumberOfErrors;
+			eventGeneral.Attributes[RelEyeAttributes.WarningsCount] = imageImportStatistics.NumberOfWarnings;
+			eventGeneral.Attributes[RelEyeAttributes.FilesLoadedCount] = imageImportStatistics.NumberOfFilesLoaded;
+		}
+
+		private void AddAttributesToStatisticsEvent(EventGeneralStatistics eventGeneral, ExportStatistics exportStatistics)
+		{
+			eventGeneral.Attributes[RelEyeAttributes.ErrorsCount] = exportStatistics.ErrorCount;
+			eventGeneral.Attributes[RelEyeAttributes.WarningsCount] = exportStatistics.WarningCount;
+		}
 	}
 }

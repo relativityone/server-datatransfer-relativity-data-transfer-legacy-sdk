@@ -1,4 +1,6 @@
-﻿using Relativity.MassImport.Core.Pipeline.Framework;
+﻿using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
+using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.Telemetry.APM;
 
 namespace Relativity.MassImport.Core.Pipeline.Builders
@@ -18,6 +20,16 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 		{
 			// TODO REL-438046 we need to figure out a better approach for dependency injection.
 			return new MassImportMetrics(context.Logger, APM);
+		}
+
+		protected IRelEyeMetricsService CreateRelEyeMetricsService()
+		{
+			return new RelEyeMetricsService(new ApmTelemetryPublisher(APM));
+		}
+
+		protected IEventsBuilder CreateEventsBuilder()
+		{
+			return new EventsBuilder();
 		}
 	}
 }
