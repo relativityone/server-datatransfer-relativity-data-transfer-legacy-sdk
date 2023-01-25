@@ -53,7 +53,7 @@ namespace Relativity.MassImport.Core
 
             SendTimer(Constants.MassImportMetricsBucketNames.BatchCompleted, correlationId, importTimeInMilliseconds, customData);
 
-            if (result.ExceptionDetail != null) // when error occured, we want to log metrics
+            if (result.ExceptionDetail != null) // when error occurred, we want to log metrics
             {
                 _logger.LogError("Import failed after '{importTime}'ms, metrics: {@customData}", importTimeInMilliseconds, customData);
             }
