@@ -663,10 +663,10 @@ SELECT
 		/// Format replace:
 		/// ---------------
 		/// 0: img temp table
-		/// 1: CodeArtifact partition table name for HasImages
+		/// 1: CodeArtifact partition table name for HasImages or HasPdf
 		/// 2: CodeType Name: HasImages or HasPDF
 		/// </summary>
-		public string ManageHasImagesForImagesImport()
+		public string ManageHasImagesOrHasPDF()
 		{
 			return $@"
 		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = '{{2}}')

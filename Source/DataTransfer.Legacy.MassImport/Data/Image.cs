@@ -491,20 +491,35 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
+
 		/// <summary>
-		/// Add or updates the records in DB related to HasImage for particular document.
+		/// Add or updates the records in DB related to HasImage or HasPDF for particular document.
 		/// </summary>
-		/// <param name="isProductionImagesImport">Flag indicating whether update 'HasImages' is because of images import or productions import.
-		/// The behaviour for these two scenario is different. </param>
-		public void ManageHasImages(bool isProductionImagesImport = false)
+		public void ManageHasImagesOrHasPDF()
 		{
 			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
-			string sqlFormat = isProductionImagesImport
-				? ImportSql.ManageHasImagesForProductionImport()
-				: ImportSql.ManageHasImagesForImagesImport();
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName)
+;
+			string sqlFormat = ImportSql.ManageHasImagesOrHasPDF();
+
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
+			ImportMeasurements.StopMeasure();
+			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
+		}
+
+		/// <summary>
+		/// Add or updates the records in DB related to HasImage for particular document for production flow.
+		/// </summary>
+		public void ManageHasImagesForProduction()
+		{
+			string codeTypeName =  Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
+			ImportMeasurements.StartMeasure();
+			ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			string codeArtifactTableName =
+				Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
+			string sqlFormat = ImportSql.ManageHasImagesForProductionImport();
 
 			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();

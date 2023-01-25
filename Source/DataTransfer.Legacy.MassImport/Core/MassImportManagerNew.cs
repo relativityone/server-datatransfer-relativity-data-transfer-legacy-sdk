@@ -193,8 +193,8 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 					}
-
-					image.ManageHasImages();
+					
+					image.ManageHasImagesOrHasPDF();
 					image.CreateImageFileRows(context.UserID, Relativity.Core.Config.AuditingEnabled,
 						context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), inRepository);
 					image.UpdateImageCount();
@@ -380,7 +380,7 @@ namespace Relativity.MassImport.Core
 						}
 					}
 
-					image.ManageHasImages(true);
+					image.ManageHasImagesForProduction();
 					image.ImportMeasurements.StartMeasure(nameof(productionManager
 						.UpdateImportStatusForFilesAlreadyInProduction));
 					productionManager.UpdateImportStatusForFilesAlreadyInProduction(context, productionArtifactID,
