@@ -8,9 +8,10 @@ namespace Relativity.MassImport.Data
 		public static ISqlQueryPart ValidateAssociatedObjectsForSingleObjectField(
 			TableNames tableNames, 
 			FieldInfo field, 
-			int associatedObjectArtifactTypeId)
+			int associatedObjectArtifactTypeId,
+			string associatedObjectTable)
 		{
-			return new SerialSqlQuery(CreateErrorsForDuplicatedObjects(tableNames, field), CreateErrorsForMissingChildObjects(tableNames, field, associatedObjectArtifactTypeId));
+			return new SerialSqlQuery(CreateErrorsForDuplicatedObjects(tableNames, field, associatedObjectTable), CreateErrorsForMissingChildObjects(tableNames, field, associatedObjectArtifactTypeId));
 		}
 
 		public static ISqlQueryPart ValidateAssociatedDocumentForSingleObjectFieldExists(TableNames tableNames, FieldInfo field)
@@ -60,7 +61,8 @@ WHERE
 
 		private static InlineSqlQuery CreateErrorsForDuplicatedObjects(
 			TableNames tableNames, 
-			FieldInfo field)
+			FieldInfo field,
+			string associatedObjectTable)
 		{
 			return new InlineSqlQuery($@"
 ;WITH DuplicatedAssociatedObjects(kCura_Import_ID) AS
@@ -74,7 +76,8 @@ WHERE
 
 UPDATE N2
 SET
-	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject}
+	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject},
+	N2.[kCura_Import_ErrorData] = N.[{field.GetColumnName()}] + '|{associatedObjectTable}' + '|{field.DisplayName}'
 FROM
 	[Resource].[{tableNames.Native}] N
 JOIN [DuplicatedAssociatedObjects] ON
