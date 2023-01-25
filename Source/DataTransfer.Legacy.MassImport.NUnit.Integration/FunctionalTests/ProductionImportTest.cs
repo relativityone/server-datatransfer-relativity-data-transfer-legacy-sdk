@@ -29,15 +29,16 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		{
 			await RdoHelper.DeleteAllObjectsByTypeAsync(TestParameters, TestWorkspace, (int)ArtifactType.Document).ConfigureAwait(false);
 		}
-		[Test]
-		public async Task ShouldRunProductionImport()
+		[TestCase(false)]
+		[TestCase(true)]
+		public async Task ShouldRunProductionImport(bool hasPDF)
 		{
 			// Arrange
 			const int expectedArtifactsCreated = 1;
 			const int expectedArtifactsUpdated = 0;
 
 			const bool inRepository = true;
-			var imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
+			var imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated, hasPDF).ConfigureAwait(false);
 			
 
 			MassImportManager massImportManager = new MassImportManager();
@@ -58,7 +59,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.AreEqual(expectedArtifactsUpdated, 0);
 		}
 
-		private async Task<ImageLoadInfo> CreateSampleImageLoadInfoAsync(int numberOfArtifactsToCreate)
+		private async Task<ImageLoadInfo> CreateSampleImageLoadInfoAsync(int numberOfArtifactsToCreate, bool hasPDF)
 		{
 			string repositoryPath = Path.Combine(this.TestWorkspace.DefaultFileRepository, "EDDS" + this.TestWorkspace.WorkspaceId);
 
@@ -95,7 +96,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				RunID = Guid.NewGuid().ToString().Replace('-', '_'),
 				UseBulkDataImport = true,
 				BulkFileName = await BcpFileHelper.CreateAsync(this.TestParameters, this.TestWorkspace.WorkspaceId, dataFileContent).ConfigureAwait(false),
-				HasPDF = false,
+				HasPDF = hasPDF,
 				UploadFullText = false,
 				DestinationFolderArtifactID = 1003697,
 			};
