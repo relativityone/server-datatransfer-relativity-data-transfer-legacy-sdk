@@ -35,7 +35,9 @@
 		internal class FileTypes
 		{
 			public const int ImageFileType = 1;
+			public const int ProducedImageFileType = 3;
 			public const int PDFFileType = 6;
+			public const int ProducedPDFFileType = 8;
 		}
 	}
 }
