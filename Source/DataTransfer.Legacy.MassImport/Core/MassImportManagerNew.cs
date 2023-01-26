@@ -273,10 +273,6 @@ namespace Relativity.MassImport.Core
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 
-			if (settings.HasPDF && !IsPDFImportSupported(context))
-			{
-				throw new System.Exception("PDF files import is not supported");
-			}
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
 				throw new System.Exception("Invalid RunId");
