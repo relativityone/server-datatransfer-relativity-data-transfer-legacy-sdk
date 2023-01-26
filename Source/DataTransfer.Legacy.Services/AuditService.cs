@@ -41,7 +41,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditExportAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditExportAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -61,7 +64,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditObjectImportAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditObjectImportAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -81,7 +87,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditImageImportAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditImageImportAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -100,7 +109,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task DeleteAuditTokenAsync(string token, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-DeleteAuditTokenAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-DeleteAuditTokenAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)

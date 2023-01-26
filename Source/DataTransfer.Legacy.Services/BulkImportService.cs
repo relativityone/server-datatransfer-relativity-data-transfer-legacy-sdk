@@ -61,7 +61,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportImageAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportImageAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -95,7 +98,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportProductionImageAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+            ActivityContext.TryParse(correlationID, null, out context);
+			
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportProductionImageAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -129,7 +135,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportNativeAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportNativeAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -164,7 +173,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportObjectsAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportObjectsAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -259,7 +271,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-GenerateImageErrorFilesAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-GenerateImageErrorFilesAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -279,7 +294,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-ImageRunHasErrorsAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-ImageRunHasErrorsAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -306,7 +324,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-GenerateNonImageErrorFilesAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-GenerateNonImageErrorFilesAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -326,7 +347,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> NativeRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-NativeRunHasErrorsAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-NativeRunHasErrorsAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -346,7 +370,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-DisposeTempTablesAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-DisposeTempTablesAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
@@ -367,7 +394,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-HasImportPermissionsAsync", ActivityKind.Server))
+			ActivityContext context = new ActivityContext();
+			ActivityContext.TryParse(correlationID, null, out context);
+
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-HasImportPermissionsAsync", ActivityKind.Server, context))
 			{
 				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
 				if (jobIdIsValid)
