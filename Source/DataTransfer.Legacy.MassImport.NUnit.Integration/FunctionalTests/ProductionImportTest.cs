@@ -29,8 +29,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		{
 			await RdoHelper.DeleteAllObjectsByTypeAsync(TestParameters, TestWorkspace, (int)ArtifactType.Document).ConfigureAwait(false);
 		}
-		[TestCase(false)]
 		[TestCase(true)]
+		[TestCase(false)]
 		public async Task ShouldRunProductionImport(bool hasPDF)
 		{
 			// Arrange
