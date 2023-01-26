@@ -41,8 +41,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Audit.Export", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditExportAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -55,8 +61,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Audit.ObjectImport", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditObjectImportAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -69,8 +81,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Audit.ImageImport", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-AuditImageImportAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -82,8 +100,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task DeleteAuditTokenAsync(string token, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.Audit.DeleteAuditToken", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("AuditService-DeleteAuditTokenAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);

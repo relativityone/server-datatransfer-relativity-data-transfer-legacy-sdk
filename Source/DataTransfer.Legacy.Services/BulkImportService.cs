@@ -61,8 +61,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.Image", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportImageAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -77,11 +83,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.RunID,
 					settings.BulkFileName);
 				
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Image - Settings created."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportImageAsync - Settings created."));
 
 				var result = BulkImport(runSettings, coordinator);
 
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Image - BulkImport executed."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportImageAsync - BulkImport executed."));
 
 				return Task.FromResult(result);
 			}
@@ -89,8 +95,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.ProductionImage", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportProductionImageAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -105,11 +117,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.RunID,
 					settings.BulkFileName);
 				
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ProductionImage - Settings created."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportProductionImageAsync - Settings created."));
 
 				var result = BulkImport(runSettings, coordinator);
 
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ProductionImage - BulkImport executed."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportProductionImageAsync - BulkImport executed."));
 
 				return Task.FromResult(result);
 			}
@@ -117,8 +129,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.ImportNative", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportNativeAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+							
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -133,11 +151,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.RunID,
 					settings.DataFileName);
 
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ImportNative - Settings created."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportNativeAsync - Settings created."));
 
 				var result = BulkImport(runSettings, coordinator);
 
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.ImportNative - BulkImport executed."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportNativeAsync - BulkImport executed."));
 
 				return Task.FromResult(result);
 			}
@@ -146,8 +164,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.Objects", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-BulkImportObjectsAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -162,11 +186,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 					settings.RunID,
 					settings.DataFileName);
 
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Objects - Settings created."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportObjectsAsync - Settings created."));
 
 				var result = BulkImport(runSettings, coordinator);
 
-				activity?.AddEvent(new ActivityEvent("DataTransfer.Legacy.Kepler.Api.BulkImport.Objects - BulkImport Executed."));
+				activity?.AddEvent(new ActivityEvent("BulkImportService-BulkImportObjectsAsync - BulkImport Executed."));
 
 				return Task.FromResult(result);
 			}
@@ -235,8 +259,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.GenerateImageErrorFiles", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-GenerateImageErrorFilesAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -249,8 +279,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.ImageRunHasErrors", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-ImageRunHasErrorsAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -270,8 +306,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.GenerateNonImageErrorFiles", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-GenerateNonImageErrorFilesAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -284,8 +326,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> NativeRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.NativeRunHasErrors", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-NativeRunHasErrorsAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -298,8 +346,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.DisposeTempTables", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-DisposeTempTablesAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
@@ -313,8 +367,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.BulkImport.HasImportPermissions", ActivityKind.Server))
+			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("BulkImportService-HasImportPermissionsAsync", ActivityKind.Server))
 			{
+				var jobIdIsValid = Guid.TryParse(correlationID, out Guid jobId);
+				if (jobIdIsValid)
+				{
+					activity?.SetParentId(jobId.ToString("N"));
+				}
+
 				_traceGenerator.SetSystemTags(activity);
 
 				activity?.SetTag("job.id", correlationID);
