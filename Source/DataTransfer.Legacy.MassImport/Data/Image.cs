@@ -500,8 +500,7 @@ SELECT
 			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName)
-;
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
 			string sqlFormat = ImportSql.ManageHasImagesOrHasPDF();
 
 			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
