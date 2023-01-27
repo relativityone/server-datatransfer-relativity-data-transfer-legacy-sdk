@@ -354,7 +354,7 @@ namespace Relativity.MassImport.Data
 			{
 				// this method updates the temp artifact table to add ids for any known RDOs that may be about to be imported from a single or multi object field.
 				string sql = new SerialSqlQuery(
-					new InlineSqlQuery(ImportSql.ValidateReferencedObjectsAreNotDuplicated(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID)), 
+					new InlineSqlQuery(ImportSql.ValidateReferencedObjectsAreNotDuplicated(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID, field.DisplayName)),
 					new InlineSqlQuery(ImportSql.SetArtifactIdForExistingMultiObjects(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID))
 					).ToString();
 				ExecuteNonQuerySQLStatement(sql);

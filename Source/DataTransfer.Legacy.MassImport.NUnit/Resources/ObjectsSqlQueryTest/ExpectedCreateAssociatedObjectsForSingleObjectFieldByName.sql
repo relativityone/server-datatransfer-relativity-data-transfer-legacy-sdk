@@ -26,7 +26,8 @@ JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleO
 
 UPDATE N2
 SET
-	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + 262144
+	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + 262144,
+    N2.[kCura_Import_ErrorData] = N.[SingleObjectFieldName] + '|SingleObjectTableName' + '|SingleObjectFieldName'
 FROM
 	[Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
 JOIN [DuplicatedAssociatedObjects] ON

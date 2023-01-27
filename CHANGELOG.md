@@ -3,6 +3,8 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+## [0.2.67]
+- REL-804941 - Add object and field information to ErrorDuplicateAssociatedObject message
 
 ## [0.2.66]
 - REL-622708 - Add support for import PDF files in production

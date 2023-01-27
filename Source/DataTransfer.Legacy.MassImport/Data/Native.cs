@@ -227,7 +227,7 @@ namespace Relativity.MassImport.Data
 			sql.Add(new InlineSqlQuery($"DECLARE @now DATETIME = GETUTCDATE()"));
 
 			sql.Add(this.ImportSql.PopulateAssociatedPartTable(this._tableNames, field.ArtifactID, associatedObjectTable, field.GetColumnName(), idFieldColumnName));
-			sql.Add(AssociatedObjectsValidationSql.ValidateAssociatedObjectsForSingleObjectField(this._tableNames, field, associatedArtifactTypeId));
+			sql.Add(AssociatedObjectsValidationSql.ValidateAssociatedObjectsForSingleObjectField(this._tableNames, field, associatedArtifactTypeId, associatedObjectTable));
 
 			sql.Add(ArtifactTableInsertSql.WithAssociatedObjects(
 				this._tableNames, 
