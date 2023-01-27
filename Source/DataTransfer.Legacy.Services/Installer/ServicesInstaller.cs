@@ -8,6 +8,7 @@ using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
+using Relativity.DataTransfer.Legacy.Services.Observability;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.Telemetry.APM;
 
@@ -48,7 +49,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 				.UsingFactoryMethod(x => x.Resolve<IBatchResultCacheFactory>().Create()));
 			container.Register(Component.For<ISqlExecutor>().ImplementedBy<DbContextToSqlExecutorAdapter>().LifestyleTransient());
 			container.Register(Component.For<ISqlRetryPolicy>().ImplementedBy<SqlRetryPolicy>().LifestyleTransient());
-			container.Register(Component.For<ITraceGenerator>().ImplementedBy<CoreTraceGenerator>().LifestyleTransient());
+			container.Register(Component.For<ITraceGenerator>().ImplementedBy<TraceGenerator>().LifestyleTransient());
 			container.Register(Component.For<RetryPolicyFactory>());
 		}
 	}

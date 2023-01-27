@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class IAPICommunicationModeService : BaseService, IIAPICommunicationModeService
 	{
 		private readonly IAPILog _logger;

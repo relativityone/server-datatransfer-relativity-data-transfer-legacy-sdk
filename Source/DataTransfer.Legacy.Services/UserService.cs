@@ -7,7 +7,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Metrics;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -16,37 +15,19 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class UserService : BaseService, IUserService
 	{
-		private readonly ITraceGenerator _traceGenerator;
-
-		public UserService(IServiceContextFactory serviceContextFactory, ITraceGenerator traceGenerator) 
-			: base(serviceContextFactory)
-		{
-			this._traceGenerator = traceGenerator ?? throw new ArgumentNullException(nameof(traceGenerator));
-
-			ActivityListener listener = new ActivityListener()
-			{
-				ShouldListenTo = _ => true,
-				Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
-			};
-
-			ActivitySource.AddActivityListener(listener);
-		}
+		public UserService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
 
 		public Task<DataSetWrapper> RetrieveAllAssignableInCaseAsync(int workspaceID, string correlationID)
 		{
-			using (var activity = _traceGenerator.GetActivitySurce()?.StartActivity("DataTransfer.Legacy.Kepler.Api.User.RetrieveAllAssignableInCase", ActivityKind.Server))
-			{
-				_traceGenerator.SetSystemTags(activity);
+			var activity = Activity.Current;
+			activity?.SetTag("r1.workspace.id", workspaceID);
 
-				activity?.SetTag("job.id", correlationID);
-				activity?.SetTag("r1.workspace.id", workspaceID);
-
-				var manager = new UserManager();
-				var result = manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
-				return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
-			}
+			var manager = new UserManager();
+			var result = manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
+			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task LogoutAsync(string correlationID)

@@ -12,13 +12,14 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
+using Relativity.DataTransfer.Legacy.Services.Observability;
 using Relativity.Services.Exceptions;
 using Relativity.Services.Objects.Exceptions;
 using TddEbook.TddToolkit;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests
 {
-	[TestFixture]
+    [TestFixture]
 	public class FileIOServiceTests
 	{
 		private Mock<IServiceContextFactory> _serviceContextFactoryMock;
@@ -47,11 +48,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			container.Register(Component.For<LogInterceptor>());
 			container.Register(Component.For<MetricsInterceptor>());
 			container.Register(Component.For<UnhandledExceptionInterceptor>());
+			container.Register(Component.For<DistributedTracingInterceptor>());
 			container.Register(Component.For<IMetricsContext>().Instance(_metricsMock.Object));
 			container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
 				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
 			container.Register(Component.For<IFileIOService>().ImplementedBy<FileIOService>());
-			container.Register(Component.For<ITraceGenerator>().ImplementedBy<CoreTraceGenerator>());
+			container.Register(Component.For<ITraceGenerator>().ImplementedBy<TraceGenerator>());
 
 			_uut = container.Resolve<IFileIOService>();
 		}
