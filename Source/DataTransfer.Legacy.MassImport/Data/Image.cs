@@ -491,20 +491,34 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
+
 		/// <summary>
-		/// Add or updates the records in DB related to HasImage for particular document.
+		/// Add or updates the records in DB related to HasImage or HasPDF for particular document.
 		/// </summary>
-		/// <param name="isProductionImagesImport">Flag indicating whether update 'HasImages' is because of images import or productions import.
-		/// The behaviour for these two scenario is different. </param>
-		public void ManageHasImages(bool isProductionImagesImport = false)
+		public void ManageHasImagesOrHasPDF()
 		{
 			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
-			string sqlFormat = isProductionImagesImport
-				? ImportSql.ManageHasImagesForProductionImport()
-				: ImportSql.ManageHasImagesForImagesImport();
+			string sqlFormat = ImportSql.ManageHasImagesOrHasPDF();
+
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
+			ImportMeasurements.StopMeasure();
+			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
+		}
+
+		/// <summary>
+		/// Add or updates the records in DB related to HasImage for particular document for production flow.
+		/// </summary>
+		public void ManageHasImagesForProduction()
+		{
+			string codeTypeName =  Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
+			ImportMeasurements.StartMeasure();
+			ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			string codeArtifactTableName =
+				Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
+			string sqlFormat = ImportSql.ManageHasImagesForProductionImport();
 
 			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
@@ -526,6 +540,8 @@ SELECT
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string sqlFormat = ImportSql.CreateProductionImageFileRows();
+			int fileType = GetProducedFileType(Settings.HasPDF);
+
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -541,7 +557,7 @@ SELECT
 			var productionIdXmlParam = new SqlParameter("@prodIdXml", SqlDbType.Xml);
 			productionIdXmlParam.Value = "<productionid>" + productionArtifactID + "</productionid>";
 
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0), new SqlParameter[] { productionIdParam, productionIdXmlParam }, QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0, fileType), new SqlParameter[] { productionIdParam, productionIdXmlParam }, QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
@@ -966,6 +982,11 @@ WHERE
 		private static int GetFileType(bool hasPDF)
 		{
 			return hasPDF ? Core.Constants.FileTypes.PDFFileType : Core.Constants.FileTypes.ImageFileType;
+		}
+
+		private static int GetProducedFileType(bool hasPDF)
+		{
+			return hasPDF ? Core.Constants.FileTypes.ProducedPDFFileType : Core.Constants.FileTypes.ProducedImageFileType;
 		}
 		#endregion
 	}
