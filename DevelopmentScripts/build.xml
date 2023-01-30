@@ -43,6 +43,7 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Security.Cryptography.ProtectedData.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Text.Encodings.Web.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Text.Json.dll</Assembly>    
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.dll</Assembly> 
         </Assemblies>
         <ResourceFiles />
         <CustomPages />

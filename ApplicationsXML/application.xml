@@ -188,6 +188,11 @@
       <Name>System.Text.Json.dll</Name>
       <Notes />
     </Assembly>
+	<Assembly>
+      <Keywords />
+      <Name>Relativity.DataGrid.dll</Name>
+      <Notes />
+    </Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />

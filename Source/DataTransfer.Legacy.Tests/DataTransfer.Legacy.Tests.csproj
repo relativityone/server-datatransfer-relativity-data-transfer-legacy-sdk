@@ -37,7 +37,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="3.0.91" />
-    <PackageReference Include="Relativity.Core" Version="52.3.17" />
+    <PackageReference Include="Relativity.Core" Version="55.0.17" />
   </ItemGroup>
 
   <ItemGroup>
