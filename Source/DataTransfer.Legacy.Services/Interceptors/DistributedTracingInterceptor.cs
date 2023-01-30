@@ -45,7 +45,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				if (parameters.Length != invocation.Arguments.Length)
 				{
 					_logger.LogInformation($"ParentContext.TraceId: NONE");
-					currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server);
 					return;
 				}
 
@@ -56,14 +55,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 					if (currentParameter.Name == "correlationID")
 					{
-						var jobIdIsValid = Guid.TryParse(invocationArgument?.ToString(), out Guid jobId);
-						if (jobIdIsValid)
-						{
-							var traceId = ActivityTraceId.CreateFromString(new ReadOnlySpan<char>(jobId.ToString("N").ToCharArray()));
-							var parentContext = new ActivityContext(traceId, ActivitySpanId.CreateRandom(), ActivityTraceFlags.None);
-							_logger.LogInformation($"ParentContext.TraceId: {parentContext.TraceId}");
-							currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server, parentContext);
-						}
+						var parentContext = TraceHelper.DeserializeContext(invocationArgument?.ToString());
+						_logger.LogInformation($"ParentContext.TraceId: {parentContext.TraceId}");
+						currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server, parentContext);
 						break;
 					}
 				}
@@ -71,7 +65,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			catch (Exception ex)
 			{
 				_logger.LogInformation($"ParentContext.TraceId: ERROR", ex);
-			}
+			}			
 		}
 
 		/// <inheritdoc />
