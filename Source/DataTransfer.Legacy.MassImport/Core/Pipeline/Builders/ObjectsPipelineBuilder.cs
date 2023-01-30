@@ -1,4 +1,6 @@
-﻿using Relativity.Core.Service;
+﻿using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
+using Relativity.Core.Service;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Framework.Stages;
 using Relativity.MassImport.Core.Pipeline.Input;
@@ -20,16 +22,18 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 		{
 			IStagingTableRepository stagingTableRepository = new ObjectsStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
+			IRelEyeMetricsService relEyeMetricsService = CreateRelEyeMetricsService();
+			IEventsBuilder eventsBuilder = CreateEventsBuilder();
 
-			var pipeline = BuildJobInitializationStage(context, stagingTableRepository, metricsService)
+			var pipeline = BuildJobInitializationStage(context, stagingTableRepository, metricsService, relEyeMetricsService, eventsBuilder)
 				.AddNextStage(BuildBatchExecutionStage(context, stagingTableRepository, metricsService), PipelineExecutor);
 
 			return pipeline;
 		}
 
-		private IPipelineStage<ObjectImportInput> BuildJobInitializationStage(MassImportContext context, IStagingTableRepository stagingTableRepository, IMassImportMetricsService metricsService)
+		private IPipelineStage<ObjectImportInput> BuildJobInitializationStage(MassImportContext context, IStagingTableRepository stagingTableRepository, IMassImportMetricsService metricsService, IRelEyeMetricsService relEyeMetricsService, IEventsBuilder eventsBuilder)
 		{
-			var jobStage = new SendJobStartedMetricStage<ObjectImportInput>(context, metricsService)
+			var jobStage = new SendJobStartedMetricStage<ObjectImportInput>(context, metricsService, relEyeMetricsService, eventsBuilder)
 				.AddNextStage(new PopulateCacheStage<ObjectImportInput>(context), PipelineExecutor)
 				.AddNextStage(new LoadColumnDefinitionCacheStage<ObjectImportInput>(context), PipelineExecutor)
 				.AddNextStage(new CreateStagingTablesStage<ObjectImportInput>(stagingTableRepository), PipelineExecutor);

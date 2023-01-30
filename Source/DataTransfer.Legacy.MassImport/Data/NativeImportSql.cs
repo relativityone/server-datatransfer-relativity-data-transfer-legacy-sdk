@@ -356,7 +356,7 @@ INSERT INTO [ArtifactAncestry](
 		#InsertedArtifactIDsTable ";
 		}
 
-		public FormattableString ValidateReferencedObjectsAreNotDuplicated(TableNames tableNames, string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID)
+		public FormattableString ValidateReferencedObjectsAreNotDuplicated(TableNames tableNames, string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID, string fieldDisplayName)
 		{
 			return $@"
 			;WITH DuplicatedObjects(ObjectName) AS
@@ -367,7 +367,8 @@ INSERT INTO [ArtifactAncestry](
 				HAVING COUNT(*) > 1
 			)
 			UPDATE N
-			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject}
+			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject},
+				kCura_Import_ErrorData = D.ObjectName + '|{associatedObjectTable}' + '|{fieldDisplayName}'
 			FROM [Resource].[{tableNames.Native}] N
 				JOIN [Resource].[{tableNames.Objects}] O
 					ON N.[{keyFieldColumnName}] = O.DocumentIdentifier

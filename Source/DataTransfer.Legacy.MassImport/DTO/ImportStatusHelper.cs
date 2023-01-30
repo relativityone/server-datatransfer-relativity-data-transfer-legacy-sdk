@@ -121,7 +121,7 @@ namespace Relativity.MassImport.DTO
 						{ ImportStatus.SecurityAdd, "Your account does not have rights to add a document or object to this case" }, 
 						{ ImportStatus.ErrorOriginalInProduction, "Document is already part of a production and original images can't be overwritten" }, 
 						{ ImportStatus.ErrorAppendNoParent, "No parent artifact specified for this new object" }, 
-						{ ImportStatus.ErrorDuplicateAssociatedObject, "A non unique associated object is specified for this new object" }, 
+						{ ImportStatus.ErrorDuplicateAssociatedObject, "A non unique associated object '{0}' is specified for the '{1}' object in the field '{2}'" },
 						{ ImportStatus.SecurityAddAssociatedObject, "Your account does not have rights to add an associated object to the current object" }, 
 						{ ImportStatus.ErrorAssociatedObjectIsChild, "20.006. Failed to copy source field into destination field due to missing child object. Review the following destination field(s): '{0}'" }, 
 						{ ImportStatus.ErrorAssociatedObjectIsDocument, "An object field references a document which does not exist. Review the following destination field(s): '{0}'" }, 

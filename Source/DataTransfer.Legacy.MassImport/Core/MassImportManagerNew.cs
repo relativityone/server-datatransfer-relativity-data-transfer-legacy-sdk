@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using kCura.Utility;
 using Relativity.Core;
 using Relativity.Core.Service;
@@ -63,6 +66,11 @@ namespace Relativity.MassImport.Core
 			}
 
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
+			ITelemetryPublisher telemetryPublisher = new ApmTelemetryPublisher(APMClient);
+			IRelEyeMetricsService relEyeMetricsService = new RelEyeMetricsService(telemetryPublisher);
+			IEventsBuilder eventsBuilder = new EventsBuilder();
+
+
 			var image = new Data.Image(context.DBContext, settings);
 
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
@@ -97,6 +105,8 @@ namespace Relativity.MassImport.Core
 			if (image.IsNewJob)
 			{
 				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.Kepler);
+				EventJobStart @event = eventsBuilder.BuildJobStartEvent(settings, Constants.ImportType.Images);
+				relEyeMetricsService.PublishEvent(@event);
 			}
 
 			timekeeper.MarkEnd("TempFileInitialization");
@@ -183,8 +193,8 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 					}
-
-					image.ManageHasImages();
+					
+					image.ManageHasImagesOrHasPDF();
 					image.CreateImageFileRows(context.UserID, Relativity.Core.Config.AuditingEnabled,
 						context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination(), inRepository);
 					image.UpdateImageCount();
@@ -251,6 +261,8 @@ namespace Relativity.MassImport.Core
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
 				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
+				var batchCompletedEvent = eventsBuilder.BuildJobBatchCompletedEvent(retval, Constants.ImportType.Images);
+				relEyeMetricsService.PublishEvent(batchCompletedEvent);
 			}
 
 			retval.RunID = settings.RunID;
@@ -261,10 +273,6 @@ namespace Relativity.MassImport.Core
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 
-			if (settings.HasPDF && !IsPDFImportSupported(context))
-			{
-				throw new System.Exception("PDF files import is not supported");
-			}
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
 				throw new System.Exception("Invalid RunId");
@@ -275,6 +283,10 @@ namespace Relativity.MassImport.Core
 			}
 
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
+			ITelemetryPublisher telemetryPublisher = new ApmTelemetryPublisher(APMClient);
+			IRelEyeMetricsService relEyeMetricsService = new RelEyeMetricsService(telemetryPublisher);
+			IEventsBuilder eventsBuilder = new EventsBuilder();
+
 			var productionManager = new Relativity.Core.Service.ProductionManager();
 			var image = new Data.Image(context.DBContext, settings);
 			if (image.HasDataGridWorkToDo && !image.IsDataGridInputValid())
@@ -301,6 +313,8 @@ namespace Relativity.MassImport.Core
 			if (image.IsNewJob)
 			{
 				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.Kepler);
+				EventJobStart @event = eventsBuilder.BuildJobStartEvent(settings, Constants.ImportType.Production);
+				relEyeMetricsService.PublishEvent(@event);
 			}
 
 			image.ImportMeasurements.StartMeasure(nameof(productionManager.CreateProductionDocumentFileTableForProduction));
@@ -362,7 +376,7 @@ namespace Relativity.MassImport.Core
 						}
 					}
 
-					image.ManageHasImages(true);
+					image.ManageHasImagesForProduction();
 					image.ImportMeasurements.StartMeasure(nameof(productionManager
 						.UpdateImportStatusForFilesAlreadyInProduction));
 					productionManager.UpdateImportStatusForFilesAlreadyInProduction(context, productionArtifactID,
@@ -452,6 +466,8 @@ namespace Relativity.MassImport.Core
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
 				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
+				var batchCompletedEvent = eventsBuilder.BuildJobBatchCompletedEvent(retval, Constants.ImportType.Production);
+				relEyeMetricsService.PublishEvent(batchCompletedEvent);
 			}
 
 			retval.RunID = settings.RunID;

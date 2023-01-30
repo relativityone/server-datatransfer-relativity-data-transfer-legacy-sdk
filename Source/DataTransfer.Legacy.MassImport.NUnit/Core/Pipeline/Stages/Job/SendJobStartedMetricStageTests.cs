@@ -6,6 +6,9 @@ using Relativity.MassImport.Core.Pipeline;
 using Relativity.MassImport.Core.Pipeline.Input.Interface;
 using Relativity.MassImport.Core.Pipeline.Stages.Job;
 using System;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
 
 namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
@@ -17,6 +20,8 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
         const string clientName = "test42";
 
         private Mock<IMassImportMetricsService> _metricsServiceMock;
+        private Mock<IRelEyeMetricsService> _relEyeMetricsServiceMock;
+        private Mock<IEventsBuilder> _eventsBuilderMock;
         private Mock<IImportSettingsInput<NativeLoadInfo>> _inputMock;
         private NativeLoadInfo _settings;
         private SendJobStartedMetricStage<IImportSettingsInput<NativeLoadInfo>> _sut;
@@ -32,8 +37,10 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
                 .Setup(x => x.Settings)
                 .Returns(() => _settings);
             _metricsServiceMock = new Mock<IMassImportMetricsService>();
+            _relEyeMetricsServiceMock = new Mock<IRelEyeMetricsService>();
+            _eventsBuilderMock = new Mock<IEventsBuilder>();
 
-            _sut = new SendJobStartedMetricStage<IImportSettingsInput<NativeLoadInfo>>(context, _metricsServiceMock.Object);
+            _sut = new SendJobStartedMetricStage<IImportSettingsInput<NativeLoadInfo>>(context, _metricsServiceMock.Object, _relEyeMetricsServiceMock.Object, _eventsBuilderMock.Object);
         }
 
 
@@ -45,6 +52,8 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
 
             // assert
             _metricsServiceMock.Verify(x => x.SendJobStarted(_settings, importType, clientName));
+            _eventsBuilderMock.Verify(x => x.BuildJobStartEvent(_settings, importType));
+            _relEyeMetricsServiceMock.Verify(x => x.PublishEvent(It.IsAny<EventBase>()));
         }
 
         [Test]
