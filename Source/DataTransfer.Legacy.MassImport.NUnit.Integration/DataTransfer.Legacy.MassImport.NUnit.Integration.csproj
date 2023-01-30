@@ -78,7 +78,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
     <PackageReference Include="Polly" Version="5.7.0" />
-    <PackageReference Include="Relativity.Core" Version="52.3.17" />
+    <PackageReference Include="Relativity.Core" Version="55.0.17" />
     <PackageReference Include="Relativity.Services.DataContracts" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />

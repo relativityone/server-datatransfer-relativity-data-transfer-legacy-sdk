@@ -1,8 +1,10 @@
-
 # Changelog
 All notable changes to this project will be documented in this file.
-
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+
+## [0.2.68]
+- REL-812680 - Force DG version and update core
+
 ## [0.2.67]
 - REL-804941 - Add object and field information to ErrorDuplicateAssociatedObject message
 
