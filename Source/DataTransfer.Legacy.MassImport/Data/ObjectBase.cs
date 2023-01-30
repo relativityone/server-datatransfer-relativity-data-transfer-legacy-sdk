@@ -18,6 +18,9 @@ using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 using DataTransfer.Legacy.MassImport.Data.Cache;
+using System.Data.Common;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
@@ -351,7 +354,7 @@ namespace Relativity.MassImport.Data
 			{
 				// this method updates the temp artifact table to add ids for any known RDOs that may be about to be imported from a single or multi object field.
 				string sql = new SerialSqlQuery(
-					new InlineSqlQuery(ImportSql.ValidateReferencedObjectsAreNotDuplicated(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID)), 
+					new InlineSqlQuery(ImportSql.ValidateReferencedObjectsAreNotDuplicated(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID, field.DisplayName)),
 					new InlineSqlQuery(ImportSql.SetArtifactIdForExistingMultiObjects(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID))
 					).ToString();
 				ExecuteNonQuerySQLStatement(sql);
@@ -468,7 +471,18 @@ WHERE
 				ImportMeasurements.StartMeasure();
 				var filePathResults = ExecuteSqlStatementAsDataTable(string.Format("SELECT [kCura_Import_ID], [{0}] FROM [Resource].[{1}] WHERE [kCura_Import_Status] = {2} AND [{0}] IS NOT NULL", 
 					FullTextFieldColumnName, _tableNames.Native, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending));
-				var reader = new FullTextFileImportDataReader(filePathResults);
+
+				DbDataReader reader;
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				{
+					reader = new FullTextFileImportDataReader(filePathResults);
+					Log.Logger.LogWarning("CAL is disabled");
+				}
+				else
+				{
+					reader = new FullTextFileImportCALDataReader(filePathResults);
+				}
+				
 				var parameters = new kCura.Data.RowDataGateway.SqlBulkCopyParameters() { EnableStreaming = true, DestinationTableName = $"[Resource].[{_tableNames.FullText}]" };
 				Context.ExecuteBulkCopy(reader, parameters);
 				ImportMeasurements.StopMeasure();

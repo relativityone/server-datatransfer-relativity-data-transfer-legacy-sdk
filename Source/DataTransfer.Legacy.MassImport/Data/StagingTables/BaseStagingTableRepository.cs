@@ -67,13 +67,13 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			{
 				ImportMeasurements.SqlBulkImportTime.Start();
 				string sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.DataFileName, TableNames.Native);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger, ImportMeasurements);
 
 				sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.CodeFileName, TableNames.Code);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger, ImportMeasurements);
 
 				sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.ObjectFileName, TableNames.Objects);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger, ImportMeasurements);
 			}
 			catch (ExecuteSQLStatementFailedException ex)
 			{
@@ -294,9 +294,9 @@ END
 			return info.GetColumnDescription(mappedField);
 		}
 
-		private void ExecuteBulkLoadWithRetryOnSqlTemporaryError(string sqlText, ILog logger)
+		private void ExecuteBulkLoadWithRetryOnSqlTemporaryError(string sqlText, ILog logger, ImportMeasurements importMeasurements)
 		{
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout), logger);
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout), logger, importMeasurements);
 		}
 
 		private string GetBulkInsertQuery(Relativity.MassImport.DTO.NativeLoadInfo settings, string bulkFileSharePath, string bulkFileName, string tableName)

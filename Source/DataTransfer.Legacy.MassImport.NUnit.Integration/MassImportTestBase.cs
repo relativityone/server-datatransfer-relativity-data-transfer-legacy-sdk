@@ -47,24 +47,30 @@ namespace MassImport.NUnit.Integration
 			Assert.AreEqual(expectedArtifactsUpdated, result.ArtifactsUpdated, "Invalid number of updated artifacts");
 		}
 
-        protected string GetMetadata(string fieldDelimiter, DataTable fieldValues)
-        {
-            StringBuilder metadataBuilder = new StringBuilder();
-            string postfix = $"{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
+		protected string GetMetadata(string fieldDelimiter, DataTable fieldValues, string[] folders)
+		{
+			StringBuilder metadataBuilder = new StringBuilder();
+			string folderId = folders != null ? "-9" : "1003697";
 
-            for (int i = 0; i < fieldValues.Rows.Count; i++)
-            {
-                string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}1003697{fieldDelimiter}";
-                metadataBuilder.Append(prefix);
+			for (int i = 0; i < fieldValues.Rows.Count; i++)
+			{
+				string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}{folderId}{fieldDelimiter}";
+				metadataBuilder.Append(prefix);
 
-                string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
-                metadataBuilder.Append(values);
+				string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
+				metadataBuilder.Append(values);
 
-                metadataBuilder.Append(postfix);
-            }
+				string postfix = $"{fieldDelimiter}{GetFolderName(folders, i)}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
+				metadataBuilder.Append(postfix);
+			}
 
-            return metadataBuilder.ToString();
-        }
+			return metadataBuilder.ToString();
+		}
+
+		private string GetFolderName(string[] folders, int index)
+		{
+			return folders != null ? folders[index] : "";
+		}
 
 		private void SetupCoreContextMock()
 		{

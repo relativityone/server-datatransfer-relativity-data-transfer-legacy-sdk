@@ -62,23 +62,148 @@
       <Name>System.ValueTuple.dll</Name>
       <Notes />
     </Assembly>
-	<Assembly>
-      <ArtifactId>1329220</ArtifactId>
+    <Assembly>
       <Keywords />
       <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
       <Notes />
-	</Assembly>
-	<Assembly>
-      <Keywords /><Name>DataTransfer.Legacy.MassImport.dll</Name><Notes />
     </Assembly>
-	
+    <Assembly>
+      <Keywords />
+      <Name>DataTransfer.Legacy.MassImport.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Azure.Core.dll</Name>
+      <Notes />
+      </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Azure.Identity.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Azure.Security.KeyVault.Secrets.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Azure.Storage.Blobs.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Azure.Storage.Common.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Azure.Storage.Files.DataLake.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>DnsClient.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Microsoft.Bcl.AsyncInterfaces.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Microsoft.Bcl.HashCode.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Microsoft.Identity.Client.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Microsoft.Identity.Client.Extensions.Msal.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Microsoft.Toolkit.HighPerformance.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.Storage.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <ArtifactId>1020166</ArtifactId>
+      <Keywords />
+      <Name>Relativity.Storage.Extensions.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Diagnostics.DiagnosticSource.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.IO.Hashing.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Linq.Async.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Memory.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Memory.Data.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Runtime.CompilerServices.Unsafe.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Security.Cryptography.ProtectedData.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Text.Encodings.Web.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.Text.Json.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+    <Keywords />
+      <Name>System.Threading.Tasks.Extensions.dll</Name>
+      <Notes />
+    </Assembly>
+	<Assembly>
+    <Keywords />
+      <Name>System.Numerics.Vectors.dll</Name>
+      <Notes />
+    </Assembly>
 	<Assembly><Keywords/><Name>OpenTelemetry.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Api.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Grpc.Core.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Grpc.Core.Api.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Google.Protobuf.dll</Name><Notes /></Assembly>
-	
 	<Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.Abstractions.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.Binder.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.dll</Name><Notes /></Assembly>
@@ -92,9 +217,6 @@
 	<Assembly><Keywords/><Name>Microsoft.Extensions.Primitives.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>System.Diagnostics.DiagnosticSource.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>System.Memory.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>System.Runtime.CompilerServices.Unsafe.dll</Name><Notes /></Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />
@@ -144,4 +266,5 @@
   <TabIds />
   <CustomPageIds />
   <Locked>true</Locked>
+>>>>>>> master
 </Application>

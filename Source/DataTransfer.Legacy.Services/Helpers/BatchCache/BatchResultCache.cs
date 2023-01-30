@@ -182,9 +182,10 @@ END ";
 
 		private bool IsParametersValid(string param, string paramName)
 		{
+			// This can be empty for old clients, but old clients dont have retries implemented
 			if (string.IsNullOrEmpty(param))
 			{
-				_logger.LogError("Empty parameter {paramName}", paramName);
+				_logger.LogDebug("Empty parameter {paramName}", paramName);
 				return false;
 			}
 

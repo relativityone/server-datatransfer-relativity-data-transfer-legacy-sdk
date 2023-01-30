@@ -42,7 +42,7 @@
     <PackageReference Include="Relativity.DataExchange.Client.SDK" Version="1.15.30" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.Kepler.Client" Version="2.15.0" />
-    <PackageReference Include="Relativity.Services.Interfaces" Version="11.2.172.14" />
+    <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="11.2.172.14" />
     <PackageReference Include="Relativity.Testing.Framework" Version="7.2.1" />
     <PackageReference Include="Relativity.Testing.Framework.Api" Version="6.1.3" />

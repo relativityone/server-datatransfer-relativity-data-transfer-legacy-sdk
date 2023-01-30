@@ -50,6 +50,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		}
 
 		[Test]
+		public void ShouldLogErrorAndThrowPermissionDeniedExceptionWithInnerInsufficientAccessControlListPermissionsWhenExecutingMethodThrows()
+		{
+			FluentActions.Invoking(() => _interceptedObject.ExecuteWithInsufficientAccessControlListPermissions()).Should().Throw<PermissionDeniedException>()
+				.WithMessage($"Error during call {nameof(UnhandledExceptionInterceptorTestsClass)}.{nameof(IUnhandledExceptionInterceptorTestsClass.ExecuteWithInsufficientAccessControlListPermissions)}. InnerExceptionType: Relativity.Core.Exception.InsufficientAccessControlListPermissions, InnerExceptionMessage: Insufficient Permissions! Please ask your Relativity Administrator to allow you import permission.")
+				.WithInnerException<Relativity.Core.Exception.InsufficientAccessControlListPermissions>();
+		}
+
+		[Test]
 		public void ShouldLogErrorAndThrowNotFoundExceptionWithInnerWhenExecutingMethodThrows()
 		{
 			FluentActions.Invoking(() => _interceptedObject.ExecuteWithBaseException()).Should().Throw<NotFoundException>()

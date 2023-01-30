@@ -373,6 +373,8 @@ END
 		/// ---------------
 		/// 0: img temp table
 		/// 1: inRepository Flag
+		/// 2: isBillable Flag
+		/// 3: Type: 3 - image, 8 - pdf
 		/// </summary>
 		public string CreateProductionImageFileRows()
 		{
@@ -395,7 +397,7 @@ INSERT INTO [File](
 		[ArtifactID],
 		[Filename],
 		[Order],
-		3,
+		{{3}},
 		-1,
 		LEFT(CAST(@prodID AS NVARCHAR(50)) + '_' + [FileIdentifier], 255),
 		[Location],
@@ -661,10 +663,10 @@ SELECT
 		/// Format replace:
 		/// ---------------
 		/// 0: img temp table
-		/// 1: CodeArtifact partition table name for HasImages
+		/// 1: CodeArtifact partition table name for HasImages or HasPdf
 		/// 2: CodeType Name: HasImages or HasPDF
 		/// </summary>
-		public string ManageHasImagesForImagesImport()
+		public string ManageHasImagesOrHasPDF()
 		{
 			return $@"
 		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = '{{2}}')

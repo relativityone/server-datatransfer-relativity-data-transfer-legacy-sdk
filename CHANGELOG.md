@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+## [0.2.67]
+- REL-804941 - Add object and field information to ErrorDuplicateAssociatedObject message
+
+## [0.2.66]
+- REL-622708 - Add support for import PDF files in production
+
+## [0.2.65]
+- REL-770037 - Add releye telemetry events
+
+## [0.2.64]
+- REL-790064 - Add missing CAL library
+
+## [0.2.63]
+- REL-718348 - Map InsufficientAccessControlListPermissions into Kepler PermissionDeniedException
+
+## [0.2.62]
+- REL-718348 - Add logging in case of KeyNotFoundException in folder creation with functional tests
+
+## [0.2.61]
+- REL-797246 - Use CAL to read Extracted Text files
+
+## [0.2.60]
+- REL-718348 - Revert provious changes
+
+## [0.2.59]
+- REL-718348 - Add logging in case of KeyNotFoundException in folder creation
+
+## [0.2.58]
+- REL-795902 - Add metrics with number of retires executed for bulk insert
 
 ## [0.2.57]
 - REL-790064 - Update DataGrid to version 17.3.1 with CAL integration

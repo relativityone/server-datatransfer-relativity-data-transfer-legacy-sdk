@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using Relativity.Data.MassImport;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Core.Pipeline;
@@ -10,7 +12,6 @@ using Relativity.MassImport.Core.Pipeline.Input;
 using Relativity.Telemetry.APM;
 using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.DataGrid;
-
 namespace Relativity.Core.Service.MassImport
 {
 	// TODO: adjust namespace, https://jira.kcura.com/browse/REL-477112 
@@ -116,6 +117,12 @@ namespace Relativity.Core.Service.MassImport
 				result,
 				contextAndExecutor.MassImportContext.ImportMeasurements);
 
+			ITelemetryPublisher telemetryPublisher = new ApmTelemetryPublisher(APMClient);
+			IRelEyeMetricsService relEyeMetricsService = new RelEyeMetricsService(telemetryPublisher);
+			IEventsBuilder eventsBuilder = new EventsBuilder();
+			var batchCompletedEvent = eventsBuilder.BuildJobBatchCompletedEvent(result, contextAndExecutor.MassImportContext.JobDetails.ImportType);
+			relEyeMetricsService.PublishEvent(batchCompletedEvent);
+			
 			return result;
 		}
 
