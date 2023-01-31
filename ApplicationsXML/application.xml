@@ -189,15 +189,15 @@
       <Notes />
     </Assembly>
     <Assembly>
-    <Keywords />
+      <Keywords />
       <Name>System.Threading.Tasks.Extensions.dll</Name>
       <Notes />
     </Assembly>
-	<Assembly>
-    <Keywords />
+    <Assembly>
+      <Keywords />
       <Name>System.Numerics.Vectors.dll</Name>
       <Notes />
-    </Assembly>
+	</Assembly>
 	<Assembly><Keywords/><Name>OpenTelemetry.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Api.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Name><Notes /></Assembly>
@@ -217,6 +217,7 @@
 	<Assembly><Keywords/><Name>Microsoft.Extensions.Primitives.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Relativity.DataGrid.dll</Name><Notes/></Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />
@@ -266,5 +267,4 @@
   <TabIds />
   <CustomPageIds />
   <Locked>true</Locked>
->>>>>>> master
 </Application>

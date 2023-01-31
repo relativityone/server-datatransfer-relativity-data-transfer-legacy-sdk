@@ -16,7 +16,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		private readonly IAPILog _logger;
 		private readonly ITraceGenerator _traceGenerator;
 		private Activity currentActivity;
-
+			
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DistributedTracingInterceptor"/> class.
 		/// </summary>
