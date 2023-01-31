@@ -16,7 +16,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		private readonly IAPILog _logger;
 		private readonly ITraceGenerator _traceGenerator;
 		private Activity currentActivity;
-			
+
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DistributedTracingInterceptor"/> class.
 		/// </summary>
@@ -26,14 +26,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			_logger = logger ?? throw new ArgumentNullException(nameof(logger));
 			_traceGenerator = traceGenerator ?? throw new ArgumentNullException(nameof(traceGenerator));
-
-			ActivityListener listener = new ActivityListener()
-			{
-				ShouldListenTo = _ => true,
-				Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
-			};
-
-			ActivitySource.AddActivityListener(listener);
 		}
 
 		/// <inheritdoc />
@@ -44,7 +36,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				var parameters = invocation.Method.GetParameters();
 				if (parameters.Length != invocation.Arguments.Length)
 				{
-					_logger.LogInformation($"ParentContext.TraceId: NONE");
 					return;
 				}
 
@@ -55,17 +46,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 					if (currentParameter.Name == "correlationID")
 					{
-						var parentContext = TraceHelper.DeserializeContext(invocationArgument?.ToString());
-						_logger.LogInformation($"ParentContext.TraceId: {parentContext.TraceId}");
-						currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server, parentContext);
+						if (ActivityContext.TryParse(invocationArgument?.ToString(), null, out var parentContext))
+						{
+							currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server, parentContext);
+						}
 						break;
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				_logger.LogInformation($"ParentContext.TraceId: ERROR", ex);
-			}			
+				_logger.LogError(ex, $"Cannot Start Activity: {invocation.TargetType.Name}-{invocation.Method.Name}");
+			}
 		}
 
 		/// <inheritdoc />

@@ -21,7 +21,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		public MetricsContext(IEnumerable<IMetricsPublisher> metricsPublishers)
 		{
 			_metricsPublishers = metricsPublishers;
-			_metrics.Add(TelemetryConstants.MetricsAttributes.R1TeamIDAttribute, TelemetryConstants.Application.OwnerTeamId);
+			_metrics.Add(TelemetryConstants.MetricsAttributes.OwnerTeamId, TelemetryConstants.Application.OwnerTeamId);
 		}
 
 		/// <inheritdoc /> 

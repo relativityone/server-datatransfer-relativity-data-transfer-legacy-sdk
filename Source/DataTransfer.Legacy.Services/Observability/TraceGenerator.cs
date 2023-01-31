@@ -4,7 +4,8 @@
 
 namespace Relativity.DataTransfer.Legacy.Services.Observability
 {
-    using OpenTelemetry;
+	using global::DataTransfer.Legacy.MassImport.Core;
+	using OpenTelemetry;
     using OpenTelemetry.Exporter;
     using OpenTelemetry.Resources;
     using OpenTelemetry.Trace;
@@ -15,16 +16,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 
 	public class TraceGenerator : ITraceGenerator
     { 
-		private const string TeamID = "PTCI-4941411";
-		private const string SystemName = "data-transfer-legacy-rap";
-		private const string ServiceName = "data-transfer-legacy-rap-kepler-api";
-		private const string ApplicationID = "9f9d45ff-5dcd-462d-996d-b9033ea8cfce";
-		private const string ApplicationName = "DataTranfer.Legacy";
-
-		private const string RelativityTelemetrySection = "Relativity.Telemetry";
-		private const string ReleyeUriTracesSettingName = "ReleyeUriTraces";
-		private const string ReleyeTokenSettingName = "ReleyeToken";
-
 		private string ApiKey = string.Empty;
 		private string ReleyeUriTraces = string.Empty;
 
@@ -38,6 +29,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 		{
 			_logger = logger ?? throw new NullReferenceException(nameof(logger));
 			_instanceSettingsBundle = instanceSettingsBundle ?? throw new NullReferenceException(nameof(instanceSettingsBundle));
+			
+			ActivityListener listener = new ActivityListener()
+			{
+				ShouldListenTo = _ => true,
+				Sample = (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllDataAndRecorded
+			};
+
+			ActivitySource.AddActivityListener(listener);
 		}
 
 		public Activity StartActivity(string name, ActivityKind kind, ActivityContext parentContext, IEnumerable<KeyValuePair<string, object>> tags = null, IEnumerable<ActivityLink> links = null, DateTimeOffset startTime = default(DateTimeOffset))
@@ -46,14 +45,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
             {
 				try
 				{
-					ReleyeUriTraces =  _instanceSettingsBundle.GetStringAsync(RelativityTelemetrySection, ReleyeUriTracesSettingName).GetAwaiter().GetResult();
-					ApiKey = _instanceSettingsBundle.GetStringAsync(RelativityTelemetrySection, ReleyeTokenSettingName).GetAwaiter().GetResult();
+					ReleyeUriTraces =  _instanceSettingsBundle.GetStringAsync(TelemetryConstants.RelEyeSettings.RelativityTelemetrySection, TelemetryConstants.RelEyeSettings.ReleyeUriTracesSettingName).GetAwaiter().GetResult();
+					ApiKey = _instanceSettingsBundle.GetStringAsync(TelemetryConstants.RelEyeSettings.RelativityTelemetrySection, TelemetryConstants.RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
 					
 					tracerProvider = Sdk.CreateTracerProviderBuilder()
-								.AddSource(new[] { SystemName })
+								.AddSource(new[] { TelemetryConstants.Application.SystemName })
 								.SetResourceBuilder(
 									ResourceBuilder.CreateDefault()
-										.AddService(ServiceName))
+										.AddService(TelemetryConstants.Application.ServiceName))
 								.SetSampler(new AlwaysOnSampler())
 								.AddOtlpExporter(options =>
 								{
@@ -63,11 +62,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 								})
 								.Build();
 
-					activitySource = new ActivitySource(SystemName);
+					activitySource = new ActivitySource(TelemetryConstants.Application.SystemName);
 				}
 				catch (Exception ex)
 				{
 					_logger.LogError(ex, "Cannot create tracerProvider");
+					return null;
 				}			
 			}
 
@@ -76,19 +76,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 			return activity;
 		}
 
-		public void SetSystemTags(Activity activity)
+		private void SetSystemTags(Activity activity)
         {
-			activity?.SetTag("r1.team.id", TeamID);
-			activity?.SetTag("service.namespace", SystemName);
-			activity?.SetTag("service.name", ServiceName);
-			activity?.SetTag("application.guid", ApplicationID);
-			activity?.SetTag("application.name", ApplicationName);
+			activity?.SetBaggage(TelemetryConstants.MetricsAttributes.OwnerTeamId, TelemetryConstants.Application.OwnerTeamId);
+			activity?.SetBaggage(TelemetryConstants.MetricsAttributes.SystemName, TelemetryConstants.Application.SystemName);
+			activity?.SetBaggage(TelemetryConstants.MetricsAttributes.ServiceName, TelemetryConstants.Application.ServiceName);
+			activity?.SetBaggage(TelemetryConstants.MetricsAttributes.ApplicationID, TelemetryConstants.Application.ApplicationID);
+			activity?.SetBaggage(TelemetryConstants.MetricsAttributes.ApplicationName, TelemetryConstants.Application.ApplicationName);
 
-			activity?.SetBaggage("r1.team.id", TeamID);
-			activity?.SetBaggage("service.namespace", SystemName);
-			activity?.SetBaggage("service.name", ServiceName);
-			activity?.SetBaggage("application.guid", ApplicationID);
-			activity?.SetBaggage("application.name", ApplicationName);
+			activity?.SetTag(TelemetryConstants.MetricsAttributes.OwnerTeamId, TelemetryConstants.Application.OwnerTeamId);
+			activity?.SetTag(TelemetryConstants.MetricsAttributes.SystemName, TelemetryConstants.Application.SystemName);
+			activity?.SetTag(TelemetryConstants.MetricsAttributes.ServiceName, TelemetryConstants.Application.ServiceName);
+			activity?.SetTag(TelemetryConstants.MetricsAttributes.ApplicationID, TelemetryConstants.Application.ApplicationID);
+			activity?.SetTag(TelemetryConstants.MetricsAttributes.ApplicationName, TelemetryConstants.Application.ApplicationName);
 		}
 
         public void Dispose()

@@ -26,7 +26,7 @@ namespace Relativity.MassImport.Core
             _customData["ImportType"] = importType;
             _customData["System"] = system;
             _customData["MassImportImprovementsToggle"] = true;
-            _customData[TelemetryConstants.MetricsAttributes.R1TeamIDAttribute] = TelemetryConstants.Application.OwnerTeamId;
+            _customData[TelemetryConstants.MetricsAttributes.OwnerTeamId] = TelemetryConstants.Application.OwnerTeamId;
             return this;
         }
 
