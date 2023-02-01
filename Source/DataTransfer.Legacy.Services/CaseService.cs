@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Castle.Core;
-using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using kCura.Utility;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
