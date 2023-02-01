@@ -5,6 +5,7 @@
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
 	using System;
+	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using Castle.DynamicProxy;
@@ -20,6 +21,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		private readonly IAPILog _logger;
 		private readonly ITraceGenerator _traceGenerator;
 		private Activity currentActivity;
+		private Dictionary<string, object> tags = new Dictionary<string, object>();
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="DistributedTracingInterceptor"/> class.
@@ -43,14 +45,17 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 					return;
 				}
 
-				for (var i = parameters.Length-1; i >= 0; i--)
+				for (var i = parameters.Length - 1; i >= 0; i--)
 				{
 					var currentParameter = parameters[i];
 					var invocationArgument = invocation.Arguments[i];
 
 					if (currentParameter.Name == WorkspaceIDArgumentName)
 					{
-						currentActivity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, invocationArgument?.ToString());
+						if (int.TryParse(invocationArgument.ToString(), out var workspaceID))
+						{
+							tags.Add(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
+						}
 						continue;
 					}
 
@@ -72,6 +77,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		/// <inheritdoc />
 		public override Task ExecuteAfter(IInvocation invocation, dynamic returnValue)
 		{
+			foreach (var tag in tags)
+			{
+				currentActivity?.SetTag(tag.Key, tag.Value);
+			}
+
 			currentActivity?.Stop();
 			return Task.CompletedTask;
 		}

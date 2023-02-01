@@ -1,0 +1,28 @@
+﻿<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Relativity.DataTransfer.Legacy.MassImport</id>
+    <version>$version$</version>
+    <authors>Relativity ODA LLC</authors>
+    <owners>Relativity ODA LLC</owners>
+	<iconUrl>https://www.relativity.com/images/relativity-nuget-logo.png</iconUrl>
+    <license type="file">LICENSE.txt</license>
+    <projectUrl>https://platform.relativity.com/index.html</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>MassImport for Object Manager - the package is for internal Relativity development only.</description>
+	<releaseNotes>https://git.kcura.com/projects/DTX/repos/relativity-data-transfer-legacy-sdk/browse/CHANGELOG.md</releaseNotes>
+    <copyright>© Relativity</copyright>
+    <dependencies>
+      <group targetFramework=".NETFramework4.6.2">
+		<dependency id="kCura" version="14.2.7" />
+        <dependency id="Relativity.Core" version="52.3.17" />
+        <dependency id="Relativity.Logging.Interfaces" version="2019.10.2" />
+		<dependency id="Relativity.Telemetry.APM" version="2019.10.1" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+	<file src="..\LICENSE.txt" target="" />
+    <file src="..\Source\DataTransfer.Legacy.MassImport\bin\DataTransfer.Legacy.MassImport.dll" target="lib\net462" />
+  </files>
+</package>
