@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.69]
+- REL-718348 - Catch and log for all Exception types during folder creation
+
 ## [0.2.68]
 - REL-812680 - Force DG version and update core
 
