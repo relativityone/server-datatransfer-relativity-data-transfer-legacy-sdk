@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Castle.Windsor;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;

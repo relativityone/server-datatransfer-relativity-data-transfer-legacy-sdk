@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Relativity.DataGrid.Interfaces.DGFS;
-using Relativity.MassImport.Data.DataGrid;
 
 namespace Relativity.MassImport.Data.DataGrid
 {

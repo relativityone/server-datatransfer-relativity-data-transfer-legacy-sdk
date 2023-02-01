@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using Moq;
-using Relativity.Core.Toggle;
 using Relativity.Toggles;
 
 namespace MassImport.NUnit.Integration.Helpers

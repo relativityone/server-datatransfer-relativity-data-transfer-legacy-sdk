@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using Relativity.Core.Service;
-using Relativity.Data.MassImport;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Framework.Stages;
 using Relativity.MassImport.Core.Pipeline.Input.Interface;

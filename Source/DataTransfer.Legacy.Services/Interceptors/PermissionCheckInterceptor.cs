@@ -6,7 +6,6 @@ using Relativity.Services.Objects.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
-	using System;
 	using Relativity.Core.Exception;
 	using Relativity.Services.Exceptions;
 	using Permission = Relativity.Core.Permission;

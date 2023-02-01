@@ -4,10 +4,8 @@ using System.Data.SqlClient;
 using Moq;
 using NUnit.Framework;
 using Relativity.Core;
-using Relativity.Core.Service.ObjectRule;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
-using System.Xml.Linq;
 using DataTransfer.Legacy.MassImport.NUnit.Properties;
 
 namespace Relativity.MassImport.NUnit.Data

@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using Relativity.API;
+﻿using Relativity.API;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.DataTransfer.Legacy.Services.Toggles;
 using Relativity.Toggles;

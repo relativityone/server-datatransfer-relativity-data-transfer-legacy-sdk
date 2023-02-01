@@ -2,7 +2,6 @@
 using Castle.Core;
 using FluentAssertions;
 using NUnit.Framework;
-using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.Services;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 

@@ -2,7 +2,6 @@
 using Moq;
 using NUnit.Framework;
 using Relativity;
-using Relativity.MassImport;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.Choices;
 

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core.Service;
@@ -7,7 +6,6 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
-using Relativity.DataTransfer.Legacy.Services.Observability;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
