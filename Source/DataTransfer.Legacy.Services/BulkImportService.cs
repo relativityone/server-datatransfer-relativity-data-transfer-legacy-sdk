@@ -130,9 +130,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private MassImportResults BulkImport(RunSettings runSettings, IImportCoordinator coordinator)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, runSettings.WorkspaceID);
-			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, runSettings.ExecutionSource);
-			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runSettings.RunID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.BatchId, runSettings.BatchID);
 
 			var serviceContext = GetBaseServiceContext(runSettings.WorkspaceID);
