@@ -14,6 +14,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		void Run();
 
 		void RunWithID(string correlationID);
+
+		void RunWithIDs(int workspaceID, string dummy, string correlationID);
 	}
 
 	/// <inheritdoc /> 
@@ -47,6 +49,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		public void RunWithID(string correlationID)
 		{
 			
+		}
+
+		public void RunWithIDs(int workspaceID, string dummy, string correlationID)
+		{
+
 		}
 	}
 }

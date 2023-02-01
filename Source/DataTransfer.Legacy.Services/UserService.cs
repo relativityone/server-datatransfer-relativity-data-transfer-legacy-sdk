@@ -23,9 +23,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<DataSetWrapper> RetrieveAllAssignableInCaseAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var manager = new UserManager();
 			var result = manager.ExternalRetrieveAllAssignableInCase(GetBaseServiceContext(workspaceID));
 			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);

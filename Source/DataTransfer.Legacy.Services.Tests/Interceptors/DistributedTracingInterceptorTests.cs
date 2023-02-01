@@ -91,5 +91,15 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_traceGeneratorMock.Verify(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>()), Times.Once);
 			_loggerMock.Verify(m => m.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()));
 		}
+
+		[Test]
+		public void InterceptRunWithSerializedActivityContextAsIdsMethod()
+		{
+			// Act 
+			_interceptedObject.RunWithIDs(1234, "test", "00-64200095b15d3185f702523c236c6920-9e017cf1e496af28-01");
+
+			// Assert 
+			_traceGeneratorMock.Verify(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>()), Times.Once);
+		}
 	}
 }

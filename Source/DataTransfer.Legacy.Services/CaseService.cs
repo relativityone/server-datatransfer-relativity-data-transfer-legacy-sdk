@@ -29,9 +29,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var instanceLevelContext = GetBaseServiceContext(AdminWorkspace);
 			var workspace = _caseManager.Read(instanceLevelContext, workspaceID);
 			var caseInfo = workspace.ToCaseInfo();
@@ -45,9 +42,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(AdminWorkspace), workspaceID);
 			return Task.FromResult(result);
 		}

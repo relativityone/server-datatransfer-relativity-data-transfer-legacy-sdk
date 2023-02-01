@@ -8,11 +8,15 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	using System.Diagnostics;
 	using System.Threading.Tasks;
 	using Castle.DynamicProxy;
+	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 	using Relativity.API;
 	using Relativity.DataTransfer.Legacy.Services.Observability;
 
 	public class DistributedTracingInterceptor : InterceptorBase
 	{
+		private const string CorrelationIDArgumentName = "correlationID";
+		private const string WorkspaceIDArgumentName = "workspaceID";
+
 		private readonly IAPILog _logger;
 		private readonly ITraceGenerator _traceGenerator;
 		private Activity currentActivity;
@@ -33,24 +37,29 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 		{
 			try
 			{
-				var parameters = invocation.Method.GetParameters();
+				System.Reflection.ParameterInfo[] parameters = invocation.Method.GetParameters();
 				if (parameters.Length != invocation.Arguments.Length)
 				{
 					return;
 				}
 
-				for (var i = 0; i < parameters.Length; i++)
+				for (var i = parameters.Length-1; i >= 0; i--)
 				{
 					var currentParameter = parameters[i];
 					var invocationArgument = invocation.Arguments[i];
 
-					if (currentParameter.Name == "correlationID")
+					if (currentParameter.Name == WorkspaceIDArgumentName)
+					{
+						currentActivity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, invocationArgument?.ToString());
+						continue;
+					}
+
+					if (currentParameter.Name == CorrelationIDArgumentName)
 					{
 						if (ActivityContext.TryParse(invocationArgument?.ToString(), null, out var parentContext))
 						{
 							currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server, parentContext);
 						}
-						break;
 					}
 				}
 			}

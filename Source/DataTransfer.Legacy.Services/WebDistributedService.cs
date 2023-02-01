@@ -54,9 +54,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<IKeplerStream> DownloadFieldFileAsync(int workspaceID, int objectArtifactID, int fileID,
 			int fileFieldArtifactId, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 			var artifactTypeID = _artifactManager.Read(workspaceServiceContext, objectArtifactID).ArtifactTypeID;
 			var hasPermission = _artifactManager.GetPermissionByArtifactTypeID(workspaceServiceContext,
@@ -83,9 +80,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<IKeplerStream> DownloadNativeFileAsync(int workspaceID, int artifactID, Guid remoteGuid,
 			string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 
 			var artifactTypeId = _artifactManager.ReadArtifact(workspaceServiceContext, artifactID).ArtifactTypeID;
@@ -114,9 +108,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<IKeplerStream> DownloadTempFileAsync(int workspaceID, Guid remoteGuid, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 			var instanceServiceContext = GetBaseServiceContext(AdminWorkspace);
 

@@ -29,36 +29,24 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<IoResponse> BeginFillAsync(int workspaceID, byte[] b, string documentDirectory, string fileName, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = _externalIo.ExternalBeginFill(GetBaseServiceContext(workspaceID), b, documentDirectory, workspaceID, fileName).Map<IoResponse>();
 			return Task.FromResult(result);
 		}
 
 		public Task<IoResponse> FileFillAsync(int workspaceID, string documentDirectory, string fileName, byte[] b, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = _externalIo.ExternalFileFill(GetBaseServiceContext(workspaceID), documentDirectory, fileName, b, workspaceID).Map<IoResponse>();
 			return Task.FromResult(result);
 		}
 
 		public Task RemoveFillAsync(int workspaceID, string documentDirectory, string fileName, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			_externalIo.ExternalRemoveFill(GetBaseServiceContext(workspaceID), documentDirectory, fileName, workspaceID);
 			return Task.CompletedTask;
 		}
 
 		public Task RemoveTempFileAsync(int workspaceID, string fileName, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var documentDirectory = GetDefaultDocumentDirectory(workspaceID);
 			_externalIo.ExternalRemoveFill(GetBaseServiceContext(workspaceID), documentDirectory, fileName,
 				workspaceID);
@@ -67,9 +55,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<string[][]> GetDefaultRepositorySpaceReportAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var documentDirectory = GetDefaultDocumentDirectory(workspaceID);
 			var result = _externalIo.GetRepositoryReport(documentDirectory);
 			return Task.FromResult(result);
@@ -77,9 +62,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<string[][]> GetBcpShareSpaceReportAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result =
 				_externalIo.GetRepositoryReport(GetBaseServiceContext(workspaceID).ChicagoContext.GetBcpSharePath());
 			return Task.FromResult(result);
@@ -87,18 +69,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<string> GetBcpSharePathAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = GetBaseServiceContext(workspaceID).ChicagoContext.GetBcpSharePath();
 			return Task.FromResult(result);
 		}
 
 		public Task<bool> ValidateBcpShareAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = GetBaseServiceContext(workspaceID).ChicagoContext.ValidateBcpShare();
 			return Task.FromResult(result);
 		}

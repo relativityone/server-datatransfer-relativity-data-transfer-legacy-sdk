@@ -33,9 +33,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<ExportDataWrapper> RetrieveBatesByProductionAndDocumentAsync(int workspaceID, int[] productionIDs,
 			int[] documentIDs, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var resultAsDataView = ProductionQuery.RetrieveBatesByProductionAndDocument(
 				GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID), productionIDs, documentIDs);
 			var resultAsObjectArrays =
@@ -46,45 +43,30 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<DataSetWrapper> RetrieveProducedByContextArtifactIDAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = _productionManager.ExternalRetrieveProduced(GetBaseServiceContext(workspaceID), GetUserAclMatrix(workspaceID));
 			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task<DataSetWrapper> RetrieveImportEligibleByContextArtifactIDAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = _productionManager.ExternalRetrieveImportEligible(GetBaseServiceContext(workspaceID));
 			return Task.FromResult(result != null ? new DataSetWrapper(result) : null);
 		}
 
 		public Task DoPostImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			_productionManager.ExternalDoPostImportProcessing(GetBaseServiceContext(workspaceID), productionArtifactID);
 			return Task.CompletedTask;
 		}
 
 		public Task DoPreImportProcessingAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			_productionManager.ExternalDoPreImportProcessing(GetBaseServiceContext(workspaceID), productionArtifactID);
 			return Task.CompletedTask;
 		}
 
 		public Task<ProductionInfo> ReadAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = _productionManager.ReadInfo(GetBaseServiceContext(workspaceID), productionArtifactID).Map<ProductionInfo>();
 			return Task.FromResult(result);
 		}

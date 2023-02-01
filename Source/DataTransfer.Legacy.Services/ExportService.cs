@@ -28,9 +28,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = InitializeExport(workspaceID, (int)ArtifactType.Document,
 						e => e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs,
 							startAtRecord).Map<InitializationResults>());
@@ -41,9 +38,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 			int parentArtifactID, bool includeSubFolders, int[] avfIDs, int startAtRecord, int artifactTypeID,
 			string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = InitializeExport(workspaceID, artifactTypeID,
 				e => e.InitializeFolderExport(viewArtifactID, parentArtifactID, includeSubFolders,
 					DynamicallyLoadedDllPaths, avfIDs, startAtRecord).Map<InitializationResults>());
@@ -53,9 +47,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID,
 			int[] avfIds, int startAtRecord, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = InitializeExport(workspaceID, (int)ArtifactType.Document,
 				e => e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds,
 					startAtRecord).Map<InitializationResults>());
@@ -66,9 +57,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 			char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int productionId, int index, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
 					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, productionId, index);
 			return Task.FromResult(result);
@@ -77,9 +65,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<ExportDataWrapper> RetrieveResultsBlockStartingFromIndexAsync(int workspaceID, Guid runID, int artifactTypeID, int[] avfIds, int chunkSize, bool displayMulticodesAsNested, char multiValueDelimiter, char nestedValueDelimiter,
 			int[] textPrecedenceAvfIds, int index, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = RetrieveResults(workspaceID, runID, artifactTypeID, avfIds, chunkSize, displayMulticodesAsNested,
 					multiValueDelimiter, nestedValueDelimiter, textPrecedenceAvfIds, null, index);
 			return Task.FromResult(result);
@@ -121,9 +106,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> HasExportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientExport);
 			return Task.FromResult(result);
 		}

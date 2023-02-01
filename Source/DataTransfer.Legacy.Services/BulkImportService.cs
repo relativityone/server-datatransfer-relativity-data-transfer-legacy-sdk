@@ -53,7 +53,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
 
@@ -73,7 +72,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
 
@@ -93,7 +91,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
 
@@ -114,7 +111,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
 
@@ -201,7 +197,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>();
@@ -211,7 +206,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			// there was a issue in image load logic, if there was no any correct image imported
@@ -228,7 +222,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>();
@@ -238,7 +231,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> NativeRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID);
@@ -248,7 +240,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
@@ -258,9 +249,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID)
 		{
-			var activity = Activity.Current;
-			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
-
 			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
 			return Task.FromResult(result);
 		}
