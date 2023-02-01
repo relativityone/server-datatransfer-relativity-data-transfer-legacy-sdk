@@ -71,10 +71,27 @@ namespace Relativity.MassImport.Core
 									"''", string.Empty);
 							}
 
-							IEnumerable<SqlDataRecord> importMap =
-								folderNodes.GetImportMapping(folderArtifactIdMappings);
-							folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID,
-								settings.RootFolderID);
+							try
+							{
+								IEnumerable<SqlDataRecord> importMap = folderNodes.GetImportMapping(folderArtifactIdMappings);
+								folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID, settings.RootFolderID);
+							}
+							catch (Exception ex)
+							{
+								logger.LogError(ex, "Failed to CreateFolders folderNodesCount: {nodesCount} folderCandidatesCount: {candidatesCount} folderArtifactIdMappingsCount: {mappingsCount}",
+									folderNodes.Count, folderCandidates.Count(), folderArtifactIdMappings.Count);
+								logger.LogError("folderArtifactIdMappings: {@mappings}", folderArtifactIdMappings);
+								foreach (var folderArtifactIdMapping in folderArtifactIdMappings)
+								{
+									logger.LogError("folderArtifactIdMapping: {@mapping}", folderArtifactIdMapping);
+								}
+								foreach (var folderNode in folderNodes)
+								{
+									logger.LogError("folderNode: {@node}", new { TempArtifactID = folderNode.TempArtifactID, LeafsCount = folderNode.LeafIDs.Count, Leafs = string.Join(",", folderNode.LeafIDs) });
+								}
+
+								throw;
+							}
 						}
 						else
 						{
