@@ -2,9 +2,9 @@
 // © Relativity All Rights Reserved. 
 // </copyright> 
 
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using DataTransfer.Legacy.MassImport.Core;
 
 namespace Relativity.DataTransfer.Legacy.Services.Metrics
 {
@@ -21,7 +21,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		public MetricsContext(IEnumerable<IMetricsPublisher> metricsPublishers)
 		{
 			_metricsPublishers = metricsPublishers;
-			_metrics.Add(TelemetryConstants.MetricsAttributes.OwnerTeamId, TelemetryConstants.Application.OwnerTeamId);
+			_metrics.Add(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID);
 		}
 
 		/// <inheritdoc /> 

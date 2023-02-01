@@ -7,7 +7,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 	/// <summary>
 	/// Constants for RelEye telemetry.
 	/// </summary>
-	public static class Constants
+	public static class TelemetryConstants
 	{
 		/// <summary>
 		/// Values for Import Service attributes.
@@ -17,7 +17,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// <summary>
 			/// Service name.
 			/// </summary>
-			public const string ServiceName = "data-transfer-legacy-rap";
+			public const string ServiceName = "data-transfer-legacy-rap-kepler-api";
 
 			/// <summary>
 			/// Service namespace.
@@ -25,10 +25,14 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			public const string ServiceNamespace = "data-transfer-legacy-rap";
 
 			/// <summary>
-			/// Name of the Import Service.
+			/// Name of the DataTransfer.Legacy.
 			/// </summary>
 			public const string ApplicationName = "DataTransfer.Legacy";
 
+			/// <summary>
+			/// Guid of the Application
+			/// </summary>
+			public const string ApplicationID = "9f9d45ff-5dcd-462d-996d-b9033ea8cfce";
 			/// <summary>
 			/// Team identification in backstage.
 			/// </summary>
@@ -44,6 +48,11 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// [string] Application name.
 			/// </summary>
 			public const string ApplicationName = "application.name";
+
+			/// <summary>
+			/// [string] Application name.
+			/// </summary>
+			public const string ApplicationID = "application.guid";
 
 			/// <summary>
 			/// [string] Correlation id.
@@ -219,6 +228,21 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// [string] Status of the operation, like success or failed.
 			/// </summary>
 			public const string Status = "status.code";
+
+			/// <summary>
+			/// [string] job trigger
+			/// </summary>
+			public const string ExecutionSource = "job.trigger";
+
+			/// <summary>
+			/// [string] job workflow_id
+			/// </summary>
+			public const string BatchId = "job.workflow_id";
+
+			/// <summary>
+			/// [string] job type
+			/// </summary>
+			public const string JobType = "job.type";
 		}
 
 		/// <summary>

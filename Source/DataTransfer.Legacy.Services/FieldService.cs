@@ -6,6 +6,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -28,7 +29,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<Field> ReadAsync(int workspaceID, int fieldArtifactID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = _fieldManager.Read(GetBaseServiceContext(workspaceID), fieldArtifactID).Map<Field>();
 			return Task.FromResult(result);
@@ -37,7 +38,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveAllMappableAsync(int workspaceID, int artifactTypeID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = FieldManagerFoundation.Query.RetrieveAllMappable(GetBaseServiceContext(workspaceID), artifactTypeID);
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
@@ -46,7 +47,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrievePotentialBeginBatesFieldsAsync(int workspaceID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = FieldQuery.RetrievePotentialBeginBatesFields(GetBaseServiceContext(workspaceID));
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
@@ -55,7 +56,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> IsFieldIndexedAsync(int workspaceID, int fieldArtifactID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = _fieldManager.IsFieldIndexed(GetBaseServiceContext(workspaceID), fieldArtifactID);
 			return Task.FromResult(result);

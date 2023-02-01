@@ -1,12 +1,11 @@
-﻿using DataTransfer.Legacy.MassImport.Core;
-using Moq;
+﻿using Moq;
 using NUnit.Framework;
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.Services.Observability;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-
+using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Observability
 {
 	[TestFixture]
@@ -36,11 +35,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Observability
 			// assert
 			Assert.That(activity, Is.Not.Null);
 
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.OwnerTeamId), Is.EqualTo(TelemetryConstants.Application.OwnerTeamId));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.SystemName), Is.EqualTo(TelemetryConstants.Application.SystemName));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.ServiceName), Is.EqualTo(TelemetryConstants.Application.ServiceName));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.ApplicationID), Is.EqualTo(TelemetryConstants.Application.ApplicationID));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.ApplicationName), Is.EqualTo(TelemetryConstants.Application.ApplicationName));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.R1TeamID), Is.EqualTo(TelemetryConstants.Values.R1TeamID));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ServiceNamespace), Is.EqualTo(TelemetryConstants.Values.ServiceNamespace));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ServiceName), Is.EqualTo(TelemetryConstants.Values.ServiceName));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationID), Is.EqualTo(TelemetryConstants.Values.ApplicationID));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationName), Is.EqualTo(TelemetryConstants.Values.ApplicationName));
 
 			_instanceSettingsBundleMock.Verify(m => m.GetStringAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 			_loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
@@ -79,11 +78,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Observability
 			// assert
 			Assert.That(activity, Is.Not.Null);
 
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.OwnerTeamId), Is.EqualTo(TelemetryConstants.Application.OwnerTeamId));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.SystemName), Is.EqualTo(TelemetryConstants.Application.SystemName));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.ServiceName), Is.EqualTo(TelemetryConstants.Application.ServiceName));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.ApplicationID), Is.EqualTo(TelemetryConstants.Application.ApplicationID));
-			Assert.That(activity.GetTagItem(TelemetryConstants.MetricsAttributes.ApplicationName), Is.EqualTo(TelemetryConstants.Application.ApplicationName));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.R1TeamID), Is.EqualTo(TelemetryConstants.Values.R1TeamID));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ServiceNamespace), Is.EqualTo(TelemetryConstants.Values.ServiceNamespace));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ServiceName), Is.EqualTo(TelemetryConstants.Values.ServiceName));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationID), Is.EqualTo(TelemetryConstants.Values.ApplicationID));
+			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationName), Is.EqualTo(TelemetryConstants.Values.ApplicationName));
 
 			_instanceSettingsBundleMock.Verify(m => m.GetStringAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
 			_loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);

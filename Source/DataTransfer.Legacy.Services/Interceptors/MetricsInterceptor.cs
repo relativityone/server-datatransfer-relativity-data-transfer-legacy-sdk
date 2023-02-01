@@ -14,7 +14,7 @@ using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
-using RelEyeAttributes = global::DataTransfer.Legacy.MassImport.RelEyeTelemetry.Constants.AttributeNames;
+using RelEyeAttributes = global::DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants.AttributeNames;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {

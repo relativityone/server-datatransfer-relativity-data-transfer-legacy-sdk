@@ -6,6 +6,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -28,7 +29,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveArtifactIdOfMappedObjectAsync(int workspaceID, string textIdentifier, int artifactTypeID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = _objectManager.Query.RetrieveArtifactIdOfMappedObject(GetBaseServiceContext(workspaceID), textIdentifier, artifactTypeID);
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
@@ -37,7 +38,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveTextIdentifierOfMappedObjectAsync(int workspaceID, int artifactID, int artifactTypeID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = _objectManager.Query.RetrieveTextIdentifierOfMappedObject(GetBaseServiceContext(workspaceID), artifactID, artifactTypeID);
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
@@ -46,7 +47,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<DataSetWrapper> RetrieveArtifactIdOfMappedParentObjectAsync(int workspaceID, string textIdentifier, int artifactTypeID, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var result = _objectManager.Query.RetrieveArtifactIdOfMappedParentObject(GetBaseServiceContext(workspaceID), textIdentifier, artifactTypeID);
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);

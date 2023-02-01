@@ -26,29 +26,29 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		public EventJobStart BuildJobStartEvent(Relativity.MassImport.DTO.ImageLoadInfo settings, string importType)
 		{
 			var @event = new EventJobStart();
-			@event.Attributes[Constants.AttributeNames.RunID] = settings.RunID;
-			@event.Attributes[Constants.AttributeNames.ImportObjectType] = importType;
-			@event.Attributes[Constants.AttributeNames.Billable] = settings.Billable;
-			@event.Attributes[Constants.AttributeNames.CustomerApplicationName] = settings.ExecutionSource.ToString();
-			@event.Attributes[Constants.AttributeNames.OverlayMode] = settings.Overlay.ToString();
-			@event.Attributes[Constants.AttributeNames.OverlayKeyField] = settings.OverlayArtifactID;
-			@event.Attributes[Constants.AttributeNames.HasPDF] = settings.HasPDF;
-			@event.Attributes[Constants.AttributeNames.AuditLevel] = settings.AuditLevel.ToString();
+			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = settings.RunID;
+			@event.Attributes[TelemetryConstants.AttributeNames.ImportObjectType] = importType;
+			@event.Attributes[TelemetryConstants.AttributeNames.Billable] = settings.Billable;
+			@event.Attributes[TelemetryConstants.AttributeNames.CustomerApplicationName] = settings.ExecutionSource.ToString();
+			@event.Attributes[TelemetryConstants.AttributeNames.OverlayMode] = settings.Overlay.ToString();
+			@event.Attributes[TelemetryConstants.AttributeNames.OverlayKeyField] = settings.OverlayArtifactID;
+			@event.Attributes[TelemetryConstants.AttributeNames.HasPDF] = settings.HasPDF;
+			@event.Attributes[TelemetryConstants.AttributeNames.AuditLevel] = settings.AuditLevel.ToString();
 			return @event;
 		}
 
 		public EventJobStart BuildJobStartEvent(Relativity.MassImport.DTO.NativeLoadInfo settings, string importType)
 		{
 			var @event = new EventJobStart();
-			@event.Attributes[Constants.AttributeNames.RunID] = settings.RunID;
-			@event.Attributes[Constants.AttributeNames.ImportObjectType] = importType;
-			@event.Attributes[Constants.AttributeNames.Billable] = settings.Billable;
-			@event.Attributes[Constants.AttributeNames.CustomerApplicationName] = settings.ExecutionSource.ToString();
-			@event.Attributes[Constants.AttributeNames.OverlayMode] = settings.Overlay.ToString();
-			@event.Attributes[Constants.AttributeNames.OverlayKeyField] = settings.OverlayArtifactID;
-			@event.Attributes[Constants.AttributeNames.AuditLevel] = settings.AuditLevel.ToString();
+			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = settings.RunID;
+			@event.Attributes[TelemetryConstants.AttributeNames.ImportObjectType] = importType;
+			@event.Attributes[TelemetryConstants.AttributeNames.Billable] = settings.Billable;
+			@event.Attributes[TelemetryConstants.AttributeNames.CustomerApplicationName] = settings.ExecutionSource.ToString();
+			@event.Attributes[TelemetryConstants.AttributeNames.OverlayMode] = settings.Overlay.ToString();
+			@event.Attributes[TelemetryConstants.AttributeNames.OverlayKeyField] = settings.OverlayArtifactID;
+			@event.Attributes[TelemetryConstants.AttributeNames.AuditLevel] = settings.AuditLevel.ToString();
 
-			@event.Attributes[Constants.AttributeNames.MappedFieldsCount] = settings.MappedFields.Length;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedFieldsCount] = settings.MappedFields.Length;
 			int numberOfFullTextFields = settings.MappedFields.Count(x => x.Category == FieldCategory.FullText);
 			int numberOfDataGridFields = settings.MappedFields.Count(f => f.EnableDataGrid);
 			int numberOfOffTableTextFields = settings.MappedFields.Count(x => x.Type == FieldTypeHelper.FieldType.OffTableText);
@@ -57,13 +57,13 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 			int numberOfSingleChoiceFields = settings.MappedFields.Count(x => x.Type == FieldTypeHelper.FieldType.Code);
 			int numberOfMultiChoiceFields = settings.MappedFields.Count(x => x.Type == FieldTypeHelper.FieldType.MultiCode);
 
-			@event.Attributes[Constants.AttributeNames.MappedFullTextCount] = numberOfFullTextFields;
-			@event.Attributes[Constants.AttributeNames.MappedDataGridCount] = numberOfDataGridFields;
-			@event.Attributes[Constants.AttributeNames.MappedOffTableCount] = numberOfOffTableTextFields;
-			@event.Attributes[Constants.AttributeNames.MappedSingleObjectCount] = numberOfSingleObjectFields;
-			@event.Attributes[Constants.AttributeNames.MappedMultiObjectCount] = numberOfMultiObjectFields;
-			@event.Attributes[Constants.AttributeNames.MappedSingleChoiceCount] = numberOfSingleChoiceFields;
-			@event.Attributes[Constants.AttributeNames.MappedMultiChoiceCount] = numberOfMultiChoiceFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedFullTextCount] = numberOfFullTextFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedDataGridCount] = numberOfDataGridFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedOffTableCount] = numberOfOffTableTextFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedSingleObjectCount] = numberOfSingleObjectFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedMultiObjectCount] = numberOfMultiObjectFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedSingleChoiceCount] = numberOfSingleChoiceFields;
+			@event.Attributes[TelemetryConstants.AttributeNames.MappedMultiChoiceCount] = numberOfMultiChoiceFields;
 
 			return @event;
 		}
@@ -71,11 +71,11 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		public EventJobBatchCompleted BuildJobBatchCompletedEvent(MassImportManagerBase.MassImportResults results, string importType)
 		{
 			var @event = new EventJobBatchCompleted();
-			@event.Attributes[Constants.AttributeNames.RunID] = results.RunID;
-			@event.Attributes[Constants.AttributeNames.JobStatus] = results.ExceptionDetail is null ? "success" : "failed";
-			@event.Attributes[Constants.AttributeNames.ArtifactsCreatedCount] = results.ArtifactsCreated;
-			@event.Attributes[Constants.AttributeNames.ArtifactsUpdatedCount] = results.ArtifactsUpdated;
-			@event.Attributes[Constants.AttributeNames.FilesProcessedCount] = results.FilesProcessed;
+			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = results.RunID;
+			@event.Attributes[TelemetryConstants.AttributeNames.JobStatus] = results.ExceptionDetail is null ? "success" : "failed";
+			@event.Attributes[TelemetryConstants.AttributeNames.ArtifactsCreatedCount] = results.ArtifactsCreated;
+			@event.Attributes[TelemetryConstants.AttributeNames.ArtifactsUpdatedCount] = results.ArtifactsUpdated;
+			@event.Attributes[TelemetryConstants.AttributeNames.FilesProcessedCount] = results.FilesProcessed;
 
 			return @event;
 		}
@@ -83,8 +83,8 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		public EventGeneralStatistics BuildGeneralStatisticsEvent(string runID, int workspaceID)
 		{
 			var @event = new EventGeneralStatistics();
-			@event.Attributes[Constants.AttributeNames.RunID] = runID;
-			@event.Attributes[Constants.AttributeNames.R1WorkspaceID] = workspaceID;
+			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = runID;
+			@event.Attributes[TelemetryConstants.AttributeNames.R1WorkspaceID] = workspaceID;
 
 			return @event;
 		}

@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.Core;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
@@ -30,8 +31,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
-			activity?.SetTag("job.type", exportStatistics.Type);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.JobType, exportStatistics.Type);
 
 			var result = _massExportManager.AuditExport(GetBaseServiceContext(workspaceID), isFatalError, exportStatistics.Map<MassImport.ExportStatistics>());
 				return Task.FromResult(result);
@@ -40,8 +41,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> AuditObjectImportAsync(int workspaceID, string runID, bool isFatalError, ObjectImportStatistics importStatistics, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
-			activity?.SetTag("job.id", runID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			var result = _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<Relativity.MassImport.DTO.ObjectImportStatistics>());
 				return Task.FromResult(result);
@@ -50,8 +51,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> AuditImageImportAsync(int workspaceID, string runID, bool isFatalError, ImageImportStatistics importStatistics, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
-			activity?.SetTag("job.id", runID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
 
 			var result = _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<Relativity.MassImport.DTO.ImageImportStatistics>());
 				return Task.FromResult(result);

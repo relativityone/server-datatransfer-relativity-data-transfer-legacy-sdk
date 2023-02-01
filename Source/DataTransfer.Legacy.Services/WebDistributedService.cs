@@ -15,6 +15,7 @@ using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.Kepler.Transport;
 using Relativity.Services.Exceptions;
+using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -54,7 +55,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			int fileFieldArtifactId, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 			var artifactTypeID = _artifactManager.Read(workspaceServiceContext, objectArtifactID).ArtifactTypeID;
@@ -83,7 +84,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 
@@ -114,7 +115,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<IKeplerStream> DownloadTempFileAsync(int workspaceID, Guid remoteGuid, string correlationID)
 		{
 			var activity = Activity.Current;
-			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1WorkspaceID, workspaceID);
 
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 			var instanceServiceContext = GetBaseServiceContext(AdminWorkspace);
