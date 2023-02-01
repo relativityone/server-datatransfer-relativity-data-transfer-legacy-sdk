@@ -12,6 +12,9 @@ using Relativity.API;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses;
 using Relativity.DataTransfer.Legacy.Services.Observability;
+using System.Diagnostics;
+using System.Collections.Generic;
+using System;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 {
@@ -23,6 +26,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 	{
 		private Mock<IAPILog> _loggerMock;
 		private Mock<ITraceGenerator> _traceGeneratorMock;
+		private IDistributedTracingInterceptorTestClass _interceptedObject;
 
 		/// <summary> 
 		/// MetricsInterceptorTestsSetup. 
@@ -35,34 +39,57 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			
 			var store = new DefaultConfigurationStore();
 			var container = new WindsorContainer(store);
-			container.Register(Component.For<MetricsInterceptor>());
-			container.Register(Component.For<IMetricsInterceptorTestClass>().ImplementedBy<MetricsInterceptorTestClass>());
+			container.Register(Component.For<DistributedTracingInterceptor>());
+			container.Register(Component.For<IDistributedTracingInterceptorTestClass>().ImplementedBy<DistributedTracingInterceptorTestClass>());
 			container.Register(Component.For<IAPILog>().Instance(_loggerMock.Object));
-			//container.Register(Component.For<IMetricsContext>().Instance(_metricsContextMock.Object));
-			//container.Register(Component.For<IRelEyeMetricsService>().Instance(_relEyeMetricsServiceMock.Object).LifestyleTransient());
-			//container.Register(Component.For<IEventsBuilder>().Instance(_eventsBuilderMock.Object).LifestyleTransient());
+			container.Register(Component.For<ITraceGenerator>().Instance(_traceGeneratorMock.Object));
 			container.AddFacility<TypedFactoryFacility>();
 
-			//_interceptedObject = container.Resolve<IMetricsInterceptorTestClass>();
+			_interceptedObject = container.Resolve<IDistributedTracingInterceptorTestClass>();
 		}
 
-		/// <summary> 
-		/// InterceptRunMethod. 
-		/// </summary> 
 		[Test]
 		public void InterceptRunMethod()
 		{
 			// Act 
-			//_interceptedObject.Run();
+			_interceptedObject.Run();
 
 			// Assert 
-			//_metricsContextMock.Verify(m => m.PushProperty($"TargetType", It.IsAny<object>()));
-			//_metricsContextMock.Verify(m => m.PushProperty($"Method", It.IsAny<object>()));
-			//_metricsContextMock.Verify(m => m.PushProperty($"ElapsedMilliseconds", It.IsAny<object>()));
-			//_metricsContextMock.Verify(m => m.Publish());
+			_traceGeneratorMock.Verify(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>()), Times.Never);
+		}
 
-			//_eventsBuilderMock.Verify(m => m.BuildGeneralStatisticsEvent("some runID", 12345));
-			//_relEyeMetricsServiceMock.Verify(m => m.PublishEvent(It.IsAny<EventGeneralStatistics>()));
+		[Test]
+		public void InterceptRunWithIdMethod()
+		{
+			// Act 
+			_interceptedObject.RunWithID("test");
+
+			// Assert 
+			_traceGeneratorMock.Verify(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>()), Times.Never);
+		}
+
+		[Test]
+		public void InterceptRunWithSerializedActivityContextAsIdMethod()
+		{
+			// Act 
+			_interceptedObject.RunWithID("00-64200095b15d3185f702523c236c6920-9e017cf1e496af28-01");
+
+			// Assert 
+			_traceGeneratorMock.Verify(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>()), Times.Once);
+		}
+
+		[Test]
+		public void InterceptRunShallLogError()
+		{
+			// Arrange
+			_traceGeneratorMock.Setup(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>())).Throws(new Exception("test"));
+			
+			// Act 
+			_interceptedObject.RunWithID("00-64200095b15d3185f702523c236c6920-9e017cf1e496af28-01");
+
+			// Assert 
+			_traceGeneratorMock.Verify(m => m.StartActivity(It.IsAny<string>(), It.IsAny<ActivityKind>(), It.IsAny<ActivityContext>(), It.IsAny<IEnumerable<KeyValuePair<string, object>>>(), It.IsAny<IEnumerable<ActivityLink>>(), It.IsAny<DateTimeOffset>()), Times.Once);
+			_loggerMock.Verify(m => m.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()));
 		}
 	}
 }

@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.ServiceModel.Syndication;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using Castle.Core;
 using Relativity.Core;
 using Relativity.Core.Exception;
@@ -53,6 +56,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.trigger", settings.ExecutionSource);
+			activity?.SetTag("job.id", settings.RunID);
 
 			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
 			var runSettings = new RunSettings(
@@ -71,6 +76,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.trigger", settings.ExecutionSource);
+			activity?.SetTag("job.id", settings.RunID);
 
 			IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
 			var runSettings = new RunSettings(
@@ -89,6 +96,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.trigger", settings.ExecutionSource);
+			activity?.SetTag("job.id", settings.RunID);
 
 			IImportCoordinator coordinator = new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
 			var runSettings = new RunSettings(
@@ -108,6 +117,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.trigger", settings.ExecutionSource);
+			activity?.SetTag("job.id", settings.RunID);
 
 			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
 			var runSettings = new RunSettings(
@@ -124,6 +135,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private MassImportResults BulkImport(RunSettings runSettings, IImportCoordinator coordinator)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag("r1.workspace.id", runSettings.WorkspaceID);
+			activity?.SetTag("job.trigger", runSettings.ExecutionSource);
+			activity?.SetTag("job.id", runSettings.RunID);
+			activity?.SetTag("job.workflow_id", runSettings.BatchID);
+
 			var serviceContext = GetBaseServiceContext(runSettings.WorkspaceID);
 			var massImportManager = new MassImportManager();
 
@@ -187,6 +204,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
 
 			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>();
 			return Task.FromResult(result);
@@ -196,6 +214,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
+
 			// there was a issue in image load logic, if there was no any correct image imported
 			// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
 			if (string.IsNullOrEmpty(runID))
@@ -211,6 +231,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
 
 			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>();
 			return Task.FromResult(result);
@@ -220,6 +241,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
 
 			var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID);
 			return Task.FromResult(result);
@@ -229,6 +251,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
 
 			var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
 			_batchResultCache.Cleanup(workspaceID, runID);

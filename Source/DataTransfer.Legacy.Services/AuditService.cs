@@ -31,6 +31,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.type", exportStatistics.Type);
 
 			var result = _massExportManager.AuditExport(GetBaseServiceContext(workspaceID), isFatalError, exportStatistics.Map<MassImport.ExportStatistics>());
 				return Task.FromResult(result);
@@ -40,6 +41,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
 
 			var result = _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<Relativity.MassImport.DTO.ObjectImportStatistics>());
 				return Task.FromResult(result);
@@ -49,6 +51,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var activity = Activity.Current;
 			activity?.SetTag("r1.workspace.id", workspaceID);
+			activity?.SetTag("job.id", runID);
 
 			var result = _massImportManager.AuditImport(GetBaseServiceContext(workspaceID), runID, isFatalError, importStatistics.Map<Relativity.MassImport.DTO.ImageImportStatistics>());
 				return Task.FromResult(result);
