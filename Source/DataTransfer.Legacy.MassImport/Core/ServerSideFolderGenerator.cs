@@ -74,13 +74,12 @@ namespace Relativity.MassImport.Core
 									"''", string.Empty);
 							}
 
-							
 							try
 							{
 								IEnumerable<SqlDataRecord> importMap = folderNodes.GetImportMapping(folderArtifactIdMappings);
 								folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID, settings.RootFolderID);
 							}
-							catch (KeyNotFoundException ex)
+							catch (Exception ex)
 							{
 								logger.LogError(ex, "Failed to CreateFolders folderNodesCount: {nodesCount} folderCandidatesCount: {candidatesCount} folderArtifactIdMappingsCount: {mappingsCount}",
 									folderNodes.Count, folderCandidates.Count(), folderArtifactIdMappings.Count);
