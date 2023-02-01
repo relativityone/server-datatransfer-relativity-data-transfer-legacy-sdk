@@ -19,7 +19,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		[SetUp]
 		public void SetUp()
 		{
-
 			_uut = Container.Resolve<IFieldService>();
 		}
 

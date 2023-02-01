@@ -8,6 +8,6 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events
 	public class EventGeneralStatistics : EventBase
 	{
 		/// <inheritdoc/>
-		public override string EventName => Constants.EventName.GeneralStatistics;
+		public override string EventName => TelemetryConstants.EventName.GeneralStatistics;
 	}
 }

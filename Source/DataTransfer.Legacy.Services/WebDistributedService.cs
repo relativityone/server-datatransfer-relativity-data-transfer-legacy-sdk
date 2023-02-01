@@ -22,6 +22,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class WebDistributedService : BaseService, IWebDistributedService
 	{
 		private readonly ArtifactManager _artifactManager;
@@ -29,7 +30,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly DynamicFieldsFileManager _fieldsFileManager;
 		private readonly FileManager _fileManager;
 
-		public WebDistributedService(IServiceContextFactory serviceContextFactory) 
+		public WebDistributedService(IServiceContextFactory serviceContextFactory)
 			: base(serviceContextFactory)
 		{
 			_artifactManager = new ArtifactManager();
@@ -54,7 +55,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			var workspaceServiceContext = GetBaseServiceContext(workspaceID);
 			var artifactTypeID = _artifactManager.Read(workspaceServiceContext, objectArtifactID).ArtifactTypeID;
 			var hasPermission = _artifactManager.GetPermissionByArtifactTypeID(workspaceServiceContext,
-				objectArtifactID, (int) ArtifactManager.PermissionType.View, artifactTypeID);
+				objectArtifactID, (int)ArtifactManager.PermissionType.View, artifactTypeID);
 
 			if (!hasPermission)
 			{
@@ -135,14 +136,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 			var fileStream = new LongFileStream(filePath, FileMode.Open, FileAccess.Read);
 			var keplerStream = new KeplerStream(fileStream)
 			{
-				Headers = new NameValueCollection {{HttpResponseHeader.ContentLength.ToString(), fileStream.Length.ToString()}}
+				Headers = new NameValueCollection { { HttpResponseHeader.ContentLength.ToString(), fileStream.Length.ToString() } }
 			};
 			return keplerStream;
 		}
 
 		private static void AuditDownload(BaseServiceContext serviceContext, string fileName)
 		{
-			AuditHelper.CreateAuditRecord(serviceContext, -1, (int) AuditAction.File_Download, XmlHelper.GenerateAuditElement($"File {fileName} downloaded by {ClaimsPrincipal.Current.Claims.UserArtifactID()}"));
+			AuditHelper.CreateAuditRecord(serviceContext, -1, (int)AuditAction.File_Download, XmlHelper.GenerateAuditElement($"File {fileName} downloaded by {ClaimsPrincipal.Current.Claims.UserArtifactID()}"));
 		}
 	}
 }

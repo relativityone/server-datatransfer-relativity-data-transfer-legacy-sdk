@@ -14,7 +14,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 	[TestFixture]
 	public class CodeServiceTests : ServicesBaseTests
 	{
-
 		private ICodeService _uut;
 
 		[SetUp]

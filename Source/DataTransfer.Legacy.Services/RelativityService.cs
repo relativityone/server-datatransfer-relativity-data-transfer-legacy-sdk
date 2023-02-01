@@ -16,12 +16,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class RelativityService : BaseService, IRelativityService
 	{
-		public RelativityService(IServiceContextFactory serviceContextFactory) 
-			: base(serviceContextFactory)
-		{
-		}
+		public RelativityService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
 
 		public Task<string> RetrieveCurrencySymbolAsync(string correlationID)
 		{
@@ -47,6 +45,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
 		{
+
 			var result = WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace));
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}

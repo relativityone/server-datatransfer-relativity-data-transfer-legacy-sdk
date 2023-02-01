@@ -14,11 +14,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class FolderService : BaseService, IFolderService
 	{
 		private readonly FolderManager _folderManager;
 
-		public FolderService(IServiceContextFactory serviceContextFactory) 
+		public FolderService(IServiceContextFactory serviceContextFactory)
 			: base(serviceContextFactory)
 		{
 			_folderManager = new FolderManager();

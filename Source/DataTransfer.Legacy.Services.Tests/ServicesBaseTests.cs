@@ -11,6 +11,7 @@ using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
+using Relativity.DataTransfer.Legacy.Services.Observability;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.Services.Interfaces.LibraryApplication;
 using Component = Castle.MicroKernel.Registration.Component;
@@ -32,7 +33,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		protected Mock<ISqlRetryPolicy> SqlRetryPolicyMock;
 		protected Mock<ILibraryApplicationManager> LibraryApplicationManager;
 		protected Mock<IMetricsPublisher> MetricsPublisherMock;
-
+		protected Mock<ITraceGenerator> TraceGeneratorMock;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
@@ -49,6 +50,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			SqlRetryPolicyMock = new Mock<ISqlRetryPolicy>();
 			LibraryApplicationManager = new Mock<ILibraryApplicationManager>();
 			MetricsPublisherMock = new Mock<IMetricsPublisher>();
+			TraceGeneratorMock = new Mock<ITraceGenerator>();
 
 			Container = new WindsorContainer();
 			Container.Register(Component.For<ISqlExecutor>().Instance(SqlExecutorMock.Object));
@@ -58,11 +60,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<IServiceContextFactory>().Instance(ServiceContextFactoryMock.Object));
 			Container.Register(Component.For<ICommunicationModeStorage>().Instance(CommunicationModeStorageMock.Object));
 			Container.Register(Component.For<IRelativityPermissionHelper>().Instance(RelativityPermissionHelperMock.Object));
+			Container.Register(Component.For<ITraceGenerator>().Instance(TraceGeneratorMock.Object));
 			Container.Register(Component.For<ToggleCheckInterceptor>());
 			Container.Register(Component.For<PermissionCheckInterceptor>());
 			Container.Register(Component.For<LogInterceptor>());
 			Container.Register(Component.For<MetricsInterceptor>());
 			Container.Register(Component.For<UnhandledExceptionInterceptor>());
+			Container.Register(Component.For<DistributedTracingInterceptor>());
 			Container.Register(Component.For<IMetricsContext>().Instance(MetricsMock.Object));
 			Container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
 				new Func<IMetricsContext>(Container.Resolve<IMetricsContext>)));

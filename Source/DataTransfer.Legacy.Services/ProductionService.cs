@@ -17,11 +17,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class ProductionService : BaseService, IProductionService
 	{
 		private readonly ProductionManager _productionManager;
 
-		public ProductionService(IServiceContextFactory serviceContextFactory) 
+		public ProductionService(IServiceContextFactory serviceContextFactory)
 			: base(serviceContextFactory)
 		{
 			_productionManager = new ProductionManager();
@@ -68,14 +69,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-        private static object[][] ToObjectArrays(kCura.Data.DataView dataView, Func<DataRow, object[]> transformer)
-        {
-            if (transformer == null)
-            {
-                transformer = row => row.ItemArray;
-            }
+		private static object[][] ToObjectArrays(kCura.Data.DataView dataView, Func<DataRow, object[]> transformer)
+		{
+			if (transformer == null)
+			{
+				transformer = row => row.ItemArray;
+			}
 
-            return dataView.Table.Select().Select(transformer).ToArray();
-        }
+			return dataView.Table.Select().Select(transformer).ToArray();
+		}
 	}
 }

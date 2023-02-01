@@ -27,6 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			var container = new WindsorContainer();
 			container.Register(Component.For<IAPILog>().Instance(_loggerMock.Object));
 			container.Register(Component.For<UnhandledExceptionInterceptor>());
+			container.Register(Component.For<DistributedTracingInterceptor>());
 			container.Register(Component.For<IUnhandledExceptionInterceptorTestsClass>().ImplementedBy<UnhandledExceptionInterceptorTestsClass>());
 
 			_interceptedObject = container.Resolve<IUnhandledExceptionInterceptorTestsClass>();

@@ -8,6 +8,6 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events
 	public class EventJobStart : EventBase
 	{
 		/// <inheritdoc/>
-		public override string EventName => Constants.EventName.JobStart;
+		public override string EventName => TelemetryConstants.EventName.JobStart;
 	}
 }

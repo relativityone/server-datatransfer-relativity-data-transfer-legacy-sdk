@@ -10,6 +10,6 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events
 		/// <summary>
 		/// Gets name of event.
 		/// </summary>
-		public override string EventName => Constants.EventName.JobBatchCompleted;
+		public override string EventName => TelemetryConstants.EventName.JobBatchCompleted;
 	}
 }

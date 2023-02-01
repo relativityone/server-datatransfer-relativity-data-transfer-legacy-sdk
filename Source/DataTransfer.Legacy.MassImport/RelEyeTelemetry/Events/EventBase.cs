@@ -18,10 +18,10 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events
 		{
 			Attributes = new Dictionary<string, object>
 			{
-				[Constants.AttributeNames.R1TeamID] = Constants.Values.R1TeamID,
-				[Constants.AttributeNames.ServiceName] = Constants.Values.ServiceName,
-				[Constants.AttributeNames.ServiceNamespace] = Constants.Values.ServiceNamespace,
-				[Constants.AttributeNames.ApplicationName] = Constants.Values.ApplicationName,
+				[TelemetryConstants.AttributeNames.R1TeamID] = TelemetryConstants.Values.R1TeamID,
+				[TelemetryConstants.AttributeNames.ServiceName] = TelemetryConstants.Values.ServiceName,
+				[TelemetryConstants.AttributeNames.ServiceNamespace] = TelemetryConstants.Values.ServiceNamespace,
+				[TelemetryConstants.AttributeNames.ApplicationName] = TelemetryConstants.Values.ApplicationName,
 			};
 		}
 

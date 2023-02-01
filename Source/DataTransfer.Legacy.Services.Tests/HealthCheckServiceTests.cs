@@ -27,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceWebAPI)));
 
 			_uut.HealthCheckAsync();
-			
+
 		}
 
 		[Test]

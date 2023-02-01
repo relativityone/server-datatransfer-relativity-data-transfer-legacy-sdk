@@ -4,7 +4,6 @@ using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
 using kCura.Data.RowDataGateway;
-using Moq;
 using NUnit.Framework;
 using Relativity.Logging;
 using Relativity.MassImport.Data.SqlFramework;

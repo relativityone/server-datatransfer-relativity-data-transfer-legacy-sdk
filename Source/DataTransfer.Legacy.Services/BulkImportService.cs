@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core;
@@ -11,14 +12,16 @@ using Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
+using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
-    [Interceptor(typeof(UnhandledExceptionInterceptor))]
+	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class BulkImportService : BaseService, IBulkImportService
 	{
 		private const string SecurityWarning =
@@ -38,8 +41,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly ISnowflakeMetrics _metrics;
 		private readonly IBatchResultCache _batchResultCache;
 
-
-		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics, IBatchResultCache batchResultCache) 
+		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics, IBatchResultCache batchResultCache)
 			: base(serviceContextFactory)
 		{
 			_massImportManager = new MassImportManager();
@@ -50,6 +52,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ImageLoadInfo settings, bool inRepository, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
+
 			IImportCoordinator coordinator = new ImageImportCoordinator(inRepository, settings);
 			var runSettings = new RunSettings(
 				workspaceID,
@@ -57,12 +63,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 				settings.OverrideReferentialLinksRestriction,
 				settings.RunID,
 				settings.BulkFileName);
+
 			var result = BulkImport(runSettings, coordinator);
+
 			return Task.FromResult(result);
 		}
 
 		public Task<MassImportResults> BulkImportProductionImageAsync(int workspaceID, SDK.ImportExport.V1.Models.ImageLoadInfo settings, int productionArtifactID, bool inRepository, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
+
 			IImportCoordinator coordinator = new ProductionImportCoordinator(inRepository, productionArtifactID, settings);
 			var runSettings = new RunSettings(
 				workspaceID,
@@ -70,12 +82,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 				settings.OverrideReferentialLinksRestriction,
 				settings.RunID,
 				settings.BulkFileName);
+
 			var result = BulkImport(runSettings, coordinator);
+
 			return Task.FromResult(result);
 		}
 
 		public Task<MassImportResults> BulkImportNativeAsync(int workspaceID, SDK.ImportExport.V1.Models.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
+
 			IImportCoordinator coordinator = new NativeImportCoordinator(inRepository, includeExtractedTextEncoding, settings);
 			var runSettings = new RunSettings(
 				workspaceID,
@@ -83,13 +101,19 @@ namespace Relativity.DataTransfer.Legacy.Services
 				settings.OverrideReferentialLinksRestriction,
 				settings.RunID,
 				settings.DataFileName);
+
 			var result = BulkImport(runSettings, coordinator);
+
 			return Task.FromResult(result);
 		}
 
 		public Task<MassImportResults> BulkImportObjectsAsync(int workspaceID,
 			SDK.ImportExport.V1.Models.ObjectLoadInfo settings, bool inRepository, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.ExecutionSource, settings.ExecutionSource);
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, settings.RunID);
+
 			IImportCoordinator coordinator = new RdoImportCoordinator(inRepository, settings);
 			var runSettings = new RunSettings(
 				workspaceID,
@@ -97,12 +121,17 @@ namespace Relativity.DataTransfer.Legacy.Services
 				settings.OverrideReferentialLinksRestriction,
 				settings.RunID,
 				settings.DataFileName);
+
 			var result = BulkImport(runSettings, coordinator);
+
 			return Task.FromResult(result);
 		}
 
 		private MassImportResults BulkImport(RunSettings runSettings, IImportCoordinator coordinator)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.BatchId, runSettings.BatchID);
+
 			var serviceContext = GetBaseServiceContext(runSettings.WorkspaceID);
 			var massImportManager = new MassImportManager();
 
@@ -140,9 +169,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			{
 				return existingResult;
 			}
-			
+
 			var results = coordinator.RunImport(serviceContext, massImportManager);
-			if (coordinator.ArtifactTypeID == (int) ArtifactType.Document && Config.EnforceDocumentLimit)
+			if (coordinator.ArtifactTypeID == (int)ArtifactType.Document && Config.EnforceDocumentLimit)
 			{
 				results = massImportManager.PostImportDocumentLimitLogic(serviceContext, runSettings.WorkspaceID, results);
 			}
@@ -164,12 +193,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateImageErrorFilesAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
 			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID).Map<ErrorFileKey>();
 			return Task.FromResult(result);
 		}
 
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
 			// there was a issue in image load logic, if there was no any correct image imported
 			// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
 			if (string.IsNullOrEmpty(runID))
@@ -183,18 +218,27 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
 			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID).Map<ErrorFileKey>();
 			return Task.FromResult(result);
 		}
 
 		public Task<bool> NativeRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
 			var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID);
 			return Task.FromResult(result);
 		}
 
 		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
 		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
 			var result = _massImportManager.DisposeRunTempTables(GetBaseServiceContext(workspaceID), runID);
 			_batchResultCache.Cleanup(workspaceID, runID);
 			return Task.FromResult(result);

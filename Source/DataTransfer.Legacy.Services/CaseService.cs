@@ -14,11 +14,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class CaseService : BaseService, ICaseService
 	{
 		private readonly CaseManager _caseManager;
 
-		public CaseService(IServiceContextFactory serviceContextFactory) 
+		public CaseService(IServiceContextFactory serviceContextFactory)
 			: base(serviceContextFactory)
 		{
 			_caseManager = new CaseManager();

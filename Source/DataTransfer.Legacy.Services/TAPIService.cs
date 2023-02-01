@@ -11,6 +11,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class TAPIService : BaseService, ITAPIService
 	{
 		private readonly IInstanceSettingsBundle _instanceSettingsBundle;
@@ -37,5 +38,5 @@ namespace Relativity.DataTransfer.Legacy.Services
 				TapiMaxAllowedTargetDataRateMbps = tapiMaxAllowedTargetDataRateMbps
 			};
 		}
-    }
+	}
 }

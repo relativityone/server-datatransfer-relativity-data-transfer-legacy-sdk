@@ -1,5 +1,4 @@
-﻿using Relativity.Data.MassImport;
-using Relativity.Logging;
+﻿using Relativity.Logging;
 using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.DataGrid;
 

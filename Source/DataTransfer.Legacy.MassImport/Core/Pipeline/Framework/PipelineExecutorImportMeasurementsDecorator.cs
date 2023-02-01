@@ -1,5 +1,4 @@
-﻿using Relativity.Data.MassImport;
-using Relativity.MassImport.Data;
+﻿using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Core.Pipeline.Framework
 {

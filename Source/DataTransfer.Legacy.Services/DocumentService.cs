@@ -13,12 +13,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class DocumentService : BaseService, IDocumentService
 	{
-		public DocumentService(IServiceContextFactory serviceContextFactory) 
-			: base(serviceContextFactory)
-		{
-		}
+		public DocumentService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
 
 		public Task<int[]> RetrieveAllUnsupportedOiFileIdsAsync(string correlationID)
 		{

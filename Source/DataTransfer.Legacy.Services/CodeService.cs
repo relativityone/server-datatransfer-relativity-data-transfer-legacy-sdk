@@ -16,6 +16,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class CodeService : BaseService, ICodeService
 	{
 		private readonly CodeManagerImplementation _codeManager;
@@ -38,7 +39,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			code.Name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(code.Name)));
 			var result = _retryPolicyFactory.CreateDeadlockExceptionAndResultRetryPolicy().Execute(() => _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false));
-			
+
 			return Task.FromResult(result);
 		}
 

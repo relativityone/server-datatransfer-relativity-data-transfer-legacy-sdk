@@ -4,22 +4,10 @@
 
 namespace DataTransfer.Legacy.MassImport.Core
 {
-	public class TelemetryConstants
+	public class RelEyeSettings
 	{
-		public class MetricsAttributes
-		{
-			/// <summary>
-			/// Team ID attribute.
-			/// </summary>
-			public const string R1TeamIDAttribute = "r1.team.id";
-		}
-
-		public class Application
-		{
-			/// <summary>
-			///  ID of 'Holy Data Acquisition' team.
-			/// </summary>
-			public const string OwnerTeamId = "PTCI-4941411";
-		}
+		public const string RelativityTelemetrySection = "Relativity.Telemetry";
+		public const string ReleyeUriTracesSettingName = "ReleyeUriTraces";
+		public const string ReleyeTokenSettingName = "ReleyeToken";
 	}
 }

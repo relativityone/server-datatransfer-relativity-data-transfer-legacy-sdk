@@ -16,19 +16,17 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 
 	public class ExportService : BaseService, IExportService
 	{
-		private static readonly string[] DynamicallyLoadedDllPaths = {Config.DynamicallyLoadedStandardSearchDLLs, Config.DynamicallyLoadedClientSearchDLLs};
+		private static readonly string[] DynamicallyLoadedDllPaths = { Config.DynamicallyLoadedStandardSearchDLLs, Config.DynamicallyLoadedClientSearchDLLs };
 
-		public ExportService(IServiceContextFactory serviceContextFactory) 
-			: base(serviceContextFactory)
-		{
-		}
+		public ExportService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
 
 		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
-			var result = InitializeExport(workspaceID, (int) ArtifactType.Document,
+			var result = InitializeExport(workspaceID, (int)ArtifactType.Document,
 						e => e.InitializeSavedSearchExport(searchArtifactID, DynamicallyLoadedDllPaths, avfIDs,
 							startAtRecord).Map<InitializationResults>());
 			return Task.FromResult(result);
@@ -47,7 +45,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<InitializationResults> InitializeProductionExportAsync(int workspaceID, int productionArtifactID,
 			int[] avfIds, int startAtRecord, string correlationID)
 		{
-			var result = InitializeExport(workspaceID, (int) ArtifactType.Document,
+			var result = InitializeExport(workspaceID, (int)ArtifactType.Document,
 				e => e.InitializeProductionExport(productionArtifactID, DynamicallyLoadedDllPaths, avfIds,
 					startAtRecord).Map<InitializationResults>());
 			return Task.FromResult(result);

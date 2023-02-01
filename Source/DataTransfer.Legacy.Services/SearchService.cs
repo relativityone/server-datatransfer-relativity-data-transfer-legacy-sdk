@@ -13,12 +13,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
 	[Interceptor(typeof(PermissionCheckInterceptor))]
+	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class SearchService : BaseService, ISearchService
 	{
 		private readonly SearchManager _searchManager;
 		private readonly ViewManager _viewManager;
 
-		public SearchService(IServiceContextFactory serviceContextFactory) 
+		public SearchService(IServiceContextFactory serviceContextFactory)
 			: base(serviceContextFactory)
 		{
 			_searchManager = new SearchManager();
@@ -63,7 +64,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<DataSetWrapper> RetrieveProducedImagesForDocumentAsync(int workspaceID, int documentArtifactID, string correlationID)
 		{
-			var result = FileQuery.RetrieveAllByDocumentArtifactIdAndType(GetBaseServiceContext(workspaceID), documentArtifactID, (int) FileType.StampedTif);
+			var result = FileQuery.RetrieveAllByDocumentArtifactIdAndType(GetBaseServiceContext(workspaceID), documentArtifactID, (int)FileType.StampedTif);
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
 		}
 
@@ -89,7 +90,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			var result = _searchManager.Query.RetrieveOrderedAvfLookupByArtifactIdList(GetBaseServiceContext(workspaceID), artifactTypeID, artifactIdList, isProductionList);
 			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
-
 		}
 
 		public Task<DataSetWrapper> RetrieveAllExportableViewFieldsAsync(int workspaceID, int artifactTypeID, string correlationID)

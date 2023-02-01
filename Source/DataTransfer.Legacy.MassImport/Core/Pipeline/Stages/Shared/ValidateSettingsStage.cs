@@ -1,5 +1,4 @@
 ﻿using kCura.Utility;
-using Relativity.Data.MassImport;
 using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared

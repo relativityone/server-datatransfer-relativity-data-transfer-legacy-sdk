@@ -10,7 +10,7 @@ using System.Reflection;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 {
-    [TestFixture]
+	[TestFixture]
     public class RetryPolicyFactoryTests
     {
         private const int SQL_INVALID_STATEMENT_ERROR_NUMBER = 1099; // The ON clause is not valid for this statement.
