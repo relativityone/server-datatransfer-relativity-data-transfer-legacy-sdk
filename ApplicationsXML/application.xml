@@ -217,6 +217,7 @@
 	<Assembly><Keywords/><Name>Microsoft.Extensions.Primitives.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Relativity.DataGrid.dll</Name><Notes/></Assembly>
 	<Assembly><Keywords/><Name>Relativity.DataGrid.Implementations.dll</Name><Notes/></Assembly>
   </Assemblies>
   <ResourceFiles />
