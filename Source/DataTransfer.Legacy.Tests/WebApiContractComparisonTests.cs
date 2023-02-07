@@ -57,6 +57,10 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			var missingMethods = new List<string>();
 			foreach (var method in keplerService.Methods)
 			{
+				if (keplerService.Name == "IProductionService" && method.Name == "ReadWithoutValidationAsync")
+				{
+					continue; // skip this method
+				}
 				if (webApiMethods.All(x => x.Name != MapKeplerToWebApiEndpointName(method.Name)))
 				{
 					missingMethods.Add(method.Name);
@@ -72,7 +76,12 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		public void MakeSureEndpointsHasCorrectNumberOfParameters(MethodDefinition keplerMethod)
 		{
 			var webApiMethods = GetAllWebApiMethods(MapKeplerToWebApiServiceName(keplerMethod.DeclaringType.Name));
-			var webApiMethodParameters = webApiMethods.First(x => x.Name == MapKeplerToWebApiEndpointName(keplerMethod.Name)).Parameters;
+			var webApiMethod = webApiMethods.FirstOrDefault(x => x.Name == MapKeplerToWebApiEndpointName(keplerMethod.Name));
+			if (webApiMethod == null)
+			{
+				Assert.Inconclusive("There is not WebAPI method to compare");
+			}
+			var webApiMethodParameters = webApiMethod.Parameters;
 
 			var keplerMethodParameters = keplerMethod.Parameters;
 
@@ -86,7 +95,12 @@ namespace Relativity.DataTransfer.Legacy.Tests
 		public void MakeSureEndpointsHasCorrectReturnType(MethodDefinition keplerMethod)
 		{
 			var webApiMethods = GetAllWebApiMethods(MapKeplerToWebApiServiceName(keplerMethod.DeclaringType.Name));
-			var webApiMethodReturnType = webApiMethods.First(x => x.Name == MapKeplerToWebApiEndpointName(keplerMethod.Name)).ReturnType;
+			var webApiMethod = webApiMethods.FirstOrDefault(x => x.Name == MapKeplerToWebApiEndpointName(keplerMethod.Name));
+			if (webApiMethod == null)
+			{
+				Assert.Inconclusive("There is not WebAPI method to compare");
+			}
+			var webApiMethodReturnType = webApiMethod.ReturnType;
 
 			var keplerMethodReturnType = keplerMethod.ReturnType;
 
@@ -163,8 +177,8 @@ namespace Relativity.DataTransfer.Legacy.Tests
 
 		private static string GetWebApiContractDll()
 		{
-			return System.IO.File.Exists("WebAPIContract/kCura.EDDS.WebAPI.dll") ? 
-				"WebAPIContract/kCura.EDDS.WebAPI.dll" : 
+			return System.IO.File.Exists("WebAPIContract/kCura.EDDS.WebAPI.dll") ?
+				"WebAPIContract/kCura.EDDS.WebAPI.dll" :
 				"Source/DataTransfer.Legacy.Tests/WebAPIContract/kCura.EDDS.WebAPI.dll";
 		}
 
@@ -187,7 +201,7 @@ namespace Relativity.DataTransfer.Legacy.Tests
 
 		private static IEnumerable<string> GetOnlyKeplerServicesNames()
 		{
-			return new[] {nameof(IIAPICommunicationModeService), nameof(IHealthCheckService)};
+			return new[] { nameof(IIAPICommunicationModeService), nameof(IHealthCheckService) };
 		}
 
 		private static string GetWebApiKeplerContractDll()

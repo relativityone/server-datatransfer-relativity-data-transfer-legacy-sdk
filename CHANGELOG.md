@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.2.71]
+- REL-816343 - Block exporting productions with redacted natives
+
 ## [0.2.70]
 - REL-635344 - OpenTelemetry and Distributed Tracing
 
