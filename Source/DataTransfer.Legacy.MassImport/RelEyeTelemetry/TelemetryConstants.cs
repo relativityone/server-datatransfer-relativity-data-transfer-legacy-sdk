@@ -37,6 +37,22 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// Team identification in backstage.
 			/// </summary>
 			public const string R1TeamID = "PTCI-4941411";
+
+			/// <summary>
+			/// Status of an activity.
+			/// </summary>
+			public enum Status
+			{
+				/// <summary>
+				/// Success
+				/// </summary>
+				Success,
+
+				/// <summary>
+				/// Failed
+				/// </summary>
+				Failed,
+			}
 		}
 
 		/// <summary>
@@ -243,6 +259,16 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// [string] job type
 			/// </summary>
 			public const string JobType = "job.type";
+
+			/// <summary>
+			/// [string] R1 source id.
+			/// </summary>
+			public const string R1SourceID = "r1.source.id";
+
+			/// <summary>
+			/// [string] Message.
+			/// </summary>
+			public const string Message = "message";
 		}
 
 		/// <summary>
