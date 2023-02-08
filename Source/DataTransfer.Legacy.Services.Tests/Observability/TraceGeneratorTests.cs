@@ -41,7 +41,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Observability
 			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationID), Is.EqualTo(TelemetryConstants.Values.ApplicationID));
 			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationName), Is.EqualTo(TelemetryConstants.Values.ApplicationName));
 
-			_instanceSettingsBundleMock.Verify(m => m.GetStringAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
+			_instanceSettingsBundleMock.Verify(m => m.GetStringAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(3));
 			_loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
 		}
 
@@ -84,7 +84,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Observability
 			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationID), Is.EqualTo(TelemetryConstants.Values.ApplicationID));
 			Assert.That(activity.GetTagItem(TelemetryConstants.AttributeNames.ApplicationName), Is.EqualTo(TelemetryConstants.Values.ApplicationName));
 
-			_instanceSettingsBundleMock.Verify(m => m.GetStringAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(2));
+			_instanceSettingsBundleMock.Verify(m => m.GetStringAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Exactly(3));
 			_loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
 		}
 	}
