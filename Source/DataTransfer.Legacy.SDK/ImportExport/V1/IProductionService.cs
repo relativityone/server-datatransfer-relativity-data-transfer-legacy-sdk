@@ -33,5 +33,9 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		[HttpPost]
 		[Route("ReadAsync")]
 		Task<ProductionInfo> ReadAsync(int workspaceID, int productionArtifactID, string correlationID);
+
+		[HttpPost]
+		[Route("ReadWithoutValidationAsync")]
+		Task<ProductionInfo> ReadWithoutValidationAsync(int workspaceID, int productionArtifactID, string correlationID);
 	}
 }
