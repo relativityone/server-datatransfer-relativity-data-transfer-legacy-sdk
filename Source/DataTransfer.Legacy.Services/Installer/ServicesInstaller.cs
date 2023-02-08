@@ -58,6 +58,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<ITelemetryPublisher>().ImplementedBy<ApmTelemetryPublisher>().LifestyleTransient());
 			container.Register(Component.For<IRelEyeMetricsService>().ImplementedBy<RelEyeMetricsService>().LifestyleTransient());
 			container.Register(Component.For<IEventsBuilder>().ImplementedBy<EventsBuilder>().LifestyleTransient());
+
+			container.Register(Component.For<IHelper>().UsingFactoryMethod((x, c) => x.Resolve<IHelper>()));
 			StorageAccessProvider.InitializeStorageAccess(container);
 		}
 	}

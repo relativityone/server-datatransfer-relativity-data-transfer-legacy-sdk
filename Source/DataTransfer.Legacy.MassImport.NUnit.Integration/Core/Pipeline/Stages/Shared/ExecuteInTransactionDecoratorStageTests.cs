@@ -8,6 +8,8 @@ using Relativity.MassImport.Core.Pipeline.Stages.Shared;
 
 namespace MassImport.NUnit.Integration.Core.Pipeline.Stages.Shared
 {
+	using Relativity.API;
+
 	[TestFixture]
 	public class ExecuteInTransactionDecoratorStageTests : MassImportTestBase
 	{
@@ -25,7 +27,8 @@ namespace MassImport.NUnit.Integration.Core.Pipeline.Stages.Shared
 				this.CoreContext.ChicagoContext,
 				loggingContext,
 				jobDetails: null, // it is not used
-				caseSystemArtifactId: 0); // it is not used
+				caseSystemArtifactId: 0,
+				new Mock<IHelper>().Object); // it is not used
 			var executor = new PipelineExecutor();
 			var innerStage = new ReturnNumberOfOpenTransactionsStage(context);
 			_sut = new ExecuteInTransactionDecoratorStage<int, int>(innerStage, executor, context);

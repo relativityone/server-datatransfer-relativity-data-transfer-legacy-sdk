@@ -8,6 +8,8 @@ using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
+	using Relativity.API;
+
 	internal class Objects : ObjectBase
 	{
 		#region Constructors
@@ -24,7 +26,8 @@ namespace Relativity.MassImport.Data
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
-			int caseSystemArtifactId) : base(
+			int caseSystemArtifactId,
+			IHelper helper) : base(
 				context,
 				queryExecutor,
 				settings,
@@ -33,7 +36,8 @@ namespace Relativity.MassImport.Data
 				importUpdateAuditAction,
 				importMeasurements,
 				columnDefinitionCache,
-				caseSystemArtifactId)
+				caseSystemArtifactId,
+				helper)
 		{
 		}
 

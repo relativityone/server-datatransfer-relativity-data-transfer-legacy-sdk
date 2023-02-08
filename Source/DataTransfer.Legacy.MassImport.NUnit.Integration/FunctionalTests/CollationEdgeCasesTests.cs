@@ -11,6 +11,9 @@ using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
+	using Moq;
+	using Relativity.API;
+
 	[TestFixture]
 	public class CollationEdgeCasesTests : MassImportTestBase
 	{
@@ -32,7 +35,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var artifactManager = new ArtifactManager();
 			var baseContext = CoreContext.ChicagoContext;
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext);
+			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, new Mock<IHelper>().Object);
 		}
 
 		[Test]

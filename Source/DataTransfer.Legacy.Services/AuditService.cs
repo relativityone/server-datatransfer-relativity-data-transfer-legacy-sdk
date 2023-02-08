@@ -10,6 +10,8 @@ using Relativity.DataTransfer.Legacy.Services.Interceptors;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	using Relativity.API;
+
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
@@ -21,11 +23,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly IMassExportManager _massExportManager;
 		private readonly MassImportManager _massImportManager;
 
-		public AuditService(IServiceContextFactory serviceContextFactory)
+		public AuditService(IServiceContextFactory serviceContextFactory, IHelper helper)
 			: base(serviceContextFactory)
 		{
 			_massExportManager = new MassExportManager();
-			_massImportManager = new MassImportManager();
+			_massImportManager = new MassImportManager(false, helper);
 		}
 
 		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)

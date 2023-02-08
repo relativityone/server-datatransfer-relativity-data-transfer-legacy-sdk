@@ -20,6 +20,7 @@ using ILog = Relativity.Logging.ILog;
 namespace Relativity.MassImport.Data
 {
 	using DataTransfer.Legacy.MassImport.Data.Cache;
+	using Relativity.API;
 
 	internal class Image
 	{
@@ -46,7 +47,7 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Constructors
-		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings)
+		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, IHelper helper)
 		{
 			_context = context;
 			_keyFieldID = settings.KeyFieldArtifactID;
@@ -65,7 +66,7 @@ namespace Relativity.MassImport.Data
 				DataGridBufferPool argbufferPool = null;
 				
 				DataGridContextBase @base;
-				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, dgSqlFactory);
+				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
 				@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
 
 				_dgContext = new Relativity.Data.DataGridContext(@base);

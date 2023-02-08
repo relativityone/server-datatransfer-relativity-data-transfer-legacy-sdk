@@ -13,7 +13,9 @@ using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
 
 namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
 {
-    [TestFixture]
+	using Relativity.API;
+
+	[TestFixture]
     public class SendJobStartedMetricStageTests
     {
         const string importType = "TestImport";
@@ -30,7 +32,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
         public void SetUp()
         {
             var jobDetails = new MassImportJobDetails(tableNames: null, clientName, importType);
-            var context = new MassImportContext(baseContext: null, loggingContext: null, jobDetails, caseSystemArtifactId: 0);
+            var context = new MassImportContext(baseContext: null, loggingContext: null, jobDetails, caseSystemArtifactId: 0, new Mock<IHelper>().Object);
             _settings = new NativeLoadInfo();
             _inputMock = new Mock<IImportSettingsInput<NativeLoadInfo>>();
             _inputMock

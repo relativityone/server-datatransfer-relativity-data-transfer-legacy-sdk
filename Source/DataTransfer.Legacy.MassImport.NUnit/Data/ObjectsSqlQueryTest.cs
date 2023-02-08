@@ -12,6 +12,8 @@ using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.NUnit.Data
 {
+	using Relativity.API;
+
 	[TestFixture]
 	internal class ObjectsSqlQueryTest : BaseSqlQueryTest
 	{
@@ -33,7 +35,8 @@ namespace Relativity.MassImport.NUnit.Data
 				importUpdateAuditAction: 1, 
 				importMeasurements: new ImportMeasurements(), 
 				columnDefinitionCache: ColumnDefinitionCache, 
-				caseSystemArtifactId: CaseArtifactId);
+				caseSystemArtifactId: CaseArtifactId,
+				new Mock<IHelper>().Object);
 		}
 
 		[Test]

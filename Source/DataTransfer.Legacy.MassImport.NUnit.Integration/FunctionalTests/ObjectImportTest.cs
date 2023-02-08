@@ -12,7 +12,10 @@ using MassImportManager = Relativity.Core.Service.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-    [TestFixture]
+	using Moq;
+	using Relativity.API;
+
+	[TestFixture]
     public class ObjectImportTest : MassImportTestBase
     {
         private const string ObjectTypeName = "Orders";
@@ -58,7 +61,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
             const bool inRepository = true;
             
             ObjectLoadInfo nativeLoadInfo = await this.CreateSampleObjectLoadInfoAsync().ConfigureAwait(false);
-            MassImportManager massImportManager = new MassImportManager();
+            MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
 
             // Act
             MassImportManagerBase.MassImportResults result = massImportManager.RunObjectImport(this.CoreContext, nativeLoadInfo, inRepository);

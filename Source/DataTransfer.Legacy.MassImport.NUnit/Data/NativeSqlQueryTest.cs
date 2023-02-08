@@ -10,6 +10,8 @@ using DataTransfer.Legacy.MassImport.NUnit.Properties;
 
 namespace Relativity.MassImport.NUnit.Data
 {
+	using Relativity.API;
+
 	[TestFixture]
 	internal class NativeSqlQueryTest : BaseSqlQueryTest
 	{
@@ -32,7 +34,8 @@ namespace Relativity.MassImport.NUnit.Data
 				importMeasurements: new ImportMeasurements(),
 				columnDefinitionCache: ColumnDefinitionCache,
 				caseSystemArtifactId: CaseArtifactId,
-				lockHelper: lockHelperMock.Object);
+				lockHelper: lockHelperMock.Object,
+				new Mock<IHelper>().Object);
 
 			_native.AllRelationalColumns = new FieldInfo[] { };
 		}

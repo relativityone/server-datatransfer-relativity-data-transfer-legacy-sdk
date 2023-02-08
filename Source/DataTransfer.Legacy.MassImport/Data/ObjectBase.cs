@@ -24,6 +24,8 @@ using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
+	using Relativity.API;
+
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
@@ -55,7 +57,8 @@ namespace Relativity.MassImport.Data
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
-			int caseSystemArtifactId)
+			int caseSystemArtifactId,
+			IHelper helper)
 		{
 			_context = context;
 			QueryExecutor = queryExecutor;
@@ -81,7 +84,7 @@ namespace Relativity.MassImport.Data
 
 				DataGridContextBase dataGridContextBase;
 
-				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, dgSqlFactory);
+				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
 				dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
 
 				_dgContext = new Relativity.Data.DataGridContext(dataGridContextBase);

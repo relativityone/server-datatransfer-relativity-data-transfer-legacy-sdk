@@ -93,6 +93,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<IRelativityService>().ImplementedBy<RelativityService>());
 			Container.Register(Component.For<ISearchService>().ImplementedBy<SearchService>());
 			Container.Register(Component.For<IWebDistributedService>().ImplementedBy<WebDistributedService>());
+			Container.Register(Component.For<IHelper>().UsingFactoryMethod(() => new Mock<IHelper>().Object).LifestyleSingleton());
 		}
 	}
 }

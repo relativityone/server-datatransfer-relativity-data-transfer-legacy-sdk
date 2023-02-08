@@ -15,6 +15,9 @@ using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
+	using Moq;
+	using Relativity.API;
+
 	[TestFixture]
 	public class MoveTests : MassImportTestBase
 	{
@@ -64,7 +67,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			var settings = GetBasicSettings();
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext);
+			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, new Mock<IHelper>().Object);
 
 			await _sut.RunMassImportAsync(GetInitialRecords(), settings, CancellationToken.None, null)
 				.ConfigureAwait(false);

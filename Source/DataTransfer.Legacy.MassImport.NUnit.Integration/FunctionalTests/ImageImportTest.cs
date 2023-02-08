@@ -16,6 +16,9 @@ using MassImportManager = Relativity.Core.Service.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
+	using Moq;
+	using Relativity.API;
+
 	[TestFixture]
 	public class ImageImportTest : MassImportTestBase
 	{
@@ -36,7 +39,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			const bool inRepository = true;
 			ImageLoadInfo imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
-			MassImportManager massImportManager = new MassImportManager();
+			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
 
 			// Act
 			MassImportManagerBase.MassImportResults result =  massImportManager.RunImageImport(this.CoreContext.ChicagoContext, imageLoadInfo, inRepository);

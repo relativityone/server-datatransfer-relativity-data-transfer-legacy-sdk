@@ -9,17 +9,21 @@ using Relativity.MassImport.Data.SqlFramework;
 // TODO: adjust namespace with Relativity, join with Api/MassImportManager https://jira.kcura.com/browse/REL-482642
 namespace Relativity.Core.Service
 {
+	using Relativity.API;
+
 	public class MassImportManager : MassImportManagerBase
 	{
 		private bool CollectIDsOnCreate { get; set; }
 		private Lazy<MassImportManagerNew> _massImportManagerLazy;
+		private readonly IHelper _helper;
 
 		public const string TEMP_TABLE_PREFIX_FOR_FOLDER_CREATION = "RELNATTMP_";
 
-		public MassImportManager(bool collectIDsOnCreate = false)
+		public MassImportManager(bool collectIDsOnCreate, IHelper helper)
 		{
 			CollectIDsOnCreate = collectIDsOnCreate;
 			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
+			_helper = helper;
 		}
 
 		protected IAPM APMClient
@@ -32,32 +36,32 @@ namespace Relativity.Core.Service
 
 		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval, _helper));
 		}
 
 		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval, _helper));
 		}
 		
 		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
 		{
-			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID);
+			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID, _helper);
 		}
 		
 		public bool ImageRunHasErrors(Core.ICoreContext icc, string runId)
 		{
-			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId);
+			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId, _helper);
 		}
 
 		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunNativeImport(context, settings, inRepository, includeExtractedTextEncoding, timekeeper, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunNativeImport(context, settings, inRepository, includeExtractedTextEncoding, timekeeper, retval, _helper));
 		}
 		
 		protected override MassImportResults AttemptRunObjectImport(Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval, _helper));
 		}
 		
 		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)

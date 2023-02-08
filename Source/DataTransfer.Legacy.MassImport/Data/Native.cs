@@ -13,6 +13,8 @@ using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
+	using Relativity.API;
+
 	internal class Native : ObjectBase
 	{
 		#region Members
@@ -68,7 +70,8 @@ namespace Relativity.MassImport.Data
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
 			int caseSystemArtifactId,
-			ILockHelper lockHelper) : base(
+			ILockHelper lockHelper,
+			IHelper helper) : base(
 				context.DBContext, 
 				queryExecutor,
 				settings,
@@ -77,7 +80,8 @@ namespace Relativity.MassImport.Data
 				importUpdateAuditAction,
 				importMeasurements,
 				columnDefinitionCache,
-				caseSystemArtifactId)
+				caseSystemArtifactId,
+				helper)
 		{
 			_context = context;
 			_lockHelper = lockHelper;

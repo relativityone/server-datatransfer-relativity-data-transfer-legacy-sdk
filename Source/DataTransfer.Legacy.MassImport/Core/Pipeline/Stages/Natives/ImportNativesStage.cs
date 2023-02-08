@@ -35,7 +35,9 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 				_context.ImportMeasurements,
 				input.ColumnDefinitionCache,
 				_context.CaseSystemArtifactId,
-				new LockHelper(new AppLockProvider()));
+				new LockHelper(new AppLockProvider()),
+				_context.Helper
+				);
 			var dataGridInputReaderProvider = input.DataGridInputReaderProvider ?? native;
 			_context.ImportMeasurements.SqlImportTime.Start();
 			int auditUserId = Relativity.Core.Service.Audit.ImpersonationToolkit.GetCaseAuditUserId(_context.BaseContext, settings.OnBehalfOfUserToken);

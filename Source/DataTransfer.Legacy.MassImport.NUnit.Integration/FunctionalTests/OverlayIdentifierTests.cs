@@ -17,6 +17,9 @@ using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
+	using Moq;
+	using Relativity.API;
+
 	[TestFixture(true)]
 	[TestFixture(false)]
 	public class OverlayIdentifierTests : MassImportTestBase
@@ -271,7 +274,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					context,
 					settings,
 					LoadStagingTablesAction,
-					dataGridReader: null);
+					dataGridReader: null,
+					new Mock<IHelper>().Object);
 			}
 			else
 			{
@@ -279,7 +283,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					context,
 					settings,
 					returnAffectedArtifactIDs: false,
-					LoadStagingTablesAction);
+					LoadStagingTablesAction,
+					new Mock<IHelper>().Object);
 			}
 
 			IEnumerable<string> itemLevelErrors = await ReadItemLevelErrorsAsync(internalResult.RunID).ConfigureAwait(false);

@@ -15,6 +15,8 @@ using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Api
 {
+	using Relativity.API;
+
 	/// <summary>
 	/// This class is entry point for every MassImport use case.
 	/// TODO: Join this class with existing MassImportManager and MassImporter classes after moving them to c#. Consider separating DG logic into another class.
@@ -25,14 +27,16 @@ namespace Relativity.MassImport.Api
 		private readonly IArtifactManager _artifactManager;
 		private readonly Relativity.Core.Service.MassImportManager _massImportManager;
 		private readonly BaseContext _context;
+		private readonly IHelper _helper;
 
-		public MassImportManager(ILog logger, IArtifactManager artifactManager, BaseContext context)
+		public MassImportManager(ILog logger, IArtifactManager artifactManager, BaseContext context, IHelper helper)
 		{
 			_logger = logger ?? Relativity.Logging.Log.Logger;
 			_artifactManager = artifactManager;
 			_context = context;
+			_helper = helper;
 
-			_massImportManager = new Relativity.Core.Service.MassImportManager(collectIDsOnCreate: true);
+			_massImportManager = new Relativity.Core.Service.MassImportManager(collectIDsOnCreate: true, helper);
 		}
 
 		public Task<MassImportResults> RunMassImportAsync(IEnumerable<MassImportArtifact> artifacts, MassImportSettings settings, CancellationToken cancel, IProgress<MassImportProgress> progress)
@@ -150,12 +154,12 @@ namespace Relativity.MassImport.Api
 			{
 				DataGridReader dataGridReader = null;
 				dataGridReader = GetDataGridReader(artifacts, settings);
-				internalResult = MassImporter.ImportNativesForObjectManager(_context, settings, LoadStagingTablesAction, dataGridReader);
+				internalResult = MassImporter.ImportNativesForObjectManager(_context, settings, LoadStagingTablesAction, dataGridReader, _helper);
 			}
 			else
 			{
 				var objectSettings = (Relativity.MassImport.DTO.ObjectLoadInfo)settings;
-				internalResult = MassImporter.ImportObjectsForObjectManager(_context, objectSettings, true, LoadStagingTablesAction);
+				internalResult = MassImporter.ImportObjectsForObjectManager(_context, objectSettings, true, LoadStagingTablesAction, _helper);
 			}
 
 			MassImportManagerBase.MassImportResults results = internalResult is MassImportManagerBase.DetailedMassImportResults detailedInternalResult ?

@@ -4,6 +4,8 @@ using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Core.Pipeline
 {
+	using Relativity.API;
+
 	internal class MassImportContext
 	{
 		private readonly LoggingContext _loggingContext;
@@ -16,16 +18,20 @@ namespace Relativity.MassImport.Core.Pipeline
 
 		public ILog Logger => _loggingContext.Logger;
 
+		public IHelper Helper { get; }
+
 		public MassImportContext(
 			Relativity.Core.BaseContext baseContext,
 			LoggingContext loggingContext,
 			MassImportJobDetails jobDetails,
-			int caseSystemArtifactId)
+			int caseSystemArtifactId,
+			IHelper helper)
 		{
 			BaseContext = baseContext;
 			_loggingContext = loggingContext;
 			JobDetails = jobDetails;
 			CaseSystemArtifactId = caseSystemArtifactId;
+			Helper = helper; 
 
 			ImportMeasurements = new ImportMeasurements();
 			Timekeeper = new Timekeeper();
