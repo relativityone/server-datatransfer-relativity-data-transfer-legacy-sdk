@@ -81,7 +81,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				currentActivity?.SetTag(tag.Key, tag.Value);
 			}
-
+			currentActivity?.SetTag(TelemetryConstants.AttributeNames.Status, TelemetryConstants.Values.Status.Success);
 			currentActivity?.Stop();
 			return Task.CompletedTask;
 		}
