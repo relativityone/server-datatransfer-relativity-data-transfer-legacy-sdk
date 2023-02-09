@@ -43,32 +43,31 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Security.Cryptography.ProtectedData.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Text.Encodings.Web.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Text.Json.dll</Assembly>    
-
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Threading.Tasks.Extensions.dll</Assembly> 
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Numerics.Vectors.dll</Assembly> 
-		  
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Threading.Tasks.Extensions.dll</Assembly> 
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Numerics.Vectors.dll</Assembly> 
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.Api.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Core.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Core.Api.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Google.Protobuf.dll</Assembly>
-		  
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Configuration.Abstractions.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Configuration.Binder.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Configuration.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.DependencyInjection.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Logging.Abstractions.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Logging.Configuration.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Logging.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Options.ConfigurationExtensions.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Options.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Primitives.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Collections.Immutable.dll</Assembly>
-		  <Assembly>Source\DataTransfer.Legacy.Services\bin\System.ComponentModel.Annotations.dll</Assembly>
-          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.dll</Assembly> 
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Core.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Core.Api.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Google.Protobuf.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Configuration.Abstractions.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Configuration.Binder.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Configuration.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.DependencyInjection.Abstractions.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.DependencyInjection.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Logging.Abstractions.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Logging.Configuration.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Logging.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Options.ConfigurationExtensions.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Options.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Extensions.Primitives.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Collections.Immutable.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\System.ComponentModel.Annotations.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.Implementations.dll</Assembly> 
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Productions.Services.Interfaces.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Productions.Services.Interfaces.Versioned.dll</Assembly>
         </Assemblies>
         <ResourceFiles />
         <CustomPages />

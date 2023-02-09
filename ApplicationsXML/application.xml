@@ -12,7 +12,7 @@
       <Name>Castle.Windsor.dll</Name>
       <Notes />
     </Assembly>
-	  <Assembly>
+      <Assembly>
       <Keywords />
       <Name>Relativity.DataTransfer.Legacy.SDK.dll</Name>
       <Notes />
@@ -197,28 +197,30 @@
       <Keywords />
       <Name>System.Numerics.Vectors.dll</Name>
       <Notes />
-	</Assembly>
-	<Assembly><Keywords/><Name>OpenTelemetry.dll</Name><Notes /></Assembly>
+    </Assembly>
+    <Assembly><Keywords/><Name>OpenTelemetry.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Api.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Grpc.Core.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Grpc.Core.Api.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Google.Protobuf.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.Abstractions.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.Binder.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.DependencyInjection.Abstractions.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.DependencyInjection.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Logging.Abstractions.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Logging.Configuration.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Logging.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Options.ConfigurationExtensions.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Options.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Microsoft.Extensions.Primitives.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>Relativity.DataGrid.dll</Name><Notes/></Assembly>
-	<Assembly><Keywords/><Name>Relativity.DataGrid.Implementations.dll</Name><Notes/></Assembly>
+    <Assembly><Keywords/><Name>Grpc.Core.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Grpc.Core.Api.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Google.Protobuf.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.Abstractions.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.Binder.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Configuration.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.DependencyInjection.Abstractions.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.DependencyInjection.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Logging.Abstractions.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Logging.Configuration.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Logging.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Options.ConfigurationExtensions.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Options.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Microsoft.Extensions.Primitives.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>Relativity.DataGrid.dll</Name><Notes/></Assembly>
+    <Assembly><Keywords/><Name>Relativity.DataGrid.Implementations.dll</Name><Notes/></Assembly>
+    <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.dll</Name><Notes/></Assembly>
+    <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.Versioned.dll</Name><Notes/></Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />

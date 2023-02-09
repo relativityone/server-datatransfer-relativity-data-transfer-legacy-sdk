@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Castle.Core;
 using Relativity.Core.Service;
@@ -20,11 +21,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class ProductionService : BaseService, IProductionService
 	{
+		private readonly IRedactedNativesValidator _productionWithRedactedNativesValidator;
 		private readonly ProductionManager _productionManager;
 
-		public ProductionService(IServiceContextFactory serviceContextFactory)
+		public ProductionService(IServiceContextFactory serviceContextFactory,
+			IRedactedNativesValidator productionWithRedactedNativesValidator)
 			: base(serviceContextFactory)
 		{
+			_productionWithRedactedNativesValidator = productionWithRedactedNativesValidator;
 			_productionManager = new ProductionManager();
 		}
 
@@ -63,7 +67,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.CompletedTask;
 		}
 
-		public Task<ProductionInfo> ReadAsync(int workspaceID, int productionArtifactID, string correlationID)
+		public async Task<ProductionInfo> ReadAsync(int workspaceID, int productionArtifactID, string correlationID)
+		{
+			await _productionWithRedactedNativesValidator.VerifyThatProductionDoesNotHaveRedactedNativesEnabledAsync(
+				workspaceID,
+				productionArtifactID,
+				CancellationToken.None);
+
+			var result = _productionManager.ReadInfo(GetBaseServiceContext(workspaceID), productionArtifactID).Map<ProductionInfo>();
+			return result;
+		}
+
+		public Task<ProductionInfo> ReadWithoutValidationAsync(int workspaceID, int productionArtifactID, string correlationID)
 		{
 			var result = _productionManager.ReadInfo(GetBaseServiceContext(workspaceID), productionArtifactID).Map<ProductionInfo>();
 			return Task.FromResult(result);

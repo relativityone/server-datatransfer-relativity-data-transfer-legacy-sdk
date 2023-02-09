@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Castle.Windsor;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using Moq;
 using NUnit.Framework;
 using Relativity.API;
+using Relativity.Core;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
@@ -14,6 +17,7 @@ using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Relativity.DataTransfer.Legacy.Services.Observability;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using Relativity.Services.Interfaces.LibraryApplication;
+using TddEbook.TddToolkit;
 using Component = Castle.MicroKernel.Registration.Component;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests
@@ -34,6 +38,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		protected Mock<ILibraryApplicationManager> LibraryApplicationManager;
 		protected Mock<IMetricsPublisher> MetricsPublisherMock;
 		protected Mock<ITraceGenerator> TraceGeneratorMock;
+		protected Mock<IRedactedNativesValidator> RedactedNativesValidatorMock;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
@@ -51,6 +56,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			LibraryApplicationManager = new Mock<ILibraryApplicationManager>();
 			MetricsPublisherMock = new Mock<IMetricsPublisher>();
 			TraceGeneratorMock = new Mock<ITraceGenerator>();
+			RedactedNativesValidatorMock = new Mock<IRedactedNativesValidator>();
 
 			Container = new WindsorContainer();
 			Container.Register(Component.For<ISqlExecutor>().Instance(SqlExecutorMock.Object));
@@ -61,6 +67,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<ICommunicationModeStorage>().Instance(CommunicationModeStorageMock.Object));
 			Container.Register(Component.For<IRelativityPermissionHelper>().Instance(RelativityPermissionHelperMock.Object));
 			Container.Register(Component.For<ITraceGenerator>().Instance(TraceGeneratorMock.Object));
+			Container.Register(Component.For<IRedactedNativesValidator>().Instance(RedactedNativesValidatorMock.Object));
 			Container.Register(Component.For<ToggleCheckInterceptor>());
 			Container.Register(Component.For<PermissionCheckInterceptor>());
 			Container.Register(Component.For<LogInterceptor>());
@@ -94,6 +101,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<ISearchService>().ImplementedBy<SearchService>());
 			Container.Register(Component.For<IWebDistributedService>().ImplementedBy<WebDistributedService>());
 			Container.Register(Component.For<IHelper>().UsingFactoryMethod(() => new Mock<IHelper>().Object).LifestyleSingleton());
+		}
+
+		protected void SetupMockForPositiveTests()
+		{
+			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
+				.Returns(Task.FromResult((true, IAPICommunicationMode.Kepler)));
+			var baseServiceContext = Any.InstanceOf<BaseServiceContext>();
+			ServiceContextFactoryMock.Setup(x => x.GetBaseServiceContext(It.IsAny<int>()))
+				.Returns(baseServiceContext);
+			RelativityPermissionHelperMock.Setup(x =>
+				x.HasAdminOperationPermission(baseServiceContext, Permission.AllowDesktopClientImport)).Returns(true);
+			RelativityPermissionHelperMock.Setup(x =>
+				x.HasAdminOperationPermission(baseServiceContext, Permission.AllowDesktopClientExport)).Returns(true);
 		}
 	}
 }

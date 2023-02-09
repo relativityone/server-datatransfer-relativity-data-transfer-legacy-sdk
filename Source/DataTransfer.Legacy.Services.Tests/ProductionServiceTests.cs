@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -20,6 +22,26 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		public void SetUp()
 		{
 			_uut = Container.Resolve<IProductionService>();
+		}
+
+		[Test]
+		public async Task ReadAsync_ThrowsNotFoundException_WhenValidatorThrowsException()
+		{
+			// arrange
+			const int WorkspaceID = 90;
+			const int ProductionID = 77;
+			const string CorrelationID = "TestCorrelationID";
+
+			SetupMockForPositiveTests();
+			RedactedNativesValidatorMock
+				.Setup(x => x.VerifyThatProductionDoesNotHaveRedactedNativesEnabledAsync(WorkspaceID, ProductionID, It.IsAny<CancellationToken>()))
+				.Throws<NotFoundException>();
+
+			// act
+			Func<Task> readAction = () => _uut.ReadAsync(WorkspaceID, ProductionID, CorrelationID);
+
+			// assert
+			await readAction.Should().ThrowAsync<NotFoundException>();
 		}
 
 		[Test]
@@ -57,6 +79,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 					_uut.ReadAsync(Any.Integer(), Any.Integer(), Any.String()))
 				.Should().Throw<ServiceException>()
 				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
+			FluentActions.Invoking(() =>
+					_uut.ReadWithoutValidationAsync(Any.Integer(), Any.Integer(), Any.String()))
+				.Should().Throw<ServiceException>()
+				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 		}
 
 		[Test]
@@ -89,6 +116,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 			FluentActions.Invoking(() =>
 				_uut.ReadAsync(Any.Integer(), Any.Integer(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+			FluentActions.Invoking(() =>
+					_uut.ReadWithoutValidationAsync(Any.Integer(), Any.Integer(), Any.String()))
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 		}
 	}

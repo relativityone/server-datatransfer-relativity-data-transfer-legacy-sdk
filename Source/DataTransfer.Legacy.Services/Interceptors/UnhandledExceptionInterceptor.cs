@@ -3,8 +3,10 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.API;
 using Relativity.Services.Exceptions;
 using Relativity.Services.Objects.Exceptions;
@@ -50,6 +52,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			}
 			catch (Exception e)
 			{
+				Activity.Current?.SetTag(TelemetryConstants.AttributeNames.Status, TelemetryConstants.Values.Status.Failed);
+				Activity.Current?.SetTag(TelemetryConstants.AttributeNames.Message, e.Message);
+
 				Logger.LogError(e, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
 				throw new ServiceException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}

@@ -14,6 +14,7 @@ using Relativity.Telemetry.APM;
 using DataTransfer.Legacy.MassImport.Data;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
+using Relativity.DataTransfer.Legacy.Services.ExternalServices;
 
 namespace Relativity.DataTransfer.Legacy.Services.Installer
 {
@@ -58,9 +59,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<ITelemetryPublisher>().ImplementedBy<ApmTelemetryPublisher>().LifestyleTransient());
 			container.Register(Component.For<IRelEyeMetricsService>().ImplementedBy<RelEyeMetricsService>().LifestyleTransient());
 			container.Register(Component.For<IEventsBuilder>().ImplementedBy<EventsBuilder>().LifestyleTransient());
-
-			//container.Register(Component.For<IHelper>().UsingFactoryMethod((x, c) => x.Resolve<IHelper>()));
+			container.Register(Component.For<IRedactedNativesValidator>().ImplementedBy<RedactedNativesValidator>().LifestyleTransient());
+			
 			StorageAccessProvider.InitializeStorageAccess(container);
+			ExternalServicesInstaller.Install(container);
 		}
 	}
 }

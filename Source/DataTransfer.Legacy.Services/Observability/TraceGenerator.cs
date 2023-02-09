@@ -19,6 +19,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
     { 
 		private string ApiKey = string.Empty;
 		private string ReleyeUriTraces = string.Empty;
+		private string SourceID = string.Empty;
 
 		private readonly IAPILog _logger;
 		private readonly IInstanceSettingsBundle _instanceSettingsBundle;
@@ -48,7 +49,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 				{
 					ReleyeUriTraces =  _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriTracesSettingName).GetAwaiter().GetResult();
 					ApiKey = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
-					
+					SourceID = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
+
 					tracerProvider = Sdk.CreateTracerProviderBuilder()
 								.AddSource(new[] { TelemetryConstants.Values.ServiceNamespace })
 								.SetResourceBuilder(
@@ -84,12 +86,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ServiceName, TelemetryConstants.Values.ServiceName);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
-
+			activity?.SetBaggage(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
+			
 			activity?.SetTag(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceName, TelemetryConstants.Values.ServiceName);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
+			activity?.SetTag(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
 		}
 
         public void Dispose()
