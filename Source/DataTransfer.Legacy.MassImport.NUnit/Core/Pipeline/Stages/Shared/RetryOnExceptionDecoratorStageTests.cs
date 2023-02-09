@@ -7,6 +7,7 @@ using Relativity.MassImport.Core.Pipeline;
 using Relativity.MassImport.Core.Pipeline.Errors;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Stages.Shared;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 {
@@ -37,7 +38,8 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 				baseContext: null, // not used by ExecuteInTransactionDecoratorStage
 				new LoggingContext("correlationId", "clientName", _loggerMock.Object),
 				jobDetails: null, // not used by ExecuteInTransactionDecoratorStage
-				caseSystemArtifactId: -1); // not used by ExecuteInTransactionDecoratorStage
+				caseSystemArtifactId: -1,
+				new Mock<IHelper>().Object); // not used by ExecuteInTransactionDecoratorStage
 
 			_sut = new RetryOnExceptionDecoratorStage<int, int>(
 				_stageMock.Object,

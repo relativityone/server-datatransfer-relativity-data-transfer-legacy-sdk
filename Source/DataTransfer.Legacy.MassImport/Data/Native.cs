@@ -10,6 +10,7 @@ using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLoc
 using DataTransfer.Legacy.MassImport.Data.Cache;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
@@ -68,7 +69,8 @@ namespace Relativity.MassImport.Data
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
 			int caseSystemArtifactId,
-			ILockHelper lockHelper) : base(
+			ILockHelper lockHelper,
+			IHelper helper) : base(
 				context.DBContext, 
 				queryExecutor,
 				settings,
@@ -77,7 +79,8 @@ namespace Relativity.MassImport.Data
 				importUpdateAuditAction,
 				importMeasurements,
 				columnDefinitionCache,
-				caseSystemArtifactId)
+				caseSystemArtifactId,
+				helper)
 		{
 			_context = context;
 			_lockHelper = lockHelper;

@@ -7,6 +7,7 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.API;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -21,11 +22,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 		private readonly IMassExportManager _massExportManager;
 		private readonly MassImportManager _massImportManager;
 
-		public AuditService(IServiceContextFactory serviceContextFactory)
+		public AuditService(IServiceContextFactory serviceContextFactory, IHelper helper)
 			: base(serviceContextFactory)
 		{
 			_massExportManager = new MassExportManager();
-			_massImportManager = new MassImportManager();
+			_massImportManager = new MassImportManager(false, helper);
 		}
 
 		public Task<bool> AuditExportAsync(int workspaceID, bool isFatalError, ExportStatistics exportStatistics, string correlationID)

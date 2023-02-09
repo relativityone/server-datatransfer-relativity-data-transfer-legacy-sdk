@@ -6,6 +6,7 @@ using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
+
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Observability
 {
 	[TestFixture]

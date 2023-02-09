@@ -13,6 +13,7 @@ using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
 using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
+using Relativity.API;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -40,13 +41,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private readonly ISnowflakeMetrics _metrics;
 		private readonly IBatchResultCache _batchResultCache;
+		private readonly IHelper _helper;
 
-		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics, IBatchResultCache batchResultCache)
+		public BulkImportService(IServiceContextFactory serviceContextFactory, ISnowflakeMetrics metrics, IBatchResultCache batchResultCache, IHelper helper)
 			: base(serviceContextFactory)
 		{
-			_massImportManager = new MassImportManager();
+			_massImportManager = new MassImportManager(false, helper);
 			_metrics = metrics;
 			_batchResultCache = batchResultCache;
+			_helper = helper;
 		}
 
 		public Task<MassImportResults> BulkImportImageAsync(int workspaceID,
@@ -133,7 +136,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			activity?.SetTag(TelemetryConstants.AttributeNames.BatchId, runSettings.BatchID);
 
 			var serviceContext = GetBaseServiceContext(runSettings.WorkspaceID);
-			var massImportManager = new MassImportManager();
+			var massImportManager = new MassImportManager(false, _helper);
 
 			if (!massImportManager.HasImportPermission(serviceContext))
 			{

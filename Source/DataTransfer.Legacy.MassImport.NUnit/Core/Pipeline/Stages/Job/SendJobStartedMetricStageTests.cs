@@ -10,10 +10,11 @@ using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
+using Relativity.API;
 
 namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
 {
-    [TestFixture]
+	[TestFixture]
     public class SendJobStartedMetricStageTests
     {
         const string importType = "TestImport";
@@ -30,7 +31,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
         public void SetUp()
         {
             var jobDetails = new MassImportJobDetails(tableNames: null, clientName, importType);
-            var context = new MassImportContext(baseContext: null, loggingContext: null, jobDetails, caseSystemArtifactId: 0);
+            var context = new MassImportContext(baseContext: null, loggingContext: null, jobDetails, caseSystemArtifactId: 0, new Mock<IHelper>().Object);
             _settings = new NativeLoadInfo();
             _inputMock = new Mock<IImportSettingsInput<NativeLoadInfo>>();
             _inputMock

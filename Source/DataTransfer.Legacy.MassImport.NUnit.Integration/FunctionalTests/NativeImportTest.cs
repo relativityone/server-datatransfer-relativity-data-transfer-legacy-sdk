@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity;
+using Relativity.API;
 using Relativity.Core.Service;
 using Relativity.MassImport.DTO;
 using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
+using Moq;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -35,7 +37,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			const bool inRepository = true;
 			const bool includeExtractedTextEncoding = false;
 			NativeLoadInfo nativeLoadInfo = await this.CreateSampleNativeLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
-			MassImportManager massImportManager = new MassImportManager();
+			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
 
 			// Act
 			MassImportManagerBase.MassImportResults result =  massImportManager.RunNativeImport(this.CoreContext, nativeLoadInfo, inRepository, includeExtractedTextEncoding);

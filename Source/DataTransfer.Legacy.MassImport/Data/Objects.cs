@@ -5,6 +5,7 @@ using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
@@ -24,7 +25,8 @@ namespace Relativity.MassImport.Data
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
-			int caseSystemArtifactId) : base(
+			int caseSystemArtifactId,
+			IHelper helper) : base(
 				context,
 				queryExecutor,
 				settings,
@@ -33,7 +35,8 @@ namespace Relativity.MassImport.Data
 				importUpdateAuditAction,
 				importMeasurements,
 				columnDefinitionCache,
-				caseSystemArtifactId)
+				caseSystemArtifactId,
+				helper)
 		{
 		}
 

@@ -8,6 +8,8 @@ using Relativity.Core.Service;
 using Relativity.MassImport.DTO;
 using Relativity.MassImport.Api;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -32,7 +34,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var artifactManager = new ArtifactManager();
 			var baseContext = CoreContext.ChicagoContext;
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext);
+			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, new Mock<IHelper>().Object);
 		}
 
 		[Test]

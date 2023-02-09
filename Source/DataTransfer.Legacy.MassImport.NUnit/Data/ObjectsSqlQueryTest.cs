@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Relativity.Core;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Data
 {
@@ -33,7 +34,8 @@ namespace Relativity.MassImport.NUnit.Data
 				importUpdateAuditAction: 1, 
 				importMeasurements: new ImportMeasurements(), 
 				columnDefinitionCache: ColumnDefinitionCache, 
-				caseSystemArtifactId: CaseArtifactId);
+				caseSystemArtifactId: CaseArtifactId,
+				new Mock<IHelper>().Object);
 		}
 
 		[Test]

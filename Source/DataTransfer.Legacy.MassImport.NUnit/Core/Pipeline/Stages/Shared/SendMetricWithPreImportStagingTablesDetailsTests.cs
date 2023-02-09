@@ -8,6 +8,7 @@ using Relativity.MassImport.Core;
 using Relativity.MassImport.Core.Pipeline;
 using Relativity.MassImport.Core.Pipeline.Stages.Shared;
 using Relativity.MassImport.Data.StagingTables;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 {
@@ -31,7 +32,8 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 				baseContext: null, // not used by SendMetricWithPreImportStagingTablesDetails
 				new LoggingContext("correlationId", "clientName", _loggerMock.Object),
 				new MassImportJobDetails(new TableNames(), clientSystemName: "test", importType: "test"),
-				caseSystemArtifactId: -1 // not used by SendMetricWithPreImportStagingTablesDetails
+				caseSystemArtifactId: -1, // not used by SendMetricWithPreImportStagingTablesDetails
+				new Mock<IHelper>().Object
 			);
 
 			_stagingTableRepositoryMock = new Mock<IStagingTableRepository>();

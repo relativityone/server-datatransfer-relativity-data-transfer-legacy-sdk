@@ -65,6 +65,7 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Collections.Immutable.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.ComponentModel.Annotations.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.dll</Assembly>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.Implementations.dll</Assembly> 
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Productions.Services.Interfaces.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Productions.Services.Interfaces.Versioned.dll</Assembly>
         </Assemblies>

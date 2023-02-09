@@ -14,6 +14,8 @@ using Relativity.MassImport.Core.Pipeline.Stages.Job.PopulateStagingTables;
 using BaseContext = Relativity.Core.BaseContext;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -271,7 +273,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					context,
 					settings,
 					LoadStagingTablesAction,
-					dataGridReader: null);
+					dataGridReader: null,
+					new Mock<IHelper>().Object);
 			}
 			else
 			{
@@ -279,7 +282,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					context,
 					settings,
 					returnAffectedArtifactIDs: false,
-					LoadStagingTablesAction);
+					LoadStagingTablesAction,
+					new Mock<IHelper>().Object);
 			}
 
 			IEnumerable<string> itemLevelErrors = await ReadItemLevelErrorsAsync(internalResult.RunID).ConfigureAwait(false);

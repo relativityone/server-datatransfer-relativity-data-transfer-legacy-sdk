@@ -14,10 +14,11 @@ using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImageLoadInfo = Relativity.MassImport.DTO.ImageLoadInfo;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-
 	[TestFixture]
 	public class ProductionImportTest : MassImportTestBase
 	{
@@ -41,7 +42,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated, hasPDF).ConfigureAwait(false);
 			
 
-			MassImportManager massImportManager = new MassImportManager();
+			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
 			var productionSetArtifactId = await ProductionHelper.CreateProductionSet(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false);
 
 			// Act

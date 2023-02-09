@@ -218,6 +218,7 @@
     <Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>Relativity.DataGrid.dll</Name><Notes/></Assembly>
+    <Assembly><Keywords/><Name>Relativity.DataGrid.Implementations.dll</Name><Notes/></Assembly>
     <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.dll</Name><Notes/></Assembly>
     <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.Versioned.dll</Name><Notes/></Assembly>
   </Assemblies>

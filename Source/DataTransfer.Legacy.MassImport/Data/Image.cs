@@ -13,12 +13,14 @@ using Relativity.DataGrid.Implementations.DGFS.ReadBackend;
 using Relativity.MassImport.Data.DataGrid;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
+using DGRelativityRepository = Relativity.MassImport.Data.DataGrid.DGRelativityRepository;
+using File = kCura.Utility.File;
 using ILog = Relativity.Logging.ILog;
+using DataTransfer.Legacy.MassImport.Data.Cache;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-
 	internal class Image
 	{
 		#region Members
@@ -44,7 +46,7 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Constructors
-		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings)
+		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, IHelper helper)
 		{
 			_context = context;
 			_keyFieldID = settings.KeyFieldArtifactID;
@@ -61,7 +63,10 @@ namespace Relativity.MassImport.Data
 				var fml = new FieldMappingLookup(dgSqlFactory);
 				var dgfsSqlReader = new SqlBackend(Relativity.Data.Config.DataGridConfiguration, dgSqlFactory);
 				DataGridBufferPool argbufferPool = null;
-				DataGridContextBase @base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
+				
+				DataGridContextBase @base;
+				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
+				@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
 
 				_dgContext = new Relativity.Data.DataGridContext(@base);
 				_dgImportHelper = new DataGridImportHelper(_dgContext, _context, ImportMeasurements, new Relativity.Data.TextMigrationVerifier(context));

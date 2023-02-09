@@ -7,6 +7,7 @@ using Relativity.Core;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
 using DataTransfer.Legacy.MassImport.NUnit.Properties;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Data
 {
@@ -32,7 +33,8 @@ namespace Relativity.MassImport.NUnit.Data
 				importMeasurements: new ImportMeasurements(),
 				columnDefinitionCache: ColumnDefinitionCache,
 				caseSystemArtifactId: CaseArtifactId,
-				lockHelper: lockHelperMock.Object);
+				lockHelper: lockHelperMock.Object,
+				new Mock<IHelper>().Object);
 
 			_native.AllRelationalColumns = new FieldInfo[] { };
 		}

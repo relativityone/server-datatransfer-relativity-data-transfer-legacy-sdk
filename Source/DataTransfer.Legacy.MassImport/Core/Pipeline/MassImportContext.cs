@@ -1,6 +1,7 @@
 ﻿using kCura.Utility;
 using Relativity.Logging;
 using Relativity.MassImport.Data;
+using Relativity.API;
 
 namespace Relativity.MassImport.Core.Pipeline
 {
@@ -16,16 +17,20 @@ namespace Relativity.MassImport.Core.Pipeline
 
 		public ILog Logger => _loggingContext.Logger;
 
+		public IHelper Helper { get; }
+
 		public MassImportContext(
 			Relativity.Core.BaseContext baseContext,
 			LoggingContext loggingContext,
 			MassImportJobDetails jobDetails,
-			int caseSystemArtifactId)
+			int caseSystemArtifactId,
+			IHelper helper)
 		{
 			BaseContext = baseContext;
 			_loggingContext = loggingContext;
 			JobDetails = jobDetails;
 			CaseSystemArtifactId = caseSystemArtifactId;
+			Helper = helper; 
 
 			ImportMeasurements = new ImportMeasurements();
 			Timekeeper = new Timekeeper();

@@ -30,7 +30,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 		{
 			var settings = input.Settings;
 			var queryExecutor = new QueryExecutor(_context.BaseContext.DBContext, _context.Logger);
-			var importObject = new Data.Objects(_context.BaseContext.DBContext, queryExecutor, settings, (int)input.ImportUpdateAuditAction, _context.ImportMeasurements, input.ColumnDefinitionCache, _context.CaseSystemArtifactId);
+			var importObject = new Data.Objects(_context.BaseContext.DBContext, queryExecutor, settings, (int)input.ImportUpdateAuditAction, _context.ImportMeasurements, input.ColumnDefinitionCache, _context.CaseSystemArtifactId, _context.Helper);
 			IChoicesImportService choicesImportService = CreateChoicesImportService(settings, input.ColumnDefinitionCache);
 			var result = this.ExecuteObjectImport(settings, importObject, choicesImportService, input.CollectCreatedIDs);
 			InjectionManager.Instance.Evaluate("b7e37d83-d252-4986-8362-390a7c0e299f");

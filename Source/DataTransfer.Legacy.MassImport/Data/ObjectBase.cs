@@ -21,6 +21,7 @@ using DataTransfer.Legacy.MassImport.Data.Cache;
 using System.Data.Common;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
@@ -55,7 +56,8 @@ namespace Relativity.MassImport.Data
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
-			int caseSystemArtifactId)
+			int caseSystemArtifactId,
+			IHelper helper)
 		{
 			_context = context;
 			QueryExecutor = queryExecutor;
@@ -78,8 +80,12 @@ namespace Relativity.MassImport.Data
 				var fml = new FieldMappingLookup(dgSqlFactory);
 				var dgfsSqlReader = new SqlBackend(Relativity.Data.Config.DataGridConfiguration, dgSqlFactory);
 				DataGridBufferPool dataGridBufferPool = null;
-				DataGridContextBase dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
-				
+
+				DataGridContextBase dataGridContextBase;
+
+				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
+				dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
+
 				_dgContext = new Relativity.Data.DataGridContext(dataGridContextBase);
 				_dgImportHelper = new DataGridImportHelper(_dgContext, Context, ImportMeasurements, new Relativity.Data.TextMigrationVerifier(Context));
 			}
