@@ -14,12 +14,11 @@ using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImageLoadInfo = Relativity.MassImport.DTO.ImageLoadInfo;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	using Moq;
-	using Relativity.API;
-
 	[TestFixture]
 	public class ProductionImportTest : MassImportTestBase
 	{

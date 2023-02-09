@@ -5,11 +5,10 @@ using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
-	using Relativity.API;
-
 	internal class Objects : ObjectBase
 	{
 		#region Constructors

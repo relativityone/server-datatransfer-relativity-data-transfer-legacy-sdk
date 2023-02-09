@@ -7,11 +7,10 @@ using Relativity.MassImport.Core.Pipeline;
 using Relativity.MassImport.Core.Pipeline.Errors;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Stages.Shared;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 {
-	using Relativity.API;
-
 	[TestFixture]
 	public class RetryOnExceptionDecoratorStageTests
 	{

@@ -9,12 +9,11 @@ using Relativity.Core.Service;
 using Relativity.MassImport.Api;
 using Relativity.MassImport.DTO;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	using Moq;
-	using Relativity.API;
-
 	[TestFixture]
     public class ObjectImportTest : MassImportTestBase
     {

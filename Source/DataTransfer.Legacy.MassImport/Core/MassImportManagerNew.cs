@@ -12,11 +12,10 @@ using Relativity.Logging;
 using Relativity.MassImport.Core.Pipeline.Input;
 using Relativity.MassImport.Data;
 using Relativity.Telemetry.APM;
+using Relativity.API;
 
 namespace Relativity.MassImport.Core
 {
-	using Relativity.API;
-
 	internal class MassImportManagerNew
 	{
 		private readonly ILockHelper _lockHelper;

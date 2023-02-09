@@ -9,11 +9,10 @@ using NUnit.Framework;
 using Relativity.Core;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Data
 {
-	using Relativity.API;
-
 	[TestFixture]
 	internal class ObjectsSqlQueryTest : BaseSqlQueryTest
 	{

@@ -12,11 +12,10 @@ using Relativity.Data.MassImport;
 using Relativity.Logging;
 using Relativity.MassImport.Core.Pipeline.Stages.Job.PopulateStagingTables;
 using Relativity.MassImport.Data;
+using Relativity.API;
 
 namespace Relativity.MassImport.Api
 {
-	using Relativity.API;
-
 	/// <summary>
 	/// This class is entry point for every MassImport use case.
 	/// TODO: Join this class with existing MassImportManager and MassImporter classes after moving them to c#. Consider separating DG logic into another class.

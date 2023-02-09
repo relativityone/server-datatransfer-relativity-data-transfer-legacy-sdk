@@ -14,12 +14,11 @@ using Relativity.MassImport.Core.Pipeline.Stages.Job.PopulateStagingTables;
 using BaseContext = Relativity.Core.BaseContext;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	using Moq;
-	using Relativity.API;
-
 	[TestFixture(true)]
 	[TestFixture(false)]
 	public class OverlayIdentifierTests : MassImportTestBase

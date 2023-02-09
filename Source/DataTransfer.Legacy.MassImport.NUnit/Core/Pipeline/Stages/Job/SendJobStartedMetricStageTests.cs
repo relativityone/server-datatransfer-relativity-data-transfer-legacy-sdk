@@ -10,11 +10,10 @@ using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
 using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
+using Relativity.API;
 
 namespace DataTransfer.Legacy.MassImport.NUnit.Core.Pipeline.Stages.Job
 {
-	using Relativity.API;
-
 	[TestFixture]
     public class SendJobStartedMetricStageTests
     {

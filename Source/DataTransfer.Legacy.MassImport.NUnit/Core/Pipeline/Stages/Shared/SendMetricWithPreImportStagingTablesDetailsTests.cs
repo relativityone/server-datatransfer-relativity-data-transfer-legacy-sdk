@@ -8,11 +8,10 @@ using Relativity.MassImport.Core;
 using Relativity.MassImport.Core.Pipeline;
 using Relativity.MassImport.Core.Pipeline.Stages.Shared;
 using Relativity.MassImport.Data.StagingTables;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 {
-	using Relativity.API;
-
 	[TestFixture]
 	public class SendMetricWithPreImportStagingTablesDetailsTests
 	{

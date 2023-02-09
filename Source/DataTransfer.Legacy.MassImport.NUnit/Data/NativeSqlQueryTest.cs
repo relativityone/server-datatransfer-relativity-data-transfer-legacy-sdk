@@ -7,11 +7,10 @@ using Relativity.Core;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
 using DataTransfer.Legacy.MassImport.NUnit.Properties;
+using Relativity.API;
 
 namespace Relativity.MassImport.NUnit.Data
 {
-	using Relativity.API;
-
 	[TestFixture]
 	internal class NativeSqlQueryTest : BaseSqlQueryTest
 	{

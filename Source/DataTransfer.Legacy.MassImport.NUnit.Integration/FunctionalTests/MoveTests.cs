@@ -12,12 +12,11 @@ using Relativity.MassImport.DTO;
 using Relativity.MassImport.Api;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
+using Moq;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	using Moq;
-	using Relativity.API;
-
 	[TestFixture]
 	public class MoveTests : MassImportTestBase
 	{

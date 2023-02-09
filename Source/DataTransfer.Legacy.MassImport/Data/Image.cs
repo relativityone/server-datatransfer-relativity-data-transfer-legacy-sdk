@@ -16,12 +16,11 @@ using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 using DGRelativityRepository = Relativity.MassImport.Data.DataGrid.DGRelativityRepository;
 using File = kCura.Utility.File;
 using ILog = Relativity.Logging.ILog;
+using DataTransfer.Legacy.MassImport.Data.Cache;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
-	using DataTransfer.Legacy.MassImport.Data.Cache;
-	using Relativity.API;
-
 	internal class Image
 	{
 		#region Members

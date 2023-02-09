@@ -1,11 +1,10 @@
 ﻿using kCura.Utility;
 using Relativity.Logging;
 using Relativity.MassImport.Data;
+using Relativity.API;
 
 namespace Relativity.MassImport.Core.Pipeline
 {
-	using Relativity.API;
-
 	internal class MassImportContext
 	{
 		private readonly LoggingContext _loggingContext;

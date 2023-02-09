@@ -21,11 +21,10 @@ using DataTransfer.Legacy.MassImport.Data.Cache;
 using System.Data.Common;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
-	using Relativity.API;
-
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;

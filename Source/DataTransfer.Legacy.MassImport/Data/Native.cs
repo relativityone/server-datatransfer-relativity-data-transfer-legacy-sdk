@@ -10,11 +10,10 @@ using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLoc
 using DataTransfer.Legacy.MassImport.Data.Cache;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using Relativity.API;
 
 namespace Relativity.MassImport.Data
 {
-	using Relativity.API;
-
 	internal class Native : ObjectBase
 	{
 		#region Members

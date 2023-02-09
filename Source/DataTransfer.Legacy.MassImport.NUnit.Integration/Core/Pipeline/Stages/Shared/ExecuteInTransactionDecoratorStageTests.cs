@@ -5,11 +5,10 @@ using Relativity.Logging;
 using Relativity.MassImport.Core.Pipeline;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Stages.Shared;
+using Relativity.API;
 
 namespace MassImport.NUnit.Integration.Core.Pipeline.Stages.Shared
 {
-	using Relativity.API;
-
 	[TestFixture]
 	public class ExecuteInTransactionDecoratorStageTests : MassImportTestBase
 	{

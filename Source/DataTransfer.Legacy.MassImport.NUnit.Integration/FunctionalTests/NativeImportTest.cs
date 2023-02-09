@@ -11,11 +11,10 @@ using Relativity.MassImport.DTO;
 using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
+using Moq;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
-	using Moq;
-
 	[TestFixture]
 	public class NativeImportTest : MassImportTestBase
 	{

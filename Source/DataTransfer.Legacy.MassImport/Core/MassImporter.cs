@@ -12,10 +12,10 @@ using Relativity.MassImport.Core.Pipeline.Input;
 using Relativity.Telemetry.APM;
 using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.DataGrid;
+using Relativity.API;
+
 namespace Relativity.Core.Service.MassImport
 {
-	using Relativity.API;
-
 	// TODO: adjust namespace, https://jira.kcura.com/browse/REL-477112 
 	internal class MassImporter
 	{
