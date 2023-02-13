@@ -18,6 +18,8 @@ using File = kCura.Utility.File;
 using ILog = Relativity.Logging.ILog;
 using DataTransfer.Legacy.MassImport.Data.Cache;
 using Relativity.API;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
@@ -65,8 +67,16 @@ namespace Relativity.MassImport.Data
 				DataGridBufferPool argbufferPool = null;
 				
 				DataGridContextBase @base;
-				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
-				@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
+
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				{
+					@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
+				}
+				else
+				{
+					var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
+					@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
+				}
 
 				_dgContext = new Relativity.Data.DataGridContext(@base);
 				_dgImportHelper = new DataGridImportHelper(_dgContext, _context, ImportMeasurements, new Relativity.Data.TextMigrationVerifier(context));
