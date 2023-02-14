@@ -83,8 +83,15 @@ namespace Relativity.MassImport.Data
 
 				DataGridContextBase dataGridContextBase;
 
-				var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
-				dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				{
+					dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
+				}
+				else
+				{
+					var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
+					dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
+				}
 
 				_dgContext = new Relativity.Data.DataGridContext(dataGridContextBase);
 				_dgImportHelper = new DataGridImportHelper(_dgContext, Context, ImportMeasurements, new Relativity.Data.TextMigrationVerifier(Context));
