@@ -7,8 +7,6 @@ namespace MassImport.NUnit.Integration.Helpers
 	public static class SettingsHelper
 	{
 		private const int MASS_IMPORT_SQL_TIME_OUT_DEFAULT_VALUE = 60;
-		private const bool ENFORCE_DOCUMENT_LIMIT_DEFAULT_VALUE = false;
-		private const int DOCUMENT_LIMIT_DEFAULT_VALUE = 0;
 		private const int MASS_MOVE_BATCH_AMOUNT = 10;
 
 		private static readonly Dictionary<string, object> ConfigSettings = new Dictionary<string, object>();
@@ -18,8 +16,6 @@ namespace MassImport.NUnit.Integration.Helpers
 		public static void SetDefaultSettings()
 		{
 			SetMassImportSqlTimeOut(MASS_IMPORT_SQL_TIME_OUT_DEFAULT_VALUE);
-			SetEnforceDocumentLimit(ENFORCE_DOCUMENT_LIMIT_DEFAULT_VALUE);
-			SetDefaultDocumentLimit(DOCUMENT_LIMIT_DEFAULT_VALUE);
 			SetMassMoveBatchAmount(MASS_MOVE_BATCH_AMOUNT);
 		}
 
@@ -32,18 +28,6 @@ namespace MassImport.NUnit.Integration.Helpers
 		public static void SetMassImportSqlTimeOut(int valueInSeconds)
 		{
 			ConfigSettings["MassImportSqlTimeout"] = valueInSeconds;
-			InjectConfigSettings(ConfigSettings);
-		}
-
-		public static void SetEnforceDocumentLimit(bool value)
-		{
-			ConfigSettings["EnforceDocumentLimit"] = value;
-			InjectConfigSettings(ConfigSettings);
-		}
-
-		public static void SetDefaultDocumentLimit(int value)
-		{
-			ConfigSettings["DefaultDocumentLimit"] = value;
 			InjectConfigSettings(ConfigSettings);
 		}
 

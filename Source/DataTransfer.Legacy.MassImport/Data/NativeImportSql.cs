@@ -83,11 +83,6 @@ WHERE N.[kCura_Import_ParentFolderID] = -1 AND N.[kCura_Import_Status] = 0;
 ");
 		}
 
-		public string IncomingDocumentCount(string parentTable)
-		{
-			return $"SELECT count(*) FROM [Resource].{parentTable}";
-		}
-
 		public InlineSqlQuery AppendOverlayParentMissingErrors(TableNames tableNames)
 		{
 			return new InlineSqlQuery($@"

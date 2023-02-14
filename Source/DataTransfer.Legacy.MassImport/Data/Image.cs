@@ -225,13 +225,6 @@ namespace Relativity.MassImport.Data
 			return result;
 		}
 
-		public int IncomingImageCount()
-		{
-			string sql = string.Format(ImportSql.IncomingDocumentCount(), TableNameImageTemp, DocumentIdentifierFieldColumnName);
-			int count = _context.ExecuteSqlStatementAsScalar<int>(sql, QueryTimeout);
-			return count;
-		}
-
 		public void ImportImageFile(string tempFilePath, bool updateFullText)
 		{
 			var sr = new ImageTempFileReader(tempFilePath);

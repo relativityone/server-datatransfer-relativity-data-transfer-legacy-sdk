@@ -19,20 +19,6 @@ WHERE
 	EXISTS(SELECT [ArtifactID] FROM [Document] WHERE [Document].[{{1}}] = [{{0}}].[DocumentIdentifier])";
 		}
 
-		public string IncomingDocumentCount()
-		{
-			return $@"/*
-	{{0}}: image temp table
-	{{1}}: doc identifier
-*/
-
-SELECT count(DISTINCT [DocumentIdentifier])
-FROM [Resource].[{{0}}]
-WHERE
-	[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
-	AND NOT EXISTS(SELECT TOP 1 [ArtifactID] FROM [Document] WHERE [Document].[{{1}}] = [{{0}}].[DocumentIdentifier])";
-		}
-
 		/// <summary>
 		/// Format replace:
 		/// ---------------

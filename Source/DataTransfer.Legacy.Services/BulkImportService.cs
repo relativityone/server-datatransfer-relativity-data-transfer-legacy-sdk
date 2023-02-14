@@ -174,10 +174,6 @@ namespace Relativity.DataTransfer.Legacy.Services
 			}
 
 			var results = coordinator.RunImport(serviceContext, massImportManager);
-			if (coordinator.ArtifactTypeID == (int)ArtifactType.Document && Config.EnforceDocumentLimit)
-			{
-				results = massImportManager.PostImportDocumentLimitLogic(serviceContext, runSettings.WorkspaceID, results);
-			}
 
 			_metrics.LogTelemetryMetricsForImport(serviceContext, results, runSettings.ExecutionSource, runSettings.WorkspaceID);
 			var returnValue = results.Map<MassImportResults>();

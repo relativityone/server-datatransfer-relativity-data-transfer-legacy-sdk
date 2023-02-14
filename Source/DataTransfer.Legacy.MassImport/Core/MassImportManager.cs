@@ -1,6 +1,5 @@
 ﻿using System;
 using kCura.Utility;
-using Relativity.Telemetry.APM;
 using Relativity.MassImport;
 using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
@@ -16,21 +15,11 @@ namespace Relativity.Core.Service
 		private Lazy<MassImportManagerNew> _massImportManagerLazy;
 		private readonly IHelper _helper;
 
-		public const string TEMP_TABLE_PREFIX_FOR_FOLDER_CREATION = "RELNATTMP_";
-
 		public MassImportManager(bool collectIDsOnCreate, IHelper helper)
 		{
 			CollectIDsOnCreate = collectIDsOnCreate;
 			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
 			_helper = helper;
-		}
-
-		protected IAPM APMClient
-		{
-			get
-			{
-				return Client.APMClient;
-			}
 		}
 
 		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportResults retval)
@@ -104,11 +93,6 @@ namespace Relativity.Core.Service
 		public bool HasImportPermission(Core.ICoreContext context)
 		{
 			return Core.PermissionsHelper.HasAdminOperationPermission(context, Core.Permission.AllowDesktopClientImport);
-		}
-
-		public MassImportResults PostImportDocumentLimitLogic(Core.BaseServiceContext sc, int workspaceId, MassImportResults importResults)
-		{
-			return ConvertResults(_massImportManagerLazy.Value.PostImportDocumentLimitLogic(sc, workspaceId, importResults));
 		}
 
 		private MassImportResults ConvertResults(MassImportManagerBase.MassImportResults results)

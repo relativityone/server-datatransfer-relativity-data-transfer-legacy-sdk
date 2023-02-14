@@ -440,13 +440,6 @@ namespace Relativity.MassImport.Data
 			return result;
 		}
 
-		public int IncomingObjectCount()
-		{
-			string sql = ImportSql.IncomingDocumentCount(_tableNames.Parent);
-			int count = ExecuteSqlStatementAsScalar<int>(sql);
-			return count;
-		}
-
 		private void CopyBulkLoadedFullText()
 		{
 			string updateSql = $@"UPDATE

@@ -20,7 +20,6 @@ namespace Relativity.MassImport.Data
 		void VerifyExistenceOfAssociatedObjectsForSingleObjectFieldByArtifactId(FieldInfo field, int userID, int? auditUserId);
 		void CreateAssociatedObjectsForMultiObjectFieldByName(FieldInfo field, int userID, string requestOrigination, string recordOrigination, bool performAudit);
 		void VerifyExistenceOfAssociatedObjectsForMultiObjectByArtifactId(FieldInfo field, int userID, int? auditUserId);
-		int IncomingObjectCount();
 		void UpdateFullTextFromFileShareLocation();
 		void PopulateArtifactIdOnInitialTempTable(int userID, bool updateOverlayPermissions);
 		void PopulateObjectsListTable();

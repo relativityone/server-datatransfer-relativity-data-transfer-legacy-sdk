@@ -21,8 +21,6 @@ namespace Relativity.MassImport.Core
 		private readonly ILockHelper _lockHelper;
 		private bool CollectIDsOnCreate { get; set; }
 
-		public const string TEMP_TABLE_PREFIX_FOR_FOLDER_CREATION = "RELNATTMP_";
-
 		public MassImportManagerNew(ILockHelper lockHelper, bool collectIDsOnCreate = false) : base()
 		{
 			_lockHelper = lockHelper;
@@ -141,10 +139,6 @@ namespace Relativity.MassImport.Core
 						case Relativity.MassImport.DTO.OverwriteType.Append:
 						{
 							image.ManageAppendErrors();
-							if (Relativity.Core.Config.EnforceDocumentLimit)
-							{
-								ThrowIfDocumentLimitExceeded(context, image);
-							}
 
 							image.CreateDocumentsFromImageFile(context.UserID, context.RequestOrigination,
 								Relativity.Core.AuditHelper.GetRecordOrigination(),
@@ -166,11 +160,6 @@ namespace Relativity.MassImport.Core
 
 						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
-							if (Relativity.Core.Config.EnforceDocumentLimit)
-							{
-								ThrowIfDocumentLimitExceeded(context, image);
-							}
-
 							image.CreateDocumentsFromImageFile(context.UserID, context.RequestOrigination,
 								Relativity.Core.AuditHelper.GetRecordOrigination(),
 								Relativity.Core.Config.AuditingEnabled, true);
@@ -335,10 +324,6 @@ namespace Relativity.MassImport.Core
 						case Relativity.MassImport.DTO.OverwriteType.Append:
 						{
 							image.ManageAppendErrors();
-							if (Relativity.Core.Config.EnforceDocumentLimit)
-							{
-								ThrowIfDocumentLimitExceeded(context, image);
-							}
 
 							image.CreateDocumentsFromImageFile(context.UserID, context.RequestOrigination,
 								Relativity.Core.AuditHelper.GetRecordOrigination(),
@@ -363,11 +348,6 @@ namespace Relativity.MassImport.Core
 
 						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
-							if (Relativity.Core.Config.CloudInstance)
-							{
-								ThrowIfDocumentLimitExceeded(context, image);
-							}
-
 							image.CreateDocumentsFromImageFile(context.UserID, context.RequestOrigination,
 								Relativity.Core.AuditHelper.GetRecordOrigination(),
 								Relativity.Core.Config.AuditingEnabled, true);
@@ -433,8 +413,9 @@ namespace Relativity.MassImport.Core
 						retval.ArtifactsUpdated = counts[1];
 						retval.FilesProcessed = counts[2];
 					}
-					catch
+					catch(Exception ex)
 					{
+						CorrelationLogger.LogError(ex, "Error when getting Report for image import");
 					}
 
 					InjectionManager.Instance.Evaluate("f7482c6c-2e01-4bad-bdf7-8392c9dc7fa4");
@@ -523,60 +504,6 @@ namespace Relativity.MassImport.Core
 		{
 			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate);
 			return MassImporter.ImportObjects(context, input, helper);
-		}
-
-		public MassImportManagerBase.MassImportResults PostImportDocumentLimitLogic(Relativity.Core.BaseServiceContext sc, int workspaceId, MassImportManagerBase.MassImportResults importResults)
-		{
-			if (importResults.ArtifactsCreated != 0)
-			{
-				int newDocumentCount = Relativity.Core.Service.DocumentManager.IncreaseDocumentCount(sc, workspaceId, importResults.ArtifactsCreated);
-				int docLimit = Relativity.Core.Service.DocumentManager.RetrieveDocumentLimit(sc, workspaceId);
-				if (docLimit != 0 & newDocumentCount > docLimit)
-				{
-					string errorMessage = "The document import was canceled. The import would have exceeded the document limit for the workspace.";
-					importResults.ExceptionDetail = new Relativity.MassImport.DTO.SoapExceptionDetail(new System.Exception(errorMessage));
-				}
-			}
-
-			return importResults;
-		}
-
-		private bool WillExceedDocumentLimit(Relativity.Core.BaseContext context, int documentImportCount)
-		{
-			bool willExceedLimit = false;
-			int workspaceId = context.AppArtifactID;
-
-			int currentDocCount = Relativity.Core.Service.DocumentManager.RetrieveCurrentDocumentCount(context, workspaceId);
-			int countAfterImport = currentDocCount + documentImportCount;
-
-			int docLimit = Relativity.Core.Service.DocumentManager.RetrieveDocumentLimit(context, workspaceId);
-
-			if (docLimit != 0 & countAfterImport > docLimit)
-			{
-				willExceedLimit = true;
-			}
-
-			return willExceedLimit;
-		}
-
-		private void ThrowIfDocumentLimitExceeded(Relativity.Core.BaseContext context, Data.ObjectBase importObject)
-		{
-			int documentImportCount = importObject.IncomingObjectCount();
-			bool willExceedLimit = WillExceedDocumentLimit(context, documentImportCount);
-			if (willExceedLimit)
-			{
-				throw new System.Exception("The document import was canceled. The import would have exceeded the document limit for the workspace.");
-			}
-		}
-
-		private void ThrowIfDocumentLimitExceeded(Relativity.Core.BaseContext context, Data.Image imageImport)
-		{
-			int documentImportCount = imageImport.IncomingImageCount();
-			bool willExceedLimit = WillExceedDocumentLimit(context, documentImportCount);
-			if (willExceedLimit)
-			{
-				throw new System.Exception("The document import was canceled. The import would have exceeded the document limit for the workspace.");
-			}
 		}
 
 		public ErrorFileKey GenerateNonImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)
@@ -725,11 +652,6 @@ namespace Relativity.MassImport.Core
 
 				return false;
 			}
-		}
-
-		public bool HasImportPermission(Relativity.Core.ICoreContext context)
-		{
-			return Relativity.Core.PermissionsHelper.HasAdminOperationPermission(context, Relativity.Core.Permission.AllowDesktopClientImport);
 		}
 
 		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)

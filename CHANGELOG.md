@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.2]
+- REL-818462 - Remove all limit document count logic
+
 ## [0.3.1]
 - REL-812680 - Update DataGrid version, use toggle for DataGrid
 

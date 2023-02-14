@@ -151,31 +151,6 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return sql;
 		}
 
-		private void ThrowIfDocumentLimitExceeded(Relativity.Core.BaseContext context, ObjectBase importObject)
-		{
-			int documentImportCount = importObject.IncomingObjectCount();
-			bool willExceedLimit = WillExceedDocumentLimit(context, documentImportCount);
-			if (willExceedLimit)
-			{
-				throw new System.Exception("The document import was canceled. The import would have exceeded the document limit for the workspace.");
-			}
-		}
-
-		private bool WillExceedDocumentLimit(Relativity.Core.BaseContext context, int documentImportCount)
-		{
-			bool willExceedLimit = false;
-			int workspaceId = context.AppArtifactID;
-			int currentDocCount = Relativity.Core.Service.DocumentManager.RetrieveCurrentDocumentCount(context, workspaceId);
-			int countAfterImport = currentDocCount + documentImportCount;
-			int docLimit = Relativity.Core.Service.DocumentManager.RetrieveDocumentLimit(context, workspaceId);
-			if (docLimit != 0 & countAfterImport > docLimit)
-			{
-				willExceedLimit = true;
-			}
-
-			return willExceedLimit;
-		}
-
 		private IChoicesImportService CreateChoicesImportService(Relativity.MassImport.DTO.NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
 		{
 			return new ChoicesImportService(
