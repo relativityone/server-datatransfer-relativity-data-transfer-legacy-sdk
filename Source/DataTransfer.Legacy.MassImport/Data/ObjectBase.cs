@@ -57,7 +57,8 @@ namespace Relativity.MassImport.Data
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
 			int caseSystemArtifactId,
-			IHelper helper)
+			IHelper helper,
+			bool useLegacyDG = true)
 		{
 			_context = context;
 			QueryExecutor = queryExecutor;
@@ -83,14 +84,22 @@ namespace Relativity.MassImport.Data
 
 				DataGridContextBase dataGridContextBase;
 
-				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>() || useLegacyDG)
 				{
+					ImportMeasurements.StartMeasure("DataGridContextLegacyInitialization");
+
 					dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
+
+					ImportMeasurements.StartMeasure("DataGridContextLegacyInitialization");
 				}
 				else
 				{
+					ImportMeasurements.StartMeasure("DataGridContextInitialization");
+
 					var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
 					dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
+
+					ImportMeasurements.StopMeasure("DataGridContextInitialization");
 				}
 
 				_dgContext = new Relativity.Data.DataGridContext(dataGridContextBase);
