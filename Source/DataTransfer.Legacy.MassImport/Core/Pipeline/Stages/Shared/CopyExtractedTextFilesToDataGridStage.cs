@@ -27,7 +27,8 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 				input.ColumnDefinitionCache,
 				_context.CaseSystemArtifactId,
 				new LockHelper(new AppLockProvider()),
-				_context.Helper);
+				_context.Helper,
+				false);
 
 			IDataGridInputReaderProvider dataGridReaderProvider= input.DataGridInputReaderProvider ?? native;
 			if (dataGridReaderProvider.IsDataGridInputValid())

@@ -70,7 +70,8 @@ namespace Relativity.MassImport.Data
 			ColumnDefinitionCache columnDefinitionCache,
 			int caseSystemArtifactId,
 			ILockHelper lockHelper,
-			IHelper helper) : base(
+			IHelper helper,
+			bool useLegacyDG = true) : base(
 				context.DBContext, 
 				queryExecutor,
 				settings,
@@ -80,7 +81,8 @@ namespace Relativity.MassImport.Data
 				importMeasurements,
 				columnDefinitionCache,
 				caseSystemArtifactId,
-				helper)
+				helper, 
+				useLegacyDG)
 		{
 			_context = context;
 			_lockHelper = lockHelper;
