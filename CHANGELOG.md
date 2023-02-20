@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.5]
+- REL-812680 - Limit the usage of the new DataGridContext constructor to linking ExtractedText files workflow
+
 ## [0.3.4]
 - REL-812680 - Limit usage of Data Grid constructor, add metrics
 
