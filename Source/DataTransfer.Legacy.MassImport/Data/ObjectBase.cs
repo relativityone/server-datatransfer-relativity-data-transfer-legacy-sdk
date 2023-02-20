@@ -84,7 +84,8 @@ namespace Relativity.MassImport.Data
 
 				DataGridContextBase dataGridContextBase;
 
-				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>() || useLegacyDG)
+				// the new DataGridContext with build-in CAL initialization is much slower than legacy, so we should not use the new one when it is not needed
+				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>() || useLegacyDG || !Settings.LoadImportedFullTextFromServer || _fullTextField == null)
 				{
 					ImportMeasurements.StartMeasure("DataGridContextLegacyInitialization");
 
