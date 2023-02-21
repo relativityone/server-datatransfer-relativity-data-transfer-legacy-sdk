@@ -4,6 +4,7 @@ using Relativity.MassImport.Api;
 using Relativity.Storage;
 using Relativity.Storage.Extensions;
 using Relativity.Storage.Extensions.Models;
+using System;
 
 namespace DataTransfer.Legacy.MassImport.Data
 {
@@ -31,8 +32,14 @@ namespace DataTransfer.Legacy.MassImport.Data
 				if (_storageAccess == null)
 				{
 					var serviceDetails = new ApplicationDetails(ServiceName);
-					const StorageAccessPermissions permissions = StorageAccessPermissions.GenericRead;
-					_storageAccess = _container.Resolve<IHelper>().GetStorageAccessorAsync(permissions, serviceDetails)
+					const StorageAccessPermissions permissions = StorageAccessPermissions.GenericReadWrite;
+					var options = new StorageAccessOptions()
+					{
+						// Disabling CAL resilience option temporarily until this defect is fixed: https://jira.kcura.com/browse/REL-822402
+						ResilienceOptions = new ResilienceOptions() { CircuitBreakerBreakDurationOnServerError = TimeSpan.Zero }
+					};
+
+					_storageAccess = _container.Resolve<IHelper>().GetStorageAccessorAsync(permissions, serviceDetails, options: options)
 						.GetAwaiter().GetResult();
 				}
 			}

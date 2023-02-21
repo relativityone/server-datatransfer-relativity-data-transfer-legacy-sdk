@@ -45,8 +45,8 @@
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
     <PackageReference Include="Relativity.Productions.SDK" Version="12.5.2" />
     <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.3.0" />
-    <PackageReference Include="Relativity.Storage" Version="1.5.0" />
-    <PackageReference Include="Relativity.Storage.Extensions" Version="1.5.0" />
+    <PackageReference Include="Relativity.Storage" Version="1.6.0" />
+    <PackageReference Include="Relativity.Storage.Extensions" Version="1.6.0" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="3003.1.0" />
     <PackageReference Include="Relativity.Telemetry.MetricsCollection" Version="3005.0.0" />
