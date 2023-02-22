@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.7]
+- REL-823658 - Update DataGrid to version 17.3.23. Fix export performance.
+
 ## [0.3.6]
 - REL-823658 - Update DataGrid to version 17.3.22. Initialize datagrid with CAL reference.
 
