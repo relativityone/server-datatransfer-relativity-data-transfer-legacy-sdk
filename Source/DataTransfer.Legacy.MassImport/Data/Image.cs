@@ -29,6 +29,7 @@ namespace Relativity.MassImport.Data
 		public const string ExtractedTextCodePageColumnName = "ExtractedTextEncodingPageCode";
 		public const string FullTextColumnName = "FullText";
 		private BaseContext _context;
+		private ILog _logger;
 		private string _documentIdentifierFieldColumnName = "";
 		private int _keyFieldID;
 		private string _auditRecordCollation = "";
@@ -48,12 +49,13 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Constructors
-		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, IHelper helper)
+		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, IHelper helper, ILog logger)
 		{
 			_context = context;
 			_keyFieldID = settings.KeyFieldArtifactID;
 			_settings = settings;
 			_tableNames = new TableNames(settings.RunID);
+			_logger = logger;
 			ImportSql = new ImageImportSql();
 			ImportMeasurements = new ImportMeasurements();
 			if (FullTextField.EnableDataGrid)
@@ -354,7 +356,7 @@ SELECT
 		#endregion
 
 		#region Error File Generation
-		public ErrorFileKey GenerateErrorFiles(int caseArtifactID, bool writeHeader)
+		public ErrorFileKey GenerateErrorFiles(int caseArtifactID)
 		{
 			var retval = new ErrorFileKey();
 			string errorFileName = "";
@@ -376,11 +378,25 @@ SELECT
 						{
 							while (reader.Read())
 							{
+								var lineNumber = GetIntegerValue(reader[0]);
 								string identifier = GetStringValue(reader[2]);
 								string documentIdentifier = GetStringValue(reader[1]);
-								errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}{0}{4}\"", "\",\"", GetIntegerValue(reader[0]), GetStringValue(reader[1]), identifier, Relativity.MassImport.DTO.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(5), identifier, GetStringValue(reader[7]), int.Parse(GetIntegerValue(reader[8])), documentIdentifier, reader[9] == null ? null : GetStringValue(reader[9]))));
+								var status = reader.GetInt64(5);
+								var originalFileLocation = GetStringValue(reader[6]);
+								var errorBatesIdentifier = GetStringValue(reader[7]);
+								var errorBatesArtifactID = int.Parse(GetIntegerValue(reader[8]));
+								string dataGridException = reader[9] == null ? null : GetStringValue(reader[9]);
+								var errorMessage = DTO.ImportStatusHelper.GetCsvErrorLine(
+									_logger,
+									status,
+									identifier,
+									errorBatesIdentifier,
+									errorBatesArtifactID,
+									documentIdentifier,
+									dataGridException);
+								errorFile.WriteLine($"\"{lineNumber}\",\"{documentIdentifier}\",\"{identifier}\",\"{errorMessage}\"");
 								string newRecordMarker = GetIntegerValue(reader[4]) == "0" ? "Y" : string.Empty;
-								errorRows.WriteLine(string.Format("{0},{1},{2},{3},,,", identifier, _tableNames.RunId, GetStringValue(reader[6]), newRecordMarker));
+								errorRows.WriteLine($"{identifier},{_tableNames.RunId},{originalFileLocation},{newRecordMarker},,,");
 							}
 						}
 					}

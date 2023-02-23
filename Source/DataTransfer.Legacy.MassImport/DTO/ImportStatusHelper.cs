@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Relativity.Logging;
+using System;
 using System.Collections.Generic;
 
 namespace Relativity.MassImport.DTO
@@ -6,46 +7,46 @@ namespace Relativity.MassImport.DTO
 	[Flags()]
 	public enum ImportStatus : long
 	{
-		Pending = 0L,                                                                   // 0
-																						// Complete = 1																'1
-		ErrorOverwrite = 1L << 1,                                       // 2
-		ErrorAppend = 1L << 2,                                              // 4
-		ErrorRedaction = 1L << 3,                                       // 8
-		ErrorBates = 1L << 4,                                               // 16
-		ErrorImageCountMismatch = 1L << 5,                      // 32
-		ErrorDocumentInProduction = 1L << 6,                    // 64
-		NoImageSpecifiedOnLine = 1L << 7,                       // 128
-		FileSpecifiedDne = 1L << 8,                                 // 256
-		InvalidImageFormat = 1L << 9,                               // 512
-		ColumnMismatch = 1L << 10,                                      // 1024
-		EmptyFile = 1L << 11,                                               // 2048
-		EmptyIdentifier = 1L << 12,                                 // 4096
-		IdentifierOverlap = 1L << 13,                               // 8192
-		SecurityUpdate = 1L << 14,                                      // 16384
-		SecurityAdd = 1L << 15,                                         // 32768
-		ErrorOriginalInProduction = 1L << 16,               // 65536
-		ErrorAppendNoParent = 1L << 17,                         // 131072
-		ErrorDuplicateAssociatedObject = 1L << 18,      // 262144
-		SecurityAddAssociatedObject = 1L << 19,         // 524288
-		ErrorAssociatedObjectIsChild = 1L << 20,            // 1048576
-		ErrorAssociatedObjectIsDocument = 1L << 21, // 2097152
-		ErrorOverwriteMultipleKey = 1L << 22,               // 4194304
-		ErrorTags = 1L << 23,                                               // 8388608
-		ErrorAssociatedObjectIsMissing = 1L << 24,      // 16777216
-		DataGridInvalidDocumentIDError = 1L << 25,      // 33554432
-		DataGridFieldMaxSizeExceeded = 1L << 26,            // 67108864
-		DataGridInvalidFieldNameError = 1L << 27,       // 134217728
-		DataGridExceptionOccurred = 1L << 28,               // 268435456
-		ErrorParentMustBeFolder = 1L << 29,             // 536870912
-		EmptyOverlayIdentifier = 1L << 30               // 1073741824
-														// 1 << 63 is the max possible value here
+		Pending = 0L,                                                // 0
+		// Complete = 1	                                             // 1
+		ErrorOverwrite = 1L << 1,                                    // 2
+		ErrorAppend = 1L << 2,                                       // 4
+		ErrorRedaction = 1L << 3,                                    // 8
+		ErrorBates = 1L << 4,                                        // 16
+		ErrorImageCountMismatch = 1L << 5,                           // 32
+		ErrorDocumentInProduction = 1L << 6,                         // 64
+		NoImageSpecifiedOnLine = 1L << 7,                            // 128
+		FileSpecifiedDne = 1L << 8,                                  // 256
+		InvalidImageFormat = 1L << 9,                                // 512
+		ColumnMismatch = 1L << 10,                                   // 1024
+		EmptyFile = 1L << 11,                                        // 2048
+		EmptyIdentifier = 1L << 12,                                  // 4096
+		IdentifierOverlap = 1L << 13,                                // 8192
+		SecurityUpdate = 1L << 14,                                   // 16384
+		SecurityAdd = 1L << 15,                                      // 32768
+		ErrorOriginalInProduction = 1L << 16,                        // 65536
+		ErrorAppendNoParent = 1L << 17,                              // 131072
+		ErrorDuplicateAssociatedObject = 1L << 18,                   // 262144
+		SecurityAddAssociatedObject = 1L << 19,                      // 524288
+		ErrorAssociatedObjectIsChild = 1L << 20,                     // 1048576
+		ErrorAssociatedObjectIsDocument = 1L << 21,                  // 2097152
+		ErrorOverwriteMultipleKey = 1L << 22,                        // 4194304
+		ErrorTags = 1L << 23,                                        // 8388608
+		ErrorAssociatedObjectIsMissing = 1L << 24,                   // 16777216
+		DataGridInvalidDocumentIDError = 1L << 25,                   // 33554432
+		DataGridFieldMaxSizeExceeded = 1L << 26,                     // 67108864
+		DataGridInvalidFieldNameError = 1L << 27,                    // 134217728
+		DataGridExceptionOccurred = 1L << 28,                        // 268435456
+		ErrorParentMustBeFolder = 1L << 29,                          // 536870912
+		EmptyOverlayIdentifier = 1L << 30                            // 1073741824
+																	// 1 << 63 is the max possible value here
 	}
 
 	public class ImportStatusHelper
 	{
 		private static Dictionary<ImportStatus, string> _importStatusMessages;
 
-		public static string GetCsvErrorLine(long status, string identifier, string errorBatesIdentifier, int errorBatesArtifactID, string documentIdentifier, string dataGridException, string errorData = "")
+		public static string GetCsvErrorLine(ILog logger, long status, string identifier, string errorBatesIdentifier, int errorBatesArtifactID, string documentIdentifier, string dataGridException, string errorData = "")
 		{
 			var retval = new System.Text.StringBuilder();
 			if ((status & (long)ImportStatus.ErrorAppend) > 0L)
@@ -55,7 +56,7 @@ namespace Relativity.MassImport.DTO
 
 			if ((status & (long)ImportStatus.ErrorBates) > 0L)
 			{
-				if ((errorBatesIdentifier ?? "") != (string.Empty ?? ""))
+				if (!string.IsNullOrEmpty(errorBatesIdentifier))
 				{
 					retval.Append(ConvertToMessageLineInCell("This image was not imported; the page identifier " + identifier + " already exists for " + errorBatesIdentifier));
 				}
@@ -73,25 +74,33 @@ namespace Relativity.MassImport.DTO
 			{
 				if ((status & (long)errorKvp.Key) > 0L)
 				{
-					retval.Append(ConvertToMessageLineInCell(FormatImportStatusErrorMessage(errorKvp.Value, errorData)));
+					retval.Append(ConvertToMessageLineInCell(FormatImportStatusErrorMessage(logger, errorKvp.Value, errorData)));
 				}
 			}
 
-			if ((status & (long)Relativity.MassImport.DTO.ImportStatus.DataGridExceptionOccurred) > 0L && !string.IsNullOrEmpty(dataGridException))
+			if ((status & (long)ImportStatus.DataGridExceptionOccurred) > 0L && !string.IsNullOrEmpty(dataGridException))
 				retval.Append(ConvertToMessageLineInCell(dataGridException));
 			return retval.ToString().TrimEnd('\n');
 		}
 
-		private static string FormatImportStatusErrorMessage(string message, string errorData)
+		private static string FormatImportStatusErrorMessage(ILog logger, string messageTemplate, string errorData)
 		{
 			if (string.IsNullOrEmpty(errorData))
 			{
-				return message;
+				return messageTemplate;
 			}
 
-			var @params = errorData.Split('|');
-			string formattedMessage = string.Format(message, @params);
-			return formattedMessage;
+			try
+			{
+				var @params = errorData.Split('|');
+				string formattedMessage = string.Format(messageTemplate, @params);
+				return formattedMessage;
+			}
+			catch (FormatException ex)
+			{
+				logger.LogError(ex, "Failed to format error for template: {messageTemplate} and data: {errorData}", messageTemplate, errorData);
+				return messageTemplate;
+			}
 		}
 
 		private static Dictionary<ImportStatus, string> SimpleImportStatusErrorMessageDictionary
@@ -140,9 +149,9 @@ namespace Relativity.MassImport.DTO
 			}
 		}
 
-		public static string ConvertToMessageLineInCell(string message)
+		private static string ConvertToMessageLineInCell(string message)
 		{
-			return string.Format(" - {0}{1}", message, '\n');
+			return $" - {message}{'\n'}";
 		}
 	}
 }

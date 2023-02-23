@@ -70,7 +70,7 @@ namespace Relativity.MassImport.Core
 			IEventsBuilder eventsBuilder = new EventsBuilder();
 
 
-			var image = new Data.Image(context.DBContext, settings, helper);
+			var image = new Data.Image(context.DBContext, settings, helper, this.CorrelationLogger);
 
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
@@ -278,7 +278,7 @@ namespace Relativity.MassImport.Core
 			IEventsBuilder eventsBuilder = new EventsBuilder();
 
 			var productionManager = new Relativity.Core.Service.ProductionManager();
-			var image = new Data.Image(context.DBContext, settings, helper);
+			var image = new Data.Image(context.DBContext, settings, helper, this.CorrelationLogger);
 			if (image.HasDataGridWorkToDo && !image.IsDataGridInputValid())
 			{
 				throw new System.Exception("Invalid DataGridFileName");
@@ -468,7 +468,7 @@ namespace Relativity.MassImport.Core
 			var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 			settings.RunID = runID;
 			settings.KeyFieldArtifactID = keyFieldID;
-			var x = new Data.Image(icc.ChicagoContext.DBContext, settings, helper).GenerateErrorFiles(caseArtifactID, writeHeader);
+			var x = new Data.Image(icc.ChicagoContext.DBContext, settings, helper, this.CorrelationLogger).GenerateErrorFiles(caseArtifactID);
 			timekeeper.MarkEnd("Generate Errors");
 			timekeeper.GenerateCsvReportItemsAsRows("_webapi_image", @"C:\");
 			return x;
@@ -487,7 +487,7 @@ namespace Relativity.MassImport.Core
 				var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 				settings.RunID = runId;
 				settings.KeyFieldArtifactID = -1;
-				var x = new Data.Image(icc.ChicagoContext.DBContext, settings, helper);
+				var x = new Data.Image(icc.ChicagoContext.DBContext, settings, helper, this.CorrelationLogger);
 				x.TruncateTempTables();
 			}
 
@@ -515,7 +515,7 @@ namespace Relativity.MassImport.Core
 
 			var timekeeper = new Timekeeper();
 			timekeeper.MarkStart("GenerateError");
-			var key = Data.Helper.GenerateNonImageErrorFiles(icc.ChicagoContext.DBContext, runID, icc.ChicagoContext.AppArtifactID, artifactTypeID, writeHeader, keyFieldID);
+			var key = Data.Helper.GenerateNonImageErrorFiles(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
 			timekeeper.MarkEnd("GenerateError");
 			timekeeper.GenerateCsvReportItemsAsRows("_webapi_errors", @"C:\");
 			return key;

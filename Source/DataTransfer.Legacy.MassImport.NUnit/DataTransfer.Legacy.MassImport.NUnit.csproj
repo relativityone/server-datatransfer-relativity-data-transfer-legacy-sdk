@@ -30,6 +30,7 @@
   
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.8.1" />
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="FluentValidation" Version="6.2.1" />
     <!--TODO Delete these once we fix the Relativity.SDK.Services.Query nuget package to include these. -->
     <PackageReference Include="FSharp.Core" Version="4.3.4" />

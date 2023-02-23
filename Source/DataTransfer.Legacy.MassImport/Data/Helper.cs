@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using DataTransfer.Legacy.MassImport.Data.Cache;
 using Relativity.Data.MassImport;
+using Relativity.Logging;
 
 namespace Relativity.MassImport.Data
 {
@@ -218,7 +219,7 @@ FROM
 			}
 		}
 
-		public static ErrorFileKey GenerateNonImageErrorFiles(kCura.Data.RowDataGateway.BaseContext context, string runID, int caseArtifactID, int artifactTypeID, bool writeHeader, int keyFieldID)
+		public static ErrorFileKey GenerateNonImageErrorFiles(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
 		{
 			var retval = new ErrorFileKey();
 			string errorFileName = "";
@@ -233,7 +234,22 @@ FROM
 					using (var errorFile = new System.IO.StreamWriter(System.IO.Path.Combine(defaultLocation, errorFileName)))
 					{
 						while (reader.Read())
-							errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}\"", "\",\"", reader.GetInt32(0), Relativity.MassImport.DTO.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(1), reader.GetString(2), "", -1, reader.GetString(2), reader.IsDBNull(3) ? null : reader.GetString(3), reader.IsDBNull(4) ? null : reader.GetString(4)), reader.GetString(2)));
+						{
+							var originalLineNumber = reader.GetInt32(0);
+							var status = reader.GetInt64(1);
+							var identifier = reader.GetString(2);
+							var dataGridException = reader.IsDBNull(3) ? null : reader.GetString(3);
+							var errorData = reader.IsDBNull(4) ? null : reader.GetString(4);
+							var errorLine = DTO.ImportStatusHelper.GetCsvErrorLine(logger,
+								status,
+								identifier,
+								"",
+								-1,
+								identifier,
+								dataGridException,
+								errorData);
+							errorFile.WriteLine($"\"{originalLineNumber}\",\"{errorLine}\",\"{identifier}\"");
+						}
 					}
 				}
 			}
