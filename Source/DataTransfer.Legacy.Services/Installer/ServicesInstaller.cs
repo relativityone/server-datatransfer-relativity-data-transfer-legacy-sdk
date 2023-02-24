@@ -54,7 +54,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 				.UsingFactoryMethod(x => x.Resolve<IBatchResultCacheFactory>().Create()));
 			container.Register(Component.For<ISqlExecutor>().ImplementedBy<DbContextToSqlExecutorAdapter>().LifestyleTransient());
 			container.Register(Component.For<ISqlRetryPolicy>().ImplementedBy<SqlRetryPolicy>().LifestyleTransient());
-			container.Register(Component.For<ITraceGenerator>().ImplementedBy<TraceGenerator>().LifestyleTransient());
+			container.Register(Component.For<ITraceGenerator>().ImplementedBy<TraceGenerator>().LifestyleSingleton());
 			container.Register(Component.For<RetryPolicyFactory>());
 			container.Register(Component.For<ITelemetryPublisher>().ImplementedBy<ApmTelemetryPublisher>().LifestyleTransient());
 			container.Register(Component.For<IRelEyeMetricsService>().ImplementedBy<RelEyeMetricsService>().LifestyleTransient());

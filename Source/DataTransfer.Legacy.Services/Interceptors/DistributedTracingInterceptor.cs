@@ -61,9 +61,15 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 					if (currentParameter.Name == CorrelationIDArgumentName)
 					{
-						if (ActivityContext.TryParse(invocationArgument?.ToString(), null, out var parentContext))
+						var argument = invocationArgument?.ToString();
+						if (ActivityContext.TryParse(argument, null, out var parentContext))
 						{
 							currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server, parentContext);
+						}
+						else
+						{
+							currentActivity = _traceGenerator.StartActivity($"{invocation.TargetType.Name}-{invocation.Method.Name}", ActivityKind.Server);
+							currentActivity.SetTag(TelemetryConstants.AttributeNames.JobID, argument);
 						}
 					}
 				}
