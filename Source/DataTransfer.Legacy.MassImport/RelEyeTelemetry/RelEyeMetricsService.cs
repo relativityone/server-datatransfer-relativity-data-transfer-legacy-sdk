@@ -5,6 +5,7 @@
 namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 {
 	using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
+	using System.Diagnostics;
 
 	/// <inheritdoc />
 	public class RelEyeMetricsService : IRelEyeMetricsService
@@ -24,6 +25,12 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 		public void PublishEvent(EventBase @event)
 		{
 			this._telemetryPublisher.PublishEvent(@event.EventName, @event.Attributes);
+
+			var activity = Activity.Current;
+			foreach (var attribute in @event.Attributes)
+			{
+				activity?.SetTag(attribute.Key, attribute.Value);
+			}
 		}
 	}
 }

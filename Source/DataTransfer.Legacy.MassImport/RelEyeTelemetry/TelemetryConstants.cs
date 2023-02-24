@@ -269,6 +269,16 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// [string] Message.
 			/// </summary>
 			public const string Message = "message";
+
+			/// <summary>
+			/// [string] Service Instance id.
+			/// </summary>
+			public const string ServiceInstanceID = "service.instance.id";
+
+			/// <summary>
+			/// [string] Job id.
+			/// </summary>
+			public const string JobID = "job.id";
 		}
 
 		/// <summary>

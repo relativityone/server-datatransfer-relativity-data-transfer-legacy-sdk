@@ -8,7 +8,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 	using OpenTelemetry;
     using OpenTelemetry.Exporter;
-    using OpenTelemetry.Resources;
+	using OpenTelemetry.Metrics;
+	using OpenTelemetry.Resources;
     using OpenTelemetry.Trace;
 	using Relativity.API;
 	using System;
@@ -25,7 +26,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 		private readonly IInstanceSettingsBundle _instanceSettingsBundle;
 
 		private TracerProvider tracerProvider = null;
+		private MeterProvider meterProvider = null;
 		private ActivitySource activitySource = null;
+		private ResourceBuilder resourceBuilder = null;
 
 		public TraceGenerator(IAPILog logger, IInstanceSettingsBundle instanceSettingsBundle)
 		{
@@ -51,11 +54,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 					ApiKey = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
 					SourceID = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
 
+					resourceBuilder = ResourceBuilder.CreateDefault().AddService(TelemetryConstants.Values.ServiceName);
 					tracerProvider = Sdk.CreateTracerProviderBuilder()
-								.AddSource(new[] { TelemetryConstants.Values.ServiceNamespace })
-								.SetResourceBuilder(
-									ResourceBuilder.CreateDefault()
-										.AddService(TelemetryConstants.Values.ServiceName))
+								.AddSource(new[] { TelemetryConstants.Values.ServiceNamespace, "Relativity.Storage" })
+								.SetResourceBuilder(resourceBuilder)
 								.SetSampler(new AlwaysOnSampler())
 								.AddOtlpExporter(options =>
 								{
@@ -66,6 +68,17 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 								.Build();
 
 					activitySource = new ActivitySource(TelemetryConstants.Values.ServiceNamespace);
+
+					meterProvider = Sdk.CreateMeterProviderBuilder()
+						.AddMeter(new[] { TelemetryConstants.Values.ServiceNamespace, "Relativity.Storage" })
+						.SetResourceBuilder(resourceBuilder)
+						.AddOtlpExporter(options =>
+						{
+							options.Endpoint = new Uri(ReleyeUriTraces);
+							options.Headers = $"apikey={ApiKey}";
+							options.Protocol = OtlpExportProtocol.HttpProtobuf;
+						})
+						.Build();
 				}
 				catch (Exception ex)
 				{
@@ -94,12 +107,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
 			activity?.SetTag(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
+			
+			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceInstanceID, SourceID);
 		}
 
         public void Dispose()
         {
-            activitySource?.Dispose();
-            tracerProvider?.Dispose();
-        }
+			tracerProvider?.Shutdown();
+			meterProvider?.Shutdown();
+
+			activitySource?.Dispose();
+			tracerProvider?.Dispose();
+			meterProvider?.Dispose();
+		}
     }
 }
