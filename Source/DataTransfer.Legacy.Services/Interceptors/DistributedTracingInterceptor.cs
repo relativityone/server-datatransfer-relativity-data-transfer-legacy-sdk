@@ -89,7 +89,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				currentActivity?.SetTag(tag.Key, tag.Value);
 			}
-			TraceHelper.SetStatusOK(currentActivity);
 			currentActivity?.Stop();
 			return Task.CompletedTask;
 		}
