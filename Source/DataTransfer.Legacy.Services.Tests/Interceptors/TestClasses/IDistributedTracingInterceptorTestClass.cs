@@ -2,6 +2,7 @@
 using System;
 using Castle.Core;
 using Relativity.API;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.DataTransfer.Legacy.Services.Observability;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses

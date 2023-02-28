@@ -20,6 +20,8 @@ using DataTransfer.Legacy.MassImport.Data.Cache;
 using Relativity.API;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using System.Diagnostics;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 
 namespace Relativity.MassImport.Data
 {
@@ -888,6 +890,8 @@ WHERE
 				if (loader == null)
 				{
 					correlationLogger.LogError("DataGridReader is null. {HasDataGridWorkToDo}", HasDataGridWorkToDo);
+					TraceHelper.SetStatusError(Activity.Current, $"DataGridReader is null. {HasDataGridWorkToDo}");
+
 					throw new ArgumentNullException(nameof(loader));
 				}
 

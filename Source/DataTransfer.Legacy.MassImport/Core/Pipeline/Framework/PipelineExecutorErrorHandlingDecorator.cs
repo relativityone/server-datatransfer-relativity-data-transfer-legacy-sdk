@@ -1,4 +1,6 @@
 ﻿using System;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 using Relativity.MassImport.Core.Pipeline.Errors;
 using Relativity.MassImport.Core.Pipeline.Framework.Stages;
 
@@ -39,6 +41,7 @@ namespace Relativity.MassImport.Core.Pipeline.Framework
 			catch (Exception ex)
 			{
 				_loggingContext.Logger.LogError(ex, "Exception occured while executing {nodeTypeName}.", nodeTypeName);
+				TraceHelper.SetStatusError(Activity.Current, $"Exception occured while executing {nodeTypeName}: {ex.Message}", ex);
 				throw MassImportExceptionHandler.CreateMassImportExecutionException(ex, nodeTypeName);
 			}
 		}

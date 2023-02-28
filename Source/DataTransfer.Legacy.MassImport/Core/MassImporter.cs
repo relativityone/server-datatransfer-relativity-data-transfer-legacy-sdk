@@ -100,14 +100,16 @@ namespace Relativity.Core.Service.MassImport
 				logger.LogError(
 					ex,
 					"Mass Import failed. Error occured while executing '{stageName}'. Category: '{errorCategory}'",
-					ex.StageName,
+				ex.StageName,
 					ex.ErrorCategory);
+				TraceHelper.SetStatusError(Activity.Current, $"Mass Import failed. Error occured while executing '{ex.StageName}'. Category: '{ex.ErrorCategory}':{ex.Message}", ex);
 				result.ExceptionDetail =
 					MassImportExceptionHandler.ConvertMassImportExceptionToSoapExceptionDetail(ex, settings.RunID);
 			}
 			catch (System.Exception ex)
 			{
 				logger.LogFatal(ex, "Mass Import failed. Unhandled Exception occured.");
+				TraceHelper.SetStatusError(Activity.Current, $"Mass Import failed. Unhandled Exception occured: {ex.Message}", ex);
 				result.ExceptionDetail =
 					MassImportExceptionHandler.ConvertExceptionToSoapExceptionDetail(ex, settings.RunID);
 			}
@@ -128,7 +130,7 @@ namespace Relativity.Core.Service.MassImport
 			IEventsBuilder eventsBuilder = new EventsBuilder();
 			var batchCompletedEvent = eventsBuilder.BuildJobBatchCompletedEvent(result, contextAndExecutor.MassImportContext.JobDetails.ImportType);
 			relEyeMetricsService.PublishEvent(batchCompletedEvent);
-			
+
 			return result;
 		}
 

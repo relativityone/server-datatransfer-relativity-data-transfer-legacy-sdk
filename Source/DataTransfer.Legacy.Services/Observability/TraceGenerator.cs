@@ -7,14 +7,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 	using global::DataTransfer.Legacy.MassImport.Core;
 	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 	using OpenTelemetry;
-    using OpenTelemetry.Exporter;
+	using OpenTelemetry.Exporter;
 	using OpenTelemetry.Metrics;
 	using OpenTelemetry.Resources;
-    using OpenTelemetry.Trace;
+	using OpenTelemetry.Trace;
 	using Relativity.API;
 	using System;
-    using System.Collections.Generic;
-    using System.Diagnostics;
+	using System.Collections.Generic;
+	using System.Diagnostics;
 
 	public class TraceGenerator : ITraceGenerator
     { 

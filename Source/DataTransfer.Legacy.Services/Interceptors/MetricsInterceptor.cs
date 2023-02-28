@@ -59,9 +59,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				// Exception in interceptor should not break current request, no rethrow, only log the error 
 				Logger.LogError(ex, "There was an error in MetricsInterceptor during call {method} - {message}", invocation.Method.Name, ex.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"There was an error in MetricsInterceptor during call {invocation.Method.Name} - {ex.Message}", ex);
 			}
 		}
-
 		private async Task LogMetricsAsync(IInvocation invocation)
 		{
 			_stopwatch.Stop();

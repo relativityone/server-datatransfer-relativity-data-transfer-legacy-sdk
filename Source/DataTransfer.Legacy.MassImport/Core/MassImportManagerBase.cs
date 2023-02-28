@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 using Relativity.Logging;
 
 // TODO: adjust namespace with Relativity, join with Api/MassImportManager https://jira.kcura.com/browse/REL-482642
@@ -70,6 +72,7 @@ namespace Relativity.Core.Service
 				retval.ExceptionDetail.Details.Add("RunID:" + retval.RunID);
 				var logger = Log.Logger.ForContext<MassImportManagerBase>();
 				logger.LogError(ex, "MassImportManager.AttemptRun Failure");
+				TraceHelper.SetStatusError(Activity.Current, $"MassImportManager.AttemptRun Failure: {ex.Message}", ex);
 			}
 
 			return retval;

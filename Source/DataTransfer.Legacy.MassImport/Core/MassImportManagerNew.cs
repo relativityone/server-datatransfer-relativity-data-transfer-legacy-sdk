@@ -416,6 +416,7 @@ namespace Relativity.MassImport.Core
 					catch(Exception ex)
 					{
 						CorrelationLogger.LogError(ex, "Error when getting Report for image import");
+						TraceHelper.SetStatusError(Activity.Current, $"Error when getting Report for image import: {ex.Message}", ex);
 					}
 
 					InjectionManager.Instance.Evaluate("f7482c6c-2e01-4bad-bdf7-8392c9dc7fa4");
@@ -551,6 +552,7 @@ namespace Relativity.MassImport.Core
 			if (dbContext == null)
 			{
 				_logger.LogFatal("The passed Core Context argument {icc} or its property is null.", icc);
+				TraceHelper.SetStatusError(Activity.Current, $"The passed Core Context argument {icc} or its property is null.");
 				throw new System.ArgumentNullException(nameof(icc));
 			}
 

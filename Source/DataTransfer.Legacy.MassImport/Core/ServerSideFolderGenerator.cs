@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using kCura.Utility;
 using kCura.Utility.Extensions;
 using Microsoft.SqlServer.Server;
@@ -83,6 +85,9 @@ namespace Relativity.MassImport.Core
 							{
 								logger.LogError(ex, "Failed to CreateFolders folderNodesCount: {nodesCount} folderCandidatesCount: {candidatesCount} folderArtifactIdMappingsCount: {mappingsCount}",
 									folderNodes.Count, folderCandidates.Count(), folderArtifactIdMappings.Count);
+
+								TraceHelper.SetStatusError(Activity.Current, $"Failed to CreateFolders folderNodesCount: {folderNodes.Count} folderCandidatesCount: {folderCandidates.Count()} folderArtifactIdMappingsCount: {folderArtifactIdMappings.Count}: {ex.Message}", ex);
+
 								logger.LogError("folderArtifactIdMappings: {@mappings}", folderArtifactIdMappings);
 								foreach (var folderArtifactIdMapping in folderArtifactIdMappings)
 								{

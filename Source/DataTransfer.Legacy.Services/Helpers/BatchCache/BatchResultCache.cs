@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.Linq;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using kCura.Utility;
 using Newtonsoft.Json;
 using Relativity.API;
@@ -46,16 +48,17 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 			}
 
 			var results = _sqlExecutor.ExecuteReader(workspaceID, query, parameters, ConvertDataRecordToItem);
-
 			if (results.Count == 0)
 			{
 				_logger.LogError("There is no data from DataReader");
+				TraceHelper.SetStatusError(Activity.Current, $"There is no data from DataReader");
 				return null;
 			}
 
 			if (results.Count > 1)
 			{
 				_logger.LogError("There is more than one row: {rows}, values: {@values}, using the first row {@row}", results.Count, results, results.First());
+				TraceHelper.SetStatusError(Activity.Current, $"There is more than one row: {results.Count}, values: {@results}, using the first row {results.First()}");
 			}
 
 			var result = results[0];
@@ -68,13 +71,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 			if (result.FinishedOn.HasValue == false)
 			{
 				_logger.LogError("Result exists but it is not finished yet {runID}, {@result}", runID, result);
+				TraceHelper.SetStatusError(Activity.Current, $"Result exists but it is not finished yet {runID}, {@result}");
 				throw new ConflictException("Batch In Progress");
 			}
 
 			if (string.IsNullOrEmpty(result.SerializedResult))
 			{
 				_logger.LogError("Expected to deserialize result but it is empty {runID}, {@result}", runID, result);
-
+				TraceHelper.SetStatusError(Activity.Current, $"Expected to deserialize result but it is empty {runID}, {@result}");
 				throw new ServiceException("Batch result is empty");
 			}
 
@@ -86,6 +90,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Failed to deserialize {runID} MassImportResults: {result}", runID, result.SerializedResult);
+				TraceHelper.SetStatusError(Activity.Current, $"Failed to deserialize {runID} MassImportResults: {result.SerializedResult}: {ex.Message}", ex);
 				throw new ServiceException("Failed to deserialize batch result", ex);
 			}
 		}
@@ -138,6 +143,7 @@ END
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, "Failed to serialize MassImportResults: {@result}", massImportResult);
+				TraceHelper.SetStatusError(Activity.Current, $"Failed to serialize MassImportResults: {massImportResult}: {ex.Message}", ex);
 				return;
 			}
 
@@ -163,6 +169,7 @@ WHERE [BatchID] = '{batchID}'
 			if (result != 1)
 			{
 				_logger.LogError("Expected to update one row but: {result} returned", result);
+				TraceHelper.SetStatusError(Activity.Current, $"Expected to update one row but: {result} returned");
 			}
 		}
 

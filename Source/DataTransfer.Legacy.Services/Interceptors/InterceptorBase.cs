@@ -3,8 +3,10 @@
 // </copyright>
 
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Castle.DynamicProxy;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.API;
 using Relativity.Services.Exceptions;
 using Relativity.Services.Objects.Exceptions;
@@ -116,16 +118,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
             catch (Core.Exception.Permission permissionException)
             {
                 Logger.LogError(permissionException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Permission error: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during interceptor action {GetType().Name} for {invocation.TargetType.Name}.{invocation.Method.Name} {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
             }
 			catch (ServiceException serviceException)
 			{
                 Logger.LogError(serviceException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Service error: {serviceException.Message}", serviceException);
 				throw;
 			}
 			catch (Exception exception)
 			{
                 Logger.LogError(exception, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, exception.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Error: {exception.Message}", exception);
 				throw new ServiceException($"Error during interceptor action {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
@@ -139,16 +144,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
             catch (Core.Exception.Permission permissionException)
             {
                 Logger.LogError(permissionException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
-                throw new PermissionDeniedException($"Error during interceptor action {GetType().Name} for {invocation.TargetType.Name}.{invocation.Method.Name} {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
+				TraceHelper.SetStatusError(Activity.Current, $"Permission error: {permissionException.Message}", permissionException);
+				throw new PermissionDeniedException($"Error during interceptor action {GetType().Name} for {invocation.TargetType.Name}.{invocation.Method.Name} {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
             }
             catch (ServiceException serviceException)
             {
                 Logger.LogError(serviceException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
-                throw;
-            }
+				TraceHelper.SetStatusError(Activity.Current, $"Service error: {serviceException.Message}", serviceException);
+				throw;
+			}
 			catch (Exception exception)
 			{
                 Logger.LogError(exception, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, exception.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Error: {exception.Message}", exception);
 				throw new ServiceException($"Error during interceptor action {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
