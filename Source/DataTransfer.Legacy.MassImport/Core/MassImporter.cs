@@ -13,7 +13,6 @@ using Relativity.Telemetry.APM;
 using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.DataGrid;
 using Relativity.API;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Relativity.Core.Service.MassImport
 {

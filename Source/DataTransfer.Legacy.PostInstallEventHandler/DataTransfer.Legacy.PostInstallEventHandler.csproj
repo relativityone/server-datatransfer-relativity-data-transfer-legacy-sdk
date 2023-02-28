@@ -42,7 +42,6 @@
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="9.4.74" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Activities" />
     <Reference Include="System.Web" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
