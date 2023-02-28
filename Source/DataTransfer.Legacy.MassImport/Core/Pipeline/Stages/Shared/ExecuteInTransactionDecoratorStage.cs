@@ -1,4 +1,6 @@
 ﻿using System;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 using Relativity.MassImport.Core.Pipeline.Framework;
 using Relativity.MassImport.Core.Pipeline.Framework.Stages;
 
@@ -69,6 +71,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			catch (Exception ex)
 			{
 				_context.Logger.LogError(ex, "Exception occured when commiting a transaction. Trying to rollback.");
+				TraceHelper.SetStatusError(Activity.Current, $"Exception occured when commiting a transaction. Trying to rollback: {ex.Message}", ex);
 				TryRollbackTransaction();
 				throw ex;
 			}
@@ -83,6 +86,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			catch (Exception ex)
 			{
 				_context.Logger.LogError(ex, "Exception occured when rolling back a transaction.");
+				TraceHelper.SetStatusError(Activity.Current, $"Exception occured when rolling back a transaction: {ex.Message}", ex);
 			}
 		}
 	}

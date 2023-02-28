@@ -1,6 +1,8 @@
-﻿using Relativity.Logging;
+﻿using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using Relativity.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Relativity.MassImport.DTO
 {
@@ -99,6 +101,7 @@ namespace Relativity.MassImport.DTO
 			catch (FormatException ex)
 			{
 				logger.LogError(ex, "Failed to format error for template: {messageTemplate} and data: {errorData}", messageTemplate, errorData);
+				TraceHelper.SetStatusError(Activity.Current, $"Failed to format error for template: {messageTemplate} and data: {errorData}: {ex.Message}", ex);
 				return messageTemplate;
 			}
 		}

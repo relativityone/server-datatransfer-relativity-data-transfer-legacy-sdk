@@ -33,29 +33,31 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			catch (Core.Exception.Permission permissionException)
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Permission error: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
 			catch (Core.Exception.InsufficientAccessControlListPermissions permissionException)
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Insufficient access control list permissions: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
 			catch (Core.Exception.BaseException baseException) when (baseException.Message.Contains("does not exist."))
 			{
 				Logger.LogError(baseException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, baseException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Base error: {baseException.Message}", baseException);
 				throw new NotFoundException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(baseException)}", baseException);
 			}
 			catch (ServiceException serviceException)
 			{
 				Logger.LogError(serviceException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Service error: {serviceException.Message}", serviceException);
 				throw;
 			}
 			catch (Exception e)
 			{
-				Activity.Current?.SetTag(TelemetryConstants.AttributeNames.Status, TelemetryConstants.Values.Status.Failed);
-				Activity.Current?.SetTag(TelemetryConstants.AttributeNames.Message, e.Message);
-
 				Logger.LogError(e, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"{e.Message}", e);
 				throw new ServiceException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}
 		}
@@ -70,26 +72,31 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			catch (Core.Exception.Permission permissionException)
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Permission error: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
 			catch (Core.Exception.InsufficientAccessControlListPermissions permissionException)
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Insufficient access control list permissions: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
 			catch (Core.Exception.BaseException baseException) when (baseException.Message.Contains("does not exist."))
 			{
 				Logger.LogError(baseException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, baseException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Base error: {baseException.Message}", baseException);
 				throw new NotFoundException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(baseException)}", baseException);
 			}
 			catch (ServiceException serviceException)
 			{
 				Logger.LogError(serviceException, "There was an error during custom continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Service error: {serviceException.Message}", serviceException);
 				throw;
 			}
 			catch (Exception e)
 			{
 				Logger.LogError(e, "There was an error during custom continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"{e.Message}", e);
 				throw new ServiceException($"Error during custom continuation of call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}
 		}
@@ -104,26 +111,31 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			catch (Core.Exception.Permission permissionException)
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Permission error: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
 			catch (Core.Exception.InsufficientAccessControlListPermissions permissionException)
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Insufficient access control list permissions: {permissionException.Message}", permissionException);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
 			catch (Core.Exception.BaseException baseException) when (baseException.Message.Contains("does not exist."))
 			{
 				Logger.LogError(baseException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, baseException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Base error: {baseException.Message}", baseException);
 				throw new NotFoundException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(baseException)}", baseException);
 			}
 			catch (ServiceException serviceException)
 			{
 				Logger.LogError(serviceException, "There was an error during continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"Service error: {serviceException.Message}", serviceException);
 				throw;
 			}
 			catch (Exception e)
 			{
 				Logger.LogError(e, "There was an error during continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, e.Message);
+				TraceHelper.SetStatusError(Activity.Current, $"{e.Message}", e);
 				throw new ServiceException($"Error during custom continuation of call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(e)}", e);
 			}
 		}

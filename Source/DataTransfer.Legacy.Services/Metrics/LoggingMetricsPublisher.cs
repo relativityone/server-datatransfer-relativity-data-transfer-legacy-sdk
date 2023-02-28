@@ -3,7 +3,9 @@
 // </copyright> 
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.API;
 
 namespace Relativity.DataTransfer.Legacy.Services.Metrics
@@ -51,6 +53,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 			else
 			{
 				_logger.LogError("Health Check Result: {@isHealthy}, message: {@message}", isHealthy, message);
+				TraceHelper.SetStatusError(Activity.Current, $"Health Check Result: {@isHealthy}, message: {@message}");
 			}
 
 			return Task.CompletedTask;

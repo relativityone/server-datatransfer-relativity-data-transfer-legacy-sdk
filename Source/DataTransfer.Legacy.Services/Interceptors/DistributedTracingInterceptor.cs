@@ -12,6 +12,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 	using Relativity.API;
 	using Relativity.DataTransfer.Legacy.Services.Observability;
+	using Relativity.Services;
 
 	public class DistributedTracingInterceptor : InterceptorBase
 	{
@@ -77,6 +78,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			catch (Exception ex)
 			{
 				_logger.LogError(ex, $"Cannot Start Activity: {invocation.TargetType.Name}-{invocation.Method.Name}");
+				TraceHelper.SetStatusError(Activity.Current, $"Cannot Start Activity: {invocation.TargetType.Name}-{invocation.Method.Name}: {ex.Message}", ex);
 			}
 		}
 
@@ -87,7 +89,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				currentActivity?.SetTag(tag.Key, tag.Value);
 			}
-			currentActivity?.SetTag(TelemetryConstants.AttributeNames.Status, TelemetryConstants.Values.Status.Success);
+			TraceHelper.SetStatusOK(currentActivity);
 			currentActivity?.Stop();
 			return Task.CompletedTask;
 		}

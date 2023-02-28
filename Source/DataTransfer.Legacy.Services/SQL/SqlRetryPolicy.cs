@@ -6,6 +6,8 @@ using System.Data.SqlClient;
 using System.Collections.Generic;
 using System.Linq;
 using Relativity.API;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 
 namespace Relativity.DataTransfer.Legacy.Services.SQL
 {
@@ -64,7 +66,7 @@ namespace Relativity.DataTransfer.Legacy.Services.SQL
 					(exception, timeSpan, retryCount, context) =>
 						this.LogMessage(exception, retryCount, context, timeSpan, RetryCount));
 		}
-		
+
 		private Policy GetSyncRetryPolicy()
 		{
 			return Policy
@@ -100,6 +102,7 @@ namespace Relativity.DataTransfer.Legacy.Services.SQL
 			else
 			{
 				this._logger.LogError("Non-retryable SQL error has occurred. Number: {errorNumber}", exception.Number);
+				TraceHelper.SetStatusError(Activity.Current, $"Non-retryable SQL error has occurred. Number: {exception.Number}:{exception.Message}", exception);
 			}
 
 			return isTransient;

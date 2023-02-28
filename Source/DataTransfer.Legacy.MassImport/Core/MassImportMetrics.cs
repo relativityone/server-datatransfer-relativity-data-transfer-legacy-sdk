@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 using Relativity.Core.Service;
 using Relativity.Logging;
 using Relativity.MassImport.Data;
@@ -56,7 +58,8 @@ namespace Relativity.MassImport.Core
             if (result.ExceptionDetail != null) // when error occurred, we want to log metrics
             {
                 _logger.LogError("Import failed after '{importTime}'ms, metrics: {@customData}", importTimeInMilliseconds, customData);
-            }
+				TraceHelper.SetStatusError(Activity.Current, $"Import failed after '{importTimeInMilliseconds}'ms, metrics: {@customData}");
+			}
         }
         
         public void SendFieldDetails(string correlationId, FieldInfo field)

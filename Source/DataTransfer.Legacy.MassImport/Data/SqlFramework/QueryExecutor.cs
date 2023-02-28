@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 using kCura.Data.RowDataGateway;
 using Relativity.Logging;
 
@@ -76,6 +78,7 @@ namespace Relativity.MassImport.Data.SqlFramework
 				catch (Exception ex)
 				{
 					_logger.LogError("Error occurred when processing {query} result. Unable to convert scalar value to type '{type}'.", query, typeof(T));
+					TraceHelper.SetStatusError(Activity.Current, $"Error occurred when processing {query} result. Unable to convert scalar value to type '{typeof(T)}': {ex.Message}", ex);
 					throw new FormatException($"Error occurred when processing query result. Unable to convert scalar value to type '{typeof(T)}'.", ex);
 				}
 			}

@@ -1,4 +1,6 @@
 ﻿using System;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using System.Diagnostics;
 using Polly;
 using Polly.Wrap;
 using Relativity.MassImport.Core.Pipeline.Errors;
@@ -115,6 +117,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			if (!isRetryAbleException)
 			{
 				_context.Logger.LogError(exception, "Non Retryable Error {category} occurred while {action}", exception.ErrorCategory, _actionName);
+				TraceHelper.SetStatusError(Activity.Current, $"Non Retryable Error {exception.ErrorCategory} occurred while {_actionName}: {exception.Message}", exception);
 			}
 			return isRetryAbleException;
 		}

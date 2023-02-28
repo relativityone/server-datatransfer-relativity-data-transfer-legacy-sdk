@@ -1,5 +1,4 @@
-﻿
-namespace Relativity.MassImport.Core.Pipeline.Framework
+﻿namespace Relativity.MassImport.Core.Pipeline.Framework
 {
 	internal class PipelineExecutor : Framework.IPipelineExecutor
 	{

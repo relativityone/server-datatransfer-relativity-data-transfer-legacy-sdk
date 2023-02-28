@@ -10,6 +10,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 
 	public interface ITraceGenerator
 	{
-		Activity StartActivity(string name, ActivityKind kind, ActivityContext parentContext = default(ActivityContext), IEnumerable<KeyValuePair<string, object>> tags = null, IEnumerable<ActivityLink> links = null, DateTimeOffset startTime = default);
+		Activity StartActivity(string name, ActivityKind kind, ActivityContext parentContext = default, IEnumerable<KeyValuePair<string, object>> tags = null, IEnumerable<ActivityLink> links = null, DateTimeOffset startTime = default);
 	}
 }

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.Logging;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 
@@ -83,6 +85,8 @@ namespace Relativity.MassImport.Data
 				if (docsWithNullGuids.Any())
 				{
 					logger.LogError("Some identifiers expected in the data file were not found: [{@missingIdentifiers}]", docsWithNullGuids);
+					TraceHelper.SetStatusError(Activity.Current, $"Some identifiers expected in the data file were not found: [{docsWithNullGuids}]");
+
 					logger.LogWarning("Document Identifiers with null guids: {nullGuids}", docsWithNullGuids.Select(doc => doc.DocumentIdentifier));
 					logger.LogWarning("Import Identifiers with null guids: {nullGuids}", docsWithNullGuids.Select(doc => doc.ImportID));
 					foreach (DataGridImportIdentity identifier in docsWithNullGuids)

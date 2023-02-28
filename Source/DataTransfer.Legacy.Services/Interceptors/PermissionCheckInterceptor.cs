@@ -6,8 +6,10 @@ using Relativity.Services.Objects.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
+	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 	using Relativity.Core.Exception;
 	using Relativity.Services.Exceptions;
+	using System.Diagnostics;
 	using Permission = Relativity.Core.Permission;
 
 	public class PermissionCheckInterceptor : InterceptorBase
@@ -61,7 +63,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			catch (WorkspaceStatusException exception)
 			{
 				Logger.LogError(exception, "There was an error during call {type}.{method} - {message} because of workspace upgrading.", nameof(PermissionCheckInterceptor), nameof(EnsureUserHasPermissionsToUseWebApiReplacement), exception.Message);
-				
+				TraceHelper.SetStatusError(Activity.Current, $"There was an error during call {nameof(PermissionCheckInterceptor)}.{nameof(EnsureUserHasPermissionsToUseWebApiReplacement)} - {exception.Message} because of workspace upgrading", exception);
 				throw new NotFoundException($"Error during call {nameof(PermissionCheckInterceptor)}.{nameof(EnsureUserHasPermissionsToUseWebApiReplacement)}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 
