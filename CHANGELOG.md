@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.11]
+- REL-635344 Remove redundant activity status ok
+
 ## [0.3.10]
 - REL-635344 Set trace status based on error
 

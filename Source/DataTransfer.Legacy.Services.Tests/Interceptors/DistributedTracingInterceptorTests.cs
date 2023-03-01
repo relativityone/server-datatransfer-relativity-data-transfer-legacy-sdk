@@ -14,7 +14,6 @@ using Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System;
-using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using Relativity.DataTransfer.Legacy.Services.Observability;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
