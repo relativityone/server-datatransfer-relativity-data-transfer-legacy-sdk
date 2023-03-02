@@ -51,7 +51,7 @@ namespace Relativity.MassImport.NUnit.Data
 		public void GetCsvErrorLineShouldReturnTemplateMessageInCaseOfFormatException()
 		{
 			var result = DTO.ImportStatusHelper.GetCsvErrorLine(_logMock.Object, (long)ImportStatus.ErrorDuplicateAssociatedObject, "someIdentifier", "", -1, "DocIdentifier", null, "Object1|Object2");
-			result.Should().Be(" - A non unique associated object '{0}' is specified for the '{1}' object in the field '{2}'");
+			result.Should().Be(" - A non unique associated object '{0}' is specified for the '{1}' object in the field '{2}' - Object1|Object2");
 
 			_logMock.Verify(x => x.LogError(It.IsAny<FormatException>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
 		}

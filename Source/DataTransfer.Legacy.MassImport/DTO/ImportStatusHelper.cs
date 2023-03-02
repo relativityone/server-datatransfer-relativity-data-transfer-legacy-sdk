@@ -76,7 +76,7 @@ namespace Relativity.MassImport.DTO
 			{
 				if ((status & (long)errorKvp.Key) > 0L)
 				{
-					retval.Append(ConvertToMessageLineInCell(FormatImportStatusErrorMessage(logger, errorKvp.Value, errorData)));
+					retval.Append(ConvertToMessageLineInCell(FormatImportStatusErrorMessage(logger, errorKvp.Value, errorData, identifier, documentIdentifier)));
 				}
 			}
 
@@ -85,7 +85,7 @@ namespace Relativity.MassImport.DTO
 			return retval.ToString().TrimEnd('\n');
 		}
 
-		private static string FormatImportStatusErrorMessage(ILog logger, string messageTemplate, string errorData)
+		private static string FormatImportStatusErrorMessage(ILog logger, string messageTemplate, string errorData, string identifier, string documentIdentifier)
 		{
 			if (string.IsNullOrEmpty(errorData))
 			{
@@ -100,9 +100,10 @@ namespace Relativity.MassImport.DTO
 			}
 			catch (FormatException ex)
 			{
-				logger.LogError(ex, "Failed to format error for template: {messageTemplate} and data: {errorData}", messageTemplate, errorData);
+				logger.LogError(ex, "Failed to format error for template: {messageTemplate} and data: {errorData} for {identifier} and {documentIdentifier}", messageTemplate, errorData, identifier, documentIdentifier);
 				TraceHelper.SetStatusError(Activity.Current, $"Failed to format error for template: {messageTemplate} and data: {errorData}: {ex.Message}", ex);
-				return messageTemplate;
+
+				return $"{messageTemplate} - {errorData}";
 			}
 		}
 
