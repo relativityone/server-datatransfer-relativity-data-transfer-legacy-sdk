@@ -5,6 +5,7 @@ using Relativity.Core.Service;
 using Relativity.Logging;
 using Relativity.MassImport.Data;
 using Relativity.Telemetry.APM;
+using Microsoft.Identity.Client;
 
 namespace Relativity.MassImport.Core
 {
@@ -80,10 +81,11 @@ namespace Relativity.MassImport.Core
                 customData: customData).Write();
 
             _logger.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+                "Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 bucketName,
                 customData);
-        }
+			Activity.Current?.AddEvent(new ActivityEvent($"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}"));
+		}
 
         private void SendTimer(
             string bucketName, 
@@ -98,10 +100,11 @@ namespace Relativity.MassImport.Core
                 customData: customData);
 
             _logger.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Timer, value: {timeInMilliseconds},  customData: {@customData}",
+                "Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Timer, value: {timeInMilliseconds},  customData: {@customData}",
                 bucketName,
                 timeInMilliseconds,
                 customData);
-        }
+			Activity.Current?.AddEvent(new ActivityEvent($"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Timer, value: {timeInMilliseconds},  customData: {@customData}"));
+		}
     }
 }

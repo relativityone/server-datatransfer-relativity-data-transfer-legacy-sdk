@@ -51,8 +51,25 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 				try
 				{
 					ReleyeUriTraces =  _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriTracesSettingName).GetAwaiter().GetResult();
+					if (string.IsNullOrEmpty(ReleyeUriTraces))
+					{
+						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriTracesSettingName}; is missing. Cannot create RelEyeTraceProvider.");
+						return null;
+					}
+
 					ApiKey = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
+					if (string.IsNullOrEmpty(ApiKey))
+					{
+						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeTokenSettingName}; is missing. Cannot create RelEyeTraceProvider.");
+						return null;
+					}
+
 					SourceID = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
+					if (string.IsNullOrEmpty(SourceID))
+					{
+						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.InstanceIdentifierSettingName}; is missing. Cannot create RelEyeTraceProvider.");
+						return null;
+					}
 
 					resourceBuilder = ResourceBuilder.CreateDefault().AddService(TelemetryConstants.Values.ServiceName);
 					tracerProvider = Sdk.CreateTracerProviderBuilder()

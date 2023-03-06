@@ -24,8 +24,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 		{
 			container.Kernel.ProxyFactory = new DefaultProxyFactory(disableSignedModule: true);
 
-			container.Register(Component.For<IAPILog>()
-				.UsingFactoryMethod((x, c) => x.Resolve<IHelper>().GetLoggerFactory().GetLogger()));
+			container.Register(Component.For<IAPILog>().UsingFactoryMethod(k => { return new RelEyeLogger(TelemetryConstants.Values.ServiceName, k.Resolve<IHelper>().GetLoggerFactory().GetLogger(), k.Resolve<IHelper>().GetInstanceSettingBundle()); }).LifestyleTransient());
 			container.Register(Component.For<IAPM>().Instance(Client.APMClient));
 			container.Register(Component.For<IServiceContextFactory>().ImplementedBy<ServiceContextFactory>());
 			container.Register(Component.For<ICommunicationModeStorage>().ImplementedBy<CommunicationModeInstanceSettingStorage>());

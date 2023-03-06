@@ -27,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 
 			await _uut.Publish(metrics);
 
-			_loggerMock.Verify(x => x.LogInformation("DataTransfer.Legacy Metrics: {@metrics}", metrics), Times.Once);
+			_loggerMock.Verify(x => x.LogInformation("DataTransfer.Legacy Checkpoint: {@metrics}", metrics), Times.Once);
 		}
 
 

@@ -33,8 +33,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Metrics
 		/// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns> 
 		public Task Publish(Dictionary<string, object> metrics)
 		{
-			_logger.LogInformation("DataTransfer.Legacy Metrics: {@metrics}", metrics);
-
+			_logger.LogInformation("DataTransfer.Legacy Checkpoint: {@metrics}", metrics);
+			Activity.Current?.AddEvent(new ActivityEvent($"DataTransfer.Legacy Checkpoint: {@metrics}"));
 			return Task.CompletedTask;
 		}
 

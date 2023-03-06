@@ -221,6 +221,12 @@
     <Assembly><Keywords/><Name>Relativity.DataGrid.Implementations.dll</Name><Notes/></Assembly>
     <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.dll</Name><Notes/></Assembly>
     <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.Versioned.dll</Name><Notes/></Assembly>
+	<Assembly><Keywords/><Name>Grpc.Net.Client.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Grpc.Net.Common.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>OpenTelemetry.SemanticConventions.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Serilog.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Serilog.Sinks.OpenTelemetry.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Serilog.Sinks.PeriodicBatching.dll</Name><Notes /></Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />
