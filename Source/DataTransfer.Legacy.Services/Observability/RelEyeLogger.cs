@@ -222,8 +222,6 @@
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID)
 						.Enrich.With(new TracingEnricher())
 						.Enrich.FromLogContext()
-						//.Filter.ByExcluding(ev => ev.MessageTemplate.Text.StartsWith("Relativity.MassImport metric."))
-						//.Filter.ByExcluding(ev => ev.MessageTemplate.Text.StartsWith("DataTransfer.Legacy Metrics:"))
 						.CreateLogger();
 					initialized = true;
 				}
