@@ -20,6 +20,9 @@ namespace Relativity.DataTransfer.Legacy.Tests
 				typeof(TAPIService),
 				typeof(IProductionExternalService),
 				typeof(ProductionExternalService),
+				typeof(IFileRepositoryExternalService),
+				typeof(KeplerFileRepositoryExternalService),
+				typeof(LegacyFileRepositoryExternalService),
 			};
 
 			var services = typeof(BaseService).Assembly

@@ -10,6 +10,7 @@ using Relativity.API;
 using Relativity.Core;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+using Relativity.DataTransfer.Legacy.Services.ExternalServices;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
@@ -39,6 +40,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		protected Mock<IMetricsPublisher> MetricsPublisherMock;
 		protected Mock<ITraceGenerator> TraceGeneratorMock;
 		protected Mock<IRedactedNativesValidator> RedactedNativesValidatorMock;
+		protected Mock<IFileRepositoryExternalService> FileRepositoryExternalServiceMock;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
@@ -57,6 +59,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			MetricsPublisherMock = new Mock<IMetricsPublisher>();
 			TraceGeneratorMock = new Mock<ITraceGenerator>();
 			RedactedNativesValidatorMock = new Mock<IRedactedNativesValidator>();
+			FileRepositoryExternalServiceMock = new Mock<IFileRepositoryExternalService>();
 
 			Container = new WindsorContainer();
 			Container.Register(Component.For<ISqlExecutor>().Instance(SqlExecutorMock.Object));
@@ -68,6 +71,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<IRelativityPermissionHelper>().Instance(RelativityPermissionHelperMock.Object));
 			Container.Register(Component.For<ITraceGenerator>().Instance(TraceGeneratorMock.Object));
 			Container.Register(Component.For<IRedactedNativesValidator>().Instance(RedactedNativesValidatorMock.Object));
+			Container.Register(Component.For<IFileRepositoryExternalService>().Instance(FileRepositoryExternalServiceMock.Object));
 			Container.Register(Component.For<ToggleCheckInterceptor>());
 			Container.Register(Component.For<PermissionCheckInterceptor>());
 			Container.Register(Component.For<LogInterceptor>());
