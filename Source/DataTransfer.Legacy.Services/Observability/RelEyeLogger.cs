@@ -179,21 +179,21 @@
 
 			try
 			{
-				var apikey = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
+				string apikey = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
 				if (string.IsNullOrEmpty(apikey))
 				{
 					relativityLogger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeTokenSettingName}; is missing. Cannot create RelEyeLogger.");
 					return;
 				}
 
-				var otlpEndpoint = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriLogsName).GetAwaiter().GetResult();
+				string otlpEndpoint = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriLogsName).GetAwaiter().GetResult();
 				if (string.IsNullOrEmpty(apikey))
 				{
 					relativityLogger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriLogsName}; is missing. Cannot create RelEyeLogger.");
 					return;
 				}
 
-				var instanceIdentifier = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
+				string instanceIdentifier = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
 				if (string.IsNullOrEmpty(apikey))
 				{
 					relativityLogger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.InstanceIdentifierSettingName}; is missing. Cannot create RelEyeLogger.");
