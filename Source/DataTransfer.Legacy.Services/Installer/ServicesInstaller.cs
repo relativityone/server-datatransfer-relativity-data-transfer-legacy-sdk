@@ -59,7 +59,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<IRelEyeMetricsService>().ImplementedBy<RelEyeMetricsService>().LifestyleTransient());
 			container.Register(Component.For<IEventsBuilder>().ImplementedBy<EventsBuilder>().LifestyleTransient());
 			container.Register(Component.For<IRedactedNativesValidator>().ImplementedBy<RedactedNativesValidator>().LifestyleTransient());
-			
+			container.Register(Component.For<IFileRepositoryExternalServiceFactory>().ImplementedBy<FileRepositoryExternalServiceFactory>().LifestyleTransient());
+			container.Register(Component.For<IFileRepositoryExternalService>()
+				.UsingFactoryMethod(x => x.Resolve<IFileRepositoryExternalServiceFactory>().Create()));
+
+
 			StorageAccessProvider.InitializeStorageAccess(container);
 			ExternalServicesInstaller.Install(container);
 		}

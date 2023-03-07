@@ -2,8 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [0.3.14]
+## [0.3.15]
 - REL-635344 Send logs to NR
+
+## [0.3.14]
+- REL-826790 - Read File Repository info from existing Kepler endpinds
 
 ## [0.3.13]
 - REL-824414 - More logging in case of FormatException

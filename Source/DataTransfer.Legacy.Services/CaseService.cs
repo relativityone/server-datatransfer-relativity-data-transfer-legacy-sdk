@@ -1,9 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Castle.Core;
 using kCura.Utility;
+using Relativity.API;
 using Relativity.Core.Service;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+using Relativity.DataTransfer.Legacy.Services.ExternalServices;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 
@@ -19,10 +22,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 	{
 		private readonly CaseManager _caseManager;
 
-		public CaseService(IServiceContextFactory serviceContextFactory)
+		private readonly IAPILog _logger;
+		private readonly IFileRepositoryExternalService _fileRepositoryExternalService;
+
+		public CaseService(IServiceContextFactory serviceContextFactory, IAPILog logger, IFileRepositoryExternalService fileRepositoryExternalService)
 			: base(serviceContextFactory)
 		{
 			_caseManager = new CaseManager();
+			_logger = logger;
+			_fileRepositoryExternalService = fileRepositoryExternalService;
 		}
 
 		public Task<SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
@@ -38,10 +46,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
+		public async Task<string[]> GetAllDocumentFolderPathsForCaseAsync(int workspaceID, string correlationID)
 		{
-			var result = _caseManager.GetAllDocumentFolderPathsForCase(GetBaseServiceContext(AdminWorkspace), workspaceID);
-			return Task.FromResult(result);
+			return await _fileRepositoryExternalService.GetAllDocumentFolderPathsForCase(workspaceID);
 		}
 
 		public Task<string[]> GetAllDocumentFolderPathsAsync(string correlationID)
