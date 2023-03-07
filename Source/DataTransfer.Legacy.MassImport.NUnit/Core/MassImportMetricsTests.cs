@@ -85,7 +85,7 @@ namespace Relativity.MassImport.NUnit.Core
                 ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y))
                 ));
@@ -178,7 +178,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(expectedFieldsDetails, y))
             ));
@@ -225,7 +225,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y))
             ));
@@ -261,7 +261,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y))
             ));
@@ -297,7 +297,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedPreImportStagingTableDetailsMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(customData, y))
             ));
@@ -353,7 +353,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedFieldDetailsMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(expectedCustomData, y))
             ));

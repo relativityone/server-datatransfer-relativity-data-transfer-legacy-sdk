@@ -279,6 +279,16 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// [string] Job id.
 			/// </summary>
 			public const string JobID = "job.id";
+
+			/// <summary>
+			/// [string] Distributed tracing trace id.
+			/// </summary>
+			public const string RelEyeTraceID = "trace.id";
+
+			/// <summary>
+			/// [string] Distributed tracing span id.
+			/// </summary>
+			public const string RelEyeSpanID = "span.id";
 		}
 
 		/// <summary>

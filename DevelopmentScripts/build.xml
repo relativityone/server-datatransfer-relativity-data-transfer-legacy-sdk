@@ -68,7 +68,13 @@
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.DataGrid.Implementations.dll</Assembly> 
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Productions.Services.Interfaces.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Productions.Services.Interfaces.Versioned.dll</Assembly>
-        </Assemblies>
+          <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Net.Client.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Grpc.Net.Common.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\OpenTelemetry.SemanticConventions.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Serilog.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Serilog.Sinks.OpenTelemetry.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Serilog.Sinks.PeriodicBatching.dll</Assembly>
+		</Assemblies>
         <ResourceFiles />
         <CustomPages />
       </Application>
