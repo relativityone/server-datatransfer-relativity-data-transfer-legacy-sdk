@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.3.15]
+- REL-748334 - Remove DisableBatchResultCacheToggle
+
+## [0.3.15]
 - REL-635344 Send logs to NR
 
 ## [0.3.14]
