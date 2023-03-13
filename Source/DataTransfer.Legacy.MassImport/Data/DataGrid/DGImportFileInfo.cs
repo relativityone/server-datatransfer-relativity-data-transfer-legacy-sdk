@@ -15,6 +15,7 @@ namespace Relativity.MassImport.Data.DataGrid
 		public ulong FileSize;
 		public string Checksum;
 		public string IndexName;
+		public bool LinkedText;
 	}
 
 	static class DGImportFileInfoEnumerable
@@ -26,7 +27,8 @@ namespace Relativity.MassImport.Data.DataGrid
 				new SqlMetaData(nameof(DGImportFileInfo.FieldArtifactId), SqlDbType.Int), 
 				new SqlMetaData(nameof(DGImportFileInfo.FileLocation), SqlDbType.NVarChar, 2000L), 
 				new SqlMetaData(nameof(DGImportFileInfo.FileSize), SqlDbType.BigInt), 
-				new SqlMetaData(nameof(DGImportFileInfo.Checksum), SqlDbType.NVarChar, SqlMetaData.Max)
+				new SqlMetaData(nameof(DGImportFileInfo.Checksum), SqlDbType.NVarChar, SqlMetaData.Max),
+				new SqlMetaData(nameof(DGImportFileInfo.LinkedText), SqlDbType.Bit)
 			);
 
 			foreach (DGImportFileInfo dgImportFileInfo in dgInfoPaths)
@@ -51,6 +53,7 @@ namespace Relativity.MassImport.Data.DataGrid
 				{
 					sqlDataRecord.SetString(4, dgImportFileInfo.Checksum);
 				}
+				sqlDataRecord.SetBoolean(5, dgImportFileInfo.LinkedText);
 
 				yield return sqlDataRecord;
 			}
