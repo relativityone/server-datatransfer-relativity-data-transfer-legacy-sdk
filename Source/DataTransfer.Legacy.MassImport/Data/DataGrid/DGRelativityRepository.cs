@@ -12,7 +12,7 @@ namespace Relativity.MassImport.Data.DataGrid
 			return $@"
 WITH dgImportFileInfoFull AS
 (
-	SELECT P.[ArtifactID], DG.[FieldArtifactId], DG.[FileLocation], DG.[FileSize], DG.[Checksum], DG.[ImportId]
+	SELECT P.[ArtifactID], DG.[FieldArtifactId], DG.[FileLocation], DG.[FileSize], DG.[Checksum], DG.[ImportId], DG.[LinkedText]
 	FROM @dgImportFileInfo AS DG
 	JOIN [Resource].[{tableName}] AS P ON P.[kCura_Import_ID] = DG.[ImportId]
 	WHERE P.[{statusColumnName}] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
@@ -27,10 +27,11 @@ WHEN MATCHED THEN
 		T.FileLocation = S.FileLocation,
 		T.FileSize = S.FileSize,
 		T.UpdatedDate = GETUTCDATE(),
-		T.Checksum = S.Checksum
+		T.Checksum = S.Checksum,
+		T.LinkedText = S.LinkedText
 WHEN NOT MATCHED AND NOT (S.FileLocation IS NULL AND S.FileSize = 0) THEN
-	INSERT (ArtifactId, FieldArtifactId, FileLocation, FileSize, CreatedDate, Checksum)
-	VALUES (S.ArtifactId, S.FieldArtifactId, S.FileLocation, S.FileSize, GETUTCDATE(), S.Checksum)
+	INSERT (ArtifactId, FieldArtifactId, FileLocation, FileSize, CreatedDate, Checksum, LinkedText)
+	VALUES (S.ArtifactId, S.FieldArtifactId, S.FileLocation, S.FileSize, GETUTCDATE(), S.Checksum, S.LinkedText)
 OUTPUT S.[ImportId], $ACTION;
 ";
 		}
@@ -49,6 +50,7 @@ OUTPUT S.[ImportId], $ACTION;
 				FileSize = byteSize,
 				Checksum = checksum,
 				IndexName = record.IndexName,
+				LinkedText = false
 			};
 			ImportFileInfos.Add(importFileInfo);
 
@@ -58,6 +60,25 @@ OUTPUT S.[ImportId], $ACTION;
 		public Task RemoveFileInformation(RecordIdentity record, FieldIdentity field)
 		{
 			// They were never added to the [DataGridFileMapping] so we don't have to delete it.
+			return Task.CompletedTask;
+		}
+
+		public Task RecordFileInformation(RecordIdentity record, FieldIdentity field, string path, ulong byteSize, string checksum, bool isLinkedText)
+		{
+			var importFileInfo = new DGImportFileInfo()
+			{
+				ImportId = record.ArtifactID,
+				FieldArtifactId = field.ArtifactID,
+				FieldName = field.FieldName,
+				FieldNamespace = field.FieldNamespace,
+				FileLocation = path,
+				FileSize = byteSize,
+				Checksum = checksum,
+				IndexName = record.IndexName,
+				LinkedText = isLinkedText
+			};
+			ImportFileInfos.Add(importFileInfo);
+
 			return Task.CompletedTask;
 		}
 	}
