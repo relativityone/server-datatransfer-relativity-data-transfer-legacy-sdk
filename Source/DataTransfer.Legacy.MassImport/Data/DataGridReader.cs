@@ -7,8 +7,7 @@ using Relativity.MassImport.Data.DataGridWriteStrategy;
 
 namespace Relativity.MassImport.Data
 {
-	// TODO: change to internal, https://jira.kcura.com/browse/REL-477112 
-	public class DataGridReader
+	internal class DataGridReader
 	{
 		private readonly Relativity.Data.DataGridContext _dgContext;
 		private readonly BaseContext _readContext;
@@ -33,10 +32,7 @@ namespace Relativity.MassImport.Data
 
 		public async Task ReadDataGridDocumentsFromDataReader(IDataGridRecordBuilder builder, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, HashSet<string> foundIdentifiers)
 		{
-			// Do change the value initialized to methodName variable if the method name is changed else the logs will have a different method name in them.
-			string methodName = "ReadDataGridDocumentsFromDataReader";
-			object methodNameObject = methodName;
-			var logger = _correlationLogger.ForContext("Method", methodNameObject, true);
+			var logger = _correlationLogger.ForContext("Method", nameof(ReadDataGridDocumentsFromDataReader), true);
 			logger.LogVerbose("Starting");
 
 			kCura.Utility.InjectionManager.Instance.Evaluate("203FB622-92DB-407D-9E42-13F939048334");
@@ -52,7 +48,7 @@ namespace Relativity.MassImport.Data
 
 			using (var dataReader = _reader)
 			{
-				if (!_options.MappedDataGridFields.Any() && !_options.LinkDataGridRecords)
+				if (!_options.MappedDataGridFields.Any())
 				{
 					logger.LogDebug("ReadDataGridDocumentsFromDataReader: Nothing to do");
 					dataReader.Close();

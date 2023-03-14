@@ -44,6 +44,9 @@
 
 		public OverlayBehavior OverlayBehavior { get; set; }
 
+		/// <summary>
+		/// This property is not used anymore.
+		/// </summary>
 		public bool LinkDataGridRecords { get; set; }
 
 		public bool LoadImportedFullTextFromServer { get; set; }

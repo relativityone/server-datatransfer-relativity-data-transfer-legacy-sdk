@@ -337,7 +337,6 @@ namespace Relativity.MassImport.NUnit.Core
                 ["TextLength"] = "32",
                 ["CodeTypeID"] = "7",
                 ["EnableDataGrid"] = "True",
-                ["FormatString"] = "str$#",
                 ["IsUnicodeEnabled"] = "False",
             };
 
@@ -370,7 +369,6 @@ namespace Relativity.MassImport.NUnit.Core
             string[] propertiesNotIncludedInCustomData =
             {
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.RunID),
-                nameof(Relativity.MassImport.DTO.NativeLoadInfo.HaveDataGridFields),
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.HasDataGridWorkToDo),
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.KeyFieldColumnName),
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.Repository),
@@ -453,7 +451,6 @@ namespace Relativity.MassImport.NUnit.Core
         {
             AssertThatDictionaryContainsKeyValuePair(customData, "ImportType", importType);
             AssertThatDictionaryContainsKeyValuePair(customData, "System", system);
-            AssertThatDictionaryContainsKeyValuePair(customData, "MassImportImprovementsToggle", true);
         }
 
         private void VerifyAllPropertiesAreIncluded<T>(T settings, string[] propertiesNotIncludedInCustomData, Dictionary<string, object> customData)

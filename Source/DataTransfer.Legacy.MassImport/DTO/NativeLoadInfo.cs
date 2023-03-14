@@ -53,8 +53,6 @@ namespace Relativity.MassImport.DTO
 
         public OverlayBehavior OverlayBehavior { get; set; }
 
-        public bool LinkDataGridRecords { get; set; }
-
         public bool LoadImportedFullTextFromServer { get; set; }
 
         public int KeyFieldArtifactID
@@ -94,17 +92,15 @@ namespace Relativity.MassImport.DTO
 
         public bool OverrideReferentialLinksRestriction { get; set; }
 
-        public bool HaveDataGridFields
+        public bool HasDataGridWorkToDo
         {
 	        get
 	        {
 		        return MappedFields is object && MappedFields.Any(f => f.EnableDataGrid);
-            }
+	        }
         }
 
-        public bool HasDataGridWorkToDo => HaveDataGridFields || LinkDataGridRecords;
-
-        public string KeyFieldColumnName
+		public string KeyFieldColumnName
         {
             get
             {

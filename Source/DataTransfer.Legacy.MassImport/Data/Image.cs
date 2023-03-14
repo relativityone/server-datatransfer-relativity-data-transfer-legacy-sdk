@@ -901,7 +901,7 @@ WHERE
 					_dataGridMappings.LoadCacheForImport(mappingReader, indexName, appID);
 				}
 
-				_dgImportHelper.WriteToDataGrid((int)Relativity.ArtifactType.Document, appID, _tableNames.RunId, loader, false, true, _dataGridMappings, correlationLogger);
+				_dgImportHelper.WriteToDataGrid((int)Relativity.ArtifactType.Document, appID, _tableNames.RunId, loader, hasMappedFields: true, _dataGridMappings, correlationLogger);
 			}
 			finally
 			{

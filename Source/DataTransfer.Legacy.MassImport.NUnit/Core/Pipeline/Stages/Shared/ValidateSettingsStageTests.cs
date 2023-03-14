@@ -168,11 +168,11 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 		}
 
 		[TestCaseSource(nameof(ValidDataGridFileNames))]
+		[TestCaseSource(nameof(InvalidDataGridFileNames))]
 		public void ShouldNotThrowWhenDataGridFileNameIsValid(string fileName)
 		{
 			// arrange
 			_settings.DataGridFileName = fileName;
-			_settings.LinkDataGridRecords = true;
 			_settings.MappedFields = null;
 
 			// act
@@ -180,41 +180,6 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 
 			// assert
 			Assert.DoesNotThrow(ValidateAction, "Input was valid");
-		}
-
-		[TestCaseSource(nameof(InvalidDataGridFileNames))]
-		public void ShouldNotThrowWhenDataGridFileNameIsInvalidButDataGridIsNotUsed(string fileName)
-		{
-			// arrange
-			_settings.DataGridFileName = fileName;
-			_settings.LinkDataGridRecords = false;
-			_settings.MappedFields = null;
-
-			// act
-			void ValidateAction() => _sut.Execute(_inputMock.Object);
-
-			// assert
-			Assert.DoesNotThrow(ValidateAction, "Input was valid");
-		}
-
-		[TestCaseSource(nameof(InvalidDataGridFileNames))]
-		public void ShouldThrowWhenDataGridFileNameIsInvalidAndHasDataGridWorkToDo(string fileName)
-		{
-			// arrange
-			_settings.DataGridFileName = fileName;
-			_settings.LinkDataGridRecords = true;
-			_settings.MappedFields = null;
-
-			// act
-			void ValidateAction() => _sut.Execute(_inputMock.Object);
-
-			// assert
-			const string expectedErrorMessage = "Invalid DataGridFileName";
-			System.Exception actualException = Assert.Throws<System.Exception>(ValidateAction);
-			Assert.That(
-				actualException.Message,
-				Is.EqualTo(expectedErrorMessage),
-				"Exception message was incorrect");
 		}
 
 		private static IEnumerable<string> ValidRunIds()

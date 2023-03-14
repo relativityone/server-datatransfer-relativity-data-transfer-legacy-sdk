@@ -106,7 +106,6 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 				["ImportedArtifacts"] = results.ArtifactsCreated + results.ArtifactsUpdated,
 				[nameof(settings.ExecutionSource)] = settings.ExecutionSource.ToString(),
 				["MappedDataGridFields"] = settings.MappedFields.Count(f => f.EnableDataGrid),
-				[nameof(settings.LinkDataGridRecords)] = settings.LinkDataGridRecords,
 				[nameof(settings.LoadImportedFullTextFromServer)] = settings.LoadImportedFullTextFromServer
 			};
 		}

@@ -110,7 +110,6 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				DisableUserSecurityCheck = false,
 				ExecutionSource = ExecutionSource.ImportAPI,
 				KeyFieldArtifactID = 1003667,
-				LinkDataGridRecords = false,
 				LoadImportedFullTextFromServer = false,
 				MappedFields = fields,
 				MoveDocumentsInAppendOverlayMode = false,

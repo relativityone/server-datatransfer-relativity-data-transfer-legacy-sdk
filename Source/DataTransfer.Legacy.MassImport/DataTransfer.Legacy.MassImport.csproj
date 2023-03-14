@@ -137,7 +137,6 @@
     <None Include="Data\DataGridWriteStrategy\IDataGridSqlTempReader.cs" />
     <None Include="Data\DataGridWriteStrategy\IDataGridWriter.cs" />
     <None Include="Data\DataGridWriteStrategy\IDListDictionary.cs" />
-    <None Include="Data\DataGridWriteStrategy\LinkedOnlyWriter.cs" />
     <None Include="Data\DataGrid\IDataGridInputReaderProvider.cs" />
     <None Include="Data\Folder.cs" />
     <None Include="Data\FolderArtifactIDMapping.cs" />
