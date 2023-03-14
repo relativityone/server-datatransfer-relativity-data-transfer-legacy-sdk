@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Text;
 using Moq;
 using NUnit.Framework;
-using Relativity.Data.MassImportOld;
 using Relativity.Logging;
+using Relativity.MassImport.Data;
 using Relativity.Toggles;
 using Relativity.Toggles.Providers;
 
@@ -100,7 +100,6 @@ namespace Relativity.MassImport.NUnit.Data
 					DataGridIDColumnName = "_DataGridID_",
 					IdentifierColumnName = "_DocumentIdentifier_",
 					MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-					LinkDataGridRecords = false,
 					ReadFullTextFromFileLocation = false
 				};
 				var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, mockLogger.Object, 0, 0) { MaximumDataGridFieldSize = 104857600L };
@@ -145,7 +144,6 @@ namespace Relativity.MassImport.NUnit.Data
 						DataGridIDColumnName = "_DataGridID_",
 						IdentifierColumnName = "_DocumentIdentifier_",
 						MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-						LinkDataGridRecords = false,
 						ReadFullTextFromFileLocation = false
 					};
 					var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFilePathDestructive, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
@@ -179,7 +177,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = true,
 				ReadFullTextFromFileLocation = false
 			};
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
@@ -239,7 +236,6 @@ text");
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
@@ -268,7 +264,6 @@ text");
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDNoFieldsPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
@@ -300,7 +295,6 @@ text");
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 			var reader = new DataGridTempFileDataReader(options, "|", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = byteThreshold };

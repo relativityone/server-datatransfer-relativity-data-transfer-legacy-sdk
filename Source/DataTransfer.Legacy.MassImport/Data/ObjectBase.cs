@@ -597,7 +597,6 @@ WHERE
 					DataGridIDColumnName = "_DataGridID_",
 					IdentifierColumnName = identifierFieldName,
 					MappedDataGridFields = Settings.MappedFields.Where(f => f.EnableDataGrid).ToList(),
-					LinkDataGridRecords = Settings.LinkDataGridRecords,
 					ReadFullTextFromFileLocation = Settings.LoadImportedFullTextFromServer,
 					SqlTempTableName = _tableNames.Native
 				};
@@ -645,7 +644,7 @@ WHERE
 					_dataGridMappings.LoadCacheForImport(mappingReader, indexName, appID);
 				}
 
-				_dgImportHelper.WriteToDataGrid(ArtifactTypeID, appID, _tableNames.RunId, loader, Settings.LinkDataGridRecords, Settings.HaveDataGridFields, _dataGridMappings, correlationLogger);
+				_dgImportHelper.WriteToDataGrid(ArtifactTypeID, appID, _tableNames.RunId, loader, Settings.HasDataGridWorkToDo, _dataGridMappings, correlationLogger);
 			}
 			finally
 			{

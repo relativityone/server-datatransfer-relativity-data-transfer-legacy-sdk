@@ -143,7 +143,6 @@ namespace MassImport.NUnit.Integration.FunctionalTests
                 DisableUserSecurityCheck = false,
                 ExecutionSource = ExecutionSource.ImportAPI,
                 KeyFieldArtifactID = _ordersIdentifierField.ArtifactID,
-                LinkDataGridRecords = false,
                 LoadImportedFullTextFromServer = false,
                 MappedFields = fields,
                 MoveDocumentsInAppendOverlayMode = false,

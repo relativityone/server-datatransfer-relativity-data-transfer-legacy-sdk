@@ -299,7 +299,7 @@ namespace Relativity.MassImport.NUnit.Core
             var actualCustomData = MetricCustomDataBuilder.New().WithFieldInfo(fieldInfo).Build();
 
             // assert
-            VerifyAllPropertiesAreIncluded(fieldInfo, new string[0], actualCustomData, shouldConvertAllPropertiesToString: true);
+            VerifyAllPropertiesAreIncluded(fieldInfo, new[] { nameof(FieldInfo.FormatString) }, actualCustomData, shouldConvertAllPropertiesToString: true);
         }
 
         private void VerifySettingsInCustomData(Relativity.MassImport.DTO.NativeLoadInfo settings, Dictionary<string, object> customData)
@@ -307,7 +307,6 @@ namespace Relativity.MassImport.NUnit.Core
             string[] propertiesNotIncludedInCustomData =
             {
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.RunID),
-                nameof(Relativity.MassImport.DTO.NativeLoadInfo.HaveDataGridFields),
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.HasDataGridWorkToDo),
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.KeyFieldColumnName),
                 nameof(Relativity.MassImport.DTO.NativeLoadInfo.Repository),
@@ -364,7 +363,6 @@ namespace Relativity.MassImport.NUnit.Core
         {
             AssertThatDictionaryContainsKeyValuePair(customData, "ImportType", importType);
             AssertThatDictionaryContainsKeyValuePair(customData, "System", system);
-            AssertThatDictionaryContainsKeyValuePair(customData, "MassImportImprovementsToggle", true);
             AssertThatDictionaryContainsKeyValuePair(customData, "r1.team.id", "PTCI-4941411");
         }
 

@@ -16,7 +16,6 @@ using Relativity.API;
 
 namespace Relativity.Core.Service.MassImport
 {
-	// TODO: adjust namespace, https://jira.kcura.com/browse/REL-477112 
 	internal class MassImporter
 	{
 		private static IAPM APMClient => Client.APMClient;

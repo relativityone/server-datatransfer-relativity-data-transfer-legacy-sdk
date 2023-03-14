@@ -5,9 +5,10 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Relativity.Data;
-using Relativity.Data.MassImportOld;
 using Relativity.DataGrid;
 using Relativity.Logging;
+using Relativity.MassImport.Data;
+using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.Toggles;
 using Relativity.Toggles.Providers;
 
@@ -20,7 +21,6 @@ namespace Relativity.MassImport.NUnit.Data
 		private string _testFileAlternateDelimiterPath;
 		private string _testFileWithDataGridIDPath;
 		private string _testFileWithDataGridIDNoFieldsPath;
-		private string _testFileWithRDCDataGridTempBulkFile;
 
 		private Mock<DataGridContext> _dgLookupContextMock;
 		private Mock<kCura.Data.RowDataGateway.BaseContext> _caseContextMock;
@@ -42,7 +42,6 @@ namespace Relativity.MassImport.NUnit.Data
 			_testFileAlternateDelimiterPath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile_AlternateDelimiter.txt");
 			_testFileWithDataGridIDPath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile_WithDataGridID.txt");
 			_testFileWithDataGridIDNoFieldsPath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile_WithDataGridID_NoFields.txt");
-			_testFileWithRDCDataGridTempBulkFile = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridRDCBulkLoadFile.txt");
 
 			_dgLookupContextMock = new Mock<DataGridContext>(new Mock<DataGridContextBase>().Object);		
 
@@ -163,7 +162,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 
@@ -196,7 +194,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 
@@ -224,7 +221,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 			var foundIdentifiers = new HashSet<string>();
@@ -250,7 +246,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 
@@ -280,7 +275,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 
@@ -310,64 +304,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = true,
-				ReadFullTextFromFileLocation = false
-			};
-
-			var foundIdentifiers = new HashSet<string>();
-			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
-			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
-			var builder = new Mock<IDataGridRecordBuilder>();
-
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
-
-			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA2", "DOCAAA3" };
-			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
-			builder.Verify(b => b.AddDocument(1, "document", It.IsAny<string>()), Times.Once());
-			builder.Verify(b => b.AddDocument(2, "document", It.IsAny<string>()), Times.Once());
-			builder.Verify(b => b.AddDocument(3, "document", It.IsAny<string>()), Times.Once());
-		}
-
-		[Test]
-		public async Task ReadFile_WithDataGridID_LinkingDocument_HasNoFields_DGFS_CheckResultDtos()
-		{
-			var mappedFields = Array.Empty<FieldInfo>();
-			var options = new DataGridReaderOptions()
-			{
-				DataGridIDColumnName = "_DataGridID_",
-				IdentifierColumnName = "_DocumentIdentifier_",
-				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = true,
-				ReadFullTextFromFileLocation = false
-			};
-
-			var foundIdentifiers = new HashSet<string>();
-			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDNoFieldsPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
-			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
-			var builder = new Mock<IDataGridRecordBuilder>();
-
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
-
-			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA2", "DOCAAA3" };
-			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
-			builder.Verify(b => b.AddDocument(1, "document", It.IsAny<string>()), Times.Once());
-			builder.Verify(b => b.AddDocument(2, "document", It.IsAny<string>()), Times.Once());
-			builder.Verify(b => b.AddDocument(3, "document", It.IsAny<string>()), Times.Once());
-		}
-
-		[Test]
-		public async Task ReadFile_WithDataGridID_NotLinkingDocument_HasSingleField_CheckResultDtos()
-		{
-			var mappedFields = new[]
-			{
-				new FieldInfo() { ArtifactID = 1001, EnableDataGrid = true, DisplayName = "field 1" }
-			};
-			var options = new DataGridReaderOptions()
-			{
-				DataGridIDColumnName = "_DataGridID_",
-				IdentifierColumnName = "_DocumentIdentifier_",
-				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 
@@ -394,7 +330,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = false
 			};
 
@@ -422,7 +357,6 @@ namespace Relativity.MassImport.NUnit.Data
 				DataGridIDColumnName = "_DataGridID_",
 				IdentifierColumnName = "_DocumentIdentifier_",
 				MappedDataGridFields = mappedFields.Where(f => f.EnableDataGrid).ToList(),
-				LinkDataGridRecords = false,
 				ReadFullTextFromFileLocation = true
 			};
 

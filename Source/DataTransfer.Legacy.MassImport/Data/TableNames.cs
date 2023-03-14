@@ -2,7 +2,6 @@
 
 namespace Relativity.Data.MassImport
 {
-	// TODO: adjust namespace, https://jira.kcura.com/browse/REL-477112 
 	internal class TableNames
 	{
 		private const string IMAGE_TEMP_TABLE_PREFIX = "RELIMGTMP_";

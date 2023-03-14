@@ -43,11 +43,22 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			if (typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.ObjectLoadInfo).FullName
 				|| typeMap.SourceType.FullName == typeof(SDK.ImportExport.V1.Models.NativeLoadInfo).FullName)
 			{
-				modifier = -3;
+				// Exists in internal model but not in SDK
+				_ = new[]
+				{
+					nameof(MassImport.DTO.NativeLoadInfo.HasDataGridWorkToDo),
+					nameof(MassImport.DTO.NativeLoadInfo.KeyFieldColumnName),
+				};
+				// Exists in SDK but not in internal model
+				_ = new[]
+				{
+					nameof(SDK.ImportExport.V1.Models.NativeLoadInfo.LinkDataGridRecords)
+				};
+				modifier = -1;
 			}
 
 			sourceProperties.Length.Should().BeGreaterThan(0, "to make sure we took fields in a correct way");
-			sourceProperties.Length.Should().Be(destinationProperties.Length + modifier, "{0} {1}", typeMap.SourceType, typeMap.DestinationType);
+			sourceProperties.Length.Should().Be(destinationProperties.Length + modifier, "{0} has {1} an {2} has {3}", typeMap.SourceType, sourceProperties.Length, typeMap.DestinationType, destinationProperties.Length + modifier);
 		}
 
 		[Test]

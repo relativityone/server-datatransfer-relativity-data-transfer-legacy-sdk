@@ -25,7 +25,6 @@ namespace Relativity.MassImport.Core
         {
             _customData["ImportType"] = importType;
             _customData["System"] = system;
-            _customData["MassImportImprovementsToggle"] = true;
             _customData[TelemetryConstants.AttributeNames.R1TeamID] = TelemetryConstants.Values.R1TeamID;
 
 			return this;
@@ -43,7 +42,6 @@ namespace Relativity.MassImport.Core
             _customData[nameof(settings.UploadFiles)] = settings.UploadFiles;
             _customData[nameof(settings.UseBulkDataImport)] = settings.UseBulkDataImport;
             _customData[nameof(settings.MoveDocumentsInAppendOverlayMode)] = settings.MoveDocumentsInAppendOverlayMode;
-            _customData[nameof(settings.LinkDataGridRecords)] = settings.LinkDataGridRecords;
             _customData[nameof(settings.LoadImportedFullTextFromServer)] = settings.LoadImportedFullTextFromServer;
             _customData[nameof(settings.KeyFieldArtifactID)] = settings.KeyFieldArtifactID;
             _customData[nameof(settings.RootFolderID)] = settings.RootFolderID;
@@ -160,7 +158,6 @@ namespace Relativity.MassImport.Core
             _customData[nameof(fieldInfo.TextLength)] = fieldInfo.TextLength.ToString();
             _customData[nameof(fieldInfo.CodeTypeID)] = fieldInfo.CodeTypeID.ToString();
             _customData[nameof(fieldInfo.EnableDataGrid)] = fieldInfo.EnableDataGrid.ToString();
-            _customData[nameof(fieldInfo.FormatString)] = fieldInfo.FormatString;
             _customData[nameof(fieldInfo.IsUnicodeEnabled)] = fieldInfo.IsUnicodeEnabled.ToString();
 
             return this;

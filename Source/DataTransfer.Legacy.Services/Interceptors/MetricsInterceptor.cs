@@ -329,7 +329,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(nativeLoadInfo.BulkLoadFileFieldDelimiter), nativeLoadInfo.BulkLoadFileFieldDelimiter);
 			metrics.PushProperty(nameof(nativeLoadInfo.OverlayArtifactID), nativeLoadInfo.OverlayArtifactID.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.OverlayBehavior), Enum.GetName(typeof(OverlayBehavior), nativeLoadInfo.OverlayBehavior));
-			metrics.PushProperty(nameof(nativeLoadInfo.LinkDataGridRecords), nativeLoadInfo.LinkDataGridRecords.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.LoadImportedFullTextFromServer), nativeLoadInfo.LoadImportedFullTextFromServer.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.KeyFieldArtifactID), nativeLoadInfo.KeyFieldArtifactID.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.RootFolderID), nativeLoadInfo.RootFolderID.ToString());

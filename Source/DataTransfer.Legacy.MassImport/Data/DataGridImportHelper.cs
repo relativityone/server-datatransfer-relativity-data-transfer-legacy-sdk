@@ -24,7 +24,7 @@ namespace Relativity.MassImport.Data
 			_textMigrationVerify = textMigrationVerify;
 		}
 
-		public void WriteToDataGrid(int artifactTypeID, int appID, string runID, DataGridReader loader, bool linkDocuments, bool hasMappedFields, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, ILog correlationLogger)
+		public void WriteToDataGrid(int artifactTypeID, int appID, string runID, DataGridReader loader, bool hasMappedFields, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, ILog correlationLogger)
 		{
 			var logger = correlationLogger.ForContext("Method", "WriteToDataGrid", true);
 			logger.LogVerbose("Starting WriteToDataGrid");
@@ -53,16 +53,9 @@ namespace Relativity.MassImport.Data
 					}
 				}
 
-				IDataGridWriter writer;
-				if (linkDocuments && !hasMappedFields)
-				{
-					writer = new LinkedOnlyWriter(); // doesn't write to the primary data store
-				}
-				else
-				{
-					var actualWriter = new BulkDataGridWriter(_dgContext, artifactTypeID, appID, errorManager, logger, fields);
-					writer = new ByteMeasuringWriter(actualWriter, _measurements);
-				}
+				var actualWriter = new BulkDataGridWriter(_dgContext, artifactTypeID, appID, errorManager, logger, fields);
+				IDataGridWriter writer = new ByteMeasuringWriter(actualWriter, _measurements);
+
 
 				IDataGridRecordBuilder recordBuilder = new FileSystemRecordBuilder(writer, Relativity.Data.Config.DataGridConfiguration.DataGridImportSmallFieldThreshold, Relativity.Data.Config.DataGridConfiguration.DataGridWriteParallelism);
 				var foundIdentifiers = new HashSet<string>();
