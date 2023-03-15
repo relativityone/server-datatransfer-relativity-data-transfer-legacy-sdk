@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using Relativity.Logging;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
+using Relativity.Telemetry.APM;
 
 namespace Relativity.MassImport.Data
 {
@@ -15,13 +17,19 @@ namespace Relativity.MassImport.Data
 		private DataGridImportResults _results;
 		private readonly ImportMeasurements _measurements;
 		private readonly Relativity.Data.ITextMigrationVerifier _textMigrationVerify;
+		private readonly IRelEyeMetricsService _metricsService;
 
-		public DataGridImportHelper(Relativity.Data.DataGridContext dgContext, kCura.Data.RowDataGateway.BaseContext context, ImportMeasurements measurements, Relativity.Data.ITextMigrationVerifier textMigrationVerify)
+		public DataGridImportHelper(
+			Relativity.Data.DataGridContext dgContext,
+			kCura.Data.RowDataGateway.BaseContext context,
+			ImportMeasurements measurements,
+			Relativity.Data.ITextMigrationVerifier textMigrationVerify)
 		{
 			_dgContext = dgContext;
 			_context = context;
 			_measurements = measurements;
 			_textMigrationVerify = textMigrationVerify;
+			_metricsService = new RelEyeMetricsService(new ApmTelemetryPublisher(Client.APMClient));
 		}
 
 		public void WriteToDataGrid(int artifactTypeID, int appID, string runID, DataGridReader loader, bool hasMappedFields, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, ILog correlationLogger)
@@ -57,7 +65,7 @@ namespace Relativity.MassImport.Data
 				IDataGridWriter writer = new ByteMeasuringWriter(actualWriter, _measurements);
 
 
-				IDataGridRecordBuilder recordBuilder = new FileSystemRecordBuilder(writer, Relativity.Data.Config.DataGridConfiguration.DataGridImportSmallFieldThreshold, Relativity.Data.Config.DataGridConfiguration.DataGridWriteParallelism);
+				FileSystemRecordBuilder recordBuilder = new FileSystemRecordBuilder(writer, Relativity.Data.Config.DataGridConfiguration.DataGridImportSmallFieldThreshold, Relativity.Data.Config.DataGridConfiguration.DataGridWriteParallelism);
 				var foundIdentifiers = new HashSet<string>();
 				try
 				{
@@ -68,7 +76,9 @@ namespace Relativity.MassImport.Data
 					throw new Exception($"Write to Data Grid failed: {ex.InnerExceptions.First().Message}", ex.InnerExceptions.First());
 				}
 
-				correlationLogger.LogDebug("WriteToDataGrid for {totalCount} documents completed with {errorCount} errors and {validationCount} validation errors.", 
+				_metricsService.PublishEvent(new EventDataGridRecordsCreated(recordBuilder.NumberOfTexts, recordBuilder.NumberOfEmptyTexts));
+
+				correlationLogger.LogDebug("WriteToDataGrid for {totalCount} documents completed with {errorCount} errors and {validationCount} validation errors.",
 					foundIdentifiers.Count, errorManager.ErrorMessages.Keys.Count(), errorManager.ValidationStatuses.Keys.Count());
 
 				// REL-108860: Something is happening where records don't end up in the data grid temp file.
