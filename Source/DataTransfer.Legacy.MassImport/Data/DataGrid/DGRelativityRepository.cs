@@ -12,7 +12,7 @@ namespace Relativity.MassImport.Data.DataGrid
 			return $@"
 WITH dgImportFileInfoFull AS
 (
-	SELECT P.[ArtifactID], DG.[FieldArtifactId], DG.[FileLocation], DG.[FileSize], DG.[Checksum], DG.[ImportId], DG.[LinkedText]
+	SELECT P.[ArtifactID], DG.[FieldArtifactId], DG.[FileLocation], DG.[FileSize], DG.[Checksum], DG.[ImportId]
 	FROM @dgImportFileInfo AS DG
 	JOIN [Resource].[{tableName}] AS P ON P.[kCura_Import_ID] = DG.[ImportId]
 	WHERE P.[{statusColumnName}] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
@@ -27,21 +27,15 @@ WHEN MATCHED THEN
 		T.FileLocation = S.FileLocation,
 		T.FileSize = S.FileSize,
 		T.UpdatedDate = GETUTCDATE(),
-		T.Checksum = S.Checksum,
-		T.LinkedText = S.LinkedText
+		T.Checksum = S.Checksum
 WHEN NOT MATCHED AND NOT (S.FileLocation IS NULL AND S.FileSize = 0) THEN
-	INSERT (ArtifactId, FieldArtifactId, FileLocation, FileSize, CreatedDate, Checksum, LinkedText)
-	VALUES (S.ArtifactId, S.FieldArtifactId, S.FileLocation, S.FileSize, GETUTCDATE(), S.Checksum, S.LinkedText)
+	INSERT (ArtifactId, FieldArtifactId, FileLocation, FileSize, CreatedDate, Checksum)
+	VALUES (S.ArtifactId, S.FieldArtifactId, S.FileLocation, S.FileSize, GETUTCDATE(), S.Checksum)
 OUTPUT S.[ImportId], $ACTION;
 ";
 		}
 
 		public ConcurrentBag<DGImportFileInfo> ImportFileInfos = new ConcurrentBag<DGImportFileInfo>();
-
-		public Task RecordFileInformation(RecordIdentity record, FieldIdentity field, string path, ulong byteSize, string checksum)
-		{
-			return RecordFileInformation(record, field, path, byteSize, checksum, false);
-		}
 
 		public Task RemoveFileInformation(RecordIdentity record, FieldIdentity field)
 		{
@@ -49,7 +43,7 @@ OUTPUT S.[ImportId], $ACTION;
 			return Task.CompletedTask;
 		}
 
-		public Task RecordFileInformation(RecordIdentity record, FieldIdentity field, string path, ulong byteSize, string checksum, bool isLinkedText)
+		public Task RecordFileInformation(RecordIdentity record, FieldIdentity field, string path, ulong byteSize, string checksum)
 		{
 			var importFileInfo = new DGImportFileInfo()
 			{
@@ -60,8 +54,7 @@ OUTPUT S.[ImportId], $ACTION;
 				FileLocation = path,
 				FileSize = byteSize,
 				Checksum = checksum,
-				IndexName = record.IndexName,
-				LinkedText = isLinkedText
+				IndexName = record.IndexName
 			};
 			ImportFileInfos.Add(importFileInfo);
 
