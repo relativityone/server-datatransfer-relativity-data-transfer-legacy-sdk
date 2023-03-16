@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using kCura.Utility.Streaming;
@@ -11,9 +12,14 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 		private string _type;
 		private int _artifactID;
 		private string _batchID;
+		private int _numberOfTexts;
+		private int _numberOfEmptyTexts;
 		private readonly IDataGridWriter _writer;
 		private readonly byte[] _shortcutBuffer;
 		private readonly ActionBlock<StorageRequest> _storageQueue;
+
+		public int NumberOfEmptyTexts => _numberOfEmptyTexts;
+		public int NumberOfTexts => _numberOfTexts;
 
 		private class StorageRequest
 		{
@@ -52,42 +58,20 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 			return Task.CompletedTask;
 		}
 
-		public async Task AddField(DataGridFieldInfo field, Relativity.DataGrid.FieldInfo fieldValue)
-		{
-			await AddRecordRequest(field, fieldValue, null);
-		}
-
-		private async Task AddRecordRequest(DataGridFieldInfo field, Relativity.DataGrid.FieldInfo fieldValue, TaskCompletionSource<bool> completion)
-		{
-			var dgRecord = new DataGridRecord()
-			{
-				ArtifactID = _artifactID,
-				Type = _type,
-				BatchID = _batchID
-			};
-			dgRecord.AddField(field.FieldNamespace, field.FieldName, fieldValue);
-			var request = new StorageRequest()
-			{
-				Field = field,
-				Record = dgRecord,
-				Completion = completion
-			};
-			await _storageQueue.SendAsync(request);
-		}
-
-		private async Task StoreRecord(StorageRequest request)
-		{
-			var results = await _writer.Write(new[] { request.Record });
-			request.Completion?.SetResult(true);
-		}
-
 		public async Task AddField(DataGridFieldInfo field, string fieldValue, bool isFileLink)
 		{
+			Interlocked.Increment(ref _numberOfTexts);
+
 			bool validLink = isFileLink && !string.IsNullOrEmpty(fieldValue);
 			long byteSize = 0L;
 			if (!validLink && fieldValue != null)
 			{
 				byteSize = System.Text.Encoding.Unicode.GetByteCount(fieldValue);
+			}
+
+			if (byteSize == 0 && !validLink)
+			{
+				Interlocked.Increment(ref _numberOfEmptyTexts);
 			}
 
 			var fieldInfo = new Relativity.DataGrid.FieldInfo()
@@ -117,9 +101,47 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 			}
 			else
 			{
+				Interlocked.Increment(ref _numberOfTexts);
 				var wellWeTriedStream = new PrependingReadStreamDecorator(fieldValue, _shortcutBuffer);
 				await WriteLargeTextStream(field, wellWeTriedStream);
 			}
+		}
+
+		public async Task Flush()
+		{
+			_storageQueue.Complete();
+			_type = null;
+			_artifactID = default;
+			await _storageQueue.Completion;
+		}
+
+		private async Task AddField(DataGridFieldInfo field, Relativity.DataGrid.FieldInfo fieldValue)
+		{
+			await AddRecordRequest(field, fieldValue, null);
+		}
+
+		private async Task AddRecordRequest(DataGridFieldInfo field, Relativity.DataGrid.FieldInfo fieldValue, TaskCompletionSource<bool> completion)
+		{
+			var dgRecord = new DataGridRecord()
+			{
+				ArtifactID = _artifactID,
+				Type = _type,
+				BatchID = _batchID
+			};
+			dgRecord.AddField(field.FieldNamespace, field.FieldName, fieldValue);
+			var request = new StorageRequest()
+			{
+				Field = field,
+				Record = dgRecord,
+				Completion = completion
+			};
+			await _storageQueue.SendAsync(request);
+		}
+
+		private async Task StoreRecord(StorageRequest request)
+		{
+			var results = await _writer.Write(new[] { request.Record });
+			request.Completion?.SetResult(true);
 		}
 
 		private async Task WriteLargeTextStream(DataGridFieldInfo field, Stream fieldValue)
@@ -134,14 +156,6 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 
 			await AddRecordRequest(field, fieldInfo, completionEvent);
 			await completionEvent.Task; // only completed after the record is written, because the reader can only have one field stream open at a time
-		}
-
-		public async Task Flush()
-		{
-			_storageQueue.Complete();
-			_type = null;
-			_artifactID = default;
-			await _storageQueue.Completion;
 		}
 	}
 }

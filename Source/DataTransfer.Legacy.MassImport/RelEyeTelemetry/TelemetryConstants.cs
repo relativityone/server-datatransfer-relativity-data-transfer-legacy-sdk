@@ -261,6 +261,16 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			public const string JobType = "job.type";
 
 			/// <summary>
+			/// [integer] [0,] total count of items requested to be processed in job
+			/// </summary>
+			public const string JobRequestedCount = "job.requested_count";
+
+			/// <summary>
+			/// [integer] [0,] count of items processed in job that skipped
+			/// </summary>
+			public const string JobSkippedCount = "job.skipped_count";
+
+			/// <summary>
 			/// [string] R1 source id.
 			/// </summary>
 			public const string R1SourceID = "r1.source.id";
@@ -311,6 +321,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// </summary>
 			public const string GeneralStatistics = "general_statistics";
 
+			public const string DataGridRecordsCreated = "data_grid_records_created";
 		}
 	}
 }
