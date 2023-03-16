@@ -69,7 +69,7 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 				byteSize = System.Text.Encoding.Unicode.GetByteCount(fieldValue);
 			}
 
-			if (byteSize == 0)
+			if (byteSize == 0 && !validLink)
 			{
 				Interlocked.Increment(ref _numberOfEmptyTexts);
 			}

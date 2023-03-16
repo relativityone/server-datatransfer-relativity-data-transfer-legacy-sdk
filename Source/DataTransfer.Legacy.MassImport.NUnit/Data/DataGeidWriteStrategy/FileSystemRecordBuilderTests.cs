@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using kCura.Utility.Streaming;
 using Moq;
 using NUnit.Framework;
-using Relativity.Data.MassImportOld;
-using Relativity.Data.MassImportOld.DataGridWriteStrategy;
 using Relativity.DataGrid;
+using Relativity.MassImport.Data.DataGridWriteStrategy;
 
 namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 {
@@ -22,8 +22,12 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 		private const int _WRITE_PARALLELISM = 4;
 		private const int _SHORT_FIELD_LENGTH_LIMIT = 16384; // 16KB
 
-		[SetUp]
-		public void Setup()
+		private DataGridFieldInfo _field;
+		private Mock<IDataGridWriter> _mockWriter;
+		private FileSystemRecordBuilder _sut;
+
+		[OneTimeSetUp]
+		public void OneTimeSetup()
 		{
 			string codeBase = System.Reflection.Assembly.GetExecutingAssembly().CodeBase;
 			var uri = new UriBuilder(codeBase);
@@ -32,12 +36,19 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 			_testFilePath = $@"{directoryPath}\Resources\{"DataGridBulkLoadTestFile.txt"}";
 		}
 
+		[SetUp]
+		public void SetUp()
+		{
+			_field = new DataGridFieldInfo(0, "Fields", "Field1", string.Empty);
+			_mockWriter = new Mock<IDataGridWriter>();
+			_sut = new FileSystemRecordBuilder(_mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
+		}
+
 		[Test]
 		public async Task SingleDocument_ThreeFields_Flush_CheckRecords()
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
 			var actualRecords = new List<IDataGridRecord>();
-			mockWriter.Setup(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()))
+			_mockWriter.Setup(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()))
 				.Callback<IEnumerable<IDataGridRecord>>(records =>
 				{
 					lock (actualRecords) actualRecords.AddRange(records);
@@ -45,14 +56,13 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 				.Returns(() => Task.FromResult(Enumerable.Empty<DataGridWriteResult>()));
 
 			Stream textStream = new MemoryStream(System.Text.Encoding.Unicode.GetBytes(_FIELD2_VALUE));
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
 			string batchID = "01234567-89ab-cdef-0123-456789abcdef";
 
-			await recordBuilder.AddDocument(_ARTIFACTID_1, "document", batchID);
-			await recordBuilder.AddField(new DataGridFieldInfo(0, "Fields", "Field1", string.Empty), _FIELD1_VALUE, false);
-			await recordBuilder.AddField(new DataGridFieldInfo(0, "Fields", "Field2", string.Empty), textStream);
-			await recordBuilder.AddField(new DataGridFieldInfo(0, "Fields", "Field3", string.Empty), _testFilePath, true);
-			await recordBuilder.Flush();
+			await _sut.AddDocument(_ARTIFACTID_1, "document", batchID);
+			await _sut.AddField(new DataGridFieldInfo(0, "Fields", "Field1", string.Empty), _FIELD1_VALUE, false);
+			await _sut.AddField(new DataGridFieldInfo(0, "Fields", "Field2", string.Empty), textStream);
+			await _sut.AddField(new DataGridFieldInfo(0, "Fields", "Field3", string.Empty), _testFilePath, true);
+			await _sut.Flush();
 
 			Assert.AreEqual(3, actualRecords.Count);
 			Assert.IsInstanceOf<DataGridRecord>(actualRecords.ElementAt(0));
@@ -95,25 +105,20 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 		[Test]
 		public async Task NoDocuments_Flush_NoWrites()
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
 			string batchID = "01234567-89ab-cdef-0123-456789abcdef";
 
-			await recordBuilder.AddDocument(_ARTIFACTID_1, "document", batchID);
-			await recordBuilder.Flush();
+			await _sut.AddDocument(_ARTIFACTID_1, "document", batchID);
+			await _sut.Flush();
 
-			mockWriter.Verify(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()), Times.Never());
+			_mockWriter.Verify(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()), Times.Never());
 		}
 
 		[Test]
 		public async Task OneDocument_NoFields_Flush_NoWrites()
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
+			await _sut.Flush();
 
-			await recordBuilder.Flush();
-
-			mockWriter.Verify(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()), Times.Never());
+			_mockWriter.Verify(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()), Times.Never());
 		}
 
 		[TestCase(2, true)]
@@ -126,14 +131,13 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 		[TestCase(8192, false)]
 		public async Task AddField_StreamimgThreshold_CheckResults(int shortFieldLengthLimit, bool shouldStream)
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
 			const string delimiter = "|END";
 			string delimitedField2Value = $"{_FIELD2_VALUE}{delimiter}";
 			Stream textStream = new MemoryStream(System.Text.Encoding.Unicode.GetBytes(delimitedField2Value));
 			var delimitedStream = new DelimitedReadStreamDecorator(textStream, System.Text.Encoding.Unicode.GetBytes(delimiter));
 			var preamble = System.Text.Encoding.Unicode.GetPreamble();
 
-			mockWriter.Setup(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>())).Callback<IEnumerable<IDataGridRecord>>(records =>
+			_mockWriter.Setup(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>())).Callback<IEnumerable<IDataGridRecord>>(records =>
 			{
 				var resultRecords = records.OfType<DataGridRecord>().ToArray();
 				Assert.AreEqual(1, resultRecords.Count());
@@ -155,27 +159,25 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 					Assert.AreEqual(_FIELD2_VALUE, resultRecords[0]["Fields"]["Field2"].GetValue<string>());
 				}
 			}).Returns(() => Task.FromResult(Enumerable.Empty<DataGridWriteResult>()));
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, shortFieldLengthLimit, _WRITE_PARALLELISM);
+			var recordBuilder = new FileSystemRecordBuilder(_mockWriter.Object, shortFieldLengthLimit, _WRITE_PARALLELISM);
 			string batchID = "01234567-89ab-cdef-0123-456789abcdef";
 
 			await recordBuilder.AddDocument(_ARTIFACTID_1, "document", batchID);
 			await recordBuilder.AddField(new DataGridFieldInfo(0, "Fields", "Field2", string.Empty), delimitedStream);
 			await recordBuilder.Flush();
 
-			mockWriter.Verify(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()), Times.Once());
+			_mockWriter.Verify(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()), Times.Once());
 		}
 
 		[Test]
 		public async Task AddDocument_IndexerDoesNotAddDocument()
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
 			var mockIndexer = new Mock<IDataGridRecordBuilder>();
 
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
 			string batchID = "01234567-89ab-cdef-0123-456789abcdef";
 
-			await recordBuilder.AddDocument(_ARTIFACTID_1, "document", batchID);
-			await recordBuilder.Flush();
+			await _sut.AddDocument(_ARTIFACTID_1, "document", batchID);
+			await _sut.Flush();
 
 			mockIndexer.Verify(i => i.AddDocument(_ARTIFACTID_1, "document", batchID), Times.Never());
 		}
@@ -183,11 +185,9 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 		[Test]
 		public async Task Flush_FlushesIndexer()
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
 			var mockIndexer = new Mock<IDataGridRecordBuilder>();
 
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
-			await recordBuilder.Flush();
+			await _sut.Flush();
 
 			mockIndexer.Verify(i => i.Flush(), Times.Never());
 		}
@@ -195,7 +195,6 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 		[Test]
 		public async Task AddField_String_Error_IndexerDoesNotAddField()
 		{
-			var mockWriter = new Mock<IDataGridWriter>();
 			var exampleWriteResult = new DataGridWriteResult()
 			{
 				ArtifactID = _ARTIFACTID_1,
@@ -210,20 +209,93 @@ namespace Relativity.MassImport.NUnit.Data.DataGeidWriteStrategy
 					}
 				}
 			};
-			mockWriter.Setup(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()))
+			_mockWriter.Setup(w => w.Write(It.IsAny<IEnumerable<IDataGridRecord>>()))
 				.Returns(Task.FromResult<IEnumerable<DataGridWriteResult>>(new[] { exampleWriteResult }));
 
 			var mockIndexer = new Mock<IDataGridRecordBuilder>();
 
-			var recordBuilder = new FileSystemRecordBuilder(mockWriter.Object, _SHORT_FIELD_LENGTH_LIMIT, _WRITE_PARALLELISM);
 			string batchID = "01234567-89ab-cdef-0123-456789abcdef";
 
-			await recordBuilder.AddDocument(_ARTIFACTID_1, "document", batchID);
-			await recordBuilder.AddField(new DataGridFieldInfo(0, "Fields", "Field1", string.Empty), _FIELD1_VALUE, false);
-			await recordBuilder.Flush();
+			await _sut.AddDocument(_ARTIFACTID_1, "document", batchID);
+			await _sut.AddField(new DataGridFieldInfo(0, "Fields", "Field1", string.Empty), _FIELD1_VALUE, false);
+			await _sut.Flush();
 
 			mockIndexer.Verify(i => i.AddDocument(_ARTIFACTID_1, "document", batchID), Times.Never());
-			mockIndexer.Verify(i => i.AddField(It.IsAny<DataGridFieldInfo>(), It.IsAny<DataGrid.FieldInfo>()), Times.Never());
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task AddField_IncrementsNumberOfEmptyTexts(bool isFileLink)
+		{
+			// act
+			await _sut.AddField(_field, string.Empty, isFileLink);
+			await _sut.AddField(_field, null, isFileLink);
+
+			// assert
+			_sut.NumberOfEmptyTexts.Should().Be(2);
+			_sut.NumberOfTexts.Should().Be(2);
+		}
+
+		[Test]
+		public async Task AddField_IncrementsNumberOfEmptyTexts_ForEmptyStream()
+		{
+			// act
+			await _sut.AddField(_field, new MemoryStream());
+
+			// assert
+			_sut.NumberOfEmptyTexts.Should().Be(1);
+			_sut.NumberOfTexts.Should().Be(1);
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task AddField_IncrementsNumberOfTexts(bool isFileLink)
+		{
+			// arrange
+			await _sut.AddField(_field, string.Empty, isFileLink);
+
+			// act
+			await _sut.AddField(_field, "Test", isFileLink);
+
+			// assert
+			_sut.NumberOfEmptyTexts.Should().Be(1);
+			_sut.NumberOfTexts.Should().Be(2);
+		}
+
+		[Test]
+		public async Task AddField_IncrementsNumberOfTexts_ForNonEmptyStream()
+		{
+			// act
+			await _sut.AddField(_field, new MemoryStream(new byte[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 }));
+
+			// assert
+			_sut.NumberOfEmptyTexts.Should().Be(0);
+			_sut.NumberOfTexts.Should().Be(1);
+		}
+
+		[Test]
+		public async Task AddField_IncrementsNumberOfTextsAndEmptyTexts_ForMultipleThreads()
+		{
+			// arrange
+			const int numberOfThreads = 8;
+			const int numberOfEmptyFieldsPerThreads = 1000;
+
+			async Task Increment()
+			{
+				for (int i = 0; i < numberOfEmptyFieldsPerThreads; i++)
+				{
+					await _sut.AddField(_field, null, isFileLink: true);
+				}
+			}
+
+			// act
+			var incrementTasks = Enumerable.Range(0, numberOfThreads).Select(_ => Increment());
+			await Task.WhenAll(incrementTasks);
+
+			// assert
+			int expectedNumberOfEmptyFiles = numberOfThreads * numberOfEmptyFieldsPerThreads;
+			_sut.NumberOfEmptyTexts.Should().Be(expectedNumberOfEmptyFiles);
+			_sut.NumberOfTexts.Should().Be(expectedNumberOfEmptyFiles);
 		}
 	}
 }
