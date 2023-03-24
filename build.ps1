@@ -30,7 +30,7 @@ The build configuration to use. Either Debug or Release. Defaults to Debug.
 param(
 	[ArgumentCompleter({
 		param($Command, $Parameter, $WordToComplete, $CommandAst, $FakeBoundParams)
-		$null = Import-Module (Resolve-Path "$PSScriptRoot\buildtools\psake.*\tools\psake\psake.psd1" | Select-Object -Last 1) -ErrorAction Ignore
+		$null = Import-Module (Resolve-Path "$PSScriptRoot\buildtools\psake-rel.*\tools\psake\psake.psd1" | Select-Object -Last 1) -ErrorAction Ignore
 		(Get-PSakeScriptTasks).Name | Where-Object { $PSItem -like "$WordToComplete*" } | Sort-Object
 	})]
 	[string[]]$TaskList = @(),
@@ -71,7 +71,7 @@ if ($LASTEXITCODE -ne 0) {
 
 Write-Progress "Importing required Powershell modules..."
 $ToolsDir = Join-Path $PSScriptRoot "buildtools"
-Import-Module (Join-Path $ToolsDir "psake.*\tools\psake\psake.psd1") -ErrorAction Stop
+Import-Module (Join-Path $ToolsDir "psake-rel.*\tools\psake\psake.psd1") -ErrorAction Stop
 Import-Module (Join-Path $ToolsDir "kCura.PSBuildTools.*\PSBuildTools.psd1") -ErrorAction Stop
 Install-Module VSSetup -Scope CurrentUser -Force
 
