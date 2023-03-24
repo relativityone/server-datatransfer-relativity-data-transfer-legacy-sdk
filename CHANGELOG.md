@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.21]
+- REL-797147 - reduce chunk size when lenght of serialized data is too large to be deserialized
+
 ## [0.3.20]
 - REL-829772 - Send event with number of empty texts passed to DataGrid
 
