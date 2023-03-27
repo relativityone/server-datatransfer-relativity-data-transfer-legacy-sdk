@@ -27,7 +27,7 @@ For more information on RAP CD, [view the documentation in Einstein](https://ein
 
 ## History
 
-Tag: 0.2.3                                        
+Tag: 0.2.3
 Branch: server-main
 
 ## Maintainers
