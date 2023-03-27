@@ -15,6 +15,8 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
 		private readonly string _xml;
 		private readonly object[][] _data;
 
+		public int? SerializedDataLength => _xml?.Length;
+
 		public ExportDataWrapper(object[] exportData)
 		{
 			if (exportData == null)

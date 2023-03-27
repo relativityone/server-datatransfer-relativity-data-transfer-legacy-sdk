@@ -60,7 +60,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 			container.Register(Component.For<IFileRepositoryExternalServiceFactory>().ImplementedBy<FileRepositoryExternalServiceFactory>().LifestyleTransient());
 			container.Register(Component.For<IFileRepositoryExternalService>()
 				.UsingFactoryMethod(x => x.Resolve<IFileRepositoryExternalServiceFactory>().Create()));
-
+			container.Register(Component.For<ResultToExportDataWrapperConverter>().LifestyleSingleton());
 
 			StorageAccessProvider.InitializeStorageAccess(container);
 			ExternalServicesInstaller.Install(container);

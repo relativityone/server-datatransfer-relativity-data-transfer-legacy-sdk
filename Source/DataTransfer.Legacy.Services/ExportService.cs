@@ -21,8 +21,12 @@ namespace Relativity.DataTransfer.Legacy.Services
 	public class ExportService : BaseService, IExportService
 	{
 		private static readonly string[] DynamicallyLoadedDllPaths = { Config.DynamicallyLoadedStandardSearchDLLs, Config.DynamicallyLoadedClientSearchDLLs };
+		private readonly ResultToExportDataWrapperConverter _resultConverter;
 
-		public ExportService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
+		public ExportService(IServiceContextFactory serviceContextFactory, ResultToExportDataWrapperConverter resultConverter) : base(serviceContextFactory)
+		{
+			_resultConverter = resultConverter;
+		}
 
 		public Task<InitializationResults> InitializeSearchExportAsync(int workspaceID, int searchArtifactID, int[] avfIDs, int startAtRecord, string correlationID)
 		{
@@ -99,7 +103,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 				result = export.RetrieveResultsBlockStartingFromIndex(GetBaseServiceContext(workspaceID), runID, avfIds, chunkSize, displayMulticodesAsNested, multiValueDelimiter, nestedValueDelimiter, index);
 			}
 
-			return new ExportDataWrapper(result);
+			return _resultConverter.Convert(result);
 		}
 
 		public Task<bool> HasExportPermissionsAsync(int workspaceID, string correlationID)
