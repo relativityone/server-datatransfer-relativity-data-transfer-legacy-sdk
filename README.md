@@ -21,7 +21,6 @@ Run Functional Tests
 > .\build.ps1 -TaskList Compile, Package, FunctionalTest -RAPVersion 1.0.0.xxx -- Generates RAP with provided versions
 
 
- 
 ## Online Documentation RAP CD
 
 For more information on RAP CD, [view the documentation in Einstein](https://einstein.kcura.com/x/hRkFCQ)
