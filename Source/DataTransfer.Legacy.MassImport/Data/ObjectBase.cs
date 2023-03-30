@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using kCura.Utility;
+using kCura.Data.RowDataGateway;
 using Polly;
 using Relativity.Data.MassImport;
 using Relativity.DataGrid;
@@ -712,12 +713,17 @@ WHERE
 			if (dgImportFileInfoList.Any())
 			{
 				ImportMeasurements.StartMeasure();
-				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Native, "kCura_Import_Status");
-				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
-				sqlParam.SqlDbType = SqlDbType.Structured;
-				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
+				string createTableStatement = DGRelativityRepository.CreateDgFieldMappingTempTableSql();
+				bool hasLinkedTextColumn = _context.ExecuteSqlStatementAsScalar<int>(createTableStatement) == 1;
+
+				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Native, "kCura_Import_Status", hasLinkedTextColumn);
+
+				IDataReader dgImportFileInfoReader = dgImportFileInfoList.GetDgImportFileInfoAsDataReader();
+				SqlBulkCopyParameters bulkCopyParameters = DGRelativityRepository.GetDgFieldMappingTempTableBulkCopyParameters();
+				_context.ExecuteBulkCopy(dgImportFileInfoReader, bulkCopyParameters);
+
 				var filter = new HashSet<int>();
-				using (var reader = Context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
+				using (var reader = Context.ExecuteSQLStatementAsReader(sqlStatement, QueryTimeout))
 				{
 					while (reader.Read())
 					{
