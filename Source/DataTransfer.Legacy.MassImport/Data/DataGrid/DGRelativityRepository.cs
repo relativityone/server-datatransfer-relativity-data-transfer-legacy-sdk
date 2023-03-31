@@ -50,7 +50,7 @@ DROP TABLE {_DG_TEMP_TABLE_NAME}
 WITH dgImportFileInfoFull AS
 (
 	SELECT P.[ArtifactID], DG.[FieldArtifactId], DG.[FileLocation], DG.[FileSize], DG.[Checksum], DG.[ImportId]
-	FROM @dgImportFileInfo AS DG
+	FROM {_DG_TEMP_TABLE_NAME} AS DG
 	JOIN [Resource].[{tableName}] AS P ON P.[kCura_Import_ID] = DG.[ImportId]
 	WHERE P.[{statusColumnName}] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 )
@@ -69,6 +69,8 @@ WHEN NOT MATCHED AND NOT (S.FileLocation IS NULL AND S.FileSize = 0) THEN
 	INSERT (ArtifactId, FieldArtifactId, FileLocation, FileSize, CreatedDate, Checksum)
 	VALUES (S.ArtifactId, S.FieldArtifactId, S.FileLocation, S.FileSize, GETUTCDATE(), S.Checksum)
 OUTPUT S.[ImportId], $ACTION;
+
+IF OBJECT_ID('tempdb..{_DG_TEMP_TABLE_NAME}') IS NOT NULL DROP TABLE {_DG_TEMP_TABLE_NAME}
 ";
 			}
 		}
