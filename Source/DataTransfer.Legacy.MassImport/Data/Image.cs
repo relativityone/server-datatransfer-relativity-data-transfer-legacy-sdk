@@ -819,15 +819,18 @@ WHERE
 			if (dgImportFileInfoList.Any())
 			{
 				ImportMeasurements.StartMeasure();
-				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status");
+				string createTableStatement = DGRelativityRepository.CreateDgFieldMappingTempTableSql();
+				bool hasLinkedTextColumn = _context.ExecuteSqlStatementAsScalar<int>(createTableStatement) == 1;
 
-				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
-				sqlParam.SqlDbType = SqlDbType.Structured;
-				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
+				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status", hasLinkedTextColumn);
+
+				IDataReader dgImportFileInfoReader = dgImportFileInfoList.GetDgImportFileInfoAsDataReader();
+				SqlBulkCopyParameters bulkCopyParameters = DGRelativityRepository.GetDgFieldMappingTempTableBulkCopyParameters();
+				_context.ExecuteBulkCopy(dgImportFileInfoReader, bulkCopyParameters);
 
 				var filter = new HashSet<int>();
 
-				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
+				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, QueryTimeout))
 				{
 					while (reader.Read())
 					{

@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.23]
+- REL-823051 - update DG, update core, Linked Text
+
 ## [0.3.22]
 - REL-797147 - reduce chunk size when size of data is too large to be serialized
 
