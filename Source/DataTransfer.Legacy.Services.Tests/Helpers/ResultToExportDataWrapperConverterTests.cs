@@ -47,7 +47,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 		}
 
 		[Test]
-		public void Convert_ReduceResultLength_IfExceedsThreshold()
+		public void Convert_ReduceResultLength_IfExceedsDeserializationThreshold()
 		{
 			// arrange
 			var result = GenerateResult(400);
@@ -61,7 +61,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 		}
 
 		[Test]
-		public void Convert_ReduceResultLengthTwice_IfExceedsThreshold()
+		public void Convert_ReduceResultLengthTwice_IfExceedsDeserializationThreshold()
 		{
 			// arrange
 			var result = GenerateResult(800);
@@ -72,6 +72,20 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 			// assert
 			var unwrapped = actual.Unwrap();
 			unwrapped.Length.Should().Be(512);
+		}
+
+		[Test]
+		public void Convert_ReduceResultLengthTwice_IfExceedsSerializationThreshold()
+		{
+			// arrange
+			var result = GenerateResult(1000);
+
+			// act
+			var actual = _sut.Convert(result);
+
+			// assert
+			var unwrapped = actual.Unwrap();
+			unwrapped.Length.Should().Be(256);
 		}
 
 		private static object[] GenerateResult(int elementSize)

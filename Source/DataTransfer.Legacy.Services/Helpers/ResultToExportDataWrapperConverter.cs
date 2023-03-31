@@ -1,4 +1,5 @@
-﻿using Relativity.API;
+﻿using System;
+using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using System.Linq;
 
@@ -14,6 +15,35 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 		}
 
 		public ExportDataWrapper Convert(object[] result)
+		{
+			ExportDataWrapper dataWrapper = null;
+			while (dataWrapper == null)
+			{
+				try
+				{
+					dataWrapper = ConvertToDeserializable(result);
+				}
+				catch (OutOfMemoryException ex)
+				{
+					_logger.LogWarning(ex, "OutOfMemoryException was thrown when creating ExportDataWrapper. Result has '{count}' records.", result.Length);
+
+					if (result.Length > 1)
+					{
+						int newResultsLength = result.Length / 2;
+						result = result.Take(newResultsLength).ToArray();
+						dataWrapper = null;
+					}
+					else
+					{
+						throw;
+					}
+				}
+			}
+
+			return dataWrapper;
+		}
+
+		private ExportDataWrapper ConvertToDeserializable(object[] result)
 		{
 			// REL-797147, System.OutOfMemoryException: Array dimensions exceeded supported range
 			const int maximumSerializedDataLength = 456176861; // 1024 rows, 1024 columns, 384 characters per each element
