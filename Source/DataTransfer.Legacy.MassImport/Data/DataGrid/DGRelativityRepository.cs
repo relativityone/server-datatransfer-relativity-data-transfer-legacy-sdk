@@ -81,12 +81,12 @@ IF OBJECT_ID('tempdb..{_DG_TEMP_TABLE_NAME}') IS NOT NULL DROP TABLE {_DG_TEMP_T
 IF OBJECT_ID('tempdb..{_DG_TEMP_TABLE_NAME}') IS NOT NULL DROP TABLE {_DG_TEMP_TABLE_NAME}
 
 CREATE TABLE {_DG_TEMP_TABLE_NAME} (
-	[{nameof(DGImportFileInfo.ImportId)}] INT NOT NULL,
-	[{nameof(DGImportFileInfo.FieldArtifactId)}] INT NOT NULL,
-	[{nameof(DGImportFileInfo.FileLocation)}] NVARCHAR(2000) NOT NULL,
-	[{nameof(DGImportFileInfo.FileSize)}] BIGINT NOT NULL,
+	[{nameof(DGImportFileInfo.ImportId)}] INT NULL,
+	[{nameof(DGImportFileInfo.FieldArtifactId)}] INT NULL,
+	[{nameof(DGImportFileInfo.FileLocation)}] NVARCHAR(2000) NULL,
+	[{nameof(DGImportFileInfo.FileSize)}] BIGINT NULL,
 	[{nameof(DGImportFileInfo.Checksum)}] NVARCHAR(MAX) NULL,
-	[{nameof(DGImportFileInfo.LinkedText)}] BIT NOT NULL
+	[{nameof(DGImportFileInfo.LinkedText)}] BIT NULL
 )
 
 SELECT COUNT(*) FROM sys.columns WHERE Name = N'{nameof(DGImportFileInfo.LinkedText)}' AND Object_ID = Object_ID(N'EDDSDBO.DataGridFileMapping')
