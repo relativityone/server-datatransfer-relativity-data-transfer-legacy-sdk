@@ -11,7 +11,11 @@ namespace Relativity.MassImport.Data
 		// https://docs.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-2017
 		private const int _CANNOT_BULK_LOAD_BECAUSE_FILE_LOCKED_MSG_ID = 4861;
 		private const int _CANNOT_BULK_LOAD_BECAUSE_FILE_DOES_NOT_EXIST_MSG_ID = 4860;
+		// Bulk load: An unexpected end of file was encountered in the data file.
+		private const int _CANNOT_BULK_LOAD_BECAUSE_UNEXPECTED_END_OF_FILE = 4832;
+
 		// https://lsuse.com/sql-error-messages/
+		// Bad or inaccessible location specified in external data source "%ls".
 		private const int _BAD_OR_INACCESSIBLE_LOCATION_SPECIFIED_IN_EXTERNAL_DATA_SOURCE_ID = 12704;
 
 		private static bool IsRetryableBulkLoadError(Exception ex)
@@ -24,7 +28,10 @@ namespace Relativity.MassImport.Data
 
 			foreach (SqlError e in sqlException.Errors)
 			{
-				if (e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_LOCKED_MSG_ID || e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_DOES_NOT_EXIST_MSG_ID || e.Number == _BAD_OR_INACCESSIBLE_LOCATION_SPECIFIED_IN_EXTERNAL_DATA_SOURCE_ID)
+				if (e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_LOCKED_MSG_ID
+					|| e.Number == _CANNOT_BULK_LOAD_BECAUSE_FILE_DOES_NOT_EXIST_MSG_ID
+					|| e.Number == _CANNOT_BULK_LOAD_BECAUSE_UNEXPECTED_END_OF_FILE
+					|| e.Number == _BAD_OR_INACCESSIBLE_LOCATION_SPECIFIED_IN_EXTERNAL_DATA_SOURCE_ID)
 				{
 					return true;
 				}
@@ -40,11 +47,11 @@ namespace Relativity.MassImport.Data
 
 		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, int retryCount, int retryWaitTimeInMilliseconds, ILog logger, ImportMeasurements importMeasurements)
 		{
-			var policy =  Policy
+			var policy = Policy
 				.Handle<Exception>(IsRetryableBulkLoadError)
 				.WaitAndRetry(
 					retryCount,
-					waitTime =>  TimeSpan.FromMilliseconds(retryWaitTimeInMilliseconds),
+					waitTime => TimeSpan.FromMilliseconds(retryWaitTimeInMilliseconds),
 					onRetry: (exception, waitTime, retryNumber, context) =>
 					{
 						importMeasurements.IncrementCounter("Retry-'BulkInsert'");

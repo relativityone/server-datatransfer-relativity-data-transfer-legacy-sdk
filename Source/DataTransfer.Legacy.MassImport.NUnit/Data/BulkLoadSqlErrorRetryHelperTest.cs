@@ -23,7 +23,7 @@ namespace Relativity.MassImport.NUnit.Data
 
 		private static List<int> SqlErrorsToRetry()
 		{
-			return new List<int>() { 4860, 4861, 12704 };
+			return new List<int>() { 4860, 4861, 12704, 4832 };
 		}
 
 		[SetUp()]

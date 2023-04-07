@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.25]
+- REL-835150 - Add retries for new sql error
+
 ## [0.3.24]
 - REL-823051 - update DG, fix null values
 
