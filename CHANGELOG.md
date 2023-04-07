@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.26]
+- REL-835185 - Update Data Grid to avoid file deletions when using file linked documents
+
 ## [0.3.25]
 - REL-835150 - Add retries for new sql error
 
