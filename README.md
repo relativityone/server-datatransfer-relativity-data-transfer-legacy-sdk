@@ -29,8 +29,3 @@ For more information on RAP CD, [view the documentation in Einstein](https://ein
 
 Tag: 0.2.3
 Branch: server-main
-
-## Maintainers
-Team:  Delta.
-Team Delta worked on code isolation work of relativity-data-transfer-legacy-sdk.
-#help-server-architecture, #team-server-delta
