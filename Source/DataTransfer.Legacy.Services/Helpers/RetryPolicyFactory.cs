@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using Relativity.DataTransfer.Legacy.Services.Extensions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Helpers
 {
@@ -84,8 +85,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 
         private bool IsDeadlockException(Exception exception)
         {
-            var exceptions = GetAllExceptionsInChain(exception);
-            bool isDeadlock = exceptions.Any(kCura.Data.RowDataGateway.Helper.IsDeadLock);
+            var exceptions = exception.GetAllExceptionsInChain();
+
+			bool isDeadlock = exceptions.Any(kCura.Data.RowDataGateway.Helper.IsDeadLock);
 
             if (!isDeadlock)
             {
@@ -105,21 +107,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
             }
 
             return false;
-        }
-
-        private static IEnumerable<Exception> GetAllExceptionsInChain(Exception exception)
-        {
-            const int MaxChainLength = 100;
-
-            int chainLength = 0;
-            Exception currentException = exception;
-            while (currentException != null && chainLength < MaxChainLength)
-            {
-                yield return currentException;
-
-                chainLength++;
-                currentException = currentException.InnerException;
-            }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -86,6 +87,83 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 			// assert
 			var unwrapped = actual.Unwrap();
 			unwrapped.Length.Should().Be(256);
+		}
+
+		[TestCase(0, 1024)]
+		[TestCase(1, 512)]
+		[TestCase(2, 256)]
+		[TestCase(3, 128)]
+		[TestCase(4, 64)]
+		[TestCase(5, 32)]
+		public void Convert_ReduceResultLength_IfOutOfMemoryExceptionWasThrown(int exceptionsCount, int expectedLength)
+		{
+			// arrange
+			int count = 0;
+			_loggerMock.Setup(x => x.LogVerbose(It.IsAny<string>(), It.IsAny<object[]>())).Callback(() =>
+			{
+				if (count < exceptionsCount)
+				{
+					count++;
+					throw new OutOfMemoryException("OOM");
+				}
+			});
+			var result = GenerateResult(1);
+
+			// act
+			var actual = _sut.Convert(result);
+
+			// assert
+			var unwrapped = actual.Unwrap();
+			unwrapped.Length.Should().Be(expectedLength);
+			count.Should().Be(exceptionsCount);
+		}
+
+		[TestCase(0, 1024)]
+		[TestCase(1, 512)]
+		[TestCase(2, 256)]
+		[TestCase(3, 128)]
+		[TestCase(4, 64)]
+		[TestCase(5, 32)]
+		public void Convert_ReduceResultLength_IfOutOfMemoryExceptionInInnerExceptionWasThrown(int exceptionsCount, int expectedLength)
+		{
+			// arrange
+			int count = 0;
+			_loggerMock.Setup(x => x.LogVerbose(It.IsAny<string>(), It.IsAny<object[]>())).Callback(() =>
+			{
+				if (count < exceptionsCount)
+				{
+					count++;
+					Exception exception = new OutOfMemoryException("OOM");
+					for (int i = 0; i < exceptionsCount; i++)
+					{
+						exception = new InvalidOperationException($"OuterException{i}", exception);
+					}
+
+					throw exception;
+				}
+			});
+			var result = GenerateResult(1);
+
+			// act
+			var actual = _sut.Convert(result);
+
+			// assert
+			var unwrapped = actual.Unwrap();
+			unwrapped.Length.Should().Be(expectedLength);
+			count.Should().Be(exceptionsCount);
+		}
+
+		[Test]
+		public void Convert_ShouldThrow_IfNotOutOfMemoryException()
+		{
+			// arrange
+			_loggerMock.Setup(x => x.LogVerbose(It.IsAny<string>(), It.IsAny<object[]>()))
+				.Throws(new ArgumentException("Not supported"));
+			var result = GenerateResult(1);
+
+			// act & assert
+			_sut.Invoking(x => x.Convert(result))
+				.Should().Throw<ArgumentException>().WithMessage("Not supported");
 		}
 
 		private static object[] GenerateResult(int elementSize)

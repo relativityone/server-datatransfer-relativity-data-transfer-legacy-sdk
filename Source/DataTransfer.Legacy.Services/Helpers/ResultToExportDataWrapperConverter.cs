@@ -2,6 +2,7 @@
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using System.Linq;
+using Relativity.DataTransfer.Legacy.Services.Extensions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Helpers
 {
@@ -21,17 +22,28 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 			{
 				try
 				{
+					_logger.LogVerbose("ResultToExportDataWrapperConverter. Result has '{count}' records.", result?.Length ?? 0);
 					dataWrapper = ConvertToDeserializable(result);
 				}
-				catch (OutOfMemoryException ex)
+				catch (Exception ex)
 				{
-					_logger.LogWarning(ex, "OutOfMemoryException was thrown when creating ExportDataWrapper. Result has '{count}' records.", result.Length);
+					var exceptions = ex.GetAllExceptionsInChain();
 
-					if (result.Length > 1)
+					bool isOutOfMemoryException = exceptions.Any(x => x is OutOfMemoryException);
+					if (isOutOfMemoryException)
 					{
-						int newResultsLength = result.Length / 2;
-						result = result.Take(newResultsLength).ToArray();
-						dataWrapper = null;
+						_logger.LogWarning(ex, "OutOfMemoryException was thrown when creating ExportDataWrapper. Result has '{count}' records.", result.Length);
+
+						if (result.Length > 1)
+						{
+							int newResultsLength = result.Length / 2;
+							result = result.Take(newResultsLength).ToArray();
+							dataWrapper = null;
+						}
+						else
+						{
+							throw;
+						}
 					}
 					else
 					{
