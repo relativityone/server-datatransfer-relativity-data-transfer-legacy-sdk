@@ -24,10 +24,12 @@ namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 			{
 				var logger = container.Resolve<IAPILog>();
 				logger.LogInformation("DataTransfer.Legacy PostInstallEventHandler begin.");
+				var instanceSettingsService = container.Resolve<IInstanceSettingsService>();
 				try
 				{
-					var instanceSettingsService = container.Resolve<IInstanceSettingsService>();
-					bool result = await instanceSettingsService.CreateInstanceSettingsTextType("IAPICommunicationMode", "DataTransfer.Legacy", IAPICommunicationMode.ForceKepler.ToString(), "Default communication mode for import (DataTransfer.Legacy).").ConfigureAwait(false);
+					bool result = await instanceSettingsService.CreateInstanceSettingsTextType("IAPICommunicationMode",
+						"DataTransfer.Legacy", IAPICommunicationMode.ForceKepler.ToString(),
+						"Default communication mode for import (DataTransfer.Legacy).").ConfigureAwait(false);
 
 					logger.LogInformation("DataTransfer.Legacy PostInstallEventHandler end.");
 					return new Response { Success = result };
@@ -36,6 +38,11 @@ namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 				{
 					logger.LogError(exception, "Error while creating DataTransfer.Legacy instance setting.");
 					throw;
+				}
+				finally
+				{
+					container.Release(logger);
+					container.Release(instanceSettingsService);
 				}
 			}
 		}

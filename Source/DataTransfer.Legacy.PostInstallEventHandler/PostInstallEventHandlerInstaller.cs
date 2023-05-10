@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Castle.MicroKernel.Registration;
 using Castle.Windsor;
 using Relativity.API;
@@ -15,14 +16,27 @@ namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 		public static IWindsorContainer CreateContainer(Func<IHelper> helperFactory)
 		{
 			const bool manageExternally = true;
+			IHelper iHelper = null;
 
 			var container = new WindsorContainer();
-			container.Register(Component.For<IHelper>().UsingFactoryMethod(helperFactory, manageExternally).LifestyleTransient());
-
-			container.Register(Component.For<IRetryPolicyProvider>().ImplementedBy<RetryPolicyProvider>().LifestyleTransient());
-			container.Register(Component.For<IInstanceSettingsService>().ImplementedBy<InstanceSettingsService>().LifestyleTransient());
-			container.Register(Component.For<IAPILog>().UsingFactoryMethod(k => k.Resolve<IHelper>().GetLoggerFactory().GetLogger()).LifestyleTransient());
-			return container;
+			try
+			{
+				container.Register(Component.For<IHelper>().UsingFactoryMethod(helperFactory, manageExternally)
+					.LifestyleTransient());
+				iHelper = container.Resolve<IHelper>();
+				container.Register(Component.For<IRetryPolicyProvider>().ImplementedBy<RetryPolicyProvider>()
+					.LifestyleTransient());
+				container.Register(Component.For<IInstanceSettingsService>().ImplementedBy<InstanceSettingsService>()
+					.LifestyleTransient());
+				container.Register(Component.For<IAPILog>()
+					.UsingFactoryMethod(k => iHelper.GetLoggerFactory().GetLogger()).LifestyleTransient());
+				return container;
+			}
+			finally
+			{
+				container.Release(iHelper);
+			}
+			
 		}
 	}
 }
