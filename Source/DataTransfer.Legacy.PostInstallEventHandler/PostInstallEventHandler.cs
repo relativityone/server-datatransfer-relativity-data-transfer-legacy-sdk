@@ -22,11 +22,13 @@ namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler
 		{
 			using (var container = (IWindsorContainer)PostInstallEventHandlerInstaller.CreateContainer(() => this.Helper))
 			{
-				var logger = container.Resolve<IAPILog>();
-				logger.LogInformation("DataTransfer.Legacy PostInstallEventHandler begin.");
-				var instanceSettingsService = container.Resolve<IInstanceSettingsService>();
+				IAPILog logger = null;
+				IInstanceSettingsService instanceSettingsService = null;
 				try
 				{
+					logger = container.Resolve<IAPILog>();
+					logger.LogInformation("DataTransfer.Legacy PostInstallEventHandler begin.");
+					instanceSettingsService = container.Resolve<IInstanceSettingsService>();
 					bool result = await instanceSettingsService.CreateInstanceSettingsTextType("IAPICommunicationMode",
 						"DataTransfer.Legacy", IAPICommunicationMode.ForceKepler.ToString(),
 						"Default communication mode for import (DataTransfer.Legacy).").ConfigureAwait(false);
