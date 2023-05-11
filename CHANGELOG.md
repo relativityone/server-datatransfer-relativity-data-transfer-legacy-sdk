@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.28]
+- REL-748334 - Remove DisableKeplerFileRepositoryQueryToggle
+
 ## [0.3.27]
 - REL-839683 - Hande OutOfMemoryException as an InnerException
 

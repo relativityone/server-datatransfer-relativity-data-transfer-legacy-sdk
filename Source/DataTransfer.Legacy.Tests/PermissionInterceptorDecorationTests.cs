@@ -22,7 +22,6 @@ namespace Relativity.DataTransfer.Legacy.Tests
 				typeof(ProductionExternalService),
 				typeof(IFileRepositoryExternalService),
 				typeof(KeplerFileRepositoryExternalService),
-				typeof(LegacyFileRepositoryExternalService),
 			};
 
 			var services = typeof(BaseService).Assembly
