@@ -5,6 +5,7 @@ using Relativity.Storage;
 using Relativity.Storage.Extensions;
 using Relativity.Storage.Extensions.Models;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace DataTransfer.Legacy.MassImport.Data
 {
@@ -27,20 +28,29 @@ namespace DataTransfer.Legacy.MassImport.Data
 				throw new MassImportException("Storage Access is not initialized");
 			}
 
+
 			lock (_lockObject)
 			{
 				if (_storageAccess == null)
 				{
-					var serviceDetails = new ApplicationDetails(ServiceName);
-					const StorageAccessPermissions permissions = StorageAccessPermissions.GenericReadWrite;
-					var options = new StorageAccessOptions()
+					IHelper iHelper = null;
+					try
 					{
-						// Disabling CAL resilience option temporarily until this defect is fixed: https://jira.kcura.com/browse/REL-822402
-						ResilienceOptions = new ResilienceOptions() { CircuitBreakerBreakDurationOnServerError = TimeSpan.Zero }
-					};
-
-					_storageAccess = _container.Resolve<IHelper>().GetStorageAccessorAsync(permissions, serviceDetails, options: options)
-						.GetAwaiter().GetResult();
+						var serviceDetails = new ApplicationDetails(ServiceName);
+						const StorageAccessPermissions permissions = StorageAccessPermissions.GenericReadWrite;
+						var options = new StorageAccessOptions()
+						{
+							// Disabling CAL resilience option temporarily until this defect is fixed: https://jira.kcura.com/browse/REL-822402
+							ResilienceOptions = new ResilienceOptions() { CircuitBreakerBreakDurationOnServerError = TimeSpan.Zero }
+						};
+						iHelper = _container.Resolve<IHelper>();
+						_storageAccess = iHelper.GetStorageAccessorAsync(permissions, serviceDetails, options: options)
+							.GetAwaiter().GetResult();
+					}
+					finally
+					{
+						_container.Release(iHelper);
+					}
 				}
 			}
 
