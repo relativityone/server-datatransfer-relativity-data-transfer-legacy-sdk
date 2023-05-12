@@ -16,8 +16,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 	using System.Collections.Generic;
 	using System.Diagnostics;
 
-	public class TraceGenerator : ITraceGenerator
-    { 
+	public class TraceGenerator : ITraceGenerator, IDisposable
+	{
 		private string ApiKey = string.Empty;
 		private string ReleyeUriTraces = string.Empty;
 		private string SourceID = string.Empty;
@@ -34,7 +34,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 		{
 			_logger = logger ?? throw new NullReferenceException(nameof(logger));
 			_instanceSettingsBundle = instanceSettingsBundle ?? throw new NullReferenceException(nameof(instanceSettingsBundle));
-			
+
 			ActivityListener listener = new ActivityListener()
 			{
 				ShouldListenTo = _ => true,
@@ -47,10 +47,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 		public Activity StartActivity(string name, ActivityKind kind, ActivityContext parentContext, IEnumerable<KeyValuePair<string, object>> tags = null, IEnumerable<ActivityLink> links = null, DateTimeOffset startTime = default(DateTimeOffset))
 		{
 			if (tracerProvider == null)
-            {
+			{
 				try
 				{
-					ReleyeUriTraces =  _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriTracesSettingName).GetAwaiter().GetResult();
+					ReleyeUriTraces = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriTracesSettingName).GetAwaiter().GetResult();
 					if (string.IsNullOrEmpty(ReleyeUriTraces))
 					{
 						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriTracesSettingName}; is missing. Cannot create RelEyeTraceProvider.");
@@ -101,7 +101,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 				{
 					_logger.LogError(ex, "Cannot create tracerProvider");
 					return null;
-				}			
+				}
 			}
 
 			var activity = activitySource?.StartActivity(name, kind, parentContext, tags, links, startTime);
@@ -110,26 +110,26 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 		}
 
 		private void SetSystemTags(Activity activity)
-        {
+		{
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ServiceName, TelemetryConstants.Values.ServiceName);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
-			
+
 			activity?.SetTag(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceName, TelemetryConstants.Values.ServiceName);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
 			activity?.SetTag(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
-			
+
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceInstanceID, SourceID);
 		}
 
-        public void Dispose()
-        {
+		public void Dispose()
+		{
 			tracerProvider?.Shutdown();
 			meterProvider?.Shutdown();
 
@@ -137,5 +137,5 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 			tracerProvider?.Dispose();
 			meterProvider?.Dispose();
 		}
-    }
+	}
 }
