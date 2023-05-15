@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.31]
+- REL-844541 update DG to version 17.4.10
+
 ## [0.3.30]
 - REL-843818 - fixed memory leak - registered RelEyeLogger as a Singleton
 
