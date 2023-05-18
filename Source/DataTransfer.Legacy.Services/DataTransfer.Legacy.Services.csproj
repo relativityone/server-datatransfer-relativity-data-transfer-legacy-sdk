@@ -1,5 +1,4 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <OutputType>Library</OutputType>
@@ -9,48 +8,30 @@
     <AssemblyName>Relativity.DataTransfer.Legacy.Services</AssemblyName>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-	<LangVersion>7.3</LangVersion>
+    <LangVersion>7.3</LangVersion>
+    <OutputPath>bin</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
-    <OutputPath>bin</OutputPath>
     <DebugType>full</DebugType>
-    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin</OutputPath>
     <DebugType>pdbonly</DebugType>
-    <DebugSymbols>True</DebugSymbols>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="10.1.1" />
-    <PackageReference Include="Castle.Windsor" Version="3.3.0" />
-    <PackageReference Include="kCura" Version="14.2.0" />
-    <PackageReference Include="kCura.LongPath" Version="2.5.0" />
-    <PackageReference Include="Relativity.API" Version="17.4.1" />
-    <PackageReference Include="Relativity.Core" Version="47.11.21" />
-    <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
-    <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.3.0" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.6" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="Castle.Windsor" />
+    <PackageReference Include="kCura.LongPath" />
+    <PackageReference Include="Relativity.Services.Interfaces.SDK" />
+    <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
     <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Web.Services" />
   </ItemGroup>
-
 </Project>

@@ -79,7 +79,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			var settings = GetBasicSettings();
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext);
+			_sut = new MassImportManager(OneTimeSetup.TestLogger, artifactManager, baseContext);
 
 			await _sut.RunMassImportAsync(GetInitialRecords(), settings, CancellationToken.None, null)
 				.ConfigureAwait(false);

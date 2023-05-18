@@ -10,7 +10,7 @@
     <AssemblyName>DataTransfer.Legacy.MassImport.NUnit</AssemblyName>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-	<LangVersion>7.3</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin</OutputPath>
@@ -18,54 +18,48 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
     <OutputPath>bin</OutputPath>
   </PropertyGroup>
-
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <WarningsAsErrors />
   </PropertyGroup>
-  
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="2.8.1" />
-    <PackageReference Include="FluentValidation" Version="6.2.1" />
+    <PackageReference Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
+    <PackageReference Include="Castle.Windsor" VersionOverride="$(CastleWindsorOverride)" />
+    <PackageReference Include="Combinatorics" />
+    <PackageReference Include="CompareNETObjects" />
+    <PackageReference Include="Coverlet.msbuild" />
+    <PackageReference Include="FluentValidation" />
     <!--TODO Delete these once we fix the Relativity.SDK.Services.Query nuget package to include these. -->
-    <PackageReference Include="FSharp.Core" Version="4.3.4" />
-    <PackageReference Include="FParsec-Big-Data-Edition" Version="1.0.3" />
-    <PackageReference Include="kCura.DataGrid.Services.Interfaces" Version="16.4.11" />
-    <!-- -->
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="6.0.8" />
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
-    <PackageReference Include="kCura" Version="14.2.2" />
+    <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="FParsec-Big-Data-Edition" />
+    <PackageReference Include="kCura" />
+    <PackageReference Include="kCura.DataGrid.Services.Interfaces" />
+    <PackageReference Include="kCura.EventHandler" />
+    <PackageReference Include="kCura.Relativity.Client" />
+    <PackageReference Include="kCura.SearchProvider" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="NunitXml.TestLogger" />
     <!--Higher Moq versions bring in Castle.Core 4.0+ that has a public class CollectionExtensions which is not the real Extension method and was updated to drop the ForEach method in the 4.0+ series.
 	It is missing the function CollectionExtensions.ForEach which is needed by a transient dependency of kCura.Utility.LazyMemoryCache. https://github.com/castleproject/Core/issues/276
 	TODO: Find a way to force a different usage of CollectionExtentions that has ForEach-->
-    <PackageReference Include="Moq" Version="4.8.3" />
-    <PackageReference Include="Moq.AutoMock" Version="1.2.0.120" />
-    <!-- -->
-    <PackageReference Include="Polly" Version="5.7.0" />
-    <PackageReference Include="Relativity.DataGrid" Version="16.4.11" />
-    <PackageReference Include="Combinatorics" Version="1.1.0.19" />
-    <PackageReference Include="CompareNETObjects" Version="3.09.0" />
-    <PackageReference Include="Relativity.ApplicationBase" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.ApplicationBase.InvariantApi" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.SecureTokenService.Interfaces" Version="1.5.5" />
-    <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
-    <PackageReference Include="Relativity.Services.Interfaces" Version="13.6.0" />
-    <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
-    <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
-    <PackageReference Include="Relativity.Logging.Interfaces" Version="2019.10.2" />
-    <PackageReference Include="kCura.Relativity.Client" Version="11.3.1.22" />
-    <PackageReference Include="kCura.EventHandler" Version="17.1.9" />
-    <PackageReference Include="Relativity.API" Version="17.4.1" />
-    <PackageReference Include="kCura.EDDS.DocumentCompareGateway" Version="11.3.1.22" />
-    <PackageReference Include="kCura.SearchProvider" Version="13.1.0" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Moq.AutoMock" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Relativity.API" />
+    <PackageReference Include="Relativity.DataGrid" />
+    <PackageReference Include="Relativity.SecureTokenService.Interfaces" />
+    <PackageReference Include="Relativity.ServiceBus" />
+    <PackageReference Include="Relativity.Services.Interfaces" />
+    <PackageReference Include="Relativity.Services.Interfaces.Private" />
+    <PackageReference Include="Relativity.Telemetry.APM" />
+    <PackageReference Include="Relativity.Toggles" />
+    <PackageReference Include="Relativity.Logging.Interfaces" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ServiceModel" Private="True" />
@@ -89,7 +83,7 @@
     <None Include="Data\ObjectsSqlQueryTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <DataGridTestFiles Include="Resources\DataGrid*.*" />  
+    <DataGridTestFiles Include="Resources\DataGrid*.*" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />

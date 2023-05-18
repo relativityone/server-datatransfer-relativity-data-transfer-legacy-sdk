@@ -16,7 +16,6 @@ using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Framework.Api.Kepler;
 using Relativity.Testing.Framework.RingSetup;
 using Relativity.Testing.Identification;
-using FieldType = Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models.FieldType;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.Performance
 {
@@ -34,7 +33,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Performance
 		private DataTable _expectedFieldValues;
 		private List<FieldRef> _expectedFieldsNames;
 
-		private const int ImportObjectType = (int)ArtifactType.Document;
+		private const int ImportObjectType = (int)Relativity.DataExchange.Service.ArtifactType.Document;
 		private const int MaxItemsToFetch = 5000;
 		private const int NumberOfDocuments = 1000;
 		private const int NumberOfCustomFields = 25;
@@ -226,7 +225,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Performance
 					ImportBehavior = null,
 					IsUnicodeEnabled = false,
 					TextLength = CustomFieldLength,
-					Type = FieldType.Varchar,
+					Type = Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models.FieldType.Varchar,
 				});
 			}
 
