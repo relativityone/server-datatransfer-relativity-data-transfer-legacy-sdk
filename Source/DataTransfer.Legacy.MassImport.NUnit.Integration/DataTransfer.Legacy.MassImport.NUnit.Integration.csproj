@@ -51,7 +51,6 @@
     <PackageReference Include="Relativity.Authentication.Interfaces" />
     <PackageReference Include="Relativity.Core" />
     <PackageReference Include="Relativity.DataGrid" />
-    <PackageReference Include="Relativity.Infrastructure.SDK" />
     <PackageReference Include="Relativity.Kepler" />
     <PackageReference Include="Relativity.Kepler.Client" />
     <PackageReference Include="Relativity.Logging" />

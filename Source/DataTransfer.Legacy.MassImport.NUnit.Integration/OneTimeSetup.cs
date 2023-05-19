@@ -45,9 +45,9 @@ namespace MassImport.NUnit.Integration
 			Uri relativityRestApi = new Uri(relativityBaseUri, new Uri("relativity.rest/api", UriKind.Relative));
 			TestParameters =
 				new IntegrationTestParameters(
-					new Lazy<Relativity.Infrastructure.V1.SQLPrimary.Models.SqlPrimaryServerResponse>(
+					new Lazy<string>(
 						valueFactory: () =>
-							CreateSqlPrimaryServerResponse(RelativityFacade.Instance, relativityRestApi)))
+							CreateSqlPrimaryServerBcpPath(RelativityFacade.Instance)))
 					{
 						RelativityUrl = relativityBaseUri.ToString(),
 						RelativityRestUrl = relativityRestApi.ToString(),
@@ -87,34 +87,48 @@ namespace MassImport.NUnit.Integration
 			return new Relativity.Services.ServiceProxy.ServiceFactory(settings);
 		}
 
-		private static Relativity.Infrastructure.V1.SQLPrimary.Models.SqlPrimaryServerResponse
-			CreateSqlPrimaryServerResponse(
-				Relativity.Testing.Framework.IRelativityFacade relativityInstance,
-				Uri relativityRestApi)
+		private static string CreateSqlPrimaryServerBcpPath(Relativity.Testing.Framework.IRelativityFacade relativityInstance)
 		{
-			Relativity.Services.ServiceProxy.ServiceFactory serviceFactory = CreateServiceFactory(
-				relativityInstance,
-				relativityRestApi);
-			Relativity.Infrastructure.V1.SQLPrimary.ISqlPrimaryServerManager sqlPrimaryServerManager =
-				serviceFactory.CreateProxy<Relativity.Infrastructure.V1.SQLPrimary.ISqlPrimaryServerManager>();
-			Relativity.Infrastructure.V1.SQLPrimary.Models.SqlPrimaryServerResponse sqlPrimaryServerResponse =
-				sqlPrimaryServerManager.ReadAsync(serverID: 1015096) // This should be constant for TestVM/Hopper SUTs
-				                       .ConfigureAwait(false)
-				                       .GetAwaiter()
-				                       .GetResult();
-			if (sqlPrimaryServerResponse == null || sqlPrimaryServerResponse.ArtifactID == 0)
+			System.Data.SqlClient.SqlConnectionStringBuilder csb = new System.Data.SqlClient.SqlConnectionStringBuilder
+				                                                       {
+					                                                       DataSource =
+						                                                       relativityInstance.Config
+							                                                       .RelativityInstance.SqlServer,
+					                                                       InitialCatalog = "edds",
+					                                                       IntegratedSecurity = false,
+					                                                       UserID = relativityInstance.Config
+						                                                       .RelativityInstance.SqlUsername,
+					                                                       Password = relativityInstance.Config
+						                                                       .RelativityInstance.SqlPassword
+				                                                       };
+			using (System.Data.SqlClient.SqlConnection conn =
+			       new System.Data.SqlClient.SqlConnection(csb.ConnectionString))
 			{
-				Assert.Fail(
-					"The functional tests cannot be run because the SQL resource server cannot be determined and indicates a SUT configuration problem.");
-			}
+				conn.Open();
+				using (System.Data.SqlClient.SqlCommand command = conn.CreateCommand())
+				{
+					command.CommandText = @"
+SELECT TOP 1	
+	rs.[TemporaryDirectory] AS BcpPath
+FROM [EDDS].[eddsdbo].[ResourceGroupSQLServers]
+INNER JOIN [EDDS].[eddsdbo].[ResourceServer] as rs
+	ON rs.[ArtifactID] = [ResourceGroupSQLServers].[SQLServerArtifactID]
+INNER JOIN [EDDS].[eddsdbo].[Code] c1
+	ON c1.[ArtifactID] = rs.[Type]
+INNER JOIN [EDDS].[eddsdbo].[Code] c2
+	ON c2.[ArtifactID] = rs.[Status]
+WHERE c2.[Name] = N'Active' AND c1.Name = N'SQL - Primary'
+";
+					string bcpPath = command.ExecuteScalar() as string;
+					if (string.IsNullOrEmpty(bcpPath))
+					{
+						Assert.Fail(
+							"The functional tests cannot be run because the BCP share is null or empty and indicates a SUT configuration problem.");
+					}
 
-			if (string.IsNullOrEmpty(sqlPrimaryServerResponse.BcpPath))
-			{
-				Assert.Fail(
-					"The functional tests cannot be run because the SQL resource server is non-null but the BCP share is null or empty and indicates a SUT configuration problem.");
+                    return bcpPath;
+				}
 			}
-
-            return sqlPrimaryServerResponse;
 		}
 
 		private static ILog InitializeLogger()

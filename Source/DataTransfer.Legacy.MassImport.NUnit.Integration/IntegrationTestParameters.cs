@@ -4,11 +4,11 @@ namespace MassImport.NUnit.Integration
 {
 	public class IntegrationTestParameters
 	{
-		private readonly Lazy<Relativity.Infrastructure.V1.SQLPrimary.Models.SqlPrimaryServerResponse> _sqlPrimaryFactory;
+		private readonly Lazy<string> _sqlBcpPath;
 
-		public IntegrationTestParameters(Lazy<Relativity.Infrastructure.V1.SQLPrimary.Models.SqlPrimaryServerResponse> sqlPrimaryFactory)
+		public IntegrationTestParameters(Lazy<string> sqlBcpPath)
 		{
-			_sqlPrimaryFactory = sqlPrimaryFactory ?? throw new ArgumentNullException(nameof(sqlPrimaryFactory));
+			_sqlBcpPath = sqlBcpPath ?? throw new ArgumentNullException(nameof(sqlBcpPath));
 		}
 
 		public string RelativityUrl { get; set; }
@@ -19,6 +19,6 @@ namespace MassImport.NUnit.Integration
 		public string SqlInstanceName { get; set; }
 		public string SqlEddsdboUserName { get; set; }
 		public string SqlEddsdboPassword { get; set; }
-		public string BcpSharePath => _sqlPrimaryFactory.Value.BcpPath;
+		public string BcpSharePath => _sqlBcpPath.Value;
 	}
 }
