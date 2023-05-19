@@ -67,7 +67,6 @@
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" />
     <PackageReference Include="Relativity.Testing.Framework" />
     <PackageReference Include="Relativity.Toggles" />
-    <PackageReference Include="StackExchange.Redis" />
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
   <ItemGroup>
