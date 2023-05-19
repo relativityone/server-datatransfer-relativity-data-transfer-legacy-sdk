@@ -102,13 +102,19 @@ namespace MassImport.NUnit.Integration
 				                       .ConfigureAwait(false)
 				                       .GetAwaiter()
 				                       .GetResult();
-			if (sqlPrimaryServerResponse == null)
+			if (sqlPrimaryServerResponse == null || sqlPrimaryServerResponse.ArtifactID == 0)
 			{
 				Assert.Fail(
 					"The functional tests cannot be run because the SQL resource server cannot be determined and indicates a SUT configuration problem.");
 			}
 
-			return sqlPrimaryServerResponse;
+			if (string.IsNullOrEmpty(sqlPrimaryServerResponse.BcpPath))
+			{
+				Assert.Fail(
+					"The functional tests cannot be run because the SQL resource server is non-null but the BCP share is null or empty and indicates a SUT configuration problem.");
+			}
+
+            return sqlPrimaryServerResponse;
 		}
 
 		private static ILog InitializeLogger()
