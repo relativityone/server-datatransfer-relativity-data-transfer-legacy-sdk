@@ -72,7 +72,7 @@ namespace Relativity.MassImport.Data
 				
 				DataGridContextBase @base;
 
-				if (ToggleProvider.Current.IsEnabled<DisableCALToggle>())
+				if (ToggleProvider.Current.IsEnabled<DisableCALForDataGridToggle>())
 				{
 					@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
 				}
