@@ -22,6 +22,7 @@ using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
 using System.Diagnostics;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.Data;
 
 namespace Relativity.MassImport.Data
 {
@@ -51,7 +52,7 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Constructors
-		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, IHelper helper, ILog logger)
+		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, ILog logger)
 		{
 			_context = context;
 			_keyFieldID = settings.KeyFieldArtifactID;
@@ -78,7 +79,7 @@ namespace Relativity.MassImport.Data
 				}
 				else
 				{
-					var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, helper);
+					var fileHelper = new Relativity.DataGrid.Helpers.DGFS.ADLS.DataGridFileHelper(Relativity.Data.Config.DataGridConfiguration, StorageAccessProvider.GetStorageAccess());
 					@base = new FileSystemContext("document", ref argbufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader, fileHelper);
 				}
 

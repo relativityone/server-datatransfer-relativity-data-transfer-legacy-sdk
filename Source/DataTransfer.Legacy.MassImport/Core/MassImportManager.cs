@@ -24,22 +24,22 @@ namespace Relativity.Core.Service
 
 		protected override MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval, _helper));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunImageImport(context, settings, inRepository, timekeeper, retval));
 		}
 
 		protected override MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
 		{
-			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval, _helper));
+			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval));
 		}
 		
 		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
 		{
-			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID, _helper);
+			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID);
 		}
 		
 		public bool ImageRunHasErrors(Core.ICoreContext icc, string runId)
 		{
-			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId, _helper);
+			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId);
 		}
 
 		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportResults retval)

@@ -55,7 +55,7 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval, IHelper helper)
+		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
 
@@ -70,7 +70,7 @@ namespace Relativity.MassImport.Core
 			IEventsBuilder eventsBuilder = new EventsBuilder();
 
 
-			var image = new Data.Image(context.DBContext, settings, helper, this.CorrelationLogger);
+			var image = new Data.Image(context.DBContext, settings, this.CorrelationLogger);
 
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
@@ -259,7 +259,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval, IHelper helper)
+		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
 
@@ -278,7 +278,7 @@ namespace Relativity.MassImport.Core
 			IEventsBuilder eventsBuilder = new EventsBuilder();
 
 			var productionManager = new Relativity.Core.Service.ProductionManager();
-			var image = new Data.Image(context.DBContext, settings, helper, this.CorrelationLogger);
+			var image = new Data.Image(context.DBContext, settings, this.CorrelationLogger);
 			if (image.HasDataGridWorkToDo && !image.IsDataGridInputValid())
 			{
 				throw new System.Exception("Invalid DataGridFileName");
@@ -457,7 +457,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public ErrorFileKey GenerateImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID, IHelper helper)
+		public ErrorFileKey GenerateImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
@@ -469,13 +469,13 @@ namespace Relativity.MassImport.Core
 			var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 			settings.RunID = runID;
 			settings.KeyFieldArtifactID = keyFieldID;
-			var x = new Data.Image(icc.ChicagoContext.DBContext, settings, helper, this.CorrelationLogger).GenerateErrorFiles(caseArtifactID);
+			var x = new Data.Image(icc.ChicagoContext.DBContext, settings, this.CorrelationLogger).GenerateErrorFiles(caseArtifactID);
 			timekeeper.MarkEnd("Generate Errors");
 			timekeeper.GenerateCsvReportItemsAsRows("_webapi_image", @"C:\");
 			return x;
 		}
 
-		public bool ImageRunHasErrors(Relativity.Core.ICoreContext icc, string runId, IHelper helper)
+		public bool ImageRunHasErrors(Relativity.Core.ICoreContext icc, string runId)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runId))
 			{
@@ -488,7 +488,7 @@ namespace Relativity.MassImport.Core
 				var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 				settings.RunID = runId;
 				settings.KeyFieldArtifactID = -1;
-				var x = new Data.Image(icc.ChicagoContext.DBContext, settings, helper, this.CorrelationLogger);
+				var x = new Data.Image(icc.ChicagoContext.DBContext, settings, this.CorrelationLogger);
 				x.TruncateTempTables();
 			}
 
