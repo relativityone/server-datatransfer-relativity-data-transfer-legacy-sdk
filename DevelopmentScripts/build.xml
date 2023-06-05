@@ -22,21 +22,17 @@
           <Assembly>Source\DataTransfer.Legacy.PostInstallEventHandler\bin\DataTransfer.Legacy.PostInstallEventHandler.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Azure.Core.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Azure.Identity.dll</Assembly>
-          <Assembly>Source\DataTransfer.Legacy.Services\bin\Azure.Security.KeyVault.Secrets.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Azure.Storage.Blobs.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Azure.Storage.Common.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Azure.Storage.Files.DataLake.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\DnsClient.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Bcl.AsyncInterfaces.dll</Assembly>
-          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Bcl.HashCode.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Identity.Client.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Identity.Client.Extensions.Msal.dll</Assembly>
-          <Assembly>Source\DataTransfer.Legacy.Services\bin\Microsoft.Toolkit.HighPerformance.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Storage.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\Relativity.Storage.Extensions.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Diagnostics.DiagnosticSource.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.IO.Hashing.dll</Assembly>
-          <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Linq.Async.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Memory.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Memory.Data.dll</Assembly>
           <Assembly>Source\DataTransfer.Legacy.Services\bin\System.Runtime.CompilerServices.Unsafe.dll</Assembly>

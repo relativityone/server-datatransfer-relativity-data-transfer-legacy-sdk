@@ -84,11 +84,6 @@
     </Assembly>
     <Assembly>
       <Keywords />
-      <Name>Azure.Security.KeyVault.Secrets.dll</Name>
-      <Notes />
-    </Assembly>
-    <Assembly>
-      <Keywords />
       <Name>Azure.Storage.Blobs.dll</Name>
       <Notes />
     </Assembly>
@@ -114,22 +109,12 @@
     </Assembly>
     <Assembly>
       <Keywords />
-      <Name>Microsoft.Bcl.HashCode.dll</Name>
-      <Notes />
-    </Assembly>
-    <Assembly>
-      <Keywords />
       <Name>Microsoft.Identity.Client.dll</Name>
       <Notes />
     </Assembly>
     <Assembly>
       <Keywords />
       <Name>Microsoft.Identity.Client.Extensions.Msal.dll</Name>
-      <Notes />
-    </Assembly>
-    <Assembly>
-      <Keywords />
-      <Name>Microsoft.Toolkit.HighPerformance.dll</Name>
       <Notes />
     </Assembly>
     <Assembly>
@@ -151,11 +136,6 @@
     <Assembly>
       <Keywords />
       <Name>System.IO.Hashing.dll</Name>
-      <Notes />
-    </Assembly>
-    <Assembly>
-      <Keywords />
-      <Name>System.Linq.Async.dll</Name>
       <Notes />
     </Assembly>
     <Assembly>
