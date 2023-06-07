@@ -12,7 +12,7 @@ namespace MassImport.NUnit.Integration
 
 		protected BaseContext EddsdboContext { get; private set; }
 
-		private static IntegrationTestParameters TestParameters => AssemblySetup.TestParameters;
+		private static IntegrationTestParameters TestParameters => OneTimeSetup.TestParameters;
 
 		private static string ConnectionString => $"Data Source={TestParameters.SqlInstanceName};" +
 											 "Persist Security Info=False;" +

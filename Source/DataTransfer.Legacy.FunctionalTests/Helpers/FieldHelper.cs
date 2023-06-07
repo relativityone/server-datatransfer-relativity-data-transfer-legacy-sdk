@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using kCura.Relativity.Client.DTOs;
 using Polly;
@@ -26,7 +25,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Helpers
 			{
 				ObjectType = new ObjectTypeRef
 				{
-					ArtifactTypeID = (int)ArtifactType.Field,
+					ArtifactTypeID = (int)Relativity.DataExchange.Service.ArtifactType.Field,
 				},
 				Condition = $"'{FieldFieldNames.IsIdentifier}' == True",
 				Fields = fieldsToRead.Select(fieldName => new FieldRef { Name = fieldName }).ToArray(),
@@ -201,7 +200,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Helpers
 				{
 					ObjectType = new ObjectTypeRef()
 					{
-						ArtifactTypeID = (int)ArtifactType.Field,
+						ArtifactTypeID = (int)Relativity.DataExchange.Service.ArtifactType.Field,
 					},
 					Condition = $"'Name' == '{fieldName}'",
 				};

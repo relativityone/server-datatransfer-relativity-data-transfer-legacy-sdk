@@ -26,13 +26,13 @@ namespace MassImport.NUnit.Integration
 
 		protected MassImportTestBase()
 		{
-			this.TestParameters = AssemblySetup.TestParameters;
+			this.TestParameters = OneTimeSetup.TestParameters;
 		}
 
 		[OneTimeSetUp]
 		public async Task OneTimeSetupAsync()
 		{
-			TestWorkspace = await AssemblySetup.TestWorkspaceAsync.ConfigureAwait(false);
+			TestWorkspace = await OneTimeSetup.TestWorkspaceAsync.ConfigureAwait(false);
 			SettingsHelper.SetDefaultSettings();
 			this.SetupCoreContextMock();
 			this.SetupConfigMock();

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AmbientData>0.2.3</AmbientData>
+    <AutoMapper>10.1.1</AutoMapper>
+    <AnalyticsCAATRestWrapper>3000.2.4</AnalyticsCAATRestWrapper>
+    <CastleCore>3.3.0</CastleCore>
+    <CastleCoreOverride>4.3.1</CastleCoreOverride>
+    <CastleWindsor>3.3.0</CastleWindsor>
+    <CastleWindsorOverride>4.1.1</CastleWindsorOverride>
+    <FluentAssertions>5.10.3</FluentAssertions>
+    <FluentValidation>6.2.1</FluentValidation>
+    <FSharpCore>4.3.4</FSharpCore>
+    <kCura>14.2.6</kCura>
+    <kCuraDbUpgrader>1.0.115</kCuraDbUpgrader>
+    <kCuraHTMLSanitizer>1.0.6</kCuraHTMLSanitizer>
+    <kCuraLongPath>2.5.0</kCuraLongPath>
+    <KeplerVersion>2.15.5</KeplerVersion>
+    <Invariant>7.2.160.4</Invariant>
+    <MicrosoftDotNetTestSdk>17.5.0</MicrosoftDotNetTestSdk>
+    <MonoCecil>0.9.6.1</MonoCecil>
+    <Moq>4.8.2</Moq>
+    <MoqAutoMock>1.2.0.120</MoqAutoMock>
+    <NewtonsoftJson>6.0.8</NewtonsoftJson>
+    <NSubstitute>2.0.3</NSubstitute>
+    <NUnit>3.13.3</NUnit>
+    <NUnitHierarchicalCategories>1.4.0</NUnitHierarchicalCategories>
+    <NUnitXmlTestLogger>3.0.131</NUnitXmlTestLogger>
+    <NUnit3TestAdapter>4.4.2</NUnit3TestAdapter>
+    <OutsideIn>2021.12.0</OutsideIn>
+    <Polly>5.7.0</Polly>
+    <Processing>12.0.47</Processing>
+    <RelativityAuditSDK>1.6.5.0</RelativityAuditSDK>
+    <RelativityAuthentication>13.4.14</RelativityAuthentication>
+    <RelativityCore>48.2.17</RelativityCore>
+    <RelativityDataGrid>16.9.1</RelativityDataGrid>
+    <RelativityEventHandler>17.0.2</RelativityEventHandler>
+    <!-- This package is a dependency of RTF and must be aligned.  -->
+    <RelativityDataExchangeClientSDK>1.15.103</RelativityDataExchangeClientSDK>
+    <RelativityLogging>3000.4.1</RelativityLogging>
+    <RelativityReviewServicesInterfaces>2020.0.9</RelativityReviewServicesInterfaces>
+    <RelativitySecretCatalog>1.0.20</RelativitySecretCatalog>
+    <RelativitySecureTokenServiceInterfaces>1.6.6</RelativitySecureTokenServiceInterfaces>
+    <RelativityServicesLayoutInterfaces>1.1.46</RelativityServicesLayoutInterfaces>
+    <RelativityServicesSDK>13.5.1</RelativityServicesSDK>
+    <RelativityServicesSDKPrivate>14.0.2</RelativityServicesSDKPrivate>
+    <RelativityServicesInterfacesSDK>13.3.0</RelativityServicesInterfacesSDK>
+    <RelativitySDK>17.4.2</RelativitySDK>
+    <RelativityTestingFramework>10.1.0</RelativityTestingFramework>
+    <RelativityTestingIdentification>3.12.0</RelativityTestingIdentification>
+    <ServiceBus>5.3.0</ServiceBus>
+    <TelemetryAPM>2019.10.9</TelemetryAPM>
+    <TelemetryMetricsCollectionClient>3003.1.1</TelemetryMetricsCollectionClient>
+    <Toggles>1.10.8</Toggles>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" Version="3001.2.4" />
+    <PackageVersion Include="AutoBogus" Version="2.13.0" />
+    <PackageVersion Include="AutoMapper" Version="$(AutoMapper)" />
+    <PackageVersion Include="Castle.Core" Version="$(CastleCore)" />
+    <PackageVersion Include="Castle.Windsor" Version="$(CastleWindsor)" />
+    <PackageVersion Include="Combinatorics" Version="1.1.0.19" />
+    <PackageVersion Include="CompareNETObjects" Version="4.73.0" />
+    <PackageVersion Include="Coverlet.msbuild" Version="2.8.1" />
+    <PackageVersion Include="FluentAssertions" Version="$(FluentAssertions)" />
+    <PackageVersion Include="FluentValidation" Version="$(FluentValidation)" />
+    <PackageVersion Include="FSharp.Core" Version="$(FSharpCore)" />
+    <PackageVersion Include="FParsec-Big-Data-Edition" Version="1.0.3" />
+    <PackageVersion Include="Invariant.Services.Interfaces" Version="$(Invariant)" />
+    <PackageVersion Include="Invariant.Services.Interfaces.Private" Version="$(Invariant)" />
+    <PackageVersion Include="kCura" Version="$(kCura)" />
+    <PackageVersion Include="kCura.DataGrid.Services.Interfaces" Version="$(RelativityDataGrid)" />
+    <PackageVersion Include="kCura.DbUpgrader" Version="$(kCuraDbUpgrader)" />
+    <PackageVersion Include="kCura.HTMLSanitizer" Version="$(kCuraHTMLSanitizer)" />
+    <PackageVersion Include="kCura.EventHandler" Version="$(RelativitySDK)" />
+    <PackageVersion Include="kCura.LongPath" Version="$(kCuraLongPath)" />
+    <PackageVersion Include="kCura.OutsideIn.Full.Win64" Version="$(OutsideIn)" />
+    <PackageVersion Include="kCura.Relativity.Client" Version="$(RelativitySDK)" />
+    <PackageVersion Include="kCura.SearchProvider" Version="$(RelativitySDK)" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(MicrosoftDotNetTestSdk)" />
+    <PackageVersion Include="Mono.Cecil" Version="$(MonoCecil)" />
+    <PackageVersion Include="Moq" Version="$(Moq)" />
+    <PackageVersion Include="Moq.AutoMock" Version="$(MoqAutoMock)" />
+    <PackageVersion Include="NSubstitute" Version="$(NSubstitute)" />
+    <PackageVersion Include="Newtonsoft.Json" Version="$(NewtonsoftJson)" />
+    <PackageVersion Include="NUnit" Version="$(NUnit)" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="$(NUnit3TestAdapter)" />
+    <PackageVersion Include="NunitXml.TestLogger" Version="$(NUnitXmlTestLogger)" />
+    <PackageVersion Include="Polly" Version="$(Polly)" />
+    <PackageVersion Include="Relativity" Version="$(RelativityCore)" />
+    <PackageVersion Include="Relativity.AmbientData" Version="$(AmbientData)" />
+    <PackageVersion Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" Version="$(AnalyticsCAATRestWrapper)" />
+    <PackageVersion Include="Relativity.API" Version="$(RelativitySDK)" />
+    <PackageVersion Include="Relativity.Audit.SDK" Version="$(RelativityAuditSDK)" />
+    <PackageVersion Include="Relativity.Authentication" Version="$(RelativityAuthentication)" />
+    <PackageVersion Include="Relativity.Authentication.Interfaces" Version="$(RelativityAuthentication)" />
+    <PackageVersion Include="Relativity.Core" Version="$(RelativityCore)" />
+    <PackageVersion Include="Relativity.DataExchange.Client.SDK" Version="$(RelativityDataExchangeClientSDK)" />
+    <PackageVersion Include="Relativity.DataGrid" Version="$(RelativityDataGrid)" />
+    <PackageVersion Include="Relativity.Eca" Version="$(Processing)" />
+    <PackageVersion Include="Relativity.EventHandler" Version="$(RelativityEventHandler)" />
+    <PackageVersion Include="Relativity.Kepler" Version="$(KeplerVersion)" />
+    <PackageVersion Include="Relativity.Kepler.Client" Version="$(KeplerVersion)" />
+    <PackageVersion Include="Relativity.Logging" Version="$(RelativityLogging)" />
+    <PackageVersion Include="Relativity.Logging.Interfaces" Version="$(RelativityLogging)" />
+    <PackageVersion Include="Relativity.MassImport" Version="$(RelativityCore)" />
+    <PackageVersion Include="Relativity.ReviewServices.Interfaces" Version="$(RelativityReviewServicesInterfaces)" />
+    <PackageVersion Include="Relativity.SecureTokenService.Interfaces" Version="$(RelativitySecureTokenServiceInterfaces)" />
+    <PackageVersion Include="Relativity.ServiceBus" Version="$(ServiceBus)" />
+    <PackageVersion Include="Relativity.ServiceBus.Patterns" Version="$(ServiceBus)" />
+    <PackageVersion Include="Relativity.Services.DataContracts" Version="$(RelativityServicesSDK)" />
+    <PackageVersion Include="Relativity.Services.Interfaces" Version="$(RelativityServicesSDK)" />
+    <PackageVersion Include="Relativity.Services.Interfaces.Helpers" Version="$(RelativityServicesSDK)" />
+    <PackageVersion Include="Relativity.Services.Interfaces.Private" Version="$(RelativityServicesSDKPrivate)" />
+    <PackageVersion Include="Relativity.Services.Interfaces.SDK" Version="$(RelativityServicesInterfacesSDK)" />
+    <PackageVersion Include="Relativity.Services.Layout.Interfaces" Version="$(RelativityServicesLayoutInterfaces)" />
+    <PackageVersion Include="Relativity.Telemetry.APM" Version="$(TelemetryAPM)" />
+    <PackageVersion Include="Relativity.Telemetry.DataContracts.Shared" Version="$(TelemetryMetricsCollectionClient)" />
+    <PackageVersion Include="Relativity.Testing.Framework" Version="$(RelativityTestingFramework)" />
+    <PackageVersion Include="Relativity.Testing.Framework.Api" Version="$(RelativityTestingFramework)" />
+    <PackageVersion Include="Relativity.Testing.Framework.RingSetup" Version="$(RelativityTestingFramework)" />
+    <PackageVersion Include="Relativity.Testing.Identification" Version="$(RelativityTestingIdentification)" />
+    <PackageVersion Include="Relativity.Toggles" Version="$(Toggles)" />
+    <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.7.0" />
+    <PackageVersion Include="System.ValueTuple" Version="4.5.0" />
+    <PackageVersion Include="Tdd-Toolkit" Version="2.0.1" />
+  </ItemGroup>
+</Project>

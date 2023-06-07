@@ -10,24 +10,11 @@
     <AssemblyName>DataTransfer.Legacy.MassImport.NUnit.Integration</AssemblyName>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-	<LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <LangVersion>7.3</LangVersion>
     <OutputPath>bin</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
-    <OutputPath>bin</OutputPath>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-
-  <PropertyGroup>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsAsErrors />
   </PropertyGroup>
-  
   <ItemGroup>
     <None Remove="LogConfig.xml" />
   </ItemGroup>
@@ -37,64 +24,58 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Castle.Windsor" Version="3.3.0" />
-    <PackageReference Include="kCura" Version="14.2.2" />
-    <PackageReference Include="Mono.Cecil" Version="0.9.6.1" />
-    <PackageReference Include="Invariant.Services.Interfaces" Version="7.1.80.7" />
-    <PackageReference Include="Invariant.Services.Interfaces.Private" Version="7.1.80.7" />
-    <PackageReference Include="kCura.DbUpgrader" Version="1.0.114" />
-    <PackageReference Include="kCura.HTMLSanitizer" Version="1.0.6" />
-    <PackageReference Include="Newtonsoft.Json" Version="6.0.8" />
-    <PackageReference Include="Relativity.AmbientData" version="0.1.2" />
-    <PackageReference Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" Version="3000.1.0" />
-    <PackageReference Include="Relativity.API" Version="17.4.1" />
-    <PackageReference Include="Relativity.DataGrid" Version="16.4.11" />
-    <PackageReference Include="Relativity.Logging" Version="2019.10.2" />
-    <PackageReference Include="Relativity.Logging.Interfaces" Version="2019.10.2" />
-    <PackageReference Include="Relativity.SecretCatalog" Version="1.0.19" />
-    <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
-    <PackageReference Include="Relativity.ServiceBus.Patterns" Version="2.4.3" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
-    <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="3003.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="1.0.328" />
-    <PackageReference Include="Relativity.Authentication" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.Authentication.Interfaces" Version="11.3.1.22" />
-    <PackageReference Include="kCura.EventHandler" Version="17.1.9" />
-    <PackageReference Include="kCura.EDDS.DocumentCompareGateway" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.ApplicationBase.InvariantApi" Version="11.3.1.22" />
-    <PackageReference Include="kCura.Imaging" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.Services.Interfaces.Helpers" Version="13.5.0" />
-    <PackageReference Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" Version="3001.2.4" />
-    <PackageReference Include="System.Wrapper" Version="11.3.1.22" />
-    <PackageReference Include="kCura.SearchProvider" Version="13.1.0" />
-    <PackageReference Include="Relativity.AssistedReview.Utility" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.Audit.SDK" Version="1.6.5.0" />
-    <PackageReference Include="kCura.OutsideIn.Full.Win64" Version="2020.1.0" />
-    <PackageReference Include="Relativity.ReviewServices.Interfaces" Version="2020.0.9" />
-    <PackageReference Include="Moq" Version="4.8.3" />
-    
-    <PackageReference Include="NUnit" Version="3.12.0" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.15.1" />
-    <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
-    <PackageReference Include="Polly" Version="5.7.0" />
-    <PackageReference Include="Relativity.Core" Version="47.11.21" />
-    
-    <PackageReference Include="Relativity.Services.DataContracts" Version="13.6.0" />
-    <PackageReference Include="Relativity.Services.Interfaces" Version="13.6.0" />
-    <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
-    <PackageReference Include="Relativity.Kepler" Version="2.9.2" />
-    <PackageReference Include="Relativity.Kepler.Client" Version="2.9.2" />
-    <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" />
+    <PackageReference Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
+    <PackageReference Include="Castle.Windsor" VersionOverride="$(CastleWindsorOverride)" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Mono.Cecil" />
+    <PackageReference Include="Invariant.Services.Interfaces" />
+    <PackageReference Include="Invariant.Services.Interfaces.Private" />
+    <PackageReference Include="kCura" />
+    <PackageReference Include="kCura.DbUpgrader" />
+    <PackageReference Include="kCura.EventHandler" />
+    <PackageReference Include="kCura.HTMLSanitizer" />
+    <PackageReference Include="kCura.OutsideIn.Full.Win64" />
+    <PackageReference Include="kCura.SearchProvider" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="NunitXml.TestLogger" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Relativity.AmbientData" />
+    <PackageReference Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" />
+    <PackageReference Include="Relativity.API" />
+    <PackageReference Include="Relativity.Audit.SDK" />
+    <PackageReference Include="Relativity.Authentication" />
+    <PackageReference Include="Relativity.Authentication.Interfaces" />
+    <PackageReference Include="Relativity.Core" />
+    <PackageReference Include="Relativity.DataGrid" />
+    <PackageReference Include="Relativity.Kepler" />
+    <PackageReference Include="Relativity.Kepler.Client" />
+    <PackageReference Include="Relativity.Logging" />
+    <PackageReference Include="Relativity.Logging.Interfaces" />
+    <PackageReference Include="Relativity.ReviewServices.Interfaces" />
+    <PackageReference Include="Relativity.ServiceBus" />
+    <PackageReference Include="Relativity.ServiceBus.Patterns" />
+    <PackageReference Include="Relativity.Services.DataContracts" />
+    <PackageReference Include="Relativity.Services.Interfaces" />
+    <PackageReference Include="Relativity.Services.Interfaces.Helpers" />
+    <PackageReference Include="Relativity.Services.Interfaces.Private" />
+    <PackageReference Include="Relativity.Telemetry.APM" />
+    <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" />
+    <PackageReference Include="Relativity.Testing.Framework" />
+    <PackageReference Include="Relativity.Toggles" />
+    <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
   <ItemGroup>
-	  <Reference Include="System.Web" />
-	  <Reference Include="System.Xml.Linq" />
-	  <Reference Include="System.Data.DataSetExtensions" />
-	  <Reference Include="Microsoft.CSharp" />
-	  <Reference Include="System.Data" />
-	  <Reference Include="System.Net.Http" />
-	  <Reference Include="System.Xml" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config">

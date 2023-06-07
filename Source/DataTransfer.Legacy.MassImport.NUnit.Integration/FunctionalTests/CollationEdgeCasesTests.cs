@@ -42,7 +42,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var artifactManager = new ArtifactManager();
 			var baseContext = CoreContext.ChicagoContext;
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext);
+			_sut = new MassImportManager(OneTimeSetup.TestLogger, artifactManager, baseContext);
 		}
 
 		[Test]
