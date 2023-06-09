@@ -522,13 +522,13 @@ CREATE CLUSTERED INDEX [IX_LookupFast] ON [Resource].[{{0}}_ExistingFile]
 		ExistingDocumentArtifactID = ISNULL(EF.[DocumentArtifactID], -1),
 		[{{0}}].[kCura_Import_DataGridException]
 	FROM
-		[Resource].[{{0}}] tmp
+		[Resource].[{{0}}]
 	LEFT JOIN [Resource].[{{0}}_ExistingFile] EF ON
 		EF.FileIdentifier COLLATE SQL_Latin1_General_CP1_CI_AS = [Resource].[{{0}}].[FileIdentifier] COLLATE SQL_Latin1_General_CP1_CI_AS
 	LEFT JOIN [EDDSDBO].[Document] Document ON
 		Document.ArtifactID = EF.[DocumentArtifactID] 
 	WHERE
-		NOT tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+		NOT [Resource].[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	ORDER BY
 		[OriginalLineNumber]
 
