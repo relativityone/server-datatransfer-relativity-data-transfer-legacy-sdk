@@ -959,7 +959,7 @@ WHERE
 UPDATE
 	[Resource].[{{0}}]
 SET
-	[Status] = [Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
+	[Status] = [{{0}}].[Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
 FROM
 	[Resource].[{{0}}]
 LEFT JOIN [Document]
