@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.35]
+- REL-851763 - Fix sql statement - add aliases to tmp tables.
+
 ## [0.3.34]
 - REL-847662 - Update Relativity.Storage to 1.7.3
 
