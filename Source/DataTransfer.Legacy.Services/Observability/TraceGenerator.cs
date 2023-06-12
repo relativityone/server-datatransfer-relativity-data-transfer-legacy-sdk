@@ -2,10 +2,12 @@
 // © Relativity All Rights Reserved. 
 // </copyright> 
 
+
 namespace Relativity.DataTransfer.Legacy.Services.Observability
 {
 	using global::DataTransfer.Legacy.MassImport.Core;
 	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+	using Relativity.DataTransfer.Legacy.Services.Helpers;
 	using OpenTelemetry;
 	using OpenTelemetry.Exporter;
 	using OpenTelemetry.Metrics;
@@ -53,21 +55,21 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 					ReleyeUriTraces = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriTracesSettingName).GetAwaiter().GetResult();
 					if (string.IsNullOrEmpty(ReleyeUriTraces))
 					{
-						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriTracesSettingName}; is missing. Cannot create RelEyeTraceProvider.");
+						_logger.LogDebug($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriTracesSettingName}; is missing. Cannot create RelEyeTraceProvider.");
 						return null;
 					}
 
 					ApiKey = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
 					if (string.IsNullOrEmpty(ApiKey))
 					{
-						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeTokenSettingName}; is missing. Cannot create RelEyeTraceProvider.");
+						_logger.LogDebug($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeTokenSettingName}; is missing. Cannot create RelEyeTraceProvider.");
 						return null;
 					}
 
 					SourceID = _instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
 					if (string.IsNullOrEmpty(SourceID))
 					{
-						_logger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.InstanceIdentifierSettingName}; is missing. Cannot create RelEyeTraceProvider.");
+						_logger.LogDebug($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.InstanceIdentifierSettingName}; is missing. Cannot create RelEyeTraceProvider.");
 						return null;
 					}
 
@@ -114,6 +116,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ServiceName, TelemetryConstants.Values.ServiceName);
+			activity?.SetBaggage(TelemetryConstants.AttributeNames.ServiceVersion, VersionHelper.GetVersion());
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
 			activity?.SetBaggage(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
@@ -121,6 +124,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 			activity?.SetTag(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceName, TelemetryConstants.Values.ServiceName);
+			activity?.SetTag(TelemetryConstants.AttributeNames.ServiceVersion, VersionHelper.GetVersion());
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationID, TelemetryConstants.Values.ApplicationID);
 			activity?.SetTag(TelemetryConstants.AttributeNames.ApplicationName, TelemetryConstants.Values.ApplicationName);
 			activity?.SetTag(TelemetryConstants.AttributeNames.R1SourceID, SourceID);
