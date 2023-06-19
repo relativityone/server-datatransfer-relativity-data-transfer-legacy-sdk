@@ -17,6 +17,7 @@ using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Relativity.DataTransfer.Legacy.Services.Observability;
 using Relativity.DataTransfer.Legacy.Services.SQL;
+using Relativity.Productions.Services.Private.V1;
 using Relativity.Services.Interfaces.LibraryApplication;
 using TddEbook.TddToolkit;
 using Component = Castle.MicroKernel.Registration.Component;
@@ -104,8 +105,13 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<IRelativityService>().ImplementedBy<RelativityService>());
 			Container.Register(Component.For<ISearchService>().ImplementedBy<SearchService>());
 			Container.Register(Component.For<IWebDistributedService>().ImplementedBy<WebDistributedService>());
-			Container.Register(Component.For<IHelper>().UsingFactoryMethod(() => new Mock<IHelper>().Object).LifestyleSingleton());
 			Container.Register(Component.For<ResultToExportDataWrapperConverter>());
+
+			Mock<IHelper> helperMock = new Mock<IHelper>();
+			Container.Register(Component.For<IHelper>().UsingFactoryMethod(() => helperMock.Object).LifestyleSingleton());
+			Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
+			serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(new Mock<IInternalProductionImportExportManager>().Object);
+			helperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
 		}
 
 		protected void SetupMockForPositiveTests()
