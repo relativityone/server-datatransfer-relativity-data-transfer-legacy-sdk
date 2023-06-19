@@ -16,6 +16,7 @@ using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
 using Moq;
 using Relativity.API;
+using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -41,8 +42,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			const bool inRepository = true;
 			var imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated, hasPDF).ConfigureAwait(false);
 			
-
-			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
+			Mock<IHelper> helperMock = new Mock<IHelper>();
+			Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
+			serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(ServiceHelper.GetServiceProxy<IInternalProductionImportExportManager>(TestParameters));
+			helperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
+			
+			MassImportManager massImportManager = new MassImportManager(false, helperMock.Object);
 			var productionSetArtifactId = await ProductionHelper.CreateProductionSet(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false);
 
 			// Act

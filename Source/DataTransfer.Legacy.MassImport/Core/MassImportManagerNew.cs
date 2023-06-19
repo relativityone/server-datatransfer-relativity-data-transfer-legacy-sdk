@@ -20,14 +20,14 @@ namespace Relativity.MassImport.Core
 	internal class MassImportManagerNew
 	{
 		private readonly ILockHelper _lockHelper;
-		private readonly IHelper _helper;
+		private readonly IInternalProductionImportExportManager _internalProductionImportExportManager;
 		private bool CollectIDsOnCreate { get; set; }
 
-		public MassImportManagerNew(ILockHelper lockHelper, IHelper helper, bool collectIDsOnCreate = false) : base()
+		public MassImportManagerNew(ILockHelper lockHelper, IInternalProductionImportExportManager internalProductionImportExportManager, bool collectIDsOnCreate = false) : base()
 		{
 			_lockHelper = lockHelper;
 			CollectIDsOnCreate = collectIDsOnCreate;
-			_helper = helper;
+			_internalProductionImportExportManager = internalProductionImportExportManager;
 		}
 
 		protected IAPM APMClient
@@ -281,8 +281,7 @@ namespace Relativity.MassImport.Core
 			IEventsBuilder eventsBuilder = new EventsBuilder();
 
 			var productionManager = new Relativity.Core.Service.ProductionManager();
-			IInternalProductionImportExportManager internalProductionImportExportManager = _helper.GetServicesManager().CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser);
-			
+
 			var image = new Data.Image(context.DBContext, settings, this.CorrelationLogger);
 			if (image.HasDataGridWorkToDo && !image.IsDataGridInputValid())
 			{
@@ -383,18 +382,18 @@ namespace Relativity.MassImport.Core
 						new Guid(settings.RunID.Replace("_", "-")));
 
 					image.ImportMeasurements.StartMeasure(
-						nameof(internalProductionImportExportManager.CreateProductionInformationForImportAsync));
+						nameof(_internalProductionImportExportManager.CreateProductionInformationForImportAsync));
 
 					if (settings.HasPDF)
 					{
-						internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.PdfsOnly);
+						_internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.PdfsOnly);
 					}
 					else
 					{
-						internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.ImagesOnly);
+						_internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.ImagesOnly);
 					}
 
-					image.ImportMeasurements.StopMeasure(nameof(internalProductionImportExportManager
+					image.ImportMeasurements.StopMeasure(nameof(_internalProductionImportExportManager
 						.CreateProductionInformationForImportAsync));
 
 					if (settings.UploadFullText)
