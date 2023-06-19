@@ -18,7 +18,7 @@ namespace Relativity.Core.Service
 		public MassImportManager(bool collectIDsOnCreate, IHelper helper)
 		{
 			CollectIDsOnCreate = collectIDsOnCreate;
-			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
+			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), helper, collectIDsOnCreate));
 			_helper = helper;
 		}
 

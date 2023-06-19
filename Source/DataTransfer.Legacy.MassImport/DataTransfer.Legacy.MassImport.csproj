@@ -43,6 +43,10 @@
     <PackageReference Include="Relativity.Core" Version="57.1.1" />
 	<PackageReference Include="Relativity.DataGrid.Implementations" Version="17.4.10" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
+    <PackageReference Include="Relativity.Platform.Agent.WorkloadDiscovery.SDK" Version="0.3.0" />
+    <PackageReference Include="Relativity.Productions.Private.SDK" Version="12.6.3" />
+    <PackageReference Include="Relativity.Productions.SDK" Version="12.6.3" />
+    <PackageReference Include="Relativity.Shared.SDK" Version="1.8.0" />
     <PackageReference Include="Relativity.Storage" Version="1.7.3" />
     <PackageReference Include="Relativity.Storage.Extensions" Version="1.7.3" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />

@@ -51,11 +51,11 @@
     <PackageReference Include="Relativity.DataGrid.Implementations" Version="17.4.10" />
     <PackageReference Include="Relativity.Logging" Version="3000.4.0" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
-    <PackageReference Include="Relativity.Productions.SDK" Version="12.1.13" />
+    <PackageReference Include="Relativity.Productions.SDK" Version="12.6.3" />
     <PackageReference Include="Relativity.SecretCatalog" Version="1.0.19" />
     <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
     <PackageReference Include="Relativity.ServiceBus.Patterns" Version="2.4.3" />
-    <PackageReference Include="Relativity.Shared.SDK" Version="1.7.0" />
+    <PackageReference Include="Relativity.Shared.SDK" Version="1.8.0" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="3003.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="1.0.328" />

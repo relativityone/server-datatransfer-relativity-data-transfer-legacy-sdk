@@ -70,6 +70,8 @@
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Serilog.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Serilog.Sinks.OpenTelemetry.dll</Assembly>
 		  <Assembly>Source\DataTransfer.Legacy.Services\bin\Serilog.Sinks.PeriodicBatching.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.MassImport\bin\Relativity.Productions.Services.Interfaces.Private.Versioned.dll</Assembly>
+		  <Assembly>Source\DataTransfer.Legacy.MassImport\bin\WorkloadDiscovery.dll</Assembly>
 		</Assemblies>
         <ResourceFiles />
         <CustomPages />
