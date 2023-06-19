@@ -10,7 +10,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 	public static class TelemetryConstants
 	{
 		/// <summary>
-		/// Values for Import Service attributes.
+		/// Values for DataTransfer.Legacy attributes.
 		/// </summary>
 		public static class Values
 		{
@@ -37,22 +37,6 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			/// Team identification in backstage.
 			/// </summary>
 			public const string R1TeamID = "PTCI-4941411";
-
-			/// <summary>
-			/// Status of an activity.
-			/// </summary>
-			public enum Status
-			{
-				/// <summary>
-				/// Success
-				/// </summary>
-				Success,
-
-				/// <summary>
-				/// Failed
-				/// </summary>
-				Failed,
-			}
 		}
 
 		/// <summary>
@@ -221,7 +205,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			public const string R1WorkspaceID = "r1.workspace.id";
 
 			/// <summary>
-			/// [string] Import Run Identifier (from Import Service API).
+			/// [string] Import Run Identifier.
 			/// </summary>
 			public const string RunID = "import.run_id";
 
@@ -236,7 +220,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			public const string ServiceNamespace = "service.namespace";
 
 			/// <summary>
-			/// [string] Version of the Import Service.
+			/// [string] Version of the application.
 			/// </summary>
 			public const string ServiceVersion = "service.version";
 

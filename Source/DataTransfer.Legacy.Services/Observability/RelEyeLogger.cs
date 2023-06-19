@@ -5,6 +5,7 @@
 	using System.Diagnostics;
 	using global::DataTransfer.Legacy.MassImport.Core;
 	using global::DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+	using Relativity.DataTransfer.Legacy.Services.Helpers;
 	using Relativity.API;
 	using Serilog;
 	using Serilog.Core;
@@ -182,21 +183,21 @@
 				string apikey = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeTokenSettingName).GetAwaiter().GetResult();
 				if (string.IsNullOrEmpty(apikey))
 				{
-					relativityLogger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeTokenSettingName}; is missing. Cannot create RelEyeLogger.");
+					relativityLogger.LogDebug($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeTokenSettingName}; is missing. Cannot create RelEyeLogger.");
 					return;
 				}
 
 				string otlpEndpoint = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityTelemetrySection, RelEyeSettings.ReleyeUriLogsName).GetAwaiter().GetResult();
 				if (string.IsNullOrEmpty(apikey))
 				{
-					relativityLogger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriLogsName}; is missing. Cannot create RelEyeLogger.");
+					relativityLogger.LogDebug($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.ReleyeUriLogsName}; is missing. Cannot create RelEyeLogger.");
 					return;
 				}
 
 				string instanceIdentifier = instanceSettingsBundle.GetStringAsync(RelEyeSettings.RelativityCoreSection, RelEyeSettings.InstanceIdentifierSettingName).GetAwaiter().GetResult()?.ToLower();
 				if (string.IsNullOrEmpty(apikey))
 				{
-					relativityLogger.LogWarning($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.InstanceIdentifierSettingName}; is missing. Cannot create RelEyeLogger.");
+					relativityLogger.LogDebug($"Instance setting - Section:{RelEyeSettings.RelativityTelemetrySection}; Name:{RelEyeSettings.InstanceIdentifierSettingName}; is missing. Cannot create RelEyeLogger.");
 					return;
 				}
 
@@ -219,6 +220,7 @@
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.R1SourceID, instanceIdentifier.ToLower())
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace)
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.ServiceName, serviceName)
+						.Enrich.WithProperty(TelemetryConstants.AttributeNames.ServiceVersion, VersionHelper.GetVersion())
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.R1TeamID, TelemetryConstants.Values.R1TeamID)
 						.Enrich.With(new TracingEnricher())
 						.Enrich.FromLogContext()
