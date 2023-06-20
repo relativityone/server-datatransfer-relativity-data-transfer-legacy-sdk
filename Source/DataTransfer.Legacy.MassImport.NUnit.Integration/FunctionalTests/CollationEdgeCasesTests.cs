@@ -10,6 +10,7 @@ using Relativity.MassImport.Api;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
 using Moq;
 using Relativity.API;
+using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -34,7 +35,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var artifactManager = new ArtifactManager();
 			var baseContext = CoreContext.ChicagoContext;
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, new Mock<IHelper>().Object);
+			Mock<IHelper> helperMock = new Mock<IHelper>();
+			Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
+			serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(ServiceHelper.GetServiceProxy<IInternalProductionImportExportManager>(TestParameters));
+			helperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
+
+			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, helperMock.Object);
 		}
 
 		[Test]

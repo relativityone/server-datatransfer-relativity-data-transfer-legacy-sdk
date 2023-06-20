@@ -12,6 +12,7 @@ using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
 using Moq;
+using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -37,7 +38,11 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			const bool inRepository = true;
 			const bool includeExtractedTextEncoding = false;
 			NativeLoadInfo nativeLoadInfo = await this.CreateSampleNativeLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
-			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
+			Mock<IHelper> helperMock = new Mock<IHelper>();
+			Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
+			serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(ServiceHelper.GetServiceProxy<IInternalProductionImportExportManager>(TestParameters));
+			helperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
+			MassImportManager massImportManager = new MassImportManager(false, helperMock.Object);
 
 			// Act
 			MassImportManagerBase.MassImportResults result =  massImportManager.RunNativeImport(this.CoreContext, nativeLoadInfo, inRepository, includeExtractedTextEncoding);
