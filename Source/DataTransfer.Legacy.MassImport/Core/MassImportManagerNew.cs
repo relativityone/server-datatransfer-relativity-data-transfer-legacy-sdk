@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
@@ -318,6 +319,7 @@ namespace Relativity.MassImport.Core
 			context.BeginTransaction();
 			try
 			{
+				Task task = null;
 				_lockHelper.Lock(context, MassImportManagerLockKey.LockType.DocumentOrImageOrProductionImage, () =>
 				{
 					image.ExistingFilesLookupInitialization();
@@ -386,11 +388,11 @@ namespace Relativity.MassImport.Core
 
 					if (settings.HasPDF)
 					{
-						_internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.PdfsOnly);
+						task = _internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.PdfsOnly);
 					}
 					else
 					{
-						_internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.ImagesOnly);
+						task = _internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.ImagesOnly);
 					}
 
 					image.ImportMeasurements.StopMeasure(nameof(_internalProductionImportExportManager
@@ -433,8 +435,8 @@ namespace Relativity.MassImport.Core
 
 					InjectionManager.Instance.Evaluate("f7482c6c-2e01-4bad-bdf7-8392c9dc7fa4");
 				});
-
 				context.CommitTransaction();
+				task.Wait();
 			}
 			catch (System.Exception ex)
 			{
