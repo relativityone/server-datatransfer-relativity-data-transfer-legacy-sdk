@@ -62,12 +62,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		{
 			var artifactManager = new ArtifactManager();
 			var baseContext = CoreContext.ChicagoContext;
-			Mock<IHelper> helperMock = new Mock<IHelper>();
-			Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
-			serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(ServiceHelper.GetServiceProxy<IInternalProductionImportExportManager>(TestParameters));
-			helperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
 
-			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, helperMock.Object);
+			_sut = new MassImportManager(AssemblySetup.TestLogger, artifactManager, baseContext, HelperMock.Object);
 		}
 
 		[TearDown]

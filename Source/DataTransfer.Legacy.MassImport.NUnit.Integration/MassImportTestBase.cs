@@ -7,9 +7,11 @@ using MassImport.NUnit.Integration.Helpers;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
+using Relativity.API;
 using Relativity.Core;
 using Relativity.Core.Service;
 using Relativity.Data.AuditIngestion;
+using Relativity.Productions.Services.Private.V1;
 using BaseContext = Relativity.Core.BaseContext;
 using Context = kCura.Data.RowDataGateway.Context;
 
@@ -17,6 +19,7 @@ namespace MassImport.NUnit.Integration
 {
 	public abstract class MassImportTestBase
 	{
+		public Mock<IHelper> HelperMock;
 		private const int USER_ID = 9;
 		private readonly Mock<ICoreContext> _coreContextMock = new Mock<ICoreContext>();
 
@@ -29,6 +32,10 @@ namespace MassImport.NUnit.Integration
 		protected MassImportTestBase()
 		{
 			this.TestParameters = AssemblySetup.TestParameters;
+			HelperMock = new Mock<IHelper>();
+			Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
+			serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(ServiceHelper.GetServiceProxy<IInternalProductionImportExportManager>(TestParameters));
+			HelperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
 		}
 
 		[OneTimeSetUp]

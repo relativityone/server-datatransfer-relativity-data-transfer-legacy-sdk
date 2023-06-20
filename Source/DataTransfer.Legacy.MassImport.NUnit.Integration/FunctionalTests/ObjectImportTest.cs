@@ -61,11 +61,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
             const bool inRepository = true;
             
             ObjectLoadInfo nativeLoadInfo = await this.CreateSampleObjectLoadInfoAsync().ConfigureAwait(false);
-            Mock<IHelper> helperMock = new Mock<IHelper>();
-            Mock<IServicesMgr> serviceManagerMock = new Mock<IServicesMgr>();
-            serviceManagerMock.Setup(x => x.CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser)).Returns(ServiceHelper.GetServiceProxy<IInternalProductionImportExportManager>(TestParameters));
-            helperMock.Setup(x => x.GetServicesManager()).Returns(serviceManagerMock.Object);
-			MassImportManager massImportManager = new MassImportManager(false, helperMock.Object);
+			MassImportManager massImportManager = new MassImportManager(false, HelperMock.Object);
 
             // Act
             MassImportManagerBase.MassImportResults result = massImportManager.RunObjectImport(this.CoreContext, nativeLoadInfo, inRepository);
