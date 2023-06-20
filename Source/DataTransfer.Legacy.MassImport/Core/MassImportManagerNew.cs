@@ -436,7 +436,7 @@ namespace Relativity.MassImport.Core
 					InjectionManager.Instance.Evaluate("f7482c6c-2e01-4bad-bdf7-8392c9dc7fa4");
 				});
 				context.CommitTransaction();
-				// task.Wait();
+				task.Wait();
 			}
 			catch (System.Exception ex)
 			{
