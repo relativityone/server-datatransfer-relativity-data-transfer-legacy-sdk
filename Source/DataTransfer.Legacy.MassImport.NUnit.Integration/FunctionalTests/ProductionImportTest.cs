@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -63,6 +64,11 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
 			this.ThenTheImportWasSuccessful(result, expectedArtifactsCreated, expectedArtifactsUpdated);
 			Assert.AreEqual(expectedArtifactsUpdated, 0);
+			var fileCount = ProductionHelper.GetNumberOfImportedFiles(TestWorkspace, productionSetArtifactId, hasPDF ? 8 : 3);
+			Assert.AreEqual(1, fileCount, "Wrong number of imported files");
+
+			var prodInformationCount = ProductionHelper.GetNumberOfProductionInformationEntries(TestWorkspace, productionSetArtifactId, hasPDF ? "WithPDF = 1" : "WithImages = 1");
+			Assert.AreEqual(1, prodInformationCount, "Wrong number of entries in ProductionInformation table");
 		}
 
 		private async Task<ImageLoadInfo> CreateSampleImageLoadInfoAsync(int numberOfArtifactsToCreate, bool hasPDF)
