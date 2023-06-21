@@ -41,10 +41,6 @@ Task Test -Description "Run tests that don't require a deployed environment." {
     Invoke-Tests -WhereClause "namespace !~ FunctionalTests && namespace !~ Integration" -OutputFile $LogPath -WithCoverage
 }
 
-Task HelloWorld -Action {
-    Write-Host '*** Hello World ***' -ForegroundColor Yellow
-}
-
 Task FunctionalTest -Description "Run functional tests that require a deployed environment." {
     $LogPath = Join-Path $LogsDir "FunctionalTestResults.xml"
     Invoke-Tests -WhereClause "namespace =~ FunctionalTests && TestExecutionCategory == CI || namespace =~ Integration" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings)
