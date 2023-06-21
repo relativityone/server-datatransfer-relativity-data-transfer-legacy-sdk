@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,9 +14,6 @@ using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImageLoadInfo = Relativity.MassImport.DTO.ImageLoadInfo;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
-using Moq;
-using Relativity.API;
-using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
