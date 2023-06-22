@@ -207,6 +207,8 @@
 	<Assembly><Keywords/><Name>Serilog.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Serilog.Sinks.OpenTelemetry.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Serilog.Sinks.PeriodicBatching.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.Private.Versioned.dll</Name><Notes /></Assembly>
+	<Assembly><Keywords/><Name>WorkloadDiscovery.dll</Name><Notes /></Assembly>
   </Assemblies>
   <ResourceFiles />
   <ExternalTabs />

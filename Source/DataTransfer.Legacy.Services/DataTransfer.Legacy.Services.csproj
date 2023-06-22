@@ -43,11 +43,11 @@
     <PackageReference Include="Relativity.API" Version="17.11.2" />
     <PackageReference Include="Relativity.Core" Version="57.1.1" />
     <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
-    <PackageReference Include="Relativity.Productions.SDK" Version="12.5.2" />
+    <PackageReference Include="Relativity.Productions.SDK" Version="12.6.3" />
     <PackageReference Include="Relativity.Services.Interfaces.SDK" Version="13.3.0" />
     <PackageReference Include="Relativity.Storage" Version="1.7.3" />
     <PackageReference Include="Relativity.Storage.Extensions" Version="1.7.3" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.8" />
     <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="3003.1.0" />
     <PackageReference Include="Relativity.Telemetry.MetricsCollection" Version="3005.0.0" />
     <PackageReference Include="Serilog" Version="2.12.0" />

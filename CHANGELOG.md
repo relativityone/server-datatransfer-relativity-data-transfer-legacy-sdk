@@ -3,7 +3,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [0.3.37]
-- REL-847662 Add service version to logs and telemetry
+- REL-832881 - use Production private API IInternalProductionImportExportManager for porduction PDF import
+
+## [0.3.37]
+- REL-847662 - Add service version to logs and telemetry
 
 ## [0.3.36]
 - REL-851763 - Fix sql statement - v2

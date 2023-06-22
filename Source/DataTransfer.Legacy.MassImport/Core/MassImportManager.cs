@@ -5,6 +5,7 @@ using Relativity.MassImport.Core;
 using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.API;
+using Relativity.Productions.Services.Private.V1;
 
 // TODO: adjust namespace with Relativity, join with Api/MassImportManager https://jira.kcura.com/browse/REL-482642
 namespace Relativity.Core.Service
@@ -18,7 +19,7 @@ namespace Relativity.Core.Service
 		public MassImportManager(bool collectIDsOnCreate, IHelper helper)
 		{
 			CollectIDsOnCreate = collectIDsOnCreate;
-			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), collectIDsOnCreate));
+			_massImportManagerLazy = new Lazy<MassImportManagerNew>(() => new MassImportManagerNew(new LockHelper(new AppLockProvider()), helper.GetServicesManager().CreateProxy<IInternalProductionImportExportManager>(ExecutionIdentity.CurrentUser), collectIDsOnCreate));
 			_helper = helper;
 		}
 

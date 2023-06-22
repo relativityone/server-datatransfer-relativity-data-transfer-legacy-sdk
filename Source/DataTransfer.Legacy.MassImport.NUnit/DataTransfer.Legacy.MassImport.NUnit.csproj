@@ -38,7 +38,7 @@
     <PackageReference Include="kCura.DataGrid.Services.Interfaces" Version="17.4.10" />
     <!-- -->
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="6.0.8" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
@@ -59,7 +59,7 @@
     <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
     <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.1" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.8" />
     <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
     <PackageReference Include="kCura.Relativity.Client" Version="11.3.1.22" />
