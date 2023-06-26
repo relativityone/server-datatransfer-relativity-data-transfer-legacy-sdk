@@ -9,6 +9,8 @@ using Relativity.Logging;
 
 namespace Relativity.MassImport.Data
 {
+	using Relativity.MassImport.DTO;
+
 	internal class Helper
 	{
 		public static string GenerateAuditInsertClause(int auditActionID, int userID, string requestOrigination, string recordOrigination, string artifactIdSourceTable)
@@ -219,7 +221,7 @@ FROM
 			}
 		}
 
-		public static ErrorFileKey GenerateNonImageErrorFiles(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		public static ErrorFileKey GenerateNonImageErrorFiles(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID, bool truncateTempTable = true)
 		{
 			var retval = new ErrorFileKey();
 			string errorFileName = "";
@@ -260,8 +262,41 @@ FROM
 			}
 
 			retval.LogKey = errorFileName;
-			TruncateTempTables(context, runID);
+			if (truncateTempTable)
+			{
+				TruncateTempTables(context, runID);
+			}
+
 			return retval;
+		}
+		public static List<NativeImportStatus> GetImportedDocuments(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		{
+			var result = new List<NativeImportStatus>();
+			System.Data.SqlClient.SqlDataReader reader = null;
+			try
+			{
+				reader = context.ExecuteSQLStatementAsReader(ImportedDocumentsSql(context, runID, keyFieldID));
+				if (reader.HasRows)
+				{
+					while (reader.Read())
+					{
+							var artifactID = reader.GetInt32(0);
+							var originalLineNumber = reader.GetInt32(1);
+							var status = reader.GetInt64(2);
+							var identifier = reader.GetString(3);
+
+							var nativeImportStatus = new NativeImportStatus(artifactID, identifier, status, originalLineNumber);
+							result.Add(nativeImportStatus);
+					}
+				}
+			}
+			finally
+			{
+				kCura.Data.RowDataGateway.Helper.CloseDataReader(reader);
+				context.ReleaseConnection();
+			}
+
+			return result;
 		}
 
 		public static string ErrorSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
@@ -278,6 +313,27 @@ SELECT
 FROM [Resource].[{ tableName }]
 WHERE
 	NOT [kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
+ORDER BY
+	kCura_Import_OriginalLineNumber";
+
+			return query;
+		}
+
+		public static string ImportedDocumentsSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
+		{
+			string tableName = Constants.NATIVE_TEMP_TABLE_PREFIX + runID;
+			string identifierColumnName = context.ExecuteSqlStatementAsScalar(string.Format("SELECT TOP 1 [ColumnName] FROM [ArtifactViewField] INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[ArtifactID] = {0}", keyFieldID)).ToString();
+			string query = $@"
+IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
+
+SELECT
+	[ArtifactID],
+	[kCura_Import_OriginalLineNumber],
+	[kCura_Import_Status],
+	[{identifierColumnName}]
+FROM [Resource].[{tableName}]
+WHERE
+	[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 ORDER BY
 	kCura_Import_OriginalLineNumber";
 

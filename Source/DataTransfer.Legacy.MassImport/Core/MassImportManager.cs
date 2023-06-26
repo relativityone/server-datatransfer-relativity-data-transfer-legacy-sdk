@@ -9,6 +9,10 @@ using Relativity.API;
 // TODO: adjust namespace with Relativity, join with Api/MassImportManager https://jira.kcura.com/browse/REL-482642
 namespace Relativity.Core.Service
 {
+	using Relativity.MassImport.DTO;
+
+	using System.Collections.Generic;
+
 	public class MassImportManager : MassImportManagerBase
 	{
 		private bool CollectIDsOnCreate { get; set; }
@@ -52,9 +56,14 @@ namespace Relativity.Core.Service
 			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval, _helper));
 		}
 		
-		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)
+		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, bool truncateTempTable = true)
 		{
-			return _massImportManagerLazy.Value.GenerateNonImageErrorFiles(icc, runID, artifactTypeID, writeHeader, keyFieldID);
+			return _massImportManagerLazy.Value.GenerateNonImageErrorFiles(icc, runID, artifactTypeID, writeHeader, keyFieldID, truncateTempTable);
+		}
+
+		public List<NativeImportStatus> GetNativeImportDocumentsStatus(Core.ICoreContext icc, string runID, int keyFieldID)
+		{
+			return _massImportManagerLazy.Value.GetNativeImportDocumentsStatus(icc, runID, keyFieldID);
 		}
 
 		/// <summary>
@@ -75,9 +84,9 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.GenerateNativeErrorReader(context, runID, keyArtifactID);
 		}
 
-		public bool NativeRunHasErrors(Core.ICoreContext icc, string runId)
+		public bool NativeRunHasErrors(Core.ICoreContext icc, string runId, bool truncateTempTables = true)
 		{
-			return _massImportManagerLazy.Value.NativeRunHasErrors(icc, runId);
+			return _massImportManagerLazy.Value.NativeRunHasErrors(icc, runId, truncateTempTables);
 		}
 
 		public object DisposeRunTempTables(Core.ICoreContext icc, string runId)

@@ -5,6 +5,8 @@ using Relativity.Kepler.Services;
 
 namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 {
+	using System.Collections.Generic;
+
 	[WebService("Bulk Import Manager replacement Service")]
 	[ServiceAudience(Audience.Private)]
 	[RoutePrefix("bulk-import")]
@@ -49,5 +51,23 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		[HttpPost]
 		[Route("HasImportPermissionsAsync")]
 		Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID);
+
+		[HttpPost]
+		[Route("GetBulkImportResultAsync")]
+		Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID);
+
+		[HttpPost]
+		[Route("GetNativeImportItemsStatusAsync")]
+		Task<List<NativeImportStatus>> GetNativeImportItemsStatusAsync(int workspaceID, string runID, int keyFieldID);
+
+		[HttpPost]
+		[Route("NativeRunHasErrorsDoNotTruncateAsync")]
+		Task<bool> NativeRunHasErrorsDoNotTruncateAsync(int workspaceID, string runID, string correlationID);
+
+		[HttpPost]
+		[Route("GenerateNonImageErrorFilesDoNotTruncateAsync")]
+		Task<ErrorFileKey> GenerateNonImageErrorFilesDoNotTruncateAsync(int workspaceID, string importKey, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID);
+
+
 	}
 }

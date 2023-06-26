@@ -53,6 +53,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 			cfg.CreateMap<MassImportManagerBase.MassImportResults, MassImportResults>();
 			cfg.CreateMap<ProductionInfo, DataTransfer.Legacy.SDK.ImportExport.V1.Models.ProductionInfo>();
 			cfg.CreateMap<Relativity.MassImport.DTO.SoapExceptionDetail, DataTransfer.Legacy.SDK.ImportExport.V1.Models.SoapExceptionDetail>();
+			cfg.CreateMap<Relativity.MassImport.DTO.NativeImportStatus, DataTransfer.Legacy.SDK.ImportExport.V1.Models.NativeImportStatus>();
 		}
 
 		public static T Map<T>(this object t1)

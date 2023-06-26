@@ -32,7 +32,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 			if (!IsParametersValid(runID, nameof(runID))) return null;
 			if (!IsParametersValid(batchID, nameof(batchID))) return null;
 
-
 			var tableName = GetTableName(runID);
 			var query = GetInsertQuery(batchID, tableName);
 			var parameters = new List<SqlParameter> { new SqlParameter("@createdOn", DateTime.Now) };
@@ -129,6 +128,23 @@ END
 			return query;
 		}
 
+		private static string GetResultQuery(string tableName)
+		{
+			var query = $@"
+IF EXISTS(SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
+BEGIN
+	SELECT
+	[BatchID],
+	[CreatedOn],
+	[FinishedOn],
+	[RunResult],
+	CAST(0 AS BIT) as IsNew
+	FROM [Resource].[{tableName}]
+END
+";
+			return query;
+		}
+
 		public void Update(int workspaceID, string runID, string batchID, MassImportResults massImportResult)
 		{
 			if (!IsParametersValid(runID, nameof(runID))) return;
@@ -207,6 +223,66 @@ END ";
 		private string GetTableName(string runID)
 		{
 			return $"{BatchResultTablePrefix}{runID}";
+		}
+
+		public MassImportResults GetResult(int workspaceID, string runID)
+		{
+			if (!IsParametersValid(runID, nameof(runID))) return null;
+
+			var tableName = GetTableName(runID);
+			var query = GetResultQuery(tableName);
+
+			ResultCacheItem ConvertDataRecordToItem(IDataRecord record)
+			{
+				var batch = record.GetString(0);
+				var createdOn = record.GetDateTime(1);
+				var finishedOn = record.IsDBNull(2) ? (DateTime?)null : record.GetDateTime(2);
+				var serializedResult = record.IsDBNull(3) ? null : record.GetString(3);
+				var isNew = record.GetBoolean(4);
+
+				return new ResultCacheItem(batch, createdOn, finishedOn, serializedResult, isNew);
+			}
+
+			var results = _sqlExecutor.ExecuteReader(workspaceID, query, null, ConvertDataRecordToItem);
+			if (results.Count == 0)
+			{
+				return null;
+			}
+
+			if (results.Count > 1)
+			{
+				_logger.LogError("There is more than one row: {rows}, values: {@values}, using the first row {@row}", results.Count, results, results.First());
+			}
+
+			var result = results[0];
+
+			if (result.IsNew)
+			{
+				return null;
+			}
+
+			if (result.FinishedOn.HasValue == false)
+			{
+				_logger.LogError("Result exists but it is not finished yet {runID}, {@result}", runID, result);
+				return null;
+			}
+
+			if (string.IsNullOrEmpty(result.SerializedResult))
+			{
+				_logger.LogError("Expected to deserialize result but it is empty {runID}, {@result}", runID, result);
+				throw new ServiceException("Batch result is empty");
+			}
+
+			try
+			{
+				_logger.LogWarning("Returning existing result for: {runID}, {batchID}, created: {createdOn}, finished: {finished}, MassImportResult: {result}", runID, result.BatchID, result.CreatedOn, result.FinishedOn, result.SerializedResult);
+				return JsonConvert.DeserializeObject<MassImportResults>(result.SerializedResult);
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Failed to deserialize {runID} MassImportResults: {result}", runID, result.SerializedResult);
+				throw new ServiceException("Failed to deserialize batch result", ex);
+			}
 		}
 	}
 

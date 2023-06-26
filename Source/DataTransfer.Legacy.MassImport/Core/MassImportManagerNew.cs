@@ -16,6 +16,8 @@ using Relativity.API;
 
 namespace Relativity.MassImport.Core
 {
+	using Relativity.MassImport.DTO;
+
 	internal class MassImportManagerNew
 	{
 		private readonly ILockHelper _lockHelper;
@@ -507,7 +509,7 @@ namespace Relativity.MassImport.Core
 			return MassImporter.ImportObjects(context, input, helper);
 		}
 
-		public ErrorFileKey GenerateNonImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)
+		public ErrorFileKey GenerateNonImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, bool truncateTempTable = true)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
@@ -516,7 +518,7 @@ namespace Relativity.MassImport.Core
 
 			var timekeeper = new Timekeeper();
 			timekeeper.MarkStart("GenerateError");
-			var key = Data.Helper.GenerateNonImageErrorFiles(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
+			var key = Data.Helper.GenerateNonImageErrorFiles(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID, truncateTempTable);
 			timekeeper.MarkEnd("GenerateError");
 			timekeeper.GenerateCsvReportItemsAsRows("_webapi_errors", @"C:\");
 			return key;
@@ -540,7 +542,7 @@ namespace Relativity.MassImport.Core
 			return Native.GenerateErrorReader(context, runID, keyArtifactID);
 		}
 
-		public bool NativeRunHasErrors(Relativity.Core.ICoreContext icc, string runId)
+		public bool NativeRunHasErrors(Relativity.Core.ICoreContext icc, string runId, bool truncateTempTables = true)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runId))
 			{
@@ -557,7 +559,7 @@ namespace Relativity.MassImport.Core
 			}
 
 			bool retval = (bool)dbContext.ExecuteSqlStatementAsScalar(string.Format("SELECT CASE WHEN EXISTS(SELECT TOP 1 [ArtifactID] FROM [Resource].[{0}] WHERE NOT [kCura_Import_Status] = 0) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", Relativity.MassImport.Constants.NATIVE_TEMP_TABLE_PREFIX + runId));
-			if (!retval)
+			if (!retval && truncateTempTables)
 			{
 				Data.Helper.TruncateTempTables(dbContext, runId);
 			}
@@ -595,6 +597,18 @@ namespace Relativity.MassImport.Core
 
 			Relativity.Core.AuditHelper.CreateAuditRecord(context, systemArtifactID, (int)Relativity.Core.AuditAction.Import, xmlSnapshot, new int?(importStats.RunTimeInMilliseconds));
 			return SendImportAuditNotificationEmailNew(icc, isFatalError, importStats);
+		}
+
+		public List<NativeImportStatus> GetNativeImportDocumentsStatus(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
+		{
+			if (!SQLInjectionHelper.IsValidRunId(runID))
+			{
+				throw new System.Exception("Invalid RunId");
+			}
+
+			var result = Data.Helper.GetImportedDocuments(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
+
+			return result;
 		}
 
 		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
