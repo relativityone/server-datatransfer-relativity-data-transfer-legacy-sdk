@@ -57,17 +57,29 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID);
 
 		[HttpPost]
-		[Route("GetNativeImportItemsStatusAsync")]
-		Task<List<NativeImportStatus>> GetNativeImportItemsStatusAsync(int workspaceID, string runID, int keyFieldID);
+		[Route("GetImportedNativesInfoAsync")]
+		Task<List<ImportedDocumentInfo>> GetImportedNativesInfoAsync(int workspaceID, string runID, int keyFieldID);
+
+		[HttpPost]
+		[Route("GetImportedImagesInfoAsync")]
+		Task<List<ImportedDocumentInfo>> GetImportedImagesInfoAsync(int workspaceID, string runID, int keyFieldID);
 
 		[HttpPost]
 		[Route("NativeRunHasErrorsDoNotTruncateAsync")]
 		Task<bool> NativeRunHasErrorsDoNotTruncateAsync(int workspaceID, string runID, string correlationID);
 
 		[HttpPost]
+		[Route("ImageRunHasErrorsDoNotTruncateAsync")]
+		Task<bool> ImageRunHasErrorsDoNotTruncateAsync(int workspaceID, string runID, string correlationID);
+
+		[HttpPost]
 		[Route("GenerateNonImageErrorFilesDoNotTruncateAsync")]
 		Task<ErrorFileKey> GenerateNonImageErrorFilesDoNotTruncateAsync(int workspaceID, string importKey, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID);
 
+
+		[HttpPost]
+		[Route("GenerateImageErrorFilesDoNotTruncateAsync")]
+		Task<ErrorFileKey> GenerateImageErrorFilesDoNotTruncateAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID);
 
 	}
 }

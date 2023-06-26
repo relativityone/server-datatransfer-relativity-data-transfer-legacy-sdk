@@ -18,6 +18,7 @@ using Relativity.API;
 namespace Relativity.DataTransfer.Legacy.Services
 {
 	using System.Collections.Generic;
+	using System.Web.UI.WebControls;
 
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
@@ -258,11 +259,20 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(existingResult);
 		}
 
-		public Task<List<NativeImportStatus>> GetNativeImportItemsStatusAsync(int workspaceID, string runID, int keyFieldID)
+		public Task<List<ImportedDocumentInfo>> GetImportedNativesInfoAsync(int workspaceID, string runID, int keyFieldID)
 		{
 			var result =
-				_massImportManager.GetNativeImportDocumentsStatus(GetBaseServiceContext(workspaceID), runID,  keyFieldID)
-					.Map<List<NativeImportStatus>>();
+				_massImportManager.GetImportedNativesInfo(GetBaseServiceContext(workspaceID), runID,  keyFieldID)
+					.Map<List<ImportedDocumentInfo>>();
+
+			return Task.FromResult(result);
+		}
+
+		public Task<List<ImportedDocumentInfo>> GetImportedImagesInfoAsync(int workspaceID, string runID, int keyFieldID)
+		{
+			var result =
+				_massImportManager.GetImportedImagesInfo(GetBaseServiceContext(workspaceID), runID, keyFieldID)
+					.Map<List<ImportedDocumentInfo>>();
 
 			return Task.FromResult(result);
 		}
@@ -276,6 +286,22 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
+		public Task<bool> ImageRunHasErrorsDoNotTruncateAsync(int workspaceID, string runID, string correlationID)
+		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
+			// there was a issue in image load logic, if there was no any correct image imported
+			// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
+			if (string.IsNullOrEmpty(runID))
+			{
+				return Task.FromResult(false);
+			}
+
+			var result = _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID, false);
+			return Task.FromResult(result);
+		}
+
 		public Task<ErrorFileKey> GenerateNonImageErrorFilesDoNotTruncateAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
 		{
 			var activity = Activity.Current;
@@ -283,7 +309,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID, false).Map<ErrorFileKey>();
 			return Task.FromResult(result);
+		}
 
+		public Task<ErrorFileKey> GenerateImageErrorFilesDoNotTruncateAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
+		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
+			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID, false).Map<ErrorFileKey>();
+			return Task.FromResult(result);
 		}
 	}
 }

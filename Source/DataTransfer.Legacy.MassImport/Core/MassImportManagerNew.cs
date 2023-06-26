@@ -459,7 +459,7 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public ErrorFileKey GenerateImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
+		public ErrorFileKey GenerateImageErrorFiles(Relativity.Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID, bool truncateTempTables = true)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
@@ -471,13 +471,13 @@ namespace Relativity.MassImport.Core
 			var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 			settings.RunID = runID;
 			settings.KeyFieldArtifactID = keyFieldID;
-			var x = new Data.Image(icc.ChicagoContext.DBContext, settings, this.CorrelationLogger).GenerateErrorFiles(caseArtifactID);
+			var x = new Data.Image(icc.ChicagoContext.DBContext, settings, this.CorrelationLogger).GenerateErrorFiles(caseArtifactID, truncateTempTables);
 			timekeeper.MarkEnd("Generate Errors");
 			timekeeper.GenerateCsvReportItemsAsRows("_webapi_image", @"C:\");
 			return x;
 		}
 
-		public bool ImageRunHasErrors(Relativity.Core.ICoreContext icc, string runId)
+		public bool ImageRunHasErrors(Relativity.Core.ICoreContext icc, string runId, bool truncateTempTables = true)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runId))
 			{
@@ -485,7 +485,7 @@ namespace Relativity.MassImport.Core
 			}
 
 			bool retval = (bool)icc.ChicagoContext.DBContext.ExecuteSqlStatementAsScalar(string.Format("SELECT CASE WHEN EXISTS(SELECT TOP 1 [DocumentIdentifier] FROM [Resource].[{0}] WHERE NOT [Status] = 0) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", Relativity.MassImport.Constants.IMAGE_TEMP_TABLE_PREFIX + runId));
-			if (!retval)
+			if (!retval && truncateTempTables)
 			{
 				var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 				settings.RunID = runId;
@@ -599,7 +599,7 @@ namespace Relativity.MassImport.Core
 			return SendImportAuditNotificationEmailNew(icc, isFatalError, importStats);
 		}
 
-		public List<NativeImportStatus> GetNativeImportDocumentsStatus(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
+		public List<ImportedDocumentInfo> GetImportedNativesInfo(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
@@ -611,6 +611,17 @@ namespace Relativity.MassImport.Core
 			return result;
 		}
 
+		public List<ImportedDocumentInfo> GetImportedImagesInfo(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
+		{
+			if (!SQLInjectionHelper.IsValidRunId(runID))
+			{
+				throw new System.Exception("Invalid RunId");
+			}
+
+			var result = Data.Helper.GetImportedImages(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
+
+			return result;
+		}
 		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
 		{
 			string destinationPath = null;

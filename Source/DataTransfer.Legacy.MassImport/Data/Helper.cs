@@ -10,6 +10,7 @@ using Relativity.Logging;
 namespace Relativity.MassImport.Data
 {
 	using Relativity.MassImport.DTO;
+	using System.Web.UI.WebControls;
 
 	internal class Helper
 	{
@@ -269,9 +270,9 @@ FROM
 
 			return retval;
 		}
-		public static List<NativeImportStatus> GetImportedDocuments(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		public static List<ImportedDocumentInfo> GetImportedDocuments(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
 		{
-			var result = new List<NativeImportStatus>();
+			var result = new List<ImportedDocumentInfo>();
 			System.Data.SqlClient.SqlDataReader reader = null;
 			try
 			{
@@ -280,13 +281,41 @@ FROM
 				{
 					while (reader.Read())
 					{
-							var artifactID = reader.GetInt32(0);
-							var originalLineNumber = reader.GetInt32(1);
-							var status = reader.GetInt64(2);
-							var identifier = reader.GetString(3);
+						var originalLineNumber = reader.GetInt32(0);
+							var status = reader.GetInt64(1);
+							var identifier = reader.GetString(2);
 
-							var nativeImportStatus = new NativeImportStatus(artifactID, identifier, status, originalLineNumber);
+							var nativeImportStatus = new ImportedDocumentInfo(identifier, status, originalLineNumber);
 							result.Add(nativeImportStatus);
+					}
+				}
+			}
+			finally
+			{
+				kCura.Data.RowDataGateway.Helper.CloseDataReader(reader);
+				context.ReleaseConnection();
+			}
+
+			return result;
+		}
+
+		public static List<ImportedDocumentInfo> GetImportedImages(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		{
+			var result = new List<ImportedDocumentInfo>();
+			System.Data.SqlClient.SqlDataReader reader = null;
+			try
+			{
+				reader = context.ExecuteSQLStatementAsReader(ImportedImagesSql(context, runID, keyFieldID));
+				if (reader.HasRows)
+				{
+					while (reader.Read())
+					{
+						var originalLineNumber = reader.GetInt32(0);
+						var status = reader.GetInt64(1);
+						var identifier = reader.GetString(2);
+
+						var importStatus = new ImportedDocumentInfo(identifier, status, originalLineNumber);
+						result.Add(importStatus);
 					}
 				}
 			}
@@ -327,7 +356,6 @@ ORDER BY
 IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
 
 SELECT
-	[ArtifactID],
 	[kCura_Import_OriginalLineNumber],
 	[kCura_Import_Status],
 	[{identifierColumnName}]
@@ -338,6 +366,22 @@ ORDER BY
 	kCura_Import_OriginalLineNumber";
 
 			return query;
+		}
+
+		public static string ImportedImagesSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
+		{
+			string tableName = Constants.IMAGE_TEMP_TABLE_PREFIX + runID;
+			return $@"SELECT
+		[OriginalLineNumber],
+		[Status],
+		[DocumentIdentifier]
+	FROM
+		[Resource].[{tableName}]
+	WHERE
+		[Status] = {(long) Relativity.MassImport.DTO.ImportStatus.Pending}
+	ORDER BY
+		[OriginalLineNumber]";
+
 		}
 
 		public static void TruncateTempTables(kCura.Data.RowDataGateway.BaseContext context, string runID)

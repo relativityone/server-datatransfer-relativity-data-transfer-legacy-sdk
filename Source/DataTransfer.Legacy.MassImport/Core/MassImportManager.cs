@@ -36,14 +36,14 @@ namespace Relativity.Core.Service
 			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval));
 		}
 		
-		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
+		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID, bool truncateTempTable = true)
 		{
-			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID);
+			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID, truncateTempTable);
 		}
 		
-		public bool ImageRunHasErrors(Core.ICoreContext icc, string runId)
+		public bool ImageRunHasErrors(Core.ICoreContext icc, string runId, bool truncateTempTables = true)
 		{
-			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId);
+			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId, truncateTempTables);
 		}
 
 		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportResults retval)
@@ -61,11 +61,15 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.GenerateNonImageErrorFiles(icc, runID, artifactTypeID, writeHeader, keyFieldID, truncateTempTable);
 		}
 
-		public List<NativeImportStatus> GetNativeImportDocumentsStatus(Core.ICoreContext icc, string runID, int keyFieldID)
+		public List<ImportedDocumentInfo> GetImportedNativesInfo(Core.ICoreContext icc, string runID, int keyFieldID)
 		{
-			return _massImportManagerLazy.Value.GetNativeImportDocumentsStatus(icc, runID, keyFieldID);
+			return _massImportManagerLazy.Value.GetImportedNativesInfo(icc, runID, keyFieldID);
 		}
 
+		public List<ImportedDocumentInfo> GetImportedImagesInfo(Core.ICoreContext icc, string runID, int keyFieldID)
+		{
+			return _massImportManagerLazy.Value.GetImportedImagesInfo(icc, runID, keyFieldID);
+		}
 		/// <summary>
 		/// Return a SqlDataReader containing errors from a mass import operation.  It is important to close
 		/// the context's connection when you are through using the reader.

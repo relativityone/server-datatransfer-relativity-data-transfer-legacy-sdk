@@ -359,7 +359,7 @@ SELECT
 		#endregion
 
 		#region Error File Generation
-		public ErrorFileKey GenerateErrorFiles(int caseArtifactID)
+		public ErrorFileKey GenerateErrorFiles(int caseArtifactID, bool truncateTempTables = true)
 		{
 			var retval = new ErrorFileKey();
 			string errorFileName = "";
@@ -413,7 +413,10 @@ SELECT
 
 			retval.LogKey = errorFileName;
 			retval.OpticonKey = errorRowsName;
-			TruncateTempTables();
+			if (truncateTempTables)
+			{
+				TruncateTempTables();
+			}
 			return retval;
 		}
 
