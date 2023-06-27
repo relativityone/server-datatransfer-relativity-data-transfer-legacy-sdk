@@ -304,7 +304,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 		}
 
 		[Test]
-		public void GetResult_ReturnsNull_WhenSqlReturnsEmptyResults()
+		public void GetMassImportResult_ReturnsNull_WhenSqlReturnsEmptyResults()
 		{
 			// Arrange
 			string runID = Guid.NewGuid().ToString().Replace("-", "_");
@@ -317,7 +317,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 				.Returns(new List<ResultCacheItem>());
 
 			// Act
-			var result = _sut.GetResult(WorkspaceID, runID);
+			var result = _sut.GetMassImportResult(WorkspaceID, runID);
 
 			// Assert
 			result.Should().BeNull();
@@ -325,7 +325,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 		}
 
 		[Test]
-		public void GetResult_ReturnExistingResult_WhenItemExists()
+		public void GetMassImportResult_ReturnExistingResult_WhenItemExists()
 		{
 			// Arrange
 			string runID = Guid.NewGuid().ToString().Replace("-", "_");
@@ -352,7 +352,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 				});
 
 			// Act
-			var result = _sut.GetResult(WorkspaceID, runID);
+			var result = _sut.GetMassImportResult(WorkspaceID, runID);
 
 			// Assert
 			result.Should().BeEquivalentTo(expectedResult);
@@ -361,7 +361,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 		}
 
 		[Test]
-		public void GetGet_ReturnsNull_WhenItemExistsButStillInProgress()
+		public void GetMassImportResult_ThrowsException_WhenItemExistsButNotFinished()
 		{
 			// Arrange
 			string runID = Guid.NewGuid().ToString().Replace("-", "_");
@@ -379,11 +379,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 					new ResultCacheItem(batchID, DateTime.Now.AddSeconds(-5), finishedOn, null, isNew: false),
 				});
 
-			// Act
-			var result = _sut.GetResult(WorkspaceID, runID);
+			// Act & Assert
+			_sut.Invoking(x => x.GetMassImportResult(WorkspaceID, runID))
+				.Should().Throw<ServiceException>().WithMessage("Batch is not finished yet.");
 
-			// Assert
-			result.Should().Be(null);
 			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
 		}
 	}

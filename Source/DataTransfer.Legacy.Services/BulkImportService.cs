@@ -254,7 +254,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID)
 		{
-			var existingResult = _batchResultCache.GetResult(workspaceID, runID);
+			var existingResult = _batchResultCache.GetMassImportResult(workspaceID, runID);
 
 			return Task.FromResult(existingResult);
 		}
