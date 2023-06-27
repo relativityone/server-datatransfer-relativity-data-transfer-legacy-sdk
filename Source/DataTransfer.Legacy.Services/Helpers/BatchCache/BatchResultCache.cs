@@ -246,12 +246,14 @@ END ";
 			var results = _sqlExecutor.ExecuteReader(workspaceID, query, null, ConvertDataRecordToItem);
 			if (results.Count == 0)
 			{
+				_logger.LogWarning("There is no data in results cache.");
+
 				return null;
 			}
 
 			if (results.Count > 1)
 			{
-				_logger.LogError("There is more than one row: {rows}, values: {@values}, using the first row {@row}", results.Count, results, results.First());
+				_logger.LogWarning("There is more than one row: {rows}, values: {@values}, using the first row {@row}", results.Count, results, results.First());
 			}
 
 			var result = results[0];
@@ -263,7 +265,7 @@ END ";
 
 			if (result.FinishedOn.HasValue == false)
 			{
-				_logger.LogError("Result exists but it is not finished yet {runID}, {@result}", runID, result);
+				_logger.LogWarning("Result exists but it is not finished yet {runID}, {@result}", runID, result);
 				return null;
 			}
 

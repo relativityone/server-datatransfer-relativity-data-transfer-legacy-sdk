@@ -10,7 +10,6 @@ using Relativity.Logging;
 namespace Relativity.MassImport.Data
 {
 	using Relativity.MassImport.DTO;
-	using System.Web.UI.WebControls;
 
 	internal class Helper
 	{

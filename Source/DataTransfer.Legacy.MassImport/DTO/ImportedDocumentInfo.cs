@@ -8,6 +8,10 @@
 
 		public int OriginalLineNumber { get; set; }
 
+		public ImportedDocumentInfo()
+		{
+			
+		}
 		public ImportedDocumentInfo(string identifier, long status, int originalLineNumber)
 		{
 			Identifier = identifier;
