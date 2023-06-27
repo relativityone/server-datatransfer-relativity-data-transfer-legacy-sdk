@@ -72,8 +72,8 @@ namespace Relativity.DataTransfer.Legacy.Tests
 				return
 					(keplerService.Name == "IProductionService" && method == "ReadWithoutValidationAsync")
 					|| (keplerService.Name == "IBulkImportService" && (method == "GetBulkImportResultAsync" 
-						|| method == "GetImportedNativesInfoAsync"
-						|| method == "GetImportedImagesInfoAsync"
+						|| method == "GetIdentifiersOfImportedDocumentsAsync"
+						|| method == "GetIdentifiersOfImportedImagesAsync"
 						|| method == "NativeRunHasErrorsDoNotTruncateAsync"
 						|| method == "ImageRunHasErrorsDoNotTruncateAsync"
 						|| method == "GenerateNonImageErrorFilesDoNotTruncateAsync"

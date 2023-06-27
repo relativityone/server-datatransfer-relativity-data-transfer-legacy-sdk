@@ -259,20 +259,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(existingResult);
 		}
 
-		public Task<List<ImportedDocumentInfo>> GetImportedNativesInfoAsync(int workspaceID, string runID, int keyFieldID)
+		public Task<List<string>> GetIdentifiersOfImportedDocumentsAsync(int workspaceID, string runID, int keyFieldID)
 		{
 			var result =
-				_massImportManager.GetImportedNativesInfo(GetBaseServiceContext(workspaceID), runID,  keyFieldID)
-					.Map<List<ImportedDocumentInfo>>();
+				_massImportManager.GetIdentifiersOfImportedDocuments(GetBaseServiceContext(workspaceID), runID, keyFieldID);
 
 			return Task.FromResult(result);
 		}
 
-		public Task<List<ImportedDocumentInfo>> GetImportedImagesInfoAsync(int workspaceID, string runID)
+		public Task<List<string>> GetIdentifiersOfImportedImagesAsync(int workspaceID, string runID)
 		{
 			var result =
-				_massImportManager.GetImportedImagesInfo(GetBaseServiceContext(workspaceID), runID)
-					.Map<List<ImportedDocumentInfo>>();
+				_massImportManager.GetIdentifiersOfImportedImages(GetBaseServiceContext(workspaceID), runID);
 
 			return Task.FromResult(result);
 		}

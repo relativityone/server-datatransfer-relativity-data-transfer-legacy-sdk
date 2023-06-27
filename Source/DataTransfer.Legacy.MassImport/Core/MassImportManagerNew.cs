@@ -613,26 +613,26 @@ namespace Relativity.MassImport.Core
 			return SendImportAuditNotificationEmailNew(icc, isFatalError, importStats);
 		}
 
-		public List<ImportedDocumentInfo> GetImportedNativesInfo(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
+		public List<string> GetIdentifiersOfImportedDocuments(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
 				throw new System.Exception("Invalid RunId");
 			}
 
-			var result = Data.Helper.GetImportedDocuments(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
+			var result = Data.Helper.GetIdentifiersOfImportedDocuments(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
 
 			return result;
 		}
 
-		public List<ImportedDocumentInfo> GetImportedImagesInfo(Relativity.Core.ICoreContext icc, string runID)
+		public List<string> GetIdentifiersOfImportedImages(Relativity.Core.ICoreContext icc, string runID)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
 				throw new System.Exception("Invalid RunId");
 			}
 
-			var result = Data.Helper.GetImportedImages(icc.ChicagoContext.DBContext, runID);
+			var result = Data.Helper.GetIdentifiersOfImportedImages(icc.ChicagoContext.DBContext, runID);
 
 			return result;
 		}

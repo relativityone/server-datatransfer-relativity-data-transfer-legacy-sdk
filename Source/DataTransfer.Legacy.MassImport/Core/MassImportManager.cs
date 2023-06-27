@@ -62,14 +62,14 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.GenerateNonImageErrorFiles(icc, runID, artifactTypeID, writeHeader, keyFieldID, truncateTempTable);
 		}
 
-		public List<ImportedDocumentInfo> GetImportedNativesInfo(Core.ICoreContext icc, string runID, int keyFieldID)
+		public List<string> GetIdentifiersOfImportedDocuments(Core.ICoreContext icc, string runID, int keyFieldID)
 		{
-			return _massImportManagerLazy.Value.GetImportedNativesInfo(icc, runID, keyFieldID);
+			return _massImportManagerLazy.Value.GetIdentifiersOfImportedDocuments(icc, runID, keyFieldID);
 		}
 
-		public List<ImportedDocumentInfo> GetImportedImagesInfo(Core.ICoreContext icc, string runID)
+		public List<string> GetIdentifiersOfImportedImages(Core.ICoreContext icc, string runID)
 		{
-			return _massImportManagerLazy.Value.GetImportedImagesInfo(icc, runID);
+			return _massImportManagerLazy.Value.GetIdentifiersOfImportedImages(icc, runID);
 		}
 		/// <summary>
 		/// Return a SqlDataReader containing errors from a mass import operation.  It is important to close

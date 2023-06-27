@@ -269,9 +269,9 @@ FROM
 
 			return retval;
 		}
-		public static List<ImportedDocumentInfo> GetImportedDocuments(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		public static List<string> GetIdentifiersOfImportedDocuments(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
 		{
-			var result = new List<ImportedDocumentInfo>();
+			var result = new List<string>();
 			System.Data.SqlClient.SqlDataReader reader = null;
 			try
 			{
@@ -280,11 +280,8 @@ FROM
 				{
 					while (reader.Read())
 					{
-							var status = reader.GetInt64(0);
-							var identifier = reader.GetString(1);
-
-							var nativeImportStatus = new ImportedDocumentInfo(identifier, status);
-							result.Add(nativeImportStatus);
+						var identifier = reader.GetString(0);
+						result.Add(identifier);
 					}
 				}
 			}
@@ -297,9 +294,9 @@ FROM
 			return result;
 		}
 
-		public static List<ImportedDocumentInfo> GetImportedImages(kCura.Data.RowDataGateway.BaseContext context, string runID)
+		public static List<string> GetIdentifiersOfImportedImages(kCura.Data.RowDataGateway.BaseContext context, string runID)
 		{
-			var result = new List<ImportedDocumentInfo>();
+			var result = new List<string>();
 			System.Data.SqlClient.SqlDataReader reader = null;
 			try
 			{
@@ -308,11 +305,8 @@ FROM
 				{
 					while (reader.Read())
 					{
-						var status = reader.GetInt64(1);
-						var identifier = reader.GetString(2);
-
-						var importStatus = new ImportedDocumentInfo(identifier, status);
-						result.Add(importStatus);
+						var identifier = reader.GetString(0);
+						result.Add(identifier);
 					}
 				}
 			}
@@ -348,12 +342,11 @@ ORDER BY
 		public static string ImportedDocumentsSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
 		{
 			string tableName = Constants.NATIVE_TEMP_TABLE_PREFIX + runID;
-			string identifierColumnName = context.ExecuteSqlStatementAsScalar(string.Format("SELECT TOP 1 [ColumnName] FROM [ArtifactViewField] INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[ArtifactID] = {0}", keyFieldID)).ToString();
+			string identifierColumnName = context.ExecuteSqlStatementAsScalar(string.Format("SELECT TOP 1 [ColumnName] FROM [ArtifactViewField] INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[HeaderName] = {0}", keyFieldID)).ToString();
 			string query = $@"
 IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
 
 SELECT
-	[kCura_Import_Status],
 	[{identifierColumnName}]
 FROM [Resource].[{tableName}]
 WHERE
@@ -368,7 +361,6 @@ ORDER BY
 		{
 			string tableName = Constants.IMAGE_TEMP_TABLE_PREFIX + runID;
 			return $@"SELECT
-		[Status],
 		[DocumentIdentifier]
 	FROM
 		[Resource].[{tableName}]
