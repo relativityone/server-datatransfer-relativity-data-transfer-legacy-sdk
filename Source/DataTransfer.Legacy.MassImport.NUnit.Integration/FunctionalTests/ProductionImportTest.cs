@@ -14,8 +14,6 @@ using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImageLoadInfo = Relativity.MassImport.DTO.ImageLoadInfo;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
-using Moq;
-using Relativity.API;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -41,8 +39,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			const bool inRepository = true;
 			var imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated, hasPDF).ConfigureAwait(false);
 			
-
-			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
+			MassImportManager massImportManager = new MassImportManager(false, HelperMock.Object);
 			var productionSetArtifactId = await ProductionHelper.CreateProductionSet(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false);
 
 			// Act
@@ -58,6 +55,11 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
 			this.ThenTheImportWasSuccessful(result, expectedArtifactsCreated, expectedArtifactsUpdated);
 			Assert.AreEqual(expectedArtifactsUpdated, 0);
+			var fileCount = ProductionHelper.GetNumberOfImportedFiles(TestWorkspace, productionSetArtifactId, hasPDF ? 8 : 3);
+			Assert.AreEqual(1, fileCount, "Wrong number of imported files");
+
+			var prodInformationCount = ProductionHelper.GetNumberOfProductionInformationEntries(TestWorkspace, productionSetArtifactId, hasPDF ? "WithPDF = 1" : "WithImages = 1");
+			Assert.AreEqual(1, prodInformationCount, "Wrong number of entries in ProductionInformation table");
 		}
 
 		private async Task<ImageLoadInfo> CreateSampleImageLoadInfoAsync(int numberOfArtifactsToCreate, bool hasPDF)

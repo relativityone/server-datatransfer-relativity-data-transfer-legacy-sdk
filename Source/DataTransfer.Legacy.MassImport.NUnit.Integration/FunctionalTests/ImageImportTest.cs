@@ -15,6 +15,7 @@ using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
 using Moq;
 using Relativity.API;
+using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -38,7 +39,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			const bool inRepository = true;
 			ImageLoadInfo imageLoadInfo = await this.CreateSampleImageLoadInfoAsync(expectedArtifactsCreated).ConfigureAwait(false);
-			MassImportManager massImportManager = new MassImportManager(false, new Mock<IHelper>().Object);
+			MassImportManager massImportManager = new MassImportManager(false, HelperMock.Object);
 
 			// Act
 			MassImportManagerBase.MassImportResults result =  massImportManager.RunImageImport(this.CoreContext.ChicagoContext, imageLoadInfo, inRepository);
