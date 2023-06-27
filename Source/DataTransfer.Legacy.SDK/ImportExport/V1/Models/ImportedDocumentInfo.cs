@@ -5,7 +5,5 @@
 		public string Identifier { get; set; }
 
 		public long Status { get; set; }
-
-		public int OriginalLineNumber { get; set; }
 	}
 }
