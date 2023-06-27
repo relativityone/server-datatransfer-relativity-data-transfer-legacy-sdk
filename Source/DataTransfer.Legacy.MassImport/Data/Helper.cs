@@ -280,11 +280,10 @@ FROM
 				{
 					while (reader.Read())
 					{
-						var originalLineNumber = reader.GetInt32(0);
-							var status = reader.GetInt64(1);
-							var identifier = reader.GetString(2);
+							var status = reader.GetInt64(0);
+							var identifier = reader.GetString(1);
 
-							var nativeImportStatus = new ImportedDocumentInfo(identifier, status, originalLineNumber);
+							var nativeImportStatus = new ImportedDocumentInfo(identifier, status);
 							result.Add(nativeImportStatus);
 					}
 				}
@@ -298,22 +297,21 @@ FROM
 			return result;
 		}
 
-		public static List<ImportedDocumentInfo> GetImportedImages(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		public static List<ImportedDocumentInfo> GetImportedImages(kCura.Data.RowDataGateway.BaseContext context, string runID)
 		{
 			var result = new List<ImportedDocumentInfo>();
 			System.Data.SqlClient.SqlDataReader reader = null;
 			try
 			{
-				reader = context.ExecuteSQLStatementAsReader(ImportedImagesSql(context, runID, keyFieldID));
+				reader = context.ExecuteSQLStatementAsReader(ImportedImagesSql(runID));
 				if (reader.HasRows)
 				{
 					while (reader.Read())
 					{
-						var originalLineNumber = reader.GetInt32(0);
 						var status = reader.GetInt64(1);
 						var identifier = reader.GetString(2);
 
-						var importStatus = new ImportedDocumentInfo(identifier, status, originalLineNumber);
+						var importStatus = new ImportedDocumentInfo(identifier, status);
 						result.Add(importStatus);
 					}
 				}
@@ -355,7 +353,6 @@ ORDER BY
 IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
 
 SELECT
-	[kCura_Import_OriginalLineNumber],
 	[kCura_Import_Status],
 	[{identifierColumnName}]
 FROM [Resource].[{tableName}]
@@ -367,11 +364,10 @@ ORDER BY
 			return query;
 		}
 
-		public static string ImportedImagesSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
+		public static string ImportedImagesSql(string runID)
 		{
 			string tableName = Constants.IMAGE_TEMP_TABLE_PREFIX + runID;
 			return $@"SELECT
-		[OriginalLineNumber],
 		[Status],
 		[DocumentIdentifier]
 	FROM

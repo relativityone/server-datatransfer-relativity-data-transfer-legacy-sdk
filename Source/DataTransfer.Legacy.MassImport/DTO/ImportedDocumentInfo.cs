@@ -6,17 +6,14 @@
 
 		public long Status { get; set; }
 
-		public int OriginalLineNumber { get; set; }
-
 		public ImportedDocumentInfo()
 		{
 			
 		}
-		public ImportedDocumentInfo(string identifier, long status, int originalLineNumber)
+		public ImportedDocumentInfo(string identifier, long status)
 		{
 			Identifier = identifier;
 			Status = status;
-			OriginalLineNumber = originalLineNumber;
 		}
 	}
 

@@ -62,7 +62,7 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 
 		[HttpPost]
 		[Route("GetImportedImagesInfoAsync")]
-		Task<List<ImportedDocumentInfo>> GetImportedImagesInfoAsync(int workspaceID, string runID, int keyFieldID);
+		Task<List<ImportedDocumentInfo>> GetImportedImagesInfoAsync(int workspaceID, string runID);
 
 		[HttpPost]
 		[Route("NativeRunHasErrorsDoNotTruncateAsync")]

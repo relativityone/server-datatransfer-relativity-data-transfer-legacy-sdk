@@ -66,9 +66,9 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.GetImportedNativesInfo(icc, runID, keyFieldID);
 		}
 
-		public List<ImportedDocumentInfo> GetImportedImagesInfo(Core.ICoreContext icc, string runID, int keyFieldID)
+		public List<ImportedDocumentInfo> GetImportedImagesInfo(Core.ICoreContext icc, string runID)
 		{
-			return _massImportManagerLazy.Value.GetImportedImagesInfo(icc, runID, keyFieldID);
+			return _massImportManagerLazy.Value.GetImportedImagesInfo(icc, runID);
 		}
 		/// <summary>
 		/// Return a SqlDataReader containing errors from a mass import operation.  It is important to close

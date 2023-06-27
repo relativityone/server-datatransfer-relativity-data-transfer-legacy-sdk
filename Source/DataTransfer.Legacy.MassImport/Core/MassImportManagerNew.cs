@@ -611,14 +611,14 @@ namespace Relativity.MassImport.Core
 			return result;
 		}
 
-		public List<ImportedDocumentInfo> GetImportedImagesInfo(Relativity.Core.ICoreContext icc, string runID, int keyFieldID)
+		public List<ImportedDocumentInfo> GetImportedImagesInfo(Relativity.Core.ICoreContext icc, string runID)
 		{
 			if (!SQLInjectionHelper.IsValidRunId(runID))
 			{
 				throw new System.Exception("Invalid RunId");
 			}
 
-			var result = Data.Helper.GetImportedImages(icc.ChicagoContext.DBContext, CorrelationLogger, runID, icc.ChicagoContext.AppArtifactID, keyFieldID);
+			var result = Data.Helper.GetImportedImages(icc.ChicagoContext.DBContext, runID);
 
 			return result;
 		}

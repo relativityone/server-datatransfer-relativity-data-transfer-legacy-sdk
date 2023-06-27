@@ -83,7 +83,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
 			FluentActions.Invoking(() =>
-					_uut.GetImportedImagesInfoAsync(Any.Integer(), Any.String(), Any.Integer()))
+					_uut.GetImportedImagesInfoAsync(Any.Integer(), Any.String()))
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
 		}
@@ -156,7 +156,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 
 			FluentActions.Invoking(() =>
-					_uut.GetImportedImagesInfoAsync(Any.Integer(), Any.String(), Any.Integer()))
+					_uut.GetImportedImagesInfoAsync(Any.Integer(), Any.String()))
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 		}
 	}
