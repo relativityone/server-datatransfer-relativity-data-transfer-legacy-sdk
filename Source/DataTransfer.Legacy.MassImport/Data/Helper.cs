@@ -342,7 +342,7 @@ ORDER BY
 		public static string ImportedDocumentsSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
 		{
 			string tableName = Constants.NATIVE_TEMP_TABLE_PREFIX + runID;
-			string identifierColumnName = context.ExecuteSqlStatementAsScalar(string.Format("SELECT TOP 1 [ColumnName] FROM [ArtifactViewField] INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[HeaderName] = {0}", keyFieldID)).ToString();
+			string identifierColumnName = context.ExecuteSqlStatementAsScalar(string.Format("SELECT TOP 1 [ColumnName] FROM [ArtifactViewField] INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[ArtifactID] = {0}", keyFieldID)).ToString();
 			string query = $@"
 IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
 
