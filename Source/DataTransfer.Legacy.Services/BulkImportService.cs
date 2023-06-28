@@ -14,12 +14,10 @@ using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
 using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 using Relativity.API;
+using System.Collections.Generic;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
-	using System.Collections.Generic;
-	using System.Web.UI.WebControls;
-
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]

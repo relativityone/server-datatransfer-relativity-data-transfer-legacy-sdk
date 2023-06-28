@@ -9,8 +9,6 @@ using Relativity.Logging;
 
 namespace Relativity.MassImport.Data
 {
-	using Relativity.MassImport.DTO;
-
 	internal class Helper
 	{
 		public static string GenerateAuditInsertClause(int auditActionID, int userID, string requestOrigination, string recordOrigination, string artifactIdSourceTable)

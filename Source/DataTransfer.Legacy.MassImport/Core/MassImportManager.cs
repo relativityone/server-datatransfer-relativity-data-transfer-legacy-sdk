@@ -6,14 +6,11 @@ using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.API;
 using Relativity.Productions.Services.Private.V1;
+using System.Collections.Generic;
 
 // TODO: adjust namespace with Relativity, join with Api/MassImportManager https://jira.kcura.com/browse/REL-482642
 namespace Relativity.Core.Service
 {
-	using Relativity.MassImport.DTO;
-
-	using System.Collections.Generic;
-
 	public class MassImportManager : MassImportManagerBase
 	{
 		private bool CollectIDsOnCreate { get; set; }
