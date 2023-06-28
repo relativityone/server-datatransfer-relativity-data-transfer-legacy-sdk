@@ -15,6 +15,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers.BatchCache
 		/// <param name="batchID"></param>
 		/// <returns></returns>
 		MassImportResults GetCreateOrThrow(int workspaceID, string runID, string batchID);
+
+		MassImportResults GetMassImportResult(int workspaceID, string runID);
 		void Update(int workspaceID, string runID, string batchID, MassImportResults massImportResult);
 		void Cleanup(int workspaceID, string runID);
 	}

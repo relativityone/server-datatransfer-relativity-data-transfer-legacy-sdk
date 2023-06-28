@@ -2,7 +2,10 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [0.3.37]
+## [0.3.39]
+- REL-832881 - Add endpoints to retrive result from latest batch
+
+## [0.3.38]
 - REL-832881 - use Production private API IInternalProductionImportExportManager for porduction PDF import
 
 ## [0.3.37]

@@ -73,6 +73,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			FluentActions.Invoking(() =>
 					_uut.NativeRunHasErrorsAsync(Any.Integer(), Any.String(), Any.String()))
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
+			FluentActions.Invoking(() =>
+					_uut.GetBulkImportResultAsync(Any.Integer(), Any.String()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
+			FluentActions.Invoking(() =>
+					_uut.GetIdentifiersOfImportedDocumentsAsync(Any.Integer(), Any.String(), Any.Integer()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
+			FluentActions.Invoking(() =>
+					_uut.GetIdentifiersOfImportedImagesAsync(Any.Integer(), Any.String()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
 		}
 
 		[Test]
@@ -132,6 +145,18 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 
 			FluentActions.Invoking(() =>
 					_uut.NativeRunHasErrorsAsync(Any.Integer(), Any.String(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.GetBulkImportResultAsync(Any.Integer(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.GetIdentifiersOfImportedDocumentsAsync(Any.Integer(), Any.String(), Any.Integer()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.GetIdentifiersOfImportedImagesAsync(Any.Integer(), Any.String()))
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 		}
 	}

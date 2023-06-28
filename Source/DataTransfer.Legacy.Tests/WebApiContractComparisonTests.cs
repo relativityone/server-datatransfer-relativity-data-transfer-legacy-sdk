@@ -57,7 +57,7 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			var missingMethods = new List<string>();
 			foreach (var method in keplerService.Methods)
 			{
-				if (keplerService.Name == "IProductionService" && method.Name == "ReadWithoutValidationAsync")
+				if (IsExceptionMethod(method.Name))
 				{
 					continue; // skip this method
 				}
@@ -67,6 +67,19 @@ namespace Relativity.DataTransfer.Legacy.Tests
 				}
 			}
 
+			bool IsExceptionMethod(string method)
+			{
+				return
+					(keplerService.Name == "IProductionService" && method == "ReadWithoutValidationAsync")
+					|| (keplerService.Name == "IBulkImportService" && (method == "GetBulkImportResultAsync" 
+						|| method == "GetIdentifiersOfImportedDocumentsAsync"
+						|| method == "GetIdentifiersOfImportedImagesAsync"
+						|| method == "NativeRunHasErrorsDoNotTruncateAsync"
+						|| method == "ImageRunHasErrorsDoNotTruncateAsync"
+						|| method == "GenerateNonImageErrorFilesDoNotTruncateAsync"
+						|| method == "GenerateImageErrorFilesDoNotTruncateAsync")
+						);
+			}
 			missingMethods.Should().BeEmpty("All Kepler endpoints should have corresponding WebAPI endpoints");
 		}
 

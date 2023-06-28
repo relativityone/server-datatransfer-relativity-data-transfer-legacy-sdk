@@ -219,7 +219,7 @@ FROM
 			}
 		}
 
-		public static ErrorFileKey GenerateNonImageErrorFiles(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		public static ErrorFileKey GenerateNonImageErrorFiles(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID, bool truncateTempTable = true)
 		{
 			var retval = new ErrorFileKey();
 			string errorFileName = "";
@@ -260,8 +260,61 @@ FROM
 			}
 
 			retval.LogKey = errorFileName;
-			TruncateTempTables(context, runID);
+			if (truncateTempTable)
+			{
+				TruncateTempTables(context, runID);
+			}
+
 			return retval;
+		}
+		public static List<string> GetIdentifiersOfImportedDocuments(kCura.Data.RowDataGateway.BaseContext context, ILog logger, string runID, int caseArtifactID, int keyFieldID)
+		{
+			var result = new List<string>();
+			System.Data.SqlClient.SqlDataReader reader = null;
+			try
+			{
+				reader = context.ExecuteSQLStatementAsReader(ImportedDocumentsSql(context, runID, keyFieldID));
+				if (reader.HasRows)
+				{
+					while (reader.Read())
+					{
+						var identifier = reader.GetString(0);
+						result.Add(identifier);
+					}
+				}
+			}
+			finally
+			{
+				kCura.Data.RowDataGateway.Helper.CloseDataReader(reader);
+				context.ReleaseConnection();
+			}
+
+			return result;
+		}
+
+		public static List<string> GetIdentifiersOfImportedImages(kCura.Data.RowDataGateway.BaseContext context, string runID)
+		{
+			var result = new List<string>();
+			System.Data.SqlClient.SqlDataReader reader = null;
+			try
+			{
+				reader = context.ExecuteSQLStatementAsReader(ImportedImagesSql(runID));
+				if (reader.HasRows)
+				{
+					while (reader.Read())
+					{
+						var identifier = reader.GetString(0);
+						result.Add(identifier);
+					}
+				}
+			}
+			finally
+			{
+				kCura.Data.RowDataGateway.Helper.CloseDataReader(reader);
+				context.ReleaseConnection();
+			}
+
+			return result;
 		}
 
 		public static string ErrorSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
@@ -282,6 +335,38 @@ ORDER BY
 	kCura_Import_OriginalLineNumber";
 
 			return query;
+		}
+
+		public static string ImportedDocumentsSql(kCura.Data.RowDataGateway.BaseContext context, string runID, int keyFieldID)
+		{
+			string tableName = Constants.NATIVE_TEMP_TABLE_PREFIX + runID;
+			string identifierColumnName = context.ExecuteSqlStatementAsScalar(string.Format("SELECT TOP 1 [ColumnName] FROM [ArtifactViewField] INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[ArtifactID] = {0}", keyFieldID)).ToString();
+			string query = $@"
+IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
+
+SELECT
+	[{identifierColumnName}]
+FROM [Resource].[{tableName}]
+WHERE
+	[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+ORDER BY
+	kCura_Import_OriginalLineNumber";
+
+			return query;
+		}
+
+		public static string ImportedImagesSql(string runID)
+		{
+			string tableName = Constants.IMAGE_TEMP_TABLE_PREFIX + runID;
+			return $@"SELECT
+		[DocumentIdentifier]
+	FROM
+		[Resource].[{tableName}]
+	WHERE
+		[Status] = {(long) Relativity.MassImport.DTO.ImportStatus.Pending}
+	ORDER BY
+		[OriginalLineNumber]";
+
 		}
 
 		public static void TruncateTempTables(kCura.Data.RowDataGateway.BaseContext context, string runID)

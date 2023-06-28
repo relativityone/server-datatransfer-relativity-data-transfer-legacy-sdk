@@ -6,6 +6,7 @@ using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.API;
 using Relativity.Productions.Services.Private.V1;
+using System.Collections.Generic;
 
 // TODO: adjust namespace with Relativity, join with Api/MassImportManager https://jira.kcura.com/browse/REL-482642
 namespace Relativity.Core.Service
@@ -33,14 +34,14 @@ namespace Relativity.Core.Service
 			return ConvertResults(_massImportManagerLazy.Value.AttemptRunProductionImageImport(context, settings, productionArtifactID, inRepository, retval));
 		}
 		
-		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID)
+		public ErrorFileKey GenerateImageErrorFiles(Core.ICoreContext icc, string runID, int caseArtifactID, bool writeHeader, int keyFieldID, bool truncateTempTable = true)
 		{
-			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID);
+			return _massImportManagerLazy.Value.GenerateImageErrorFiles(icc, runID, caseArtifactID, writeHeader, keyFieldID, truncateTempTable);
 		}
 		
-		public bool ImageRunHasErrors(Core.ICoreContext icc, string runId)
+		public bool ImageRunHasErrors(Core.ICoreContext icc, string runId, bool truncateTempTables = true)
 		{
-			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId);
+			return _massImportManagerLazy.Value.ImageRunHasErrors(icc, runId, truncateTempTables);
 		}
 
 		protected override MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportResults retval)
@@ -53,11 +54,20 @@ namespace Relativity.Core.Service
 			return ConvertResults(_massImportManagerLazy.Value.AttemptRunObjectImport(context, settings, inRepository, retval, _helper));
 		}
 		
-		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID)
+		public ErrorFileKey GenerateNonImageErrorFiles(Core.ICoreContext icc, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, bool truncateTempTable = true)
 		{
-			return _massImportManagerLazy.Value.GenerateNonImageErrorFiles(icc, runID, artifactTypeID, writeHeader, keyFieldID);
+			return _massImportManagerLazy.Value.GenerateNonImageErrorFiles(icc, runID, artifactTypeID, writeHeader, keyFieldID, truncateTempTable);
 		}
 
+		public List<string> GetIdentifiersOfImportedDocuments(Core.ICoreContext icc, string runID, int keyFieldID)
+		{
+			return _massImportManagerLazy.Value.GetIdentifiersOfImportedDocuments(icc, runID, keyFieldID);
+		}
+
+		public List<string> GetIdentifiersOfImportedImages(Core.ICoreContext icc, string runID)
+		{
+			return _massImportManagerLazy.Value.GetIdentifiersOfImportedImages(icc, runID);
+		}
 		/// <summary>
 		/// Return a SqlDataReader containing errors from a mass import operation.  It is important to close
 		/// the context's connection when you are through using the reader.
@@ -76,9 +86,9 @@ namespace Relativity.Core.Service
 			return _massImportManagerLazy.Value.GenerateNativeErrorReader(context, runID, keyArtifactID);
 		}
 
-		public bool NativeRunHasErrors(Core.ICoreContext icc, string runId)
+		public bool NativeRunHasErrors(Core.ICoreContext icc, string runId, bool truncateTempTables = true)
 		{
-			return _massImportManagerLazy.Value.NativeRunHasErrors(icc, runId);
+			return _massImportManagerLazy.Value.NativeRunHasErrors(icc, runId, truncateTempTables);
 		}
 
 		public object DisposeRunTempTables(Core.ICoreContext icc, string runId)

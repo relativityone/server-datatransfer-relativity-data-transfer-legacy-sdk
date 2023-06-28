@@ -302,5 +302,88 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Helpers
 			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
 			_loggerMock.Verify(x => x.LogError(It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
 		}
+
+		[Test]
+		public void GetMassImportResult_ReturnsNull_WhenSqlReturnsEmptyResults()
+		{
+			// Arrange
+			string runID = Guid.NewGuid().ToString().Replace("-", "_");
+
+			_sqlExecutorMock.Setup(x => x.ExecuteReader(
+					WorkspaceID,
+					It.IsAny<string>(),
+					It.IsAny<IEnumerable<SqlParameter>>(),
+					It.IsAny<Func<IDataRecord, ResultCacheItem>>()))
+				.Returns(new List<ResultCacheItem>());
+
+			// Act
+			var result = _sut.GetMassImportResult(WorkspaceID, runID);
+
+			// Assert
+			result.Should().BeNull();
+			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public void GetMassImportResult_ReturnExistingResult_WhenItemExists()
+		{
+			// Arrange
+			string runID = Guid.NewGuid().ToString().Replace("-", "_");
+			string batchID = Guid.NewGuid().ToString();
+
+			var expectedResult = new MassImportResults()
+			{
+				RunID = runID,
+				ArtifactsCreated = 100,
+				ArtifactsUpdated = 4,
+				FilesProcessed = 3,
+				ExceptionDetail = new SDK.ImportExport.V1.Models.SoapExceptionDetail(),
+			};
+			var serialized = JsonConvert.SerializeObject(expectedResult);
+
+			_sqlExecutorMock.Setup(x => x.ExecuteReader(
+					WorkspaceID,
+					It.IsAny<string>(),
+					It.IsAny<IEnumerable<SqlParameter>>(),
+					It.IsAny<Func<IDataRecord, ResultCacheItem>>()))
+				.Returns(new List<ResultCacheItem>
+				{
+					new ResultCacheItem(batchID, DateTime.Now.AddSeconds(-5), DateTime.Now, serialized, isNew: false),
+				});
+
+			// Act
+			var result = _sut.GetMassImportResult(WorkspaceID, runID);
+
+			// Assert
+			result.Should().BeEquivalentTo(expectedResult);
+			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
+			_loggerMock.Verify(x => x.LogError(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
+		}
+
+		[Test]
+		public void GetMassImportResult_ThrowsException_WhenItemExistsButNotFinished()
+		{
+			// Arrange
+			string runID = Guid.NewGuid().ToString().Replace("-", "_");
+			string batchID = Guid.NewGuid().ToString();
+
+			DateTime? finishedOn = null;
+
+			_sqlExecutorMock.Setup(x => x.ExecuteReader(
+					WorkspaceID,
+					It.IsAny<string>(),
+					It.IsAny<IEnumerable<SqlParameter>>(),
+					It.IsAny<Func<IDataRecord, ResultCacheItem>>()))
+				.Returns(new List<ResultCacheItem>
+				{
+					new ResultCacheItem(batchID, DateTime.Now.AddSeconds(-5), finishedOn, null, isNew: false),
+				});
+
+			// Act & Assert
+			_sut.Invoking(x => x.GetMassImportResult(WorkspaceID, runID))
+				.Should().Throw<ServiceException>().WithMessage("Batch is not finished yet.");
+
+			_loggerMock.Verify(x => x.LogWarning(It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
+		}
 	}
 }

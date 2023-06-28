@@ -14,6 +14,7 @@ using Relativity.DataTransfer.Legacy.Services.Metrics;
 using Permission = Relativity.Core.Permission;
 using TelemetryConstants = DataTransfer.Legacy.MassImport.RelEyeTelemetry.TelemetryConstants;
 using Relativity.API;
+using System.Collections.Generic;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
@@ -246,6 +247,72 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<bool> HasImportPermissionsAsync(int workspaceID, string correlationID)
 		{
 			var result = PermissionsHelper.HasAdminOperationPermission(GetBaseServiceContext(workspaceID), Permission.AllowDesktopClientImport);
+			return Task.FromResult(result);
+		}
+
+		public Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID)
+		{
+			var existingResult = _batchResultCache.GetMassImportResult(workspaceID, runID);
+
+			return Task.FromResult(existingResult);
+		}
+
+		public Task<List<string>> GetIdentifiersOfImportedDocumentsAsync(int workspaceID, string runID, int keyFieldID)
+		{
+			var result =
+				_massImportManager.GetIdentifiersOfImportedDocuments(GetBaseServiceContext(workspaceID), runID, keyFieldID);
+
+			return Task.FromResult(result);
+		}
+
+		public Task<List<string>> GetIdentifiersOfImportedImagesAsync(int workspaceID, string runID)
+		{
+			var result =
+				_massImportManager.GetIdentifiersOfImportedImages(GetBaseServiceContext(workspaceID), runID);
+
+			return Task.FromResult(result);
+		}
+
+		public Task<bool> NativeRunHasErrorsDoNotTruncateAsync(int workspaceID, string runID, string correlationID)
+		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
+			var result = _massImportManager.NativeRunHasErrors(GetBaseServiceContext(workspaceID), runID, false);
+			return Task.FromResult(result);
+		}
+
+		public Task<bool> ImageRunHasErrorsDoNotTruncateAsync(int workspaceID, string runID, string correlationID)
+		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
+			// there was a issue in image load logic, if there was no any correct image imported
+			// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
+			if (string.IsNullOrEmpty(runID))
+			{
+				return Task.FromResult(false);
+			}
+
+			var result = _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID, false);
+			return Task.FromResult(result);
+		}
+
+		public Task<ErrorFileKey> GenerateNonImageErrorFilesDoNotTruncateAsync(int workspaceID, string runID, int artifactTypeID, bool writeHeader, int keyFieldID, string correlationID)
+		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
+			var result = _massImportManager.GenerateNonImageErrorFiles(GetBaseServiceContext(workspaceID), runID, artifactTypeID, writeHeader, keyFieldID, false).Map<ErrorFileKey>();
+			return Task.FromResult(result);
+		}
+
+		public Task<ErrorFileKey> GenerateImageErrorFilesDoNotTruncateAsync(int workspaceID, string runID, bool writeHeader, int keyFieldID, string correlationID)
+		{
+			var activity = Activity.Current;
+			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
+
+			var result = _massImportManager.GenerateImageErrorFiles(GetBaseServiceContext(workspaceID), runID, workspaceID, writeHeader, keyFieldID, false).Map<ErrorFileKey>();
 			return Task.FromResult(result);
 		}
 	}
