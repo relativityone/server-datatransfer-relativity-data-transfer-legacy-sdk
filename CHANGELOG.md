@@ -2,11 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.41]
+- REL-856445 Add missing CorrelationId to newest BulkImportService endpoints
+
 ## [0.3.40]
 - REL-844541 update DG to version 17.5.8
 
 ## [0.3.39]
-- REL-832881 - Add endpoints to retrive result from latest batch
+- REL-856445 - Add endpoints to retrive result from latest batch
 
 ## [0.3.38]
 - REL-832881 - use Production private API IInternalProductionImportExportManager for porduction PDF import
