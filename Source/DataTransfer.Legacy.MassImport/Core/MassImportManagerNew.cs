@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders;
+using DataTransfer.Legacy.MassImport.Toggles;
 using kCura.Utility;
 using Relativity.Core;
 using Relativity.Core.Service;
@@ -15,10 +16,10 @@ using Relativity.MassImport.Data;
 using Relativity.Telemetry.APM;
 using Relativity.API;
 using Relativity.Productions.Services.Private.V1;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Core
 {
-	using Relativity.MassImport.DTO;
 
 	internal class MassImportManagerNew
 	{
@@ -385,20 +386,37 @@ namespace Relativity.MassImport.Core
 					int dataSourceID = productionManager.GetImportProductionDataSource(context, productionArtifactID,
 						new Guid(settings.RunID.Replace("_", "-")));
 
-					image.ImportMeasurements.StartMeasure(
-						nameof(_internalProductionImportExportManager.CreateProductionInformationForImportAsync));
-
-					if (settings.HasPDF)
+					if (ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>())
 					{
-						task = _internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.PdfsOnly);
+
+						image.ImportMeasurements.StartMeasure(
+							nameof(_internalProductionImportExportManager.CreateProductionInformationForImportAsync));
+
+						if (settings.HasPDF)
+						{
+							task = _internalProductionImportExportManager.CreateProductionInformationForImportAsync(
+								context.AppArtifactID, productionArtifactID, dataSourceID,
+								Productions.Services.Interfaces.V1.DTOs.ProductionType.PdfsOnly);
+						}
+						else
+						{
+							task = _internalProductionImportExportManager.CreateProductionInformationForImportAsync(
+								context.AppArtifactID, productionArtifactID, dataSourceID,
+								Productions.Services.Interfaces.V1.DTOs.ProductionType.ImagesOnly);
+						}
+
+						image.ImportMeasurements.StopMeasure(nameof(_internalProductionImportExportManager
+							.CreateProductionInformationForImportAsync));
 					}
 					else
 					{
-						task = _internalProductionImportExportManager.CreateProductionInformationForImportAsync(context.AppArtifactID, productionArtifactID, dataSourceID, Productions.Services.Interfaces.V1.DTOs.ProductionType.ImagesOnly);
+						image.ImportMeasurements.StartMeasure(
+							nameof(productionManager.CreateProductionInformationForImport));
+						productionManager.CreateProductionInformationForImport(context, productionArtifactID, dataSourceID,
+							image.QueryTimeout);
+						image.ImportMeasurements.StopMeasure(nameof(productionManager
+							.CreateProductionInformationForImport));
 					}
-
-					image.ImportMeasurements.StopMeasure(nameof(_internalProductionImportExportManager
-						.CreateProductionInformationForImportAsync));
 
 					if (settings.UploadFullText)
 					{
@@ -438,7 +456,10 @@ namespace Relativity.MassImport.Core
 					InjectionManager.Instance.Evaluate("f7482c6c-2e01-4bad-bdf7-8392c9dc7fa4");
 				});
 				context.CommitTransaction();
-				task.Wait();
+				if (ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>())
+				{
+					task.Wait();
+				}
 			}
 			catch (System.Exception ex)
 			{
