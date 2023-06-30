@@ -54,15 +54,15 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 
 		[HttpPost]
 		[Route("GetBulkImportResultAsync")]
-		Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID);
+		Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID, string correlationID);
 
 		[HttpPost]
 		[Route("GetIdentifiersOfImportedDocumentsAsync")]
-		Task<List<string>> GetIdentifiersOfImportedDocumentsAsync(int workspaceID, string runID, int keyFieldID);
+		Task<List<string>> GetIdentifiersOfImportedDocumentsAsync(int workspaceID, string runID, int keyFieldID, string correlationID);
 
 		[HttpPost]
 		[Route("GetIdentifiersOfImportedImagesAsync")]
-		Task<List<string>> GetIdentifiersOfImportedImagesAsync(int workspaceID, string runID);
+		Task<List<string>> GetIdentifiersOfImportedImagesAsync(int workspaceID, string runID, string correlationID);
 
 		[HttpPost]
 		[Route("NativeRunHasErrorsDoNotTruncateAsync")]

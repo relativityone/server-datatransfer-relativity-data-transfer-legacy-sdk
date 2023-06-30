@@ -75,17 +75,32 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
 			FluentActions.Invoking(() =>
-					_uut.GetBulkImportResultAsync(Any.Integer(), Any.String()))
+					_uut.GetBulkImportResultAsync(Any.Integer(), Any.String(), Any.String()))
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
 			FluentActions.Invoking(() =>
-					_uut.GetIdentifiersOfImportedDocumentsAsync(Any.Integer(), Any.String(), Any.Integer()))
+					_uut.GetIdentifiersOfImportedDocumentsAsync(Any.Integer(), Any.String(), Any.Integer(), Any.String()))
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
 			FluentActions.Invoking(() =>
-					_uut.GetIdentifiersOfImportedImagesAsync(Any.Integer(), Any.String()))
+					_uut.GetIdentifiersOfImportedImagesAsync(Any.Integer(), Any.String(), Any.String()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled."); 
+			
+			FluentActions.Invoking(() =>
+					_uut.NativeRunHasErrorsDoNotTruncateAsync(Any.Integer(), Any.String(), Any.String()))
 				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
+			FluentActions.Invoking(() =>
+					_uut.ImageRunHasErrorsDoNotTruncateAsync(Any.Integer(), Any.String(), Any.String()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
+			FluentActions.Invoking(() =>
+					_uut.GenerateImageErrorFilesDoNotTruncateAsync(Any.Integer(), Any.String(), Any.Boolean(), Any.Integer(), Any.String()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
+			FluentActions.Invoking(() =>
+					_uut.GenerateNonImageErrorFilesDoNotTruncateAsync(Any.Integer(), Any.String(), Any.Integer(), Any.Boolean(), Any.Integer(), Any.String()))
+				.Should().Throw<ServiceException>().WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 		}
 
 		[Test]
@@ -148,16 +163,33 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 
 			FluentActions.Invoking(() =>
-					_uut.GetBulkImportResultAsync(Any.Integer(), Any.String()))
+					_uut.GetBulkImportResultAsync(Any.Integer(), Any.String(), Any.String()))
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 
 			FluentActions.Invoking(() =>
-					_uut.GetIdentifiersOfImportedDocumentsAsync(Any.Integer(), Any.String(), Any.Integer()))
+					_uut.GetIdentifiersOfImportedDocumentsAsync(Any.Integer(), Any.String(), Any.Integer(), Any.String()))
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 
 			FluentActions.Invoking(() =>
-					_uut.GetIdentifiersOfImportedImagesAsync(Any.Integer(), Any.String()))
+					_uut.GetIdentifiersOfImportedImagesAsync(Any.Integer(), Any.String(), Any.String()))
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.NativeRunHasErrorsDoNotTruncateAsync(Any.Integer(), Any.String(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.ImageRunHasErrorsDoNotTruncateAsync(Any.Integer(), Any.String(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.GenerateImageErrorFilesDoNotTruncateAsync(Any.Integer(), Any.String(), Any.Boolean(), Any.Integer(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
+			FluentActions.Invoking(() =>
+					_uut.GenerateNonImageErrorFilesDoNotTruncateAsync(Any.Integer(), Any.String(), Any.Integer(), Any.Boolean(), Any.Integer(), Any.String()))
+				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
+
 		}
 	}
 }

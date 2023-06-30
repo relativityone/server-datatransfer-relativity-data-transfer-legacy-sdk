@@ -234,7 +234,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationID)
+		public Task<object> DisposeTempTablesAsync(int workspaceID, string runID, string correlationIDs)
 		{
 			var activity = Activity.Current;
 			activity?.SetTag(TelemetryConstants.AttributeNames.RunID, runID);
@@ -250,14 +250,14 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID)
+		public Task<MassImportResults> GetBulkImportResultAsync(int workspaceID, string runID, string correlationID)
 		{
 			var existingResult = _batchResultCache.GetMassImportResult(workspaceID, runID);
 
 			return Task.FromResult(existingResult);
 		}
 
-		public Task<List<string>> GetIdentifiersOfImportedDocumentsAsync(int workspaceID, string runID, int keyFieldID)
+		public Task<List<string>> GetIdentifiersOfImportedDocumentsAsync(int workspaceID, string runID, int keyFieldID, string correlationID)
 		{
 			var result =
 				_massImportManager.GetIdentifiersOfImportedDocuments(GetBaseServiceContext(workspaceID), runID, keyFieldID);
@@ -265,7 +265,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<List<string>> GetIdentifiersOfImportedImagesAsync(int workspaceID, string runID)
+		public Task<List<string>> GetIdentifiersOfImportedImagesAsync(int workspaceID, string runID, string correlationID)
 		{
 			var result =
 				_massImportManager.GetIdentifiersOfImportedImages(GetBaseServiceContext(workspaceID), runID);
