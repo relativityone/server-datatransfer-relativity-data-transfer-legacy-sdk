@@ -323,6 +323,7 @@ namespace Relativity.MassImport.Core
 			try
 			{
 				Task task = null;
+				bool enableIInternalProductionImportExportManager = ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>();
 				_lockHelper.Lock(context, MassImportManagerLockKey.LockType.DocumentOrImageOrProductionImage, () =>
 				{
 					image.ExistingFilesLookupInitialization();
@@ -386,7 +387,6 @@ namespace Relativity.MassImport.Core
 					int dataSourceID = productionManager.GetImportProductionDataSource(context, productionArtifactID,
 						new Guid(settings.RunID.Replace("_", "-")));
 
-					bool enableIInternalProductionImportExportManager = ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>();
 					if (enableIInternalProductionImportExportManager)
 					{
 
