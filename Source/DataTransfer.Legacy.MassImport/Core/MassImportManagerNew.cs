@@ -386,7 +386,8 @@ namespace Relativity.MassImport.Core
 					int dataSourceID = productionManager.GetImportProductionDataSource(context, productionArtifactID,
 						new Guid(settings.RunID.Replace("_", "-")));
 
-					if (ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>())
+					bool enableIInternalProductionImportExportManager = ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>();
+					if (enableIInternalProductionImportExportManager)
 					{
 
 						image.ImportMeasurements.StartMeasure(
@@ -456,7 +457,7 @@ namespace Relativity.MassImport.Core
 					InjectionManager.Instance.Evaluate("f7482c6c-2e01-4bad-bdf7-8392c9dc7fa4");
 				});
 				context.CommitTransaction();
-				if (ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>())
+				if (enableIInternalProductionImportExportManager)
 				{
 					task.Wait();
 				}
