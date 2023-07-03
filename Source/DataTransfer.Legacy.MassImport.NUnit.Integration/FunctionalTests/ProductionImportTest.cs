@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DataTransfer.Legacy.MassImport.Toggles;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity;
 using Relativity.Core.Service;
 using Relativity.MassImport.DTO;
 using Relativity.Services.Objects.DataContracts;
+using Relativity.Toggles;
 using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
 using ImageLoadInfo = Relativity.MassImport.DTO.ImageLoadInfo;
 using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
@@ -55,11 +57,14 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
 			this.ThenTheImportWasSuccessful(result, expectedArtifactsCreated, expectedArtifactsUpdated);
 			Assert.AreEqual(expectedArtifactsUpdated, 0);
-			var fileCount = ProductionHelper.GetNumberOfImportedFiles(TestWorkspace, productionSetArtifactId, hasPDF ? 8 : 3);
-			Assert.AreEqual(1, fileCount, "Wrong number of imported files");
+			if (ToggleProvider.Current.IsEnabled<EnableIInternalProductionImportExportManager>())
+			{
+				var fileCount = ProductionHelper.GetNumberOfImportedFiles(TestWorkspace, productionSetArtifactId, hasPDF ? 8 : 3);
+				Assert.AreEqual(1, fileCount, "Wrong number of imported files");
 
-			var prodInformationCount = ProductionHelper.GetNumberOfProductionInformationEntries(TestWorkspace, productionSetArtifactId, hasPDF ? "WithPDF = 1" : "WithImages = 1");
-			Assert.AreEqual(1, prodInformationCount, "Wrong number of entries in ProductionInformation table");
+				var prodInformationCount = ProductionHelper.GetNumberOfProductionInformationEntries(TestWorkspace, productionSetArtifactId, hasPDF ? "WithPDF = 1" : "WithImages = 1");
+				Assert.AreEqual(1, prodInformationCount, "Wrong number of entries in ProductionInformation table");
+			}
 		}
 
 		private async Task<ImageLoadInfo> CreateSampleImageLoadInfoAsync(int numberOfArtifactsToCreate, bool hasPDF)
