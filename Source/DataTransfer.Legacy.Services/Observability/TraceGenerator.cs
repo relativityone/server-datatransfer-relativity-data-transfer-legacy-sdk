@@ -77,7 +77,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Observability
 					tracerProvider = Sdk.CreateTracerProviderBuilder()
 								.AddSource(new[] { TelemetryConstants.Values.ServiceNamespace, "Relativity.Storage" })
 								.SetResourceBuilder(resourceBuilder)
-								.SetSampler(new AlwaysOnSampler())
+								.SetSampler(new OpenTelemetrySampler(new AlwaysOnSampler()))
 								.AddOtlpExporter(options =>
 								{
 									options.Endpoint = new Uri(ReleyeUriTraces);
