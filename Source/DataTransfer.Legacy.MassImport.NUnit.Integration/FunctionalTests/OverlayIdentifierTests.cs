@@ -12,7 +12,6 @@ using Relativity.Data.MassImport;
 using Relativity.MassImport;
 using Relativity.MassImport.Api;
 using Relativity.MassImport.Core.Pipeline.Stages.Job.PopulateStagingTables;
-using Relativity.MassImport.Toggles;
 using BaseContext = Relativity.Core.BaseContext;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
@@ -42,8 +41,6 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		[OneTimeSetUp]
 		public async Task OneTimeSetUpAsync()
 		{
-			SettingsHelper.SetToggle<CreateItemErrorWhenIdentifierIsNullToggle>(true);
-
 			if (_isDocumentImport)
 			{
 				_objectTypeId = (int)ArtifactType.Document;

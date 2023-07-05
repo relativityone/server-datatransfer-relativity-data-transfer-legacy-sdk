@@ -65,8 +65,14 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 
 		private IChoicesImportService CreateChoicesImportService(NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
 		{
-			var factory = new ChoiceImportServiceFactory(ToggleProvider.Current);
-			return factory.Create(_context, settings, columnDefinitionCache);
+			return new ChoicesImportService(
+				_context.BaseContext.DBContext,
+				ToggleProvider.Current,
+				_context.JobDetails.TableNames,
+				_context.ImportMeasurements,
+				settings,
+				columnDefinitionCache,
+				Relativity.Data.Config.MassImportSqlTimeout);
 		}
 	}
 }
