@@ -476,6 +476,11 @@ END
 		public string ExistingFilesLookupInitialization()
 		{
 			return $@"
+IF EXISTS(SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{{0}}_ExistingFile')
+BEGIN	
+	DROP TABLE [Resource].[{{0}}_ExistingFile]
+END
+
 SELECT
 	[FileIdentifier] = [File].[Identifier],
 	[DocumentArtifactID] = [File].[DocumentArtifactID]

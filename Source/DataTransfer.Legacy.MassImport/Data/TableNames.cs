@@ -16,6 +16,7 @@ namespace Relativity.Data.MassImport
 		private const string COLUMN_DEFINTION_TABLE_PREFIX = "RELCOLUMNDEF_";
 		private const string PARENT_ANCESTORS_TABLE_PREFIX = "#RELNATPARENTANCESTORS_";
 		private const string NEW_ANCESTORS_TABLE_PREFIX = "#RELNATNEWANCESTORS_";
+		private const string EXISTING_FILE_SUFFIX = "_ExistingFile";
 
 		public TableNames() : this(null)
 		{
@@ -73,7 +74,7 @@ namespace Relativity.Data.MassImport
 		/// 		''' <returns>An array of possible cached/auxiliary-type names</returns>
 		public static string[] GetAllAuxiliaryTableNames(string runId)
 		{
-			return new string[] { COLUMN_DEFINTION_TABLE_PREFIX + runId };
+			return new string[] { COLUMN_DEFINTION_TABLE_PREFIX + runId, IMAGE_TEMP_TABLE_PREFIX + runId + EXISTING_FILE_SUFFIX };
 		}
 	}
 }
