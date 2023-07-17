@@ -56,6 +56,7 @@ namespace Relativity.MassImport.Data
 			sql.Add(ArtifactTableInsertSql.WithObject(
 				this._tableNames, 
 				this.IdentifierField.GetColumnName(), 
+				keyField.GetColumnName(),
 				ObjectBase.TopFieldArtifactID, 
 				this.ArtifactTypeID, 
 				keyFieldCheck));

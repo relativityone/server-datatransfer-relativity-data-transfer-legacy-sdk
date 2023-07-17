@@ -125,7 +125,7 @@ namespace Relativity.MassImport.Data
 			set => _sizeThreshold = value;
 		}
 
-		private bool CanRead => FileStream.Position < _fileSize;
+		private bool CanRead => FileStream.Position < FileStream.Length;
 
 		private long SeekToOrdinal(int i)
 		{
@@ -188,15 +188,21 @@ namespace Relativity.MassImport.Data
 		{
 			Func<FileStream> openFileStream = () =>
 			{
-				_fileSize = kCura.Utility.File.Instance.GetFileSize(fileName);
-				int maxBufferSize = _fileSize < _BUFFER_SIZE ? (int)_fileSize : _BUFFER_SIZE;
-				var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, maxBufferSize);
+				var fileInfoSize = kCura.Utility.File.Instance.GetFileSize(fileName);
+				var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, _BUFFER_SIZE);
 				foreach (byte bomByte in _encoding.GetPreamble())
 				{
 					if (bomByte != fs.ReadByte()) // advance through the file's BOM before starting to read import data
 					{
 						throw new Exception($"Expected the Data Grid bulk file to begin with a {_encoding.EncodingName} preamble byte sequence but it was not found.");
 					}
+				}
+
+				// Using FileStream.Length because sometimes FileInfo.Length is giving us invalid length
+				_fileSize = fs.Length;
+				if (fileInfoSize != _fileSize)
+				{
+					_correlationLogger.LogWarning("FileSize {fileSize} is different then stream length {streamLength}", fileInfoSize, _fileSize);
 				}
 
 				return fs;

@@ -177,9 +177,8 @@ BEGIN
 		[CodeArtifactID] INT NOT NULL,
 		[CodeTypeID] INT NOT NULL,
 
-		INDEX IX_CodeTypeID_DocumentIdentifier CLUSTERED 
+		INDEX IX_DocumentIdentifier CLUSTERED 
 		(
-			[CodeTypeID] ASC,
 			[DocumentIdentifier] ASC
 		)
 	)
@@ -194,10 +193,9 @@ BEGIN
 		[ObjectTypeID] INT NOT NULL,
 		[FieldID] INT NOT NULL,
 
-		INDEX IX_DocumentIdentifier_ObjectTypeID CLUSTERED 
+		INDEX IX_DocumentIdentifier CLUSTERED 
 		(
-			[DocumentIdentifier] ASC,
-			[ObjectTypeID] ASC
+			[DocumentIdentifier] ASC
 		)
 	)
 
