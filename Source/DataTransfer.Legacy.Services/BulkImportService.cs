@@ -136,6 +136,13 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		public Task<bool> ImageRunHasErrorsAsync(int workspaceID, string runID, string correlationID)
 		{
+			// there was a issue in image load logic, if there was no any correct image imported
+			// then BulkImportImageAsync was not executed and runID was never set up, so there is no temp table
+			if (string.IsNullOrEmpty(runID))
+			{
+				return Task.FromResult(false);
+			}
+
 			var result = _massImportManager.ImageRunHasErrors(GetBaseServiceContext(workspaceID), runID);
 			return Task.FromResult(result);
 		}
