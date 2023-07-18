@@ -9,7 +9,7 @@ using Relativity.Toggles;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 {
-	internal class ImportObjectsStage : Framework.IPipelineStage<Input.ObjectImportInput, IMassImportManagerInternal.MassImportResults>
+	internal class ImportObjectsStage : Framework.IPipelineStage<Input.ObjectImportInput, MassImportManagerBase.MassImportResults>
 	{
 		private readonly MassImportContext _context;
 		private readonly ILockHelper _lockHelper;
@@ -20,12 +20,12 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			_lockHelper = lockHelper;
 		}
 
-		public IMassImportManagerInternal.MassImportResults Execute(ObjectImportInput input)
+		public MassImportManagerBase.MassImportResults Execute(ObjectImportInput input)
 		{
 			return AttemptRunObjectImportNew(input);
 		}
 
-		private IMassImportManagerInternal.MassImportResults AttemptRunObjectImportNew(ObjectImportInput input)
+		private MassImportManagerBase.MassImportResults AttemptRunObjectImportNew(ObjectImportInput input)
 		{
 			var settings = input.Settings;
 			var queryExecutor = new QueryExecutor(_context.BaseContext.DBContext, _context.Logger);
@@ -36,7 +36,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return result;
 		}
 
-		private IMassImportManagerInternal.MassImportResults ExecuteObjectImport(
+		private MassImportManagerBase.MassImportResults ExecuteObjectImport(
 			ObjectLoadInfo settings, 
 			Data.Objects importObject,
 			IChoicesImportService choicesImportService,
@@ -89,7 +89,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			}
 
 			importObject.ClearTempTableAndSaveErrors();
-			var result = new IMassImportManagerInternal.MassImportResults();
+			var result = new MassImportManagerBase.MassImportResults();
 			if (collectCreatedIDs)
 			{
 				result = DetailedObjectImporReportGenerator.PopulateResultsObject(importObject);
@@ -177,8 +177,14 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 
 		private IChoicesImportService CreateChoicesImportService(NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
 		{
-			var factory = new ChoiceImportServiceFactory(ToggleProvider.Current);
-			return factory.Create(_context, settings, columnDefinitionCache);
+			return new ChoicesImportService(
+				_context.BaseContext.DBContext,
+				ToggleProvider.Current,
+				_context.JobDetails.TableNames,
+				_context.ImportMeasurements,
+				settings,
+				columnDefinitionCache,
+				Relativity.Data.Config.MassImportSqlTimeout);
 		}
 	}
 }

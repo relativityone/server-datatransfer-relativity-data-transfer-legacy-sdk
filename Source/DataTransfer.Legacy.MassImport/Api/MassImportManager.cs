@@ -12,8 +12,6 @@ using Relativity.Data.MassImport;
 using Relativity.Logging;
 using Relativity.MassImport.Core.Pipeline.Stages.Job.PopulateStagingTables;
 using Relativity.MassImport.Data;
-using Relativity.MassImport.Toggles;
-using Relativity.Toggles;
 
 namespace Relativity.MassImport.Api
 {
@@ -27,7 +25,6 @@ namespace Relativity.MassImport.Api
 		private readonly IArtifactManager _artifactManager;
 		private readonly Relativity.Core.Service.MassImportManager _massImportManager;
 		private readonly BaseContext _context;
-		private readonly bool _useMassImportImprovements;
 
 		public MassImportManager(ILog logger, IArtifactManager artifactManager, BaseContext context)
 		{
@@ -35,9 +32,7 @@ namespace Relativity.MassImport.Api
 			_artifactManager = artifactManager;
 			_context = context;
 
-			_useMassImportImprovements = ToggleProvider.Current.IsEnabled<EnableMassImportImprovementsInMassImportManager>();
-
-			_massImportManager = new Relativity.Core.Service.MassImportManager(true, _useMassImportImprovements);
+			_massImportManager = new Relativity.Core.Service.MassImportManager(collectIDsOnCreate: true);
 		}
 
 		public Task<MassImportResults> RunMassImportAsync(IEnumerable<MassImportArtifact> artifacts, MassImportSettings settings, CancellationToken cancel, IProgress<MassImportProgress> progress)
@@ -144,57 +139,28 @@ namespace Relativity.MassImport.Api
 
 		private MassImportManagerBase.MassImportResults RunImport(IEnumerable<MassImportArtifact> artifacts, MassImportSettings settings)
 		{
-			MassImportManagerBase.MassImportResults results;
 			int artifactTypeID = settings.ArtifactTypeID;
 
-			if (_useMassImportImprovements)
+			// TODO: move to pipeline
+			var popoluteStagingTablesStage = new PopulateStagingTablesStage<TableNames>(_context, artifacts, settings, _artifactManager);
+			void LoadStagingTablesAction(TableNames tableNames) => popoluteStagingTablesStage.Execute(tableNames.Native, tableNames.Code, tableNames.Objects);
+
+			MassImportManagerBase.MassImportResults internalResult;
+			if (artifactTypeID == (int)ArtifactType.Document)
 			{
-				// TODO: move to pipeline
-				var popoluteStagingTablesStage = new PopulateStagingTablesStage<TableNames>(_context, artifacts, settings, _artifactManager);
-				void LoadStagingTablesAction(TableNames tableNames) => popoluteStagingTablesStage.Execute(tableNames.Native, tableNames.Code, tableNames.Objects);
-
-				IMassImportManagerInternal.MassImportResults internalResult;
-				if (artifactTypeID == (int)ArtifactType.Document)
-				{
-					DataGridReader dataGridReader = null;
-					dataGridReader = GetDataGridReader(artifacts, settings);
-					internalResult = MassImporter.ImportNativesForObjectManager(_context, settings, LoadStagingTablesAction, dataGridReader);
-				}
-				else
-				{
-					var objectSettings = (ObjectLoadInfo)settings;
-					internalResult = MassImporter.ImportObjectsForObjectManager(_context, objectSettings, true, LoadStagingTablesAction);
-				}
-
-				results = internalResult is IMassImportManagerInternal.DetailedMassImportResults detailedInternalResult ?
-					new MassImportManagerBase.DetailedMassImportResults(detailedInternalResult) :
-					new MassImportManagerBase.MassImportResults(internalResult);
+				DataGridReader dataGridReader = null;
+				dataGridReader = GetDataGridReader(artifacts, settings);
+				internalResult = MassImporter.ImportNativesForObjectManager(_context, settings, LoadStagingTablesAction, dataGridReader);
 			}
 			else
 			{
-				FieldInfo[] readerFields = settings.MappedFields.Where(mappedField => !mappedField.EnableDataGrid).ToArray();
-				var popoluteStagingTablesStage = new PopulateStagingTablesStage<TableNames>(_context, artifacts, settings, _artifactManager);
-
-				if (artifactTypeID == (int)ArtifactType.Document)
-				{
-					Relativity.Data.MassImportOld.Native massImport;
-					Relativity.Data.MassImportOld.DataGridReader dataGridReader = GetDataGridReaderOld(artifacts, settings);
-					massImport = new Relativity.Data.MassImportOld.Native(_context.DBContext, settings, dataGridReader);
-
-					massImport.CreateNativeTempTables(readerFields, settings.KeyFieldArtifactID, false, false);
-					popoluteStagingTablesStage.Execute(massImport.TableNameNativeTemp, massImport.TableNameCodeTemp, massImport.TableNameObjectsTemp);
-					results = _massImportManager.RunNativeImportForAPI(_context, settings, massImport);
-				}
-				else
-				{
-					ObjectLoadInfo objectSettings = settings;
-					Relativity.Data.MassImportOld.Objects objectMassImport = new Relativity.Data.MassImportOld.Objects(_context.DBContext, objectSettings);
-					objectMassImport.CreateNativeTempTables(readerFields, settings.KeyFieldArtifactID);
-
-					popoluteStagingTablesStage.Execute(objectMassImport.TableNameNativeTemp, objectMassImport.TableNameCodeTemp, objectMassImport.TableNameObjectsTemp);
-					results = _massImportManager.RunObjectImportForAPI(_context, objectSettings, objectMassImport);
-				}
+				var objectSettings = (ObjectLoadInfo)settings;
+				internalResult = MassImporter.ImportObjectsForObjectManager(_context, objectSettings, true, LoadStagingTablesAction);
 			}
+
+			MassImportManagerBase.MassImportResults results = internalResult is MassImportManagerBase.DetailedMassImportResults detailedInternalResult ?
+				new MassImportManagerBase.DetailedMassImportResults(detailedInternalResult) :
+				new MassImportManagerBase.MassImportResults(internalResult);
 
 			return results;
 		}
@@ -217,26 +183,6 @@ namespace Relativity.MassImport.Api
 			};
 
 			return new DataGridReader(dgContext, _context.DBContext.Clone(), options, dataTable.CreateDataReader(), _logger, new List<FieldInfo>(), null);
-		}
-
-		private Relativity.Data.MassImportOld.DataGridReader GetDataGridReaderOld(IEnumerable<MassImportArtifact> artifacts, MassImportSettings settings)
-		{
-			var dataGridFields = settings.MappedFields.Where(field => field.EnableDataGrid).ToArray();
-			if (!dataGridFields.Any())
-			{
-				return null;
-			}
-
-			int keyFieldIndex = Array.FindIndex(settings.MappedFields, field => field.ArtifactID == settings.KeyFieldArtifactID);
-			DataGridContext dgContext = new DataGridContext(_context.DBContext, false);
-			DataTable dataTable = GetDataTableWithDataGridFields(artifacts, settings, keyFieldIndex);
-			Relativity.Data.MassImportOld.DataGridReaderOptions options = new Relativity.Data.MassImportOld.DataGridReaderOptions()
-			{
-				IdentifierColumnName = settings.MappedFields[keyFieldIndex].GetColumnName(),
-				MappedDataGridFields = dataGridFields
-			};
-
-			return new Relativity.Data.MassImportOld.DataGridReader(dgContext, _context.DBContext.Clone(), options, dataTable.CreateDataReader(), _logger, new List<FieldInfo>(), null);
 		}
 
 		private DataTable GetDataTableWithDataGridFields(IEnumerable<MassImportArtifact> artifacts, MassImportSettings settings, int keyFieldIndex)

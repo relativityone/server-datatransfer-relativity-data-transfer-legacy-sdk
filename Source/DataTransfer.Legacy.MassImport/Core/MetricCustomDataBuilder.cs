@@ -93,7 +93,7 @@ namespace Relativity.MassImport.Core
 			return this;
 		}
 
-		public MetricCustomDataBuilder WithResult(IMassImportManagerInternal.MassImportResults results)
+		public MetricCustomDataBuilder WithResult(MassImportManagerBase.MassImportResults results)
 		{
 			_customData["IsSuccess"] = results.ExceptionDetail is null;
 			_customData[nameof(results.ArtifactsCreated)] = results.ArtifactsCreated;

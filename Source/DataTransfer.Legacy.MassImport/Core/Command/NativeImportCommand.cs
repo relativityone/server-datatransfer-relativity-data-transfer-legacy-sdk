@@ -63,7 +63,7 @@ namespace Relativity.MassImport.Core.Command
 		protected NativeImportInput Input { get; private set; }
 		private IDataGridInputReaderProvider DataGridInputReaderProvider { get; set; }
 
-		public IMassImportManagerInternal.MassImportResults ExecuteNativeImport()
+		public MassImportManagerBase.MassImportResults ExecuteNativeImport()
 		{
 			this.CorrelationLogger.LogDebug("Starting Transaction");
 			var sql = new SerialSqlQuery();
@@ -108,7 +108,7 @@ namespace Relativity.MassImport.Core.Command
 			Native.ImportMeasurements.SqlImportTime.Stop();
 			this.TimeKeeper.GenerateCsvReportItemsAsColumns("_webapi", @"C:\");
 			this.CorrelationLogger.LogDebug("Ending Transaction");
-			return new IMassImportManagerInternal.MassImportResults()
+			return new MassImportManagerBase.MassImportResults()
 			{
 				ArtifactsCreated = artifactsCreated,
 				ArtifactsUpdated = artifactsUpdated,
