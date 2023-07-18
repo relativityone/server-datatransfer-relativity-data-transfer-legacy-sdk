@@ -40,7 +40,7 @@
     <RelativityDataGrid>16.9.1</RelativityDataGrid>
     <RelativityEventHandler>17.0.2</RelativityEventHandler>
     <!-- This package is a dependency of RTF and must be aligned.  -->
-    <RelativityDataExchangeClientSDK>2.5.0</RelativityDataExchangeClientSDK>
+    <RelativityDataExchangeClientSDK>1.15.103</RelativityDataExchangeClientSDK>
     <RelativityLogging>3000.4.1</RelativityLogging>
     <RelativityReviewServicesInterfaces>2020.0.9</RelativityReviewServicesInterfaces>
     <RelativitySecretCatalog>1.0.20</RelativitySecretCatalog>
@@ -50,7 +50,7 @@
     <RelativityServicesSDKPrivate>14.0.2</RelativityServicesSDKPrivate>
     <RelativityServicesInterfacesSDK>13.3.0</RelativityServicesInterfacesSDK>
     <RelativitySDK>17.4.2</RelativitySDK>
-    <RelativityTestingFramework>10.3.0</RelativityTestingFramework>
+    <RelativityTestingFramework>10.1.0</RelativityTestingFramework>
     <RelativityTestingIdentification>3.12.0</RelativityTestingIdentification>
     <ServiceBus>5.3.0</ServiceBus>
     <TelemetryAPM>2019.10.9</TelemetryAPM>
