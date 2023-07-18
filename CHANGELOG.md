@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+
+## [0.7.0] - 07-18-2023
+
+### Changed
+
+- [REL-857343](https://jira.kcura.com/browse/REL-857343) - Fixing conversion issue from type 'DBNull' to type 'String' - Backported ticket [REL-576997] from server 2022 release
 
 ## [0.6.0] - 07-06-2023
 
