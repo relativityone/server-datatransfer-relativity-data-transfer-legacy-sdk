@@ -87,33 +87,6 @@ namespace Relativity.MassImport.Data
 			return "Document";
 		}
 
-		public string GetCreateDocumentsSqlStatement2(string requestOrigination, string recordOrigination, bool performAudit, bool includeExtractedTextEncoding, string codeArtifactTableName)
-		{
-			var sql = new SerialSqlQuery(
-				new InlineSqlQuery($"DECLARE @now DATETIME = GETUTCDATE()"), 
-				new InlineSqlQuery($"DECLARE @hasImagesCodeTypeID INT = (SELECT TOP 1 CodeTypeID FROM CodeType WHERE [Name] = 'HasImages')"), 
-				new InlineSqlQuery($"DECLARE @hasImagesCodeArtifactID INT = (SELECT TOP 1 [ArtifactID] FROM [Code] WHERE [Name]='No' AND CodeTypeID = @hasImagesCodeTypeID )"), 
-				new InlineSqlQuery($"DECLARE @addArtifactPermissionId INT = (SELECT TOP 1 ArtifactTypePermission.PermissionID FROM ArtifactTypePermission INNER JOIN Permission ON Permission.PermissionID = ArtifactTypePermission.PermissionID AND [Type] = 6 AND ArtifactTypeID = {{8}})"), 
-				new InlineSqlQuery($"DECLARE @containerArtifactID INT = (SELECT TOP 1 [ArtifactID] FROM [Artifact] WHERE [ParentArtifactID] IS NULL AND ArtifactTypeID = {(int) Relativity.ArtifactType.Case})"), 
-				new InlineSqlQuery($"/* UpdateStateWithError */"), 
-				new InlineSqlQuery($"/* UpdateStateWithErrorParentMustBeFolder */"), 
-				new InlineSqlQuery($"/* UpdateOverlayPermissionsForAppendOverlayMode */"), 
-				ArtifactTableInsertSql.WithDocument(
-					this._tableNames, 
-					this.IdentifierField.GetColumnName(), 
-					ObjectBase.TopFieldArtifactID), 
-				new InlineSqlQuery($"/* InsertObjectsOrDocuments */"), 
-				new InlineSqlQuery($"INSERT INTO ArtifactAncestry"), 
-				new InlineSqlQuery($"/* InsertAuditRecords */"), 
-				new InlineSqlQuery($"/* InsertDataGridRecordMapping */"), 
-				new InlineSqlQuery($"/* InsertIntoCodeArtifactTableForDocImages */"));
-
-			var queryBuilder = new StringBuilder();
-			sql.WriteTo(queryBuilder);
-
-			return queryBuilder.ToString();
-		}
-
 		public ISqlQueryPart GetCreateDocumentsSqlStatement(string requestOrigination, string recordOrigination, bool performAudit, bool includeExtractedTextEncoding, string codeArtifactTableName)
 		{
 			var sql = new SerialSqlQuery();

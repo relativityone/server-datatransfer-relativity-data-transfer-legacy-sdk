@@ -5,6 +5,7 @@
 		internal static class SystemNames
 		{
 			public const string WebApi = "WebAPI";
+			public const string Kepler = "Kepler";
 			public const string ObjectManager = "ObjectManager";
 			public const string RSAPI = "RSAPI";
 		}

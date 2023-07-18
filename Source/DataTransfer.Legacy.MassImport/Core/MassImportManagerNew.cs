@@ -86,7 +86,7 @@ namespace Relativity.MassImport.Core
 
 			if (image.IsNewJob)
 			{
-				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.WebApi);
+				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.Kepler);
 			}
 
 			timekeeper.MarkEnd("TempFileInitialization");
@@ -240,7 +240,7 @@ namespace Relativity.MassImport.Core
 					precalculatedMilliseconds: image.ImportMeasurements.SqlImportTime.ElapsedMilliseconds,
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
-				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.WebApi, retval, image.ImportMeasurements);
+				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
 			}
 
 			retval.RunID = settings.RunID;
@@ -281,7 +281,7 @@ namespace Relativity.MassImport.Core
 
 			if (image.IsNewJob)
 			{
-				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.WebApi);
+				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.Kepler);
 			}
 
 			image.ImportMeasurements.StartMeasure(nameof(productionManager.CreateProductionDocumentFileTableForProduction));
@@ -431,7 +431,7 @@ namespace Relativity.MassImport.Core
 					precalculatedMilliseconds: image.ImportMeasurements.SqlImportTime.ElapsedMilliseconds,
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
-				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.WebApi, retval, image.ImportMeasurements);
+				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
 			}
 
 			retval.RunID = settings.RunID;
@@ -613,7 +613,7 @@ namespace Relativity.MassImport.Core
 		public bool AuditImport(Relativity.Core.BaseServiceContext icc, string runID, bool isFatalError, ImportStatistics importStats)
 		{
 			var context = icc.ChicagoContext;
-			var auditor = new ImportAuditor(context.DBContext);
+			var auditor = new ImportAuditor(context.DBContext, CorrelationLogger);
 			string xmlSnapshot = auditor.GetImportAuditXmlSnapshot(importStats, !isFatalError);
 			int systemArtifactID = Relativity.Core.Service.SystemArtifactQuery.Instance().RetrieveArtifactIDByIdentifier(context, "System");
 
@@ -667,7 +667,7 @@ namespace Relativity.MassImport.Core
 				destinationPath = destinationPath.Replace(".", "_") + ".csv";
 				using (var sw = new System.IO.StreamWriter(destinationPath, false, System.Text.Encoding.Default))
 				{
-					sw.Write(new ImportAuditor(icc.ChicagoContext.DBContext).GetAuditCsvSnapshot(importStats));
+					sw.Write(new ImportAuditor(icc.ChicagoContext.DBContext, CorrelationLogger).GetAuditCsvSnapshot(importStats));
 				}
 
 				msg.Attachments.Add(new System.Net.Mail.Attachment(destinationPath));
