@@ -23,7 +23,7 @@ namespace Relativity.Core.Service.MassImport
 			var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
 				baseContext,
 				input.Settings,
-				Relativity.MassImport.Core.Constants.SystemNames.WebApi,
+				Relativity.MassImport.Core.Constants.SystemNames.Kepler,
 				Relativity.MassImport.Core.Constants.ImportType.Natives);
 			var pipelineBuilder = new NativePipelineBuilder(contextAndExecutorDto.PipelineExecutor, APMClient);
 			var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext);
@@ -36,7 +36,7 @@ namespace Relativity.Core.Service.MassImport
 			var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
 				baseContext,
 				input.Settings,
-				Relativity.MassImport.Core.Constants.SystemNames.WebApi,
+				Relativity.MassImport.Core.Constants.SystemNames.Kepler,
 				Relativity.MassImport.Core.Constants.ImportType.Objects);
 			var pipelineBuilder = new ObjectsPipelineBuilder(contextAndExecutorDto.PipelineExecutor, APMClient);
 			var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext);
