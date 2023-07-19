@@ -14,6 +14,7 @@ using Relativity.Services.Objects.DataContracts;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Framework.Api.Kepler;
+using Relativity.Testing.Framework.Models;
 using Relativity.Testing.Framework.RingSetup;
 using Relativity.Testing.Identification;
 using FieldType = Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models.FieldType;

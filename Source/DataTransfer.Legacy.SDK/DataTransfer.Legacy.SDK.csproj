@@ -8,7 +8,7 @@
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
     <OutputType>Library</OutputType>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <LangVersion>7</LangVersion>
+    <LangVersion>7.3</LangVersion>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
@@ -33,7 +33,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
+    <PackageReference Include="Relativity.Kepler" Version="2.20.1" />
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

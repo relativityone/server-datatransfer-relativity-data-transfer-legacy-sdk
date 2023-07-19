@@ -17,11 +17,11 @@ namespace MassImport.NUnit.Integration.Helpers
 
 				context.CommitTransaction();
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				context.RollbackTransaction();
 
-				throw ex;
+				throw;
 			}
 
 			return result;

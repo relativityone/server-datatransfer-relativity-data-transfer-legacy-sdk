@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DataTransfer.Legacy.MassImport.Toggles;
+using FluentAssertions;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity;
@@ -23,13 +24,14 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 	public class ProductionImportTest : MassImportTestBase
 	{
 		private DataTable _expectedFieldValues;
-		private string ConrolNumber;
+		private string ControlNumber;
 
 		[TearDown]
 		public async Task TearDownAsync()
 		{
 			await RdoHelper.DeleteAllObjectsByTypeAsync(TestParameters, TestWorkspace, (int)ArtifactType.Document).ConfigureAwait(false);
 		}
+
 		[TestCase(true)]
 		[TestCase(false)]
 		public async Task ShouldRunProductionImport(bool hasPDF)
@@ -48,7 +50,9 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			MassImportManagerBase.MassImportResults result = massImportManager.RunProductionImageImport(this.CoreContext.ChicagoContext, imageLoadInfo, productionSetArtifactId, inRepository);
 
 			// Assert
-			var document = await GetDocumentByControlNumber(ConrolNumber).ConfigureAwait(false);
+			result.ExceptionDetail.Should().BeNull();
+
+			var document = await GetDocumentByControlNumber(ControlNumber).ConfigureAwait(false);
 
 			var hasImagesField = ChoiceHelper.GetChoiceField(document, WellKnownFields.HasImages);
 
@@ -128,7 +132,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				sb.Append("FileNameThatShouldBeShorterThen200chars");
 				sb.Append(postfix);
 
-				ConrolNumber = controlNumber;
+				ControlNumber = controlNumber;
 			}
 
 			return sb.ToString();

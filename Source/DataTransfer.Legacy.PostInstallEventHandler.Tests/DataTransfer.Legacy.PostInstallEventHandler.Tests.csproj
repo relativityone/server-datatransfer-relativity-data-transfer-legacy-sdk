@@ -8,7 +8,7 @@
     <AssemblyName>DataTransfer.Legacy.PostInstallEventHandler.Tests</AssemblyName>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
     <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
-    <LangVersion>7</LangVersion>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin</OutputPath>
@@ -26,19 +26,17 @@
     <RootNamespace>Relativity.DataTransfer.Legacy.PostInstallEventHandler.Tests</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Moq" Version="4.5.3" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
     <PackageReference Include="Polly" Version="5.7.0" />
-    <PackageReference Include="Relativity" Version="11.2.172.14" />
-    <PackageReference Include="Relativity.API" Version="17.11.2" />
-    <PackageReference Include="Relativity.Kepler" Version="2.15.3" />
-    <PackageReference Include="Relativity.SecretCatalog" Version="1.0.18" />
+    <PackageReference Include="Relativity" Version="58.3.2" />
+    <PackageReference Include="Relativity.API" Version="18.3.0" />
+    <PackageReference Include="Relativity.Kepler" Version="2.20.1" />
     <PackageReference Include="Relativity.Services.DataContracts" Version="13.8.1" />
     <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
-    <PackageReference Include="Relativity.Services.Interfaces.Private" Version="11.2.172.14" />
-    <PackageReference Include="Relativity.Services.Layout.Interfaces" Version="1.1.46" />
-    <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" Version="9.4.74" />
+    <PackageReference Include="Relativity.Services.Interfaces.Private" Version="14.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Data.DataSetExtensions" />

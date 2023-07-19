@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.45]
+- REL-858463 - Update and cleanup dependencies
+
 ## [0.3.44]
 - REL-854097 - Dispose RELIMGTMP_runId_ExistingFile table during initialization and when disposeTempTables endpoint is called.
 

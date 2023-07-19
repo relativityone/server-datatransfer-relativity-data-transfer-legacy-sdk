@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using MassImport.NUnit.Integration.Assertions;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
@@ -12,9 +13,6 @@ using Relativity.MassImport.DTO;
 using Relativity.MassImport.Api;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
-using Moq;
-using Relativity.API;
-using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -111,9 +109,9 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var result = await TransactionHelper.WrapInTransaction(ActTask(documentsToImport, settings), Context).ConfigureAwait(false);
 
 			//assert
-			Assert.That(result.ExceptionDetail, Is.Null);
-			Assert.That(result.ArtifactsProcessed, Is.EqualTo(4));
-			Assert.That(result.ArtifactsUpdated, Is.EqualTo(4));
+			result.ExceptionDetail.Should().BeNull();
+			result.ArtifactsProcessed.Should().Be(4);
+			result.ArtifactsUpdated.Should().Be(4);
 			AuditAssertions.ThenTheAuditIsCorrectAsync(TestWorkspace, UserId, expectedAuditDetails, 4, lastRelevantAuditId, AuditAction.Move);
 
 			var documents = await RdoHelper
@@ -149,9 +147,9 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var result = await TransactionHelper.WrapInTransaction(ActTask(documentsToImport, settings), Context).ConfigureAwait(false);
 
 			//assert
-			Assert.That(result.ExceptionDetail, Is.Null);
-			Assert.That(result.ArtifactsProcessed, Is.EqualTo(4));
-			Assert.That(result.ArtifactsUpdated, Is.EqualTo(4));
+			result.ExceptionDetail.Should().BeNull();
+			result.ArtifactsProcessed.Should().Be(4);
+			result.ArtifactsUpdated.Should().Be(4);
 			AuditAssertions.ThenTheAuditIsCorrectAsync(TestWorkspace, UserId, expectedAuditDetails, 4, lastRelevantAuditId, AuditAction.Move);
 
 			var documents = await RdoHelper

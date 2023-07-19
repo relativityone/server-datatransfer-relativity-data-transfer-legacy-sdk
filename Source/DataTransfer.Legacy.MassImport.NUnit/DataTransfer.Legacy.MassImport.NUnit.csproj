@@ -31,62 +31,24 @@
   <ItemGroup>
     <PackageReference Include="coverlet.msbuild" Version="2.8.1" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
-    <PackageReference Include="FluentValidation" Version="6.2.1" />
-    <!--TODO Delete these once we fix the Relativity.SDK.Services.Query nuget package to include these. -->
-    <PackageReference Include="FSharp.Core" Version="4.3.4" />
-    <PackageReference Include="FParsec-Big-Data-Edition" Version="1.0.3" />
-    <PackageReference Include="kCura.DataGrid.Services.Interfaces" Version="17.5.8" />
-    <!-- -->
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.11.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.3" />
     <PackageReference Include="NUnit" Version="3.13.2" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
-    <PackageReference Include="NunitXml.TestLogger" Version="2.1.41" />
-    <PackageReference Include="kCura" Version="14.2.7" />
+    <PackageReference Include="NunitXml.TestLogger" Version="3.1.15" />
+    <PackageReference Include="kCura" Version="15.0.0" />
     <!--Higher Moq versions bring in Castle.Core 4.0+ that has a public class CollectionExtensions which is not the real Extension method and was updated to drop the ForEach method in the 4.0+ series.
 	It is missing the function CollectionExtensions.ForEach which is needed by a transient dependency of kCura.Utility.LazyMemoryCache. https://github.com/castleproject/Core/issues/276
 	TODO: Find a way to force a different usage of CollectionExtentions that has ForEach-->
-    <PackageReference Include="Moq" Version="4.8.3" />
-    <PackageReference Include="Moq.AutoMock" Version="1.2.0.120" />
-    <!-- -->
-    <PackageReference Include="Polly" Version="5.7.0" />
+    <PackageReference Include="Moq" Version="4.5.3" />
     <PackageReference Include="Relativity.DataGrid.Implementations" Version="17.5.8" />
-	  <PackageReference Include="Combinatorics" Version="1.1.0.19" />
-    <PackageReference Include="CompareNETObjects" Version="3.09.0" />
-    <PackageReference Include="Relativity.ApplicationBase" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.ApplicationBase.InvariantApi" Version="11.3.1.22" />
-    <PackageReference Include="Relativity.SecureTokenService.Interfaces" Version="1.5.5" />
-    <PackageReference Include="Relativity.ServiceBus" Version="2.4.3" />
-    <PackageReference Include="Relativity.Services.Interfaces" Version="13.8.1" />
-    <PackageReference Include="Relativity.Services.Interfaces.Private" Version="13.1.0" />
-    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.8" />
-    <PackageReference Include="Relativity.Toggles" Version="1.5.0" />
+    <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.9" />
+    <PackageReference Include="Relativity.Toggles" Version="1.13.2" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />
-    <PackageReference Include="kCura.Relativity.Client" Version="11.3.1.22" />
-    <PackageReference Include="kCura.EventHandler" Version="17.1.9" />
-    <PackageReference Include="Relativity.API" Version="17.11.2" />
-    <PackageReference Include="kCura.EDDS.DocumentCompareGateway" Version="11.3.1.22" />
-    <PackageReference Include="kCura.SearchProvider" Version="13.1.0" />
+    <PackageReference Include="Relativity.API" Version="18.3.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ServiceModel" Private="True" />
     <Reference Include="System.Web" Private="True" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Data\BaseSqlQueryTest.cs" />
-    <None Include="Data\BulkLoadSqlErrorRetryHelperTest.cs" />
-    <None Include="Data\Cache\ColumnDefinitionCacheTests.cs" />
-    <None Include="Data\ColumnDefinitionInfoTest.cs" />
-    <None Include="Data\DataGeidWriteStrategy\BulkDataGridWriterTests.cs" />
-    <None Include="Data\DataGeidWriteStrategy\ByteMeasuringWriterTests.cs" />
-    <None Include="Data\DataGeidWriteStrategy\FileSystemRecordBuilderTests.cs" />
-    <None Include="Data\DataGridReaderTests.cs" />
-    <None Include="Data\DataGridTempFileDataReaderTests.cs" />
-    <None Include="Data\NativeSqlQueryTest.cs" />
-    <None Include="Data\Native\ProcessMultiObjectFieldTests.cs" />
-    <None Include="Data\Native\ProcessSingleObjectFieldTests.cs" />
-    <None Include="Data\Native\UpdateBulkTableWithCreatedFoldersAndRetrieveFolderPathsToCreate.cs" />
-    <None Include="Data\ObjectsSqlQueryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <DataGridTestFiles Include="Resources\DataGrid*.*" />  

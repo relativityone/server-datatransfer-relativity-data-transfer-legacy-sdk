@@ -13,6 +13,7 @@ using Relativity.Services.Objects.DataContracts;
 using Relativity.Testing.Framework;
 using Relativity.Testing.Framework.Api;
 using Relativity.Testing.Framework.Api.Kepler;
+using Relativity.Testing.Framework.Models;
 
 namespace Relativity.DataTransfer.Legacy.FunctionalTests.Helpers
 {
