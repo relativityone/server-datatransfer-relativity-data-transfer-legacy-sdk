@@ -15,7 +15,7 @@
     <FluentAssertions>5.10.3</FluentAssertions>
     <FluentValidation>6.2.1</FluentValidation>
     <FSharpCore>4.3.4</FSharpCore>
-    <kCura>14.2.6</kCura>
+    <kCura>14.2.7</kCura>
     <kCuraDbUpgrader>1.0.115</kCuraDbUpgrader>
     <kCuraHTMLSanitizer>1.0.6</kCuraHTMLSanitizer>
     <kCuraLongPath>2.5.0</kCuraLongPath>
@@ -56,6 +56,8 @@
     <TelemetryAPM>2019.10.9</TelemetryAPM>
     <TelemetryMetricsCollectionClient>3003.1.1</TelemetryMetricsCollectionClient>
     <Toggles>1.10.8</Toggles>
+    <kCuraAssemblyAnalysis>48.2.26</kCuraAssemblyAnalysis>
+    <RelativityTelemetryMetricsCollection>3005.0.0</RelativityTelemetryMetricsCollection>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" Version="3001.2.4" />
@@ -128,5 +130,7 @@
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.7.0" />
     <PackageVersion Include="System.ValueTuple" Version="4.5.0" />
     <PackageVersion Include="Tdd-Toolkit" Version="2.0.1" />
+    <PackageVersion Include="kCura.Assembly.Analysis" Version="$(kCuraAssemblyAnalysis)" />
+    <PackageVersion Include="Relativity.Telemetry.MetricsCollection" Version="$(RelativityTelemetryMetricsCollection)" />
   </ItemGroup>
 </Project>
