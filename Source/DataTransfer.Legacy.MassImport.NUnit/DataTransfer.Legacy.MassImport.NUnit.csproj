@@ -40,7 +40,7 @@
 	It is missing the function CollectionExtensions.ForEach which is needed by a transient dependency of kCura.Utility.LazyMemoryCache. https://github.com/castleproject/Core/issues/276
 	TODO: Find a way to force a different usage of CollectionExtentions that has ForEach-->
     <PackageReference Include="Moq" Version="4.5.3" />
-    <PackageReference Include="Relativity.DataGrid.Implementations" Version="17.5.8" />
+    <PackageReference Include="Relativity.DataGrid.Implementations" Version="18.0.5" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.9" />
     <PackageReference Include="Relativity.Toggles" Version="1.13.2" />
     <PackageReference Include="Relativity.Logging.Interfaces" Version="3000.4.0" />

@@ -8,6 +8,7 @@
 	using Relativity.DataTransfer.Legacy.Services.Helpers;
 	using Relativity.API;
 	using Serilog;
+	using Serilog.Context;
 	using Serilog.Core;
 	using Serilog.Events;
 	using Serilog.Sinks.OpenTelemetry;
@@ -69,10 +70,12 @@
 		}
 
 		/// <inheritdoc/>
-		public IDisposable LogContextPushProperty(string propertyName, object obj)
+		public IDisposable LogContextPushProperty(string propertyName, object value)
 		{
 			Initialize();
-			return relativityLogger.LogContextPushProperty(propertyName, obj);
+			IDisposable serilogContext = LogContext.PushProperty(propertyName, value);
+			IDisposable relContext = relativityLogger.LogContextPushProperty(propertyName, value);
+			return new DisposableCollection(new[] { serilogContext, relContext });
 		}
 
 		/// <inheritdoc/>
@@ -210,13 +213,15 @@
 
 					serilogLogger = new LoggerConfiguration()
 						.MinimumLevel.Information()
-						.WriteTo.OpenTelemetry(
-							endpoint: otlpEndpoint,
-							protocol: OpenTelemetrySink.OtlpProtocol.HttpProtobuf,
-							headers: new Dictionary<string, string>() { { "apikey", apikey }, },
-							batchSizeLimit: 2,
-							batchPeriod: 2,
-							batchQueueLimit: 10)
+						.WriteTo.OpenTelemetry(options =>
+						{
+							options.Endpoint = otlpEndpoint;
+							options.Protocol = OtlpProtocol.HttpProtobuf;
+							options.Headers = new Dictionary<string, string>() { { "apikey", apikey }, };
+							options.BatchingOptions.BatchSizeLimit = 2;
+							options.BatchingOptions.Period = TimeSpan.FromSeconds(2);
+							options.BatchingOptions.QueueLimit = 10;
+						})
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.R1SourceID, instanceIdentifier.ToLower())
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.ServiceNamespace, TelemetryConstants.Values.ServiceNamespace)
 						.Enrich.WithProperty(TelemetryConstants.AttributeNames.ServiceName, serviceName)

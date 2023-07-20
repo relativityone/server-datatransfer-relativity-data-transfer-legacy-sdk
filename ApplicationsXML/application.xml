@@ -180,6 +180,7 @@
     </Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Api.dll</Name><Notes /></Assembly>
+    <Assembly><Keywords/><Name>OpenTelemetry.Api.ProviderBuilderExtensions.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>OpenTelemetry.Exporter.OpenTelemetryProtocol.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>Grpc.Core.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>Grpc.Core.Api.dll</Name><Notes /></Assembly>
@@ -195,7 +196,6 @@
     <Assembly><Keywords/><Name>Microsoft.Extensions.Options.ConfigurationExtensions.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>Microsoft.Extensions.Options.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>Microsoft.Extensions.Primitives.dll</Name><Notes /></Assembly>
-    <Assembly><Keywords/><Name>System.Collections.Immutable.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>System.ComponentModel.Annotations.dll</Name><Notes /></Assembly>
     <Assembly><Keywords/><Name>Relativity.DataGrid.dll</Name><Notes/></Assembly>
     <Assembly><Keywords/><Name>Relativity.DataGrid.Implementations.dll</Name><Notes/></Assembly>
@@ -203,7 +203,6 @@
     <Assembly><Keywords/><Name>Relativity.Productions.Services.Interfaces.Versioned.dll</Name><Notes/></Assembly>
 	<Assembly><Keywords/><Name>Grpc.Net.Client.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Grpc.Net.Common.dll</Name><Notes /></Assembly>
-	<Assembly><Keywords/><Name>OpenTelemetry.SemanticConventions.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Serilog.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Serilog.Sinks.OpenTelemetry.dll</Name><Notes /></Assembly>
 	<Assembly><Keywords/><Name>Serilog.Sinks.PeriodicBatching.dll</Name><Notes /></Assembly>
