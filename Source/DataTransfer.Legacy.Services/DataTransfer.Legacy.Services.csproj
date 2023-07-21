@@ -25,7 +25,7 @@
     <PackageReference Include="Castle.Windsor" />
     <PackageReference Include="kCura" />
     <PackageReference Include="kCura.LongPath" />
-    <PackageReference Include="Polly" Version="5.7.0" />
+    <PackageReference Include="Polly" />
     <PackageReference Include="Relativity.API" />
     <PackageReference Include="Relativity.Core" />
     <PackageReference Include="Relativity.Kepler" />
