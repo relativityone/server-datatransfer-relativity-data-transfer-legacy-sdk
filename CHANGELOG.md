@@ -4,9 +4,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [0.9.0] - 07-20-2023
 
-## [0.2.17]
-- REL-661435 - cloned NativeLoadInfo and ObjectLoadInfo dtos from the relativity core.
-
 - [REL-857896](https://jira.kcura.com/browse/REL-857896) - Backport relativity-data-transfer-legacy-sdk - Backported from [REL-658092](https://jira.kcura.com/browse/REL-658092) ticket
 
 ## [0.8.0] - 07-06-2023
