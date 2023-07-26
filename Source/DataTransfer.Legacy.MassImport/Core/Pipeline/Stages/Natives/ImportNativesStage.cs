@@ -43,7 +43,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 			return result;
 		}
 
-		private MassImportManagerBase.MassImportResults ExecuteNativeImport(MassImportContext context, Native native, IDataGridInputReaderProvider dataGridInputReaderFactory, NativeLoadInfo settings, int auditUserID, bool inRepository, bool includeExtractedTextEncoding, NativeImportInput input)
+		private MassImportManagerBase.MassImportResults ExecuteNativeImport(MassImportContext context, Native native, IDataGridInputReaderProvider dataGridInputReaderFactory, Relativity.MassImport.DTO.NativeLoadInfo settings, int auditUserID, bool inRepository, bool includeExtractedTextEncoding, NativeImportInput input)
 		{
 			IChoicesImportService choicesImportService = CreateChoicesImportService(settings, input.ColumnDefinitionCache);
 			var command = new NativeImportCommand(
@@ -63,7 +63,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 			return command.ExecuteNativeImport();
 		}
 
-		private IChoicesImportService CreateChoicesImportService(NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
+		private IChoicesImportService CreateChoicesImportService(Relativity.MassImport.DTO.NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
 		{
 			return new ChoicesImportService(
 				_context.BaseContext.DBContext,

@@ -16,7 +16,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 	/// </summary>
 	/// <typeparam name="T">Any input type</typeparam>
 	internal class SendLegacyImportMetricDecoratorStage<T> : DecoratorStage<T, MassImportManagerBase.MassImportResults>
-		where T : IImportSettingsInput<NativeLoadInfo>
+		where T : IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly MassImportContext _context;
 		private readonly IAPM _apmClient;
@@ -70,7 +70,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 		}
 
 		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			MassImportManagerBase.MassImportResults results,
 			Data.ImportMeasurements importMeasurements)
 		{
@@ -80,7 +80,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 		}
 
 		private Dictionary<string, object> CreateSqlImportMetricsCustomData(
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			MassImportManagerBase.MassImportResults results,
 			Data.ImportMeasurements importMeasurements)
 		{
@@ -99,7 +99,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 		}
 
 		private Dictionary<string, object> CreateImportMetricCustomData(
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			MassImportManagerBase.MassImportResults results)
 		{
 			return new Dictionary<string, object>

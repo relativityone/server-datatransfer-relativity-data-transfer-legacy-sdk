@@ -18,7 +18,7 @@ namespace Relativity.MassImport.Data
 		public Objects(
 			kCura.Data.RowDataGateway.BaseContext context,
 			IQueryExecutor queryExecutor,
-			ObjectLoadInfo settings,
+			Relativity.MassImport.DTO.ObjectLoadInfo settings,
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,

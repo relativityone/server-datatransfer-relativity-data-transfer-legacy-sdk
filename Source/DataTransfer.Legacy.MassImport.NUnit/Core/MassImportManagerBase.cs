@@ -10,7 +10,7 @@ namespace Relativity.MassImport.NUnit.Core
 		private Mock<ICoreContext> _mockContext;
 		private Mock<BaseContext> _mockChicagoContext;
 		private Relativity.Core.Service.MassImportManagerBase.MassImportResults _massImportResults;
-		private ImageLoadInfo _settings;
+		private Relativity.MassImport.DTO.ImageLoadInfo _settings;
 		private const string IMAGE_IMPORT_EXCEPTION_MESSAGE = "AttemptRunImageImport Failed";
 		private const string PRODUCTION_IMAGE_IMPORT_EXCEPTION_MESSAGE = "AttemptRunProductionImageImport Failed";
 		private const string NATIVE_IMPORT_EXCEPTION_MESSAGE = "AttemptRunNativeImport Failed";
@@ -27,7 +27,7 @@ namespace Relativity.MassImport.NUnit.Core
 				.Returns(_mockChicagoContext.Object);
 
 			_massImportResults = new Relativity.Core.Service.MassImportManagerBase.MassImportResults();
-			_settings = new ImageLoadInfo()
+			_settings = new Relativity.MassImport.DTO.ImageLoadInfo()
 			{
 				BulkFileName = "",
 				UploadFullText = false,
@@ -79,22 +79,22 @@ namespace Relativity.MassImport.NUnit.Core
 				// empatee
 			}
 
-			protected override MassImportResults AttemptRunImageImport(BaseContext context, ImageLoadInfo settings, bool inRepository, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
+			protected override MassImportResults AttemptRunImageImport(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunImageImport Failed");
 			}
 
-			protected override MassImportResults AttemptRunNativeImport(BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
+			protected override MassImportResults AttemptRunNativeImport(BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunNativeImport Failed");
 			}
 
-			protected override MassImportResults AttemptRunObjectImport(BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportResults retval)
+			protected override MassImportResults AttemptRunObjectImport(BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunObjectImport Failed");
 			}
 			
-			protected override MassImportResults AttemptRunProductionImageImport(BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
+			protected override MassImportResults AttemptRunProductionImageImport(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval)
 			{
 				throw new System.Exception("AttemptRunProductionImageImport Failed");
 			}

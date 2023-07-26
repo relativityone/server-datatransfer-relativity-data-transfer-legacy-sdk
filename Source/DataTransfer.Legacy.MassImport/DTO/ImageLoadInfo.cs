@@ -1,13 +1,10 @@
-﻿namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models
+﻿using System;
+
+namespace Relativity.MassImport.DTO
 {
+	[Serializable]
 	public class ImageLoadInfo
 	{
-		public ImageLoadInfo()
-		{
-			OverlayArtifactID = -1;
-			Billable = true;
-		}
-
 		public bool DisableUserSecurityCheck { get; set; }
 
 		public string RunID { get; set; }
@@ -28,19 +25,14 @@
 
 		public int DestinationFolderArtifactID { get; set; }
 
-		public ImportAuditLevel AuditLevel { get; set; }
+		public ImportAuditLevel AuditLevel { get; set; } = ImportAuditLevel.FullAudit;
 
-		public int OverlayArtifactID { get; set; }
+		public int OverlayArtifactID { get; set; } = -1;
 
-		public ExecutionSource ExecutionSource { get; set; }
+		public ExecutionSource ExecutionSource { get; set; } = ExecutionSource.Unknown;
 
-		public bool Billable { get; set; }
+		public bool Billable { get; set; } = true;
 
 		public string BulkFileSharePath { get; set; }
-
-		public override string ToString()
-		{
-			return this.ToSafeString();
-		}
 	}
 }

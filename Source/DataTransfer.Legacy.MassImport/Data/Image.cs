@@ -34,7 +34,7 @@ namespace Relativity.MassImport.Data
 		private const bool _FILTER_BY_ORDER = true;
 		private FieldInfo _fullTextField;
 		private Relativity.Data.DataGridContext _dgContext;
-		private ImageLoadInfo _settings;
+		private Relativity.MassImport.DTO.ImageLoadInfo _settings;
 		private TableNames _tableNames;
 		private DataGridImportHelper _dgImportHelper;
 		private Relativity.Data.DataGridMappingMultiDictionary _dataGridMappings;
@@ -42,7 +42,7 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Constructors
-		public Image(BaseContext context, ImageLoadInfo settings)
+		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings)
 		{
 			_context = context;
 			_keyFieldID = settings.KeyFieldArtifactID;
@@ -70,7 +70,7 @@ namespace Relativity.MassImport.Data
 		#region Private Accessors
 		private string TableNameArtifactTemp => _tableNames.ImagePart;
 
-		private ImageLoadInfo Settings => _settings;
+		private Relativity.MassImport.DTO.ImageLoadInfo Settings => _settings;
 
 		public DGRelativityRepository DGRelativityRepository { get; set; }
 		public DataGrid.DGFieldInformationLookupFactory DGFieldInformationLookupFactory { get; set; }

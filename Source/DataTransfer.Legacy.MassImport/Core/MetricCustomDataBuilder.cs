@@ -28,7 +28,7 @@ namespace Relativity.MassImport.Core
 			return this;
 		}
 
-		public MetricCustomDataBuilder WithSettings(NativeLoadInfo settings)
+		public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			// Import settings
 			_customData[nameof(settings.ExecutionSource)] = settings.ExecutionSource.ToString();
@@ -45,6 +45,7 @@ namespace Relativity.MassImport.Core
 			_customData[nameof(settings.KeyFieldArtifactID)] = settings.KeyFieldArtifactID;
 			_customData[nameof(settings.RootFolderID)] = settings.RootFolderID;
 			_customData[nameof(settings.Billable)] = settings.Billable;
+			_customData[nameof(settings.BulkFileSharePath)] = settings.BulkFileSharePath;
 			_customData[$"{nameof(settings.Range)}Defined"] = settings.Range != null;
 			_customData[$"{nameof(settings.Range)}Start"] = settings.Range?.StartIndex;
 			_customData[$"{nameof(settings.Range)}Count"] = settings.Range?.Count;
@@ -69,7 +70,7 @@ namespace Relativity.MassImport.Core
 			_customData[nameof(IsFolderNameMapped)] = IsFolderNameMapped;
 
 			// Object import
-			if (settings is ObjectLoadInfo settingsAsObjectLoadInfo)
+			if (settings is Relativity.MassImport.DTO.ObjectLoadInfo settingsAsObjectLoadInfo)
 			{
 				_customData[nameof(settingsAsObjectLoadInfo.ArtifactTypeID)] = settingsAsObjectLoadInfo.ArtifactTypeID;
 			}
@@ -77,7 +78,7 @@ namespace Relativity.MassImport.Core
 			return this;
 		}
 
-		public MetricCustomDataBuilder WithSettings(ImageLoadInfo settings)
+		public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.ImageLoadInfo settings)
 		{
 			_customData[nameof(settings.ExecutionSource)] = settings.ExecutionSource.ToString();
 			_customData[nameof(settings.AuditLevel)] = settings.AuditLevel.ToString();
@@ -89,6 +90,7 @@ namespace Relativity.MassImport.Core
 			_customData[nameof(settings.OverlayArtifactID)] = settings.OverlayArtifactID;
 			_customData[nameof(settings.DestinationFolderArtifactID)] = settings.DestinationFolderArtifactID;
 			_customData[nameof(settings.Billable)] = settings.Billable;
+			_customData[nameof(settings.BulkFileSharePath)] = settings.BulkFileSharePath;
 
 			return this;
 		}

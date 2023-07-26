@@ -48,7 +48,7 @@ namespace Relativity.MassImport.NUnit.Core
 				}
 			};
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields
@@ -128,7 +128,7 @@ namespace Relativity.MassImport.NUnit.Core
 				},
 			};
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields
@@ -185,7 +185,7 @@ namespace Relativity.MassImport.NUnit.Core
 				}
 			};
 
-			var settings = new ObjectLoadInfo
+			var settings = new Relativity.MassImport.DTO.ObjectLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields,
@@ -222,7 +222,7 @@ namespace Relativity.MassImport.NUnit.Core
 
 			string runId = Guid.NewGuid().ToString();
 
-			var settings = new ImageLoadInfo
+			var settings = new Relativity.MassImport.DTO.ImageLoadInfo
 			{
 				RunID = runId,
 			};
@@ -284,7 +284,7 @@ namespace Relativity.MassImport.NUnit.Core
 		}
 
 		public bool VerifyCustomData(
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			string importType,
 			string system,
 			Dictionary<string, object> customData)
@@ -293,20 +293,20 @@ namespace Relativity.MassImport.NUnit.Core
 
 			string[] propertiesNotIncludedInCustomData =
 			{
-				nameof(NativeLoadInfo.RunID),
-				nameof(NativeLoadInfo.HaveDataGridFields),
-				nameof(NativeLoadInfo.HasDataGridWorkToDo),
-				nameof(NativeLoadInfo.KeyFieldColumnName),
-				nameof(NativeLoadInfo.Repository),
-				nameof(NativeLoadInfo.DataFileName),
-				nameof(NativeLoadInfo.CodeFileName),
-				nameof(NativeLoadInfo.ObjectFileName),
-				nameof(NativeLoadInfo.DataGridFileName),
-				nameof(NativeLoadInfo.DataGridOffsetFileName),
-				nameof(NativeLoadInfo.BulkLoadFileFieldDelimiter),
-				nameof(NativeLoadInfo.OnBehalfOfUserToken),
-				nameof(NativeLoadInfo.Range),
-				nameof(NativeLoadInfo.MappedFields),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.RunID),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.HaveDataGridFields),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.HasDataGridWorkToDo),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.KeyFieldColumnName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.Repository),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.DataFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.CodeFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.ObjectFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.DataGridFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.DataGridOffsetFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.BulkLoadFileFieldDelimiter),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.OnBehalfOfUserToken),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.Range),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.MappedFields),
 			};
 
 			VerifyAllPropertiesAreIncluded(settings, propertiesNotIncludedInCustomData, customData);
@@ -330,7 +330,7 @@ namespace Relativity.MassImport.NUnit.Core
 		}
 
 		public bool VerifyCustomData(
-			ImageLoadInfo settings,
+			Relativity.MassImport.DTO.ImageLoadInfo settings,
 			string importType,
 			string system,
 			Dictionary<string, object> customData)
@@ -339,10 +339,10 @@ namespace Relativity.MassImport.NUnit.Core
 
 			string[] propertiesNotIncludedInCustomData =
 			{
-				nameof(ImageLoadInfo.RunID),
-				nameof(ImageLoadInfo.Repository),
-				nameof(ImageLoadInfo.BulkFileName),
-				nameof(ImageLoadInfo.DataGridFileName),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.RunID),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.Repository),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.BulkFileName),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.DataGridFileName),
 			};
 
 			VerifyAllPropertiesAreIncluded(settings, propertiesNotIncludedInCustomData, customData);
@@ -351,12 +351,12 @@ namespace Relativity.MassImport.NUnit.Core
 		}
 
 		private bool VerifyCustomData(
-			ObjectLoadInfo settings,
+			Relativity.MassImport.DTO.ObjectLoadInfo settings,
 			string importType,
 			string system,
 			Dictionary<string, object> customData)
 		{
-			VerifyCustomData(settings as NativeLoadInfo, importType, system, customData);
+			VerifyCustomData(settings as Relativity.MassImport.DTO.NativeLoadInfo, importType, system, customData);
 
 			AssertThatDictionaryContainsKeyValuePair(customData, nameof(settings.ArtifactTypeID), settings.ArtifactTypeID);
 			return true;

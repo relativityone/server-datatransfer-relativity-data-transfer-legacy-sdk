@@ -2,7 +2,7 @@
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
-	internal class LoadColumnDefinitionCacheStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IColumnDefinitionCacheInput, Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>
+	internal class LoadColumnDefinitionCacheStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IColumnDefinitionCacheInput, Pipeline.Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly Pipeline.MassImportContext _context;
 
@@ -21,7 +21,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 			return input;
 		}
 
-		private ColumnDefinitionCache LoadColumnDefinitionCache(string runId, NativeLoadInfo settings)
+		private ColumnDefinitionCache LoadColumnDefinitionCache(string runId, Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			var columnDefinitionCache = new ColumnDefinitionCache(_context.BaseContext.DBContext);
 			columnDefinitionCache.LoadDataFromCache(runId);
