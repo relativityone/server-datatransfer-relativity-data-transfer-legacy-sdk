@@ -50,6 +50,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			container.Register(Component.For<IMetricsContext>().Instance(_metricsMock.Object));
 			container.Register(Component.For<Func<IMetricsContext>>().UsingFactoryMethod(x =>
 				new Func<IMetricsContext>(container.Resolve<IMetricsContext>)));
+			container.Register(Component.For<RetryPolicyFactory>());
 			container.Register(Component.For<ICodeService>().ImplementedBy<CodeService>());
 
 			_uut = container.Resolve<ICodeService>();
