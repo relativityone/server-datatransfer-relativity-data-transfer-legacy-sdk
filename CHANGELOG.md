@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.10.0] - 07-20-2023
+
+- [REL-857896](https://jira.kcura.com/browse/REL-857896) - Backport relativity-data-transfer-legacy-sdk - Backported from [REL-658092](https://jira.kcura.com/browse/REL-658092) ticket
+
+
 ## [0.9.0] - 07-24-2023
 
 ### Changed
