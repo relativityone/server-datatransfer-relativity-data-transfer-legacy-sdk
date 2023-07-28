@@ -37,7 +37,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 		}
 
 		private MassImportManagerBase.MassImportResults ExecuteObjectImport(
-			ObjectLoadInfo settings, 
+			Relativity.MassImport.DTO.ObjectLoadInfo settings, 
 			Data.Objects importObject,
 			IChoicesImportService choicesImportService,
 			bool collectCreatedIDs)
@@ -110,7 +110,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return sql;
 		}
 
-		private SerialSqlQuery PrepareErrorUpdateQuery(ObjectLoadInfo settings, Data.Objects importObject)
+		private SerialSqlQuery PrepareErrorUpdateQuery(Relativity.MassImport.DTO.ObjectLoadInfo settings, Data.Objects importObject)
 		{
 			var sql = new SerialSqlQuery();
 			switch (settings.Overlay)
@@ -175,7 +175,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return willExceedLimit;
 		}
 
-		private IChoicesImportService CreateChoicesImportService(NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
+		private IChoicesImportService CreateChoicesImportService(Relativity.MassImport.DTO.NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
 		{
 			return new ChoicesImportService(
 				_context.BaseContext.DBContext,

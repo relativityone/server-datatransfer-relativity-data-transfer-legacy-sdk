@@ -27,7 +27,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Helpers
 
 		public MassImportManagerBase.MassImportResults RunImport(BaseServiceContext serviceContext, MassImportManager massImportManager)
 		{
-			return massImportManager.RunNativeImport(serviceContext, _settings.Map<NativeLoadInfo>(), _inRepository, _includeExtractedTextEncoding);
+			return massImportManager.RunNativeImport(serviceContext, _settings.Map<Relativity.MassImport.DTO.NativeLoadInfo>(), _inRepository, _includeExtractedTextEncoding);
 		}
 	}
 }

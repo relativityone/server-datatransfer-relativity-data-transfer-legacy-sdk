@@ -19,7 +19,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			_columnDefinitionCacheMock = new Mock<IColumnDefinitionCache>();
 		}
 
-		private protected override IChoicesImportService CreateSut(NativeLoadInfo settings)
+		private protected override IChoicesImportService CreateSut(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			return new ChoicesImportService(
 				this.EddsdboContext,

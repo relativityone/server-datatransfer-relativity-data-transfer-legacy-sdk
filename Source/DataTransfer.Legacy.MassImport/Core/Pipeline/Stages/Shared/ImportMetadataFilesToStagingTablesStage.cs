@@ -2,7 +2,7 @@
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 {
-	internal class ImportMetadataFilesToStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
+	internal class ImportMetadataFilesToStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
 	{
 		private readonly Pipeline.MassImportContext _context;
 		private readonly IStagingTableRepository _stagingTableRepository;
@@ -24,7 +24,11 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					settings.BulkLoadFileFieldDelimiter = Relativity.Data.Config.BulkLoadFileFieldDelimiter;
 				}
 
-				_stagingTableRepository.BulkInsert(settings, _context.BaseContext.GetBcpSharePath());
+				var bulkFileSharePath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
+					_context.BaseContext.GetBcpSharePath() :
+					settings.BulkFileSharePath;
+
+				_stagingTableRepository.BulkInsert(settings, bulkFileSharePath);
 			}
 			else
 			{

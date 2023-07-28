@@ -12,16 +12,16 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 	[TestFixture]
 	public class ValidateSettingsStageTests
 	{
-		private readonly Mock<IImportSettingsInput<NativeLoadInfo>> _inputMock;
-		private readonly ValidateSettingsStage<IImportSettingsInput<NativeLoadInfo>> _sut;
+		private readonly Mock<IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>> _inputMock;
+		private readonly ValidateSettingsStage<IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>> _sut;
 
-		private NativeLoadInfo _settings;
+		private Relativity.MassImport.DTO.NativeLoadInfo _settings;
 
 		public ValidateSettingsStageTests()
 		{
-			_sut = new ValidateSettingsStage<IImportSettingsInput<NativeLoadInfo>>();
+			_sut = new ValidateSettingsStage<IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>>();
 
-			_inputMock = new Mock<IImportSettingsInput<NativeLoadInfo>>();
+			_inputMock = new Mock<IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>>();
 			_inputMock
 				.Setup(x => x.Settings)
 				.Returns(() => _settings);
@@ -33,7 +33,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			string validRunId = ValidRunIds().First();
 			string validFileName = ValidFileNames().First();
 
-			_settings = new NativeLoadInfo
+			_settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = validRunId,
 				CodeFileName = validFileName,

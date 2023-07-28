@@ -9,7 +9,7 @@ namespace Relativity.MassImport.Data
 	internal class AuditDetailsBuilder
 	{
 		private kCura.Data.RowDataGateway.BaseContext Context { get; }
-		private NativeLoadInfo Settings { get; }
+		private Relativity.MassImport.DTO.NativeLoadInfo Settings { get; }
 		protected IColumnDefinitionCache ColumnDefinitionCache { get; private set; }
 		private bool IsDocument { get; }
 
@@ -19,7 +19,7 @@ namespace Relativity.MassImport.Data
 
 		public AuditDetailsBuilder(
 			kCura.Data.RowDataGateway.BaseContext context,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			IColumnDefinitionCache columnDefinitionCache,
 			TableNames tableNames,
 			int artifactTypeId)

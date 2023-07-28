@@ -6,10 +6,10 @@ namespace Relativity.MassImport.Data.StagingTables
 	internal interface IStagingTableRepository
 	{
 		bool StagingTablesExist();
-		void CreateStagingTables(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool includeExtractedTextEncoding, bool excludeFolderPathForOldClient);
+		void CreateStagingTables(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool includeExtractedTextEncoding, bool excludeFolderPathForOldClient);
 		void TruncateStagingTables(FieldInfo[] mappedFields, bool loadImportedFullTextFromServer);
-		string BulkInsert(NativeLoadInfo settings, string bulkFileSharePath);
-		string Insert(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool excludeFolderPathForOldClient);
+		string BulkInsert(Relativity.MassImport.DTO.NativeLoadInfo settings, string bulkFileSharePath);
+		string Insert(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool excludeFolderPathForOldClient);
 		
 		/// <summary>
 		/// This method returns number of choices per CodeTypeId.

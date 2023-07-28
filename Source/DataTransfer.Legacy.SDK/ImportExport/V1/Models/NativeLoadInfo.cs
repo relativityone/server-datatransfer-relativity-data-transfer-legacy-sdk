@@ -58,6 +58,8 @@
 
 		public bool Billable { get; set; }
 
+		public string BulkFileSharePath { get; set; }
+
 		public override string ToString()
 		{
 			return this.ToSafeString();

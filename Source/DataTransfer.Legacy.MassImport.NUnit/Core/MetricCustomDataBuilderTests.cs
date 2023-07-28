@@ -92,7 +92,7 @@ namespace Relativity.MassImport.NUnit.Core
 				}
 			};
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields
@@ -125,7 +125,7 @@ namespace Relativity.MassImport.NUnit.Core
 				}
 			};
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields
@@ -193,7 +193,7 @@ namespace Relativity.MassImport.NUnit.Core
 				},
 			};
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields
@@ -239,7 +239,7 @@ namespace Relativity.MassImport.NUnit.Core
 				}
 			};
 
-			var settings = new ObjectLoadInfo
+			var settings = new Relativity.MassImport.DTO.ObjectLoadInfo
 			{
 				RunID = runId,
 				MappedFields = mappedFields,
@@ -262,7 +262,7 @@ namespace Relativity.MassImport.NUnit.Core
 			// arrange
 			string runId = Guid.NewGuid().ToString();
 
-			var settings = new ImageLoadInfo
+			var settings = new Relativity.MassImport.DTO.ImageLoadInfo
 			{
 				RunID = runId,
 			};
@@ -277,24 +277,24 @@ namespace Relativity.MassImport.NUnit.Core
 			VerifySettingsInCustomData(settings, actualCustomData);
 		}
 
-		private void VerifySettingsInCustomData(NativeLoadInfo settings, Dictionary<string, object> customData)
+		private void VerifySettingsInCustomData(Relativity.MassImport.DTO.NativeLoadInfo settings, Dictionary<string, object> customData)
 		{
 			string[] propertiesNotIncludedInCustomData =
 			{
-				nameof(NativeLoadInfo.RunID),
-				nameof(NativeLoadInfo.HaveDataGridFields),
-				nameof(NativeLoadInfo.HasDataGridWorkToDo),
-				nameof(NativeLoadInfo.KeyFieldColumnName),
-				nameof(NativeLoadInfo.Repository),
-				nameof(NativeLoadInfo.DataFileName),
-				nameof(NativeLoadInfo.CodeFileName),
-				nameof(NativeLoadInfo.ObjectFileName),
-				nameof(NativeLoadInfo.DataGridFileName),
-				nameof(NativeLoadInfo.DataGridOffsetFileName),
-				nameof(NativeLoadInfo.BulkLoadFileFieldDelimiter),
-				nameof(NativeLoadInfo.OnBehalfOfUserToken),
-				nameof(NativeLoadInfo.Range),
-				nameof(NativeLoadInfo.MappedFields),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.RunID),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.HaveDataGridFields),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.HasDataGridWorkToDo),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.KeyFieldColumnName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.Repository),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.DataFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.CodeFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.ObjectFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.DataGridFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.DataGridOffsetFileName),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.BulkLoadFileFieldDelimiter),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.OnBehalfOfUserToken),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.Range),
+				nameof(Relativity.MassImport.DTO.NativeLoadInfo.MappedFields),
 			};
 
 			VerifyAllPropertiesAreIncluded(settings, propertiesNotIncludedInCustomData, customData);
@@ -315,21 +315,21 @@ namespace Relativity.MassImport.NUnit.Core
 			Assert.That(customData, Contains.Key("IsFolderNameMapped"));
 		}
 
-		private void VerifySettingsInCustomData(ObjectLoadInfo settings, Dictionary<string, object> customData)
+		private void VerifySettingsInCustomData(Relativity.MassImport.DTO.ObjectLoadInfo settings, Dictionary<string, object> customData)
 		{
-			VerifySettingsInCustomData(settings as NativeLoadInfo, customData);
+			VerifySettingsInCustomData(settings as Relativity.MassImport.DTO.NativeLoadInfo, customData);
 
 			AssertThatDictionaryContainsKeyValuePair(customData, nameof(settings.ArtifactTypeID), settings.ArtifactTypeID);
 		}
 
-		private void VerifySettingsInCustomData(ImageLoadInfo settings, Dictionary<string, object> customData)
+		private void VerifySettingsInCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, Dictionary<string, object> customData)
 		{
 			string[] propertiesNotIncludedInCustomData =
 			{
-				nameof(ImageLoadInfo.RunID),
-				nameof(ImageLoadInfo.Repository),
-				nameof(ImageLoadInfo.BulkFileName),
-				nameof(ImageLoadInfo.DataGridFileName),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.RunID),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.Repository),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.BulkFileName),
+				nameof(Relativity.MassImport.DTO.ImageLoadInfo.DataGridFileName),
 			};
 
 			VerifyAllPropertiesAreIncluded(settings, propertiesNotIncludedInCustomData, customData);
