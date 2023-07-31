@@ -4,8 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
-## [0.2.28]
-- REL-669697 - Catch Relativity.Core.Exception.Permission and throw as PermissionDeniedException to stop automatic retries in Import API
+## [0.11.0] - 07-31-2023
+
+### Changed
+
+- [REL-857917](https://jira.kcura.com/browse/REL-857917) - relativity-data-transfer-legacy-sdk - Backported from [REL-669697](https://jira.kcura.com/browse/REL-669697) and [REL-683467](https://jira.kcura.com/browse/REL-683467)
+
 ## [0.10.0] - 07-20-2023
 
 - [REL-857896](https://jira.kcura.com/browse/REL-857896) - Backport relativity-data-transfer-legacy-sdk - Backported from [REL-658092](https://jira.kcura.com/browse/REL-658092) ticket
