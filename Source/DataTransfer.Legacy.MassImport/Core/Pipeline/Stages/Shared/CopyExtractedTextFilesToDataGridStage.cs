@@ -47,7 +47,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Shared
 					}
 					catch (Exception ex)
 					{
-						throw MassImportExceptionHandler.CreateMassImportExecutionException(ex, nameof(CopyExtratedTextFilesToDataGridStage), MassImportErrorCategory.DataGrid);
+						throw MassImportExceptionHandler.CreateMassImportExecutionException(ex, nameof(CopyExtratedTextFilesToDataGridStage), MassImportErrorCategory.DataGridCategory);
 					}
 				}
 

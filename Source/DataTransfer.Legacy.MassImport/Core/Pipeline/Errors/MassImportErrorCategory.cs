@@ -7,7 +7,8 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 		public const string TimeoutCategory = "Timeout";
 		public const string DeadlockCategory = "Deadlock";
 		public const string SqlCategory = "Sql";
-		public const string DataGrid = "DataGrid";
+		public const string DataGridCategory = "DataGrid";
+		public const string BcpCategory = "BCP";
 		public const string UnknownCategory = "Unknown";
 
 		public static IReadOnlyDictionary<string, string> CategoryToErrorDescriptionMap => _categoryToErrorDescriptionMapping;
@@ -23,7 +24,8 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 		private static readonly string[] _retryableErrorCategories =
 		{
 			TimeoutCategory,
-			DeadlockCategory
+			DeadlockCategory,
+			BcpCategory,
 		};
 	}
 }

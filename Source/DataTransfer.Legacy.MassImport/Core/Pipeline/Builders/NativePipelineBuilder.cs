@@ -52,10 +52,13 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 			createFoldersStage = ExecuteInTransactionDecoratorStage.New(createFoldersStage, PipelineExecutor, context);
 			createFoldersStage = RetryOnExceptionDecoratorStage.New(createFoldersStage, PipelineExecutor, context, "creating folders");
 
+			IPipelineStage<NativeImportInput, NativeImportInput> importMetadataFilesToStagingTablesStage = new ImportMetadataFilesToStagingTablesStage<NativeImportInput>(context, stagingTableRepository);
+			importMetadataFilesToStagingTablesStage = RetryOnExceptionDecoratorStage.New(importMetadataFilesToStagingTablesStage, PipelineExecutor, context, "bulk insert temp files");
+
 			return new ValidateSettingsStage<NativeImportInput>()
 				.AddNextStage(new TruncateStagingTablesStage<NativeImportInput>(stagingTableRepository), PipelineExecutor)
 				.AddNextStage(new LoadColumnDefinitionCacheStage<NativeImportInput>(context), PipelineExecutor)
-				.AddNextStage(new ImportMetadataFilesToStagingTablesStage<NativeImportInput>(context, stagingTableRepository), PipelineExecutor)
+				.AddNextStage(importMetadataFilesToStagingTablesStage, PipelineExecutor)
 				.AddNextStage(new SendMetricWithPreImportStagingTablesDetails<NativeImportInput>(context, stagingTableRepository, metricsService), PipelineExecutor)
 				.AddNextStage(createFoldersStage, PipelineExecutor)
 				.AddNextStage(new CopyFullTextFromFileShareLocationStage(context), PipelineExecutor)

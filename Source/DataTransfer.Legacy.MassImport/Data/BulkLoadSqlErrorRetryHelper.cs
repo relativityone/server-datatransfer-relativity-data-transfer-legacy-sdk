@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data.SqlClient;
-using kCura.Utility;
 
 namespace Relativity.MassImport.Data
 {
+	using Polly;
+	using Relativity.Logging;
+
 	internal static class BulkLoadSqlErrorRetryHelper
 	{
 		// https://docs.microsoft.com/en-us/sql/relational-databases/errors-events/database-engine-events-and-errors?view=sql-server-2017
@@ -31,14 +33,27 @@ namespace Relativity.MassImport.Data
 			return false;
 		}
 
-		internal static void RetryOnBulkLoadSqlTemporaryError(Action f)
+		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, ILog logger)
 		{
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(f, Relativity.Data.Config.MassImportOnFileLockRetryCount, Relativity.Data.Config.MassImportOnFileLockRetryWaitTimeInMilliseconds, new RetryLogger("BulkLoadFile"));
+			RetryOnBulkLoadSqlTemporaryError(f, Relativity.Data.Config.MassImportOnFileLockRetryCount, Relativity.Data.Config.MassImportOnFileLockRetryWaitTimeInMilliseconds, logger);
 		}
 
-		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, int retryCount, int retryWaitTimeInMilliseconds, IRetryLogger logger)
+		internal static void RetryOnBulkLoadSqlTemporaryError(Action f, int retryCount, int retryWaitTimeInMilliseconds, ILog logger)
 		{
-			RetryHelper.ExecuteSubWithRetry(f, retryCount, retryWaitTimeInMilliseconds, IsRetryableBulkLoadError, logger);
+			var policy =  Policy
+				.Handle<Exception>(IsRetryableBulkLoadError)
+				.WaitAndRetry(
+					retryCount,
+					waitTime =>  TimeSpan.FromMilliseconds(retryWaitTimeInMilliseconds),
+					onRetry: (exception, waitTime, retryNumber, context) =>
+					{
+						logger.LogWarning(exception, "Error occured when executing BulkInsert. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.",
+							retryNumber,
+							retryCount,
+							waitTime);
+					});
+
+			policy.Execute(f);
 		}
 
 		internal static bool IsTooMuchDataForSqlError(Exception ex)
