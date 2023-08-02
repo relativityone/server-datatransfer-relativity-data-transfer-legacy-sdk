@@ -136,24 +136,5 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceRelativityCase(workspaceId)).Should()
 				.Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 		}
-
-		[Test(Description = "This tests InterceptorBase error handling, in case of Core.Exception.Permission should rethrow as PermissionDeniedException")]
-		public void ShouldThrowPermissionDeniedExceptionWhenPermissionHelperThrowPermissionExceptionToBeHandled()
-		{
-			var workspaceId = Any.Integer();
-
-			var serviceContext = Any.InstanceOf<BaseServiceContext>();
-			_serviceContextFactoryMock.Setup(x => x.GetBaseServiceContext(workspaceId)).Returns(serviceContext);
-			_relativityPermissionHelper
-				.Setup(x => x.HasAdminOperationPermission(serviceContext, Permission.AllowDesktopClientImport))
-				.Throws(new Core.Exception.Permission("Logged in user ID 10240454 does not have access to workspace ID 1018995.  If the logged in user is a member of the system administrators group, please ensure that the logged in user is added to any other group with access to this workspace."));
-
-			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceCamelCase(workspaceId)).Should()
-				.Throw<PermissionDeniedException>().WithMessage($"Error during interceptor action {nameof(PermissionCheckInterceptor)} for {nameof(PermissionCheckInterceptorTestClass)}.{nameof(PermissionCheckInterceptorTestClass.RunWithWorkspaceCamelCase)} InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: Logged in user ID 10240454 does not have access to workspace ID 1018995.  If the logged in user is a member of the system administrators group, please ensure that the logged in user is added to any other group with access to this workspace.");
-			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceLowerCase(workspaceId)).Should()
-                .Throw<PermissionDeniedException>().WithMessage($"Error during interceptor action {nameof(PermissionCheckInterceptor)} for {nameof(PermissionCheckInterceptorTestClass)}.{nameof(PermissionCheckInterceptorTestClass.RunWithWorkspaceLowerCase)} InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: Logged in user ID 10240454 does not have access to workspace ID 1018995.  If the logged in user is a member of the system administrators group, please ensure that the logged in user is added to any other group with access to this workspace.");
-			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceRelativityCase(workspaceId)).Should()
-                .Throw<PermissionDeniedException>().WithMessage($"Error during interceptor action {nameof(PermissionCheckInterceptor)} for {nameof(PermissionCheckInterceptorTestClass)}.{nameof(PermissionCheckInterceptorTestClass.RunWithWorkspaceRelativityCase)} InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: Logged in user ID 10240454 does not have access to workspace ID 1018995.  If the logged in user is a member of the system administrators group, please ensure that the logged in user is added to any other group with access to this workspace.");
-		}
 	}
 }

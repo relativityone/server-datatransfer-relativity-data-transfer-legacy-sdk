@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using Castle.DynamicProxy;
 using Relativity.API;
 using Relativity.Services.Exceptions;
-using Relativity.Services.Objects.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
@@ -99,56 +98,46 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 		private void SafeExecuteBefore(IInvocation invocation)
 		{
-			SafeExecute(() => ExecuteBefore(invocation), invocation);
+			SafeExecute(() => ExecuteBefore(invocation));
 		}
 
 		private async Task SafeExecuteAfter(IInvocation invocation, dynamic returnValue)
 		{
-			await SafeExecute(async () => await ExecuteAfter(invocation, returnValue), invocation);
+			await SafeExecute(async () => await ExecuteAfter(invocation, returnValue));
 		}
 
-		private void SafeExecute(Action action, IInvocation invocation)
+		private void SafeExecute(Action action)
 		{
 			try
 			{
 				action.Invoke();
 			}
-            catch (Core.Exception.Permission permissionException)
-            {
-                Logger.LogError(permissionException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
-				throw new PermissionDeniedException($"Error during interceptor action {GetType().Name} for {invocation.TargetType.Name}.{invocation.Method.Name} {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
-            }
 			catch (ServiceException serviceException)
 			{
-                Logger.LogError(serviceException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
+				Logger.LogError(serviceException, $"Error during interceptor action {GetType().Name} - {serviceException.Message}");
 				throw;
 			}
 			catch (Exception exception)
 			{
-                Logger.LogError(exception, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, exception.Message);
+				Logger.LogError(exception, $"Error during interceptor action {GetType().Name} - {exception.Message}");
 				throw new ServiceException($"Error during interceptor action {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
 
-		private async Task SafeExecute(Func<Task> action, IInvocation invocation)
+		private async Task SafeExecute(Func<Task> action)
 		{
 			try
 			{
 				await action.Invoke();
 			}
-            catch (Core.Exception.Permission permissionException)
-            {
-                Logger.LogError(permissionException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
-                throw new PermissionDeniedException($"Error during interceptor action {GetType().Name} for {invocation.TargetType.Name}.{invocation.Method.Name} {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
-            }
-            catch (ServiceException serviceException)
-            {
-                Logger.LogError(serviceException, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
-                throw;
-            }
+			catch (ServiceException serviceException)
+			{
+				Logger.LogError(serviceException, $"Error during interceptor action {GetType().Name} - {serviceException.Message}");
+				throw;
+			}
 			catch (Exception exception)
 			{
-                Logger.LogError(exception, "Error during interceptor action {interceptor} - {type}.{method} - {message}", GetType().Name, invocation.TargetType.Name, invocation.Method.Name, exception.Message);
+				Logger.LogError(exception, $"Error during interceptor action {GetType().Name} - {exception.Message}");
 				throw new ServiceException($"Error during interceptor action {GetType().Name}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
 			}
 		}
