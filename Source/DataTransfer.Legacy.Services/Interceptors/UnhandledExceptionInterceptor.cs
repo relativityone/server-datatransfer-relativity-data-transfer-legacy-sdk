@@ -33,11 +33,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
-			catch (Core.Exception.BaseException baseException) when (baseException.Message.Contains("does not exist."))
-			{
-				Logger.LogError(baseException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, baseException.Message);
-				throw new NotFoundException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(baseException)}", baseException);
-			}
 			catch (ServiceException serviceException)
 			{
 				Logger.LogError(serviceException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
@@ -62,11 +57,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
 			}
-			catch (Core.Exception.BaseException baseException) when (baseException.Message.Contains("does not exist."))
-			{
-				Logger.LogError(baseException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, baseException.Message);
-				throw new NotFoundException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(baseException)}", baseException);
-			}
 			catch (ServiceException serviceException)
 			{
 				Logger.LogError(serviceException, "There was an error during custom continuation of call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, serviceException.Message);
@@ -90,11 +80,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			{
 				Logger.LogError(permissionException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, permissionException.Message);
 				throw new PermissionDeniedException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(permissionException)}", permissionException);
-			}
-			catch (Core.Exception.BaseException baseException) when (baseException.Message.Contains("does not exist."))
-			{
-				Logger.LogError(baseException, "There was an error during call {type}.{method} - {message}", invocation.TargetType.Name, invocation.Method.Name, baseException.Message);
-				throw new NotFoundException($"Error during call {invocation.TargetType.Name}.{invocation.Method.Name}. {InterceptorHelper.BuildErrorMessageDetails(baseException)}", baseException);
 			}
 			catch (ServiceException serviceException)
 			{
