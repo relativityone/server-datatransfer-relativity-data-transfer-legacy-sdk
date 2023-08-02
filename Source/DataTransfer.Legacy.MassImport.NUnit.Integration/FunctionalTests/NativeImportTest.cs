@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Data;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
@@ -111,5 +113,24 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				UseBulkDataImport = true,
 			};
 		}
-    }
+
+		private string GetMetadata(string fieldDelimiter, DataTable fieldValues)
+		{
+			StringBuilder metadataBuilder = new StringBuilder();
+			string postfix = $"{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
+
+			for (int i = 0; i < fieldValues.Rows.Count; i++)
+			{
+				string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}1003697{fieldDelimiter}";
+				metadataBuilder.Append(prefix);
+
+				string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
+				metadataBuilder.Append(values);
+
+				metadataBuilder.Append(postfix);
+			}
+
+			return metadataBuilder.ToString();
+		}
+	}
 }
