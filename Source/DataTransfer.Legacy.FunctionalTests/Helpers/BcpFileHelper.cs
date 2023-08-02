@@ -43,15 +43,16 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.Helpers
 			UnicodeEncoding encoding = new UnicodeEncoding(false, true);
 			byte[] contentBytes = encoding.GetPreamble().Concat(encoding.GetBytes(content)).ToArray();
 
-			string fileName = Guid.NewGuid().ToString();
-			using (var fileIOService = serviceFactory.GetServiceProxy<IFileIOService>())
+			using (IFileSystemManager fileSystemManager = serviceFactory.GetServiceProxy<IFileSystemManager>())
+			using (var stream = new MemoryStream(contentBytes))
+			using (var keplerStream = new KeplerStream(stream))
 			{
-				await fileIOService.BeginFillAsync(workspaceId, contentBytes.Concat(new byte[] { 0x49 }).ToArray(),
-					bcpPath + "\\",
-					fileName, Guid.NewGuid().ToString());
-			}
+				string fileName = Guid.NewGuid().ToString();
+				await fileSystemManager.UploadFileAsync(keplerStream, Path.Combine(bcpPath, fileName)).ConfigureAwait(false);
 
-			return fileName;
+				return fileName;
+			}
 		}
+
 	}
 }
