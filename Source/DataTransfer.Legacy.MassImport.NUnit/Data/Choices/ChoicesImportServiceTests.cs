@@ -93,7 +93,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 
 			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
-				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults,
 				MappedFields = new[]
 				{
 					_identifierField,
@@ -125,8 +125,8 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 
 			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
-				Overlay = OverwriteType.Append,
-				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Append,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults,
 				MappedFields = new[]
 				{
 					_identifierField,
@@ -146,7 +146,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 		[TestCase(OverlayBehavior.ReplaceAll, true)]
 		[TestCase(OverlayBehavior.ReplaceAll, false)]
 		[TestCase(OverlayBehavior.UseRelativityDefaults, false)]
-		public void ShouldExecuteQueryForMultiChoiceOverlayReplace(OverlayBehavior overlayBehavior, bool overlayMergeValues)
+		public void ShouldExecuteQueryForMultiChoiceOverlayReplace(Relativity.MassImport.DTO.OverlayBehavior overlayBehavior, bool overlayMergeValues)
 		{
 			// arrange
 			string expectedQuery = Resources.ChoicesImportServiceTests_ShouldExecuteQueryForMultiChoiceOverlayReplace;
@@ -159,7 +159,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 
 			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
-				Overlay = OverwriteType.Overlay,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Overlay,
 				OverlayBehavior = overlayBehavior,
 				MappedFields = new[]
 				{
@@ -180,7 +180,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 		[TestCase(OverlayBehavior.MergeAll, true)]
 		[TestCase(OverlayBehavior.MergeAll, false)]
 		[TestCase(OverlayBehavior.UseRelativityDefaults, true)]
-		public void ShouldExecuteQueryForMultiChoiceOverlayMerge(OverlayBehavior overlayBehavior, bool overlayMergeValues)
+		public void ShouldExecuteQueryForMultiChoiceOverlayMerge(Relativity.MassImport.DTO.OverlayBehavior overlayBehavior, bool overlayMergeValues)
 		{
 			// arrange
 			string expectedQuery = Resources.ChoicesImportServiceTests_ShouldExecuteQueryForMultiChoiceOverlayMerge;
@@ -193,7 +193,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 
 			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
-				Overlay = OverwriteType.Overlay,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Overlay,
 				OverlayBehavior = overlayBehavior,
 				MappedFields = new[]
 				{
@@ -228,7 +228,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 
 			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
-				OverlayBehavior = OverlayBehavior.ReplaceAll,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
 				{
 					_identifierField,
@@ -264,7 +264,7 @@ namespace Relativity.MassImport.NUnit.Data.Choices
 
 			var setting = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
-				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults,
 				MappedFields = new[]
 				{
 					_identifierField,

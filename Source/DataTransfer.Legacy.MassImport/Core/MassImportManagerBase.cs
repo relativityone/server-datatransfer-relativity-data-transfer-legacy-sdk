@@ -66,7 +66,7 @@ namespace Relativity.Core.Service
 			}
 			catch (System.Exception ex)
 			{
-				retval.ExceptionDetail = new SoapExceptionDetail(ex);
+				retval.ExceptionDetail = new Relativity.MassImport.DTO.SoapExceptionDetail(ex);
 				retval.ExceptionDetail.Details.Add("RunID:" + retval.RunID);
 				var logger = Log.Logger.ForContext<MassImportManagerBase>();
 				logger.LogError(ex, "MassImportManager.AttemptRun Failure");
@@ -107,7 +107,7 @@ namespace Relativity.Core.Service
 			public int FilesProcessed = 0;
 			public int ArtifactsCreated = 0;
 			public int ArtifactsUpdated = 0;
-			public SoapExceptionDetail ExceptionDetail = null;
+			public Relativity.MassImport.DTO.SoapExceptionDetail ExceptionDetail = null;
 			// TODO:            Public ParentArtifactsCreated As Int32 = 0
 			public string RunID;
 

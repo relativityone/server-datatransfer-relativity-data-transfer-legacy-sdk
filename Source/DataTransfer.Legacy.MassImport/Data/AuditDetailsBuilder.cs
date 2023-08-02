@@ -39,7 +39,7 @@ namespace Relativity.MassImport.Data
 			var mapClause = new StringBuilder();
 			detailsClause.AppendLine("	CAST(N'<auditElement>' AS NVARCHAR(MAX)) +");
 
-			if (performAudit && Settings.AuditLevel == ImportAuditLevel.FullAudit)
+			if (performAudit && Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 			{
 				foreach (FieldInfo mappedField in Settings.MappedFields)
 				{
@@ -51,7 +51,7 @@ namespace Relativity.MassImport.Data
 						// do not audit overlays of the import identifier itself, it can't be changed
 					}
 
-					else if (Settings.Overlay == OverwriteType.Overlay && mappedField.Category == FieldCategory.Identifier && mappedField.ArtifactID != this.GetKeyField().ArtifactID && IsDocument)
+					else if (Settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay && mappedField.Category == FieldCategory.Identifier && mappedField.ArtifactID != this.GetKeyField().ArtifactID && IsDocument)
 					{
 						// do not audit identifier field when overlaying on different field as value won't be changed
 					}

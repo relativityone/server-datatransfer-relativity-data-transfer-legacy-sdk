@@ -1,12 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Castle.Components.DictionaryAdapter;
 using kCura.Data.RowDataGateway;
 using Moq;
 using NUnit.Framework;
@@ -28,7 +24,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 			_messages = new List<string>();
 		}
 
-		[Test]
+		[Test, Timeout(60_000)] // 1 min timeout
 		public void ShouldNotWaitForLock()
 		{
 			// arrange 
@@ -67,7 +63,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 			Assert.AreEqual("task2 release", _messages[5]);
 		}
 
-		[Test]
+		[Test, Timeout(60_000)] // 1 min timeout
 		public void ShouldWaitForLockAndReturnTimeout()
 		{
 			// arrange
@@ -111,7 +107,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 			Assert.AreEqual("task1 release", _messages[4]);
 		}
 
-		[Test]
+		[Test, Timeout(60_000)] // 1 min timeout
 		public void ShouldReturnDeadlock()
 		{
 			using (var beginSemaphore = new SemaphoreSlim(1))
@@ -173,7 +169,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 
 				context.CommitTransaction();
 			}
-			catch (ExecuteSQLStatementFailedException ex)
+			catch (AppLockException ex)
 			{
 				context.RollbackTransaction();
 				AddMessage(ex.Message);
@@ -205,7 +201,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 
 				context.CommitTransaction();
 			}
-			catch (ExecuteSQLStatementFailedException ex)
+			catch (AppLockException ex)
 			{
 				context.RollbackTransaction();
 				AddMessage(ex.Message);

@@ -47,8 +47,8 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			sql.Add(PrepareErrorUpdateQuery(settings, importObject));
 			importObject.ExecuteQueryAndSendMetrics(new StatisticsTimeOnQuery(sql));
 			int auditUserId = Relativity.Core.Service.Audit.ImpersonationToolkit.GetCaseAuditUserId(_context.BaseContext, settings.OnBehalfOfUserToken);
-			bool isAppend = settings.Overlay == Relativity.MassImport.OverwriteType.Append;
-			bool isAppendOrOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Both;
+			bool isAppend = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Append;
+			bool isAppendOrOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Both;
 			bool isAppendOrBoth = isAppend || isAppendOrOverlay;
 			int artifactsCreated = 0;
 
@@ -65,7 +65,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 				}
 			});
 
-			bool isOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Overlay;
+			bool isOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay;
 			importObject.PopulateArtifactIdOnInitialTempTable(_context.BaseContext.UserID, isOverlay);
 			
 			_lockHelper.Lock(_context.BaseContext, MassImportManagerLockKey.LockType.Choice, () =>
@@ -115,19 +115,19 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			var sql = new SerialSqlQuery();
 			switch (settings.Overlay)
 			{
-				case Relativity.MassImport.OverwriteType.Append:
+				case Relativity.MassImport.DTO.OverwriteType.Append:
 					{
 						sql.Add(new PrintSectionQuery(importObject.ManageAppendErrors(), nameof(importObject.ManageAppendErrors)));
 						break;
 					}
 
-				case Relativity.MassImport.OverwriteType.Overlay:
+				case Relativity.MassImport.DTO.OverwriteType.Overlay:
 					{
 						sql.Add(new PrintSectionQuery(importObject.ManageOverwriteErrors(), nameof(importObject.ManageOverwriteErrors)));
 						break;
 					}
 
-				case Relativity.MassImport.OverwriteType.Both:
+				case Relativity.MassImport.DTO.OverwriteType.Both:
 					{
 						sql.Add(new PrintSectionQuery(importObject.ManageAppendOverlayParentMissingErrors(), nameof(importObject.ManageAppendOverlayParentMissingErrors)));
 						break;
@@ -136,8 +136,8 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 
 			if (!settings.DisableUserSecurityCheck)
 			{
-				sql.Add(new PrintSectionQuery(importObject.ManageCheckAddingPermissions(_context.BaseContext.UserID), nameof(importObject.ManageCheckAddingPermissions)));
-				if (settings.Overlay == Relativity.MassImport.OverwriteType.Both || settings.Overlay == Relativity.MassImport.OverwriteType.Overlay)
+				sql.Add(new PrintSectionQuery(importObject.ManageCheckAddingPermissions(_context.BaseContext.AclUserID), nameof(importObject.ManageCheckAddingPermissions)));
+				if (settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Both || settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay)
 				{
 					sql.Add(new PrintSectionQuery(importObject.ManageUpdateOverlayPermissions(_context.BaseContext.UserID), nameof(importObject.ManageUpdateOverlayPermissions)));
 				}

@@ -12,7 +12,7 @@ DECLARE @addArtifactPermissionId INT = (SELECT TOP 1 ArtifactTypePermission.Perm
 
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.SecurityAdd}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityAdd}
 FROM [Resource].[{tableNames.Native}] N
 LEFT JOIN [Resource].[{tableNames.Part}] P ON N.[kCura_Import_ID] = P.[kCura_Import_ID]
 LEFT JOIN [Resource].[{tableNames.Parent}] P2 ON N.[kCura_Import_ID] = P2.[kCura_Import_ID]
@@ -39,7 +39,7 @@ WHERE
 			return new InlineSqlQuery($@"
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorParentMustBeFolder}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorParentMustBeFolder}
 FROM
 	[Resource].[{tableNames.Native}] N
 JOIN 

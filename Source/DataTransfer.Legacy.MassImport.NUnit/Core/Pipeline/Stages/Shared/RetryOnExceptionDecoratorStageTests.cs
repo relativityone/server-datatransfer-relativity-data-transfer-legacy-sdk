@@ -69,6 +69,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 
 		[TestCase(MassImportErrorCategory.SqlCategory)]
 		[TestCase(MassImportErrorCategory.UnknownCategory)]
+		[TestCase(MassImportErrorCategory.DataGridCategory)]
 		public void ShouldThrowExceptionWithoutRetryWhenErrorIsNonRetryable(string errorCategory)
 		{
 			// arrange
@@ -88,6 +89,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 		[TestCase(MassImportErrorCategory.TimeoutCategory)]
 		[TestCase(MassImportErrorCategory.DeadlockCategory)]
 		[TestCase(MassImportErrorCategory.BcpCategory)]
+		[TestCase(MassImportErrorCategory.SqlAppLockCategory)]
 		public void ShouldRetryWhenFirstCallFailed(string errorCategory)
 		{
 			// arrange

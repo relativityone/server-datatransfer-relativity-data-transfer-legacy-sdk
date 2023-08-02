@@ -315,15 +315,13 @@ namespace Relativity.MassImport.Data
 		public virtual void VerifyExistenceOfAssociatedObjectsForMultiObjectByArtifactId(FieldInfo field, int userID, int? auditUserId)
 		{
 			string importedIdentifierColumn = IdentifierField.GetColumnName();
-			string associatedObjectSqlFormat = ImportSql.VerifyExistenceOfAssociatedMultiObjects();
-
 			string objectTypeName = ColumnDefinitionCache[field.ArtifactID].ObjectTypeName;
 			string associatedObjectTable = Relativity.Data.FieldHelper.GetColumnName(objectTypeName);
 			string idFieldColumnName = ColumnDefinitionCache[field.ArtifactID].ColumnName;
 
 			// create errors for associated objects that do not exist
-			associatedObjectSqlFormat = string.Format(associatedObjectSqlFormat, _tableNames.Native, _tableNames.Objects, importedIdentifierColumn, idFieldColumnName, field.GetColumnName(), associatedObjectTable, (object)field.ArtifactID);
-			ExecuteNonQuerySQLStatement(associatedObjectSqlFormat, new SqlParameter[] { new SqlParameter("@userID", userID), new SqlParameter("@auditUserID", auditUserId.Value) });
+			string query = ImportSql.VerifyExistenceOfAssociatedMultiObjects(_tableNames, importedIdentifierColumn, idFieldColumnName, associatedObjectTable, field);
+			ExecuteNonQuerySQLStatement(query);
 		}
 
 		private void CheckForChildAssociatedObjects(int artifactTypeID, string fieldName, int fieldArtifactId)
@@ -333,7 +331,7 @@ namespace Relativity.MassImport.Data
 			if (associatedParentId != (int) ArtifactType.Case)
 			{
 				// Child object! WHOA
-				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? ImportStatus.ErrorAssociatedObjectIsDocument : ImportStatus.ErrorAssociatedObjectIsChild);
+				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild);
 				string childObjectCreations = string.Format("SELECT DISTINCT [DocumentIdentifier] FROM [Resource].[{0}] WHERE [ObjectTypeID] = @artifactTypeID AND [ObjectArtifactID] = -1", _tableNames.Objects);
 				string produceLineErrors = string.Format("UPDATE [Resource].[{0}] SET [kCura_Import_Status] = [kCura_Import_Status] | {1}, [kCura_Import_ErrorData] = '{4}' WHERE [{2}] in ({3})", 
 					_tableNames.Native, (object)errorStatusCode, IdentifierField.GetColumnName(), childObjectCreations, fieldName);
@@ -468,7 +466,7 @@ WHERE
 			{
 				ImportMeasurements.StartMeasure();
 				var filePathResults = ExecuteSqlStatementAsDataTable(string.Format("SELECT [kCura_Import_ID], [{0}] FROM [Resource].[{1}] WHERE [kCura_Import_Status] = {2} AND [{0}] IS NOT NULL", 
-					FullTextFieldColumnName, _tableNames.Native, (object)(long)ImportStatus.Pending));
+					FullTextFieldColumnName, _tableNames.Native, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending));
 				var reader = new FullTextFileImportDataReader(filePathResults);
 				var parameters = new kCura.Data.RowDataGateway.SqlBulkCopyParameters() { EnableStreaming = true, DestinationTableName = $"[Resource].[{_tableNames.FullText}]" };
 				Context.ExecuteBulkCopy(reader, parameters);
@@ -538,7 +536,7 @@ WHERE
 			string sql = $@"
 															SELECT [kCura_Import_ID], [{ tempTableName }].[{ identifierFieldName }], NULL, [kCura_Import_ID]
 															FROM [Resource].[{ tempTableName }]
-															WHERE [kCura_Import_Status] = { (long) ImportStatus.Pending }
+															WHERE [kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 ";
 			return ExecuteSQLStatementAsReader(sql);
 		}
