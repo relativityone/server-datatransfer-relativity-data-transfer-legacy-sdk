@@ -2,9 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.47]
+- REL-864723 - improved handling of arrays in the logging context
+
 ## [0.3.46]
 - REL-858463 - Update logging packages
-- 
+
 ## [0.3.45]
 - REL-858463 - Update and cleanup dependencies
 
