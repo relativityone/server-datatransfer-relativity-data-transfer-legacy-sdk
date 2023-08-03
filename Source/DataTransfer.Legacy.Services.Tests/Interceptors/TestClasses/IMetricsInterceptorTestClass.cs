@@ -21,6 +21,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		/// Run. 
 		/// </summary> 
 		void Run();
+
+		void Array(int?[] array);
 	}
 
 	/// <inheritdoc /> 
@@ -54,6 +56,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 			this._metricsContext.PushProperty("TestMetric", "TestValue");
 			EventGeneralStatistics @event = this._eventsBuilder.BuildGeneralStatisticsEvent("some runID", workspaceID);
 			this._relEyeMetricsService.PublishEvent(@event);
+		}
+
+		public void Array(int?[] array)
+		{
 		}
 	}
 }

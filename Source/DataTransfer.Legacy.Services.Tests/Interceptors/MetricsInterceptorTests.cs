@@ -76,5 +76,30 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_eventsBuilderMock.Verify(m => m.BuildGeneralStatisticsEvent("some runID", 12345));
 			_relEyeMetricsServiceMock.Verify(m => m.PublishEvent(It.IsAny<EventGeneralStatistics>()));
 		}
+
+		[Test]
+		public void Intercept_ArrayParameter()
+		{
+			// Arrange
+			var array = new int?[] { 1, 2, 3, null };
+
+			// Act 
+			_interceptedObject.Array(array);
+
+			// Assert
+			string expectedValue = "1;2;3;;";
+			_metricsContextMock.Verify(x=>x.PushProperty("array", expectedValue));
+		}
+
+		[Test]
+		public void Intercept_ArrayParameter_WhenNull()
+		{
+			// Act 
+			_interceptedObject.Array(null);
+
+			// Assert
+			string expectedValue = "null";
+			_metricsContextMock.Verify(x=>x.PushProperty("array", expectedValue));
+		}
 	}
 }
