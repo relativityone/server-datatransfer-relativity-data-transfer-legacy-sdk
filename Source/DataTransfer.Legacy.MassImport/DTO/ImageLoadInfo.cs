@@ -34,5 +34,6 @@ namespace Relativity.MassImport.DTO
 		public bool Billable { get; set; } = true;
 
 		public string BulkFileSharePath { get; set; }
+		public bool HasPDF { get; set; }
 	}
 }

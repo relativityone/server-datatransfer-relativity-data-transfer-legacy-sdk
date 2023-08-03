@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using DataTransfer.Legacy.MassImport.Data.Cache;
 using Relativity.Data.MassImport;
 
 namespace Relativity.MassImport.Data
