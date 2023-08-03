@@ -2,9 +2,16 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.13.0]   - 07-31-2023
+
+ ## Changed
+
+- [REL-857934](https://jira.kcura.com/browse/REL-857934) -  Backport relativity-data-transfer-legacy-sdk - Backported from [DEVOPS-159751](https://jira.kcura.com/browse/DEVOPS-159751), [REL-682882](https://jira.kcura.com/browse/REL-682882) and [REL-697865](https://jira.kcura.com/browse/REL-697865) ticket
+
 ## [0.12.0]   - 07-31-2023
 
 ## Changed
+
 - [REL-857924](https://jira.kcura.com/browse/REL-857924) -  Backport relativity-data-transfer-legacy-sdk - Backported from [REL-691656](https://jira.kcura.com/browse/REL-691656) and [REL-671246](https://jira.kcura.com/browse/REL-671246) ticket 
 
 ## [0.11.0] - 07-31-2023
@@ -19,8 +26,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - [REL-857896](https://jira.kcura.com/browse/REL-857896) - Backport relativity-data-transfer-legacy-sdk - Backported from [REL-658092](https://jira.kcura.com/browse/REL-658092) ticket
 
+- [REL-857917](https://jira.kcura.com/browse/REL-857917) - relativity-data-transfer-legacy-sdk - Backported from [REL-669697](https://jira.kcura.com/browse/REL-669697), [REL-665917](https://jira.kcura.com/browse/REL-665917) ticket from Server 2022 release
 
-## [0.9.0] - 07-24-2023
+## [0.9.0] - 07-26-2023
 
 ## [0.2.29]
 - REL-683467 - Add more retires for NoBcpDirectoryException

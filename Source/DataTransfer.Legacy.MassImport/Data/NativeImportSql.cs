@@ -449,10 +449,8 @@ SELECT 1 WHERE EXISTS (
   Format replace:
   ---------------
   0: native temp table
-  1: MassDeleteBatchAmount
 */
 	DELETE
-		TOP ({{1}})
 	FROM
 		[File]
 	/*NativeImportAuditIntoClause*/

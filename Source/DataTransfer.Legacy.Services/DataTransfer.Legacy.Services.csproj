@@ -24,13 +24,16 @@
     <PackageReference Include="AutoMapper" />
     <PackageReference Include="Castle.Windsor" />
     <PackageReference Include="kCura" />
+    <PackageReference Include="kCura.Assembly.Analysis" />
     <PackageReference Include="kCura.LongPath" />
     <PackageReference Include="Polly" />
     <PackageReference Include="Relativity.API" />
-    <PackageReference Include="Relativity.Core" />
-    <PackageReference Include="Relativity.Kepler" />
+    <PackageReference Include="Relativity.Core"/>
+    <PackageReference Include="Relativity.Kepler"/>
     <PackageReference Include="Relativity.Services.Interfaces.SDK" />
     <PackageReference Include="Relativity.Telemetry.APM" />
+    <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" />
+    <PackageReference Include="Relativity.Telemetry.MetricsCollection" />
     <PackageReference Include="System.ValueTuple" />
   </ItemGroup>
   <ItemGroup>
