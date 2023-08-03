@@ -40,6 +40,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 
 			container.Register(Component.For<IInstanceSettingsBundle>()
 				.UsingFactoryMethod((x, c) => x.Resolve<IHelper>().GetInstanceSettingBundle()));
+
+			container.Register(Component.For<RetryPolicyFactory>());
 		}
 	}
 }
