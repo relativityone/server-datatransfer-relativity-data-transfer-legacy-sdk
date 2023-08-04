@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.48]
+- REL-865352 - Bump Relativity.Storage to 1.9
+
 ## [0.3.47]
 - REL-864723 - improved handling of arrays in the logging context
 

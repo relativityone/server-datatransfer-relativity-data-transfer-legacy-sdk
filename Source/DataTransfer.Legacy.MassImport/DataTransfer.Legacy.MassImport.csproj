@@ -46,8 +46,8 @@
     <PackageReference Include="Relativity.Productions.Private.SDK" Version="12.6.5" />
     <PackageReference Include="Relativity.Productions.SDK" Version="12.6.5" />
     <PackageReference Include="Relativity.Shared.SDK" Version="1.8.0" />
-    <PackageReference Include="Relativity.Storage" Version="1.8.1" />
-    <PackageReference Include="Relativity.Storage.Extensions" Version="1.8.1" />
+    <PackageReference Include="Relativity.Storage" Version="1.9.0" />
+    <PackageReference Include="Relativity.Storage.Extensions" Version="1.9.0" />
     <PackageReference Include="Relativity.Telemetry.APM" Version="2019.10.9" />
     <PackageReference Include="Relativity.Toggles" Version="1.13.2" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" Version="7.0.0" />
