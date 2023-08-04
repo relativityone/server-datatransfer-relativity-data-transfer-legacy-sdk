@@ -154,6 +154,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 					continue;
 				}
 
+				if (currentParameter.ParameterType.IsArray && arguments.TryGetValue(currentParameter.Name, out string metricValue))
+				{
+					generalMetrics.PushProperty(currentParameter.Name, metricValue);
+					continue;
+				}
+
 				generalMetrics.PushProperty(currentParameter.Name, invocationArgument.ToString());
 			}
 

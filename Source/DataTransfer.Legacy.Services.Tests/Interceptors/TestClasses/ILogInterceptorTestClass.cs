@@ -83,6 +83,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 		/// </summary>
 		/// <param name="testClass">testClass.</param>
 		void SensitiveDataWithModel(SDK.ImportExport.V1.Models.ChoiceInfo testClass);
+
+		void Array(int?[] array);
+
 	}
 
 	/// <inheritdoc />
@@ -147,12 +150,14 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses
 
 		public void SensitiveData(string sensitiveData, string notSensitiveData)
 		{
-
 		}
 
 		public void SensitiveDataWithModel(SDK.ImportExport.V1.Models.ChoiceInfo testClass)
 		{
+		}
 
+		public void Array(int?[] array)
+		{
 		}
 	}
 }

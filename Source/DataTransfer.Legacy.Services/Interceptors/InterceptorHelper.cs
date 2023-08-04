@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using Castle.DynamicProxy;
@@ -26,7 +27,24 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 			for (var i = 0; i < parameters.Length; i++)
 			{
-				var value = invocation.Arguments[i]?.ToString() ?? "null";
+				string value;
+				if (parameters[i].ParameterType.IsArray && invocation.Arguments[i] is Array array)
+				{
+					var sb = new StringBuilder();
+					foreach (object element in array)
+					{
+						sb.Append(element + ";");
+					}
+
+					value = sb.ToString();
+				}
+				else
+				{
+					value = invocation.Arguments[i]?.ToString();
+				}
+
+				value = value ?? "null";
+
 				if (Attribute.IsDefined(parameters[i], typeof(SensitiveDataAttribute)))
 				{
 					value = HashValue(value);

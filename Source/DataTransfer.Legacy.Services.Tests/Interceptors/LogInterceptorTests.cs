@@ -263,5 +263,30 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			//Make sure sensitive data has never been logged even under different name
 			_loggerMock.Verify(m => m.LogContextPushProperty(It.IsAny<string>(), It.Is<string>(x => x.Contains(sensitiveData))), Times.Never);
 		}
+
+		[Test]
+		public void Intercept_ArrayParameter()
+		{
+			// Arrange
+			var array = new int?[] { 1, 2, 3, null };
+
+			// Act 
+			_interceptedObject.Array(array);
+
+			// Assert
+			string expectedValue = "1;2;3;;";
+			_loggerMock.Verify(m => m.LogContextPushProperty("array", expectedValue), Times.Once);
+		}
+
+		[Test]
+		public void Intercept_ArrayParameter_WhenNull()
+		{
+			// Act 
+			_interceptedObject.Array(null);
+
+			// Assert
+			string expectedValue = "null";
+			_loggerMock.Verify(m => m.LogContextPushProperty("array", expectedValue), Times.Once);
+		}
 	}
 }
