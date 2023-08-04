@@ -494,7 +494,6 @@ SELECT
 		/// The behaviour for these two scenario is different. </param>
 		public void ManageHasImages(bool isProductionImagesImport = false)
 		{
-			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
