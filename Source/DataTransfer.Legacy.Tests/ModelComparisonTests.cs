@@ -11,7 +11,6 @@ using Relativity.DataTransfer.Legacy.Tests.Helpers;
 
 namespace Relativity.DataTransfer.Legacy.Tests
 {
-	
 	[TestFixture]
 	public class ModelComparisonTests
 	{
@@ -26,7 +25,6 @@ namespace Relativity.DataTransfer.Legacy.Tests
 			_compareLogic.Config.CustomComparers.Add(new EnumComparerIgnoringType(RootComparerFactory.GetRootComparer()));
 		}
 
-		[Ignore("REL-857947 - Expected sourceProperties.Length to be 16 because Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models.ImageLoadInfo Relativity.MassImport.DTO.ImageLoadInfo. We will look into it later")]
 		[Test]
 		[TestCaseSource(nameof(GetMappings))]
 		[Order(1)]

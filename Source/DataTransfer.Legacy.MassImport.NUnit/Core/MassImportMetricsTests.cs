@@ -10,8 +10,7 @@ using Relativity.Telemetry.APM;
 
 namespace Relativity.MassImport.NUnit.Core
 {
-	
-	[TestFixture]
+    [TestFixture]
     public class MassImportMetricsTests
     {
         private const string ExpectedJobStartedMetricName = "Relativity.MassImport.JobStarted";
@@ -215,8 +214,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
         }
 
-		[Ignore("REL-857947 - Expected: dictionary containing key \"HasPDF\". We will look into it later.")]
-		[Test]
+        [Test]
         public void ShouldSendJobStartedMetricsForImages()
         {
             // arrange
@@ -245,7 +243,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.IsAny<IEnumerable<ISink>>()
             ));
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y))
             ));

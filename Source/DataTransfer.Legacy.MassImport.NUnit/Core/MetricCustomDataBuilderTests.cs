@@ -7,8 +7,7 @@ using Relativity.MassImport.Core;
 
 namespace Relativity.MassImport.NUnit.Core
 {
-	
-	[TestFixture]
+    [TestFixture]
     public class MetricCustomDataBuilderTests
     {
         [Test]
@@ -257,8 +256,7 @@ namespace Relativity.MassImport.NUnit.Core
             VerifySettingsInCustomData(settings, actualCustomData);
         }
 
-		[Ignore("REL-857947 - Expected: dictionary containing key \"HasPDF\". We will look into it later.")]
-		[Test]
+        [Test]
         public void ShouldBuildCustomDataWithImagesSettings()
         {
             // arrange
