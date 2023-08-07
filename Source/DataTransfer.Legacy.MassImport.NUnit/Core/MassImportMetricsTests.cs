@@ -243,7 +243,7 @@ namespace Relativity.MassImport.NUnit.Core
                 It.IsAny<IEnumerable<ISink>>()
             ));
             _loggerMock.Verify(x => x.LogInformation(
-				"Relativity.MassImport Checkpoint. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y))
             ));
