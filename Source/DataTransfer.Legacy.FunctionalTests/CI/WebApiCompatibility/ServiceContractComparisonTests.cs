@@ -43,49 +43,49 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         [IdentifiedTest("4FEC15F9-5AC3-4A0B-B06A-8343B2B34155")]
         public async Task AuditServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IAuditService, AuditManager>().ConfigureAwait(false);
+            await CompareServiceContract<IAuditService, AuditManager>();
         }
 
         [IdentifiedTest("92FE823A-D2E1-414E-BE26-279C6189FDE8")]
         public async Task BulkImportServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IBulkImportService, BulkImportManager>().ConfigureAwait(false);
+            await CompareServiceContract<IBulkImportService, BulkImportManager>();
         }
 
         [IdentifiedTest("99983EF4-7DB6-4941-8AF8-C6AF6CD64104")]
         public async Task CaseServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<ICaseService, CaseManager>().ConfigureAwait(false);
+            await CompareServiceContract<ICaseService, CaseManager>();
         }
 
         [IdentifiedTest("32E8B4F6-145F-418D-B37D-392712C065AB")]
         public async Task CodeServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<ICodeService, CodeManager>().ConfigureAwait(false);
+            await CompareServiceContract<ICodeService, CodeManager>();
         }
 
         [IdentifiedTest("6E230D38-7F6A-4BA3-9C77-128CD7EC2EE9")]
         public async Task DocumentServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IDocumentService, DocumentManager>().ConfigureAwait(false);
+            await CompareServiceContract<IDocumentService, DocumentManager>();
         }
 
         [IdentifiedTest("606B4EAA-DA2A-44B9-9F1C-86A93A56AD8C")]
         public async Task ExportServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IExportService, ExportManager>().ConfigureAwait(false);
+            await CompareServiceContract<IExportService, ExportManager>();
         }
 
         [IdentifiedTest("52570DB9-E2A4-4568-A7AF-ED641045DC6D")]
         public async Task FieldServiceMethods_ShouldReturnTheSameResultForWebApiFieldQueryAndKepler()
         {
-            await CompareServiceContract<IFieldService, FieldQuery>(null, new[] { "RetrieveAllMappableAsync", "RetrievePotentialBeginBatesFieldsAsync", "IsFieldIndexedAsync" }).ConfigureAwait(false);
+            await CompareServiceContract<IFieldService, FieldQuery>(null, new[] { "RetrieveAllMappableAsync", "RetrievePotentialBeginBatesFieldsAsync", "IsFieldIndexedAsync" });
         }
 
         [IdentifiedTest("52570DB9-E2A4-4568-A7AF-ED641045DC6D")]
         public async Task FieldServiceMethods_ShouldReturnTheSameResultForWebApiFieldManagerAndKepler()
         {
-            await CompareServiceContract<IFieldService, FieldManager>(null, new[] { "ReadAsync" }).ConfigureAwait(false);
+            await CompareServiceContract<IFieldService, FieldManager>(null, new[] { "ReadAsync" });
         }
 
         [IdentifiedTest("DDB0CBE8-BEA0-4E3C-BB5A-EAA0CD7C8B10")]
@@ -112,49 +112,49 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 }
 
                 return jsonResult;
-            }).ConfigureAwait(false);
+            });
         }
 
         [IdentifiedTest("EF1408F2-5C6E-4CD4-8DE8-187943CB1997")]
         public async Task FolderServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IFolderService, FolderManager>().ConfigureAwait(false);
+            await CompareServiceContract<IFolderService, FolderManager>();
         }
 
         [IdentifiedTest("CDF6DD1A-1EA2-4A19-87E5-837EA220B7E9")]
         public async Task ObjectServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IObjectService, ObjectManager>().ConfigureAwait(false);
+            await CompareServiceContract<IObjectService, ObjectManager>();
         }
 
         [IdentifiedTest("3B0F9961-F0B4-4C9E-8093-2881B773ADF0")]
         public async Task ObjectTypeServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IObjectTypeService, ObjectTypeManager>().ConfigureAwait(false);
+            await CompareServiceContract<IObjectTypeService, ObjectTypeManager>();
         }
 
         [IdentifiedTest("506CCBBE-6E7E-44A4-82F2-E5E8DB3CEE2B")]
         public async Task ProductionServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IProductionService, ProductionManager>().ConfigureAwait(false);
+            await CompareServiceContract<IProductionService, ProductionManager>();
         }
 
         [IdentifiedTest("E10FCD24-E617-46B7-BED3-BDCB3D18699D")]
         public async Task RelativityServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IRelativityService, RelativityManager>().ConfigureAwait(false);
+            await CompareServiceContract<IRelativityService, RelativityManager>();
         }
 
         [IdentifiedTest("A57E1612-3729-431E-B5CF-4EE6D6507B27")]
         public async Task SearchServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<ISearchService, SearchManager>().ConfigureAwait(false);
+            await CompareServiceContract<ISearchService, SearchManager>();
         }
 
         [IdentifiedTest("1BC11427-732B-4815-A67D-8D2FFC0597AC")]
         public async Task UserServiceMethods_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            await CompareServiceContract<IUserService, UserManager>().ConfigureAwait(false);
+            await CompareServiceContract<IUserService, UserManager>();
         }
 
         private async Task CompareServiceContract<TKeplerService, TWebApiManager>(Func<string, string, string> adjustMethodResultBeforeCompare = null, string[] keplerMethodsToCompare = null) where TKeplerService : IDisposable where TWebApiManager : IDisposable
@@ -174,14 +174,14 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             {
 	            var webApiMethodName = ConvertKeplerMethodName2WebApiMethodName(keplerMethodName);
                 
-                var keplerMethodParameters = GetKeplerMethodParameters<TKeplerService>(keplerMethodName);
+                var keplerMethodParameters = await GetKeplerMethodParameters<TKeplerService>(keplerMethodName);
 	            var webApiMethodParameters = GetWebApiMethodParameters<TWebApiManager>(webApiMethodName, keplerMethodParameters);
 
                 var methodComparisonResult = new ServiceMethodComparisonResult
                 {
-                    KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName, keplerMethodParameters, adjustMethodResultBeforeCompare).ConfigureAwait(false),
-                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(webApiMethodName, webApiMethodParameters, adjustMethodResultBeforeCompare).ConfigureAwait(false)
-				};
+                    KeplerMethodExecutionInfo = await ExecuteKeplerServiceMethod<TKeplerService>(keplerMethodName, keplerMethodParameters, adjustMethodResultBeforeCompare),
+                    WebApiMethodExecutionInfo = await ExecuteWebApiServiceMethod<TWebApiManager>(webApiMethodName, webApiMethodParameters, adjustMethodResultBeforeCompare)
+                };
 
                 DisplayServiceMethodComparisonResult(methodComparisonResult);
                 serviceMethodComparisonResults.Add(methodComparisonResult);
@@ -214,11 +214,11 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             return webApiMethodName;
         }
 
-        private object[] GetKeplerMethodParameters<TKeplerService>(string keplerMethodName)
+        private async Task<object[]> GetKeplerMethodParameters<TKeplerService>(string keplerMethodName)
         {
 	        var keplerServiceType = typeof(TKeplerService);
 	        var keplerMethod = keplerServiceType.GetMethod(keplerMethodName);
-	        return PopulateMethodParameters(keplerMethod);
+	        return await PopulateMethodParameters(keplerMethod);
         }
 
         private object[] GetWebApiMethodParameters<TWebApiManager>(string webApiMethodName, object[] keplerMethodParameters)
@@ -265,9 +265,9 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 await KeplerServiceWrapper.PerformDataRequest<T>(async service =>
                 {
                     var task = (Task)typeof(T).GetMethod(methodName).Invoke(service, methodParameters);
-                    await task.ConfigureAwait(false);
+                    await task;
                     result = task.GetType().GetProperty("Result")?.GetValue(task);
-                }).ConfigureAwait(false);
+                });
 
                 if (result is DataSetWrapper dataSetWrapper)
                 {
@@ -275,7 +275,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 }
                 
                 return result;
-            }, adjustMethodResultBeforeCompare).ConfigureAwait(false);
+            }, adjustMethodResultBeforeCompare);
         }
 
         private async Task<ServiceMethodExecutionInfo> ExecuteWebApiServiceMethod<T>(string methodName, object[] methodParameters, Func<string, string, string> adjustMethodResultBeforeCompare) where T : IDisposable
@@ -292,7 +292,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
                 });
 
                 return Task.FromResult(result);
-            }, adjustMethodResultBeforeCompare).ConfigureAwait(false);
+            }, adjustMethodResultBeforeCompare);
         }
 
         private async Task<ServiceMethodExecutionInfo> ExecuteServiceMethod<T>(string methodName, object[] methodParameters, Func<Task<object>> action, Func<string, string, string> adjustMethodResultBeforeCompare) where T : IDisposable
@@ -308,7 +308,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 
             try
             {
-                var result = await action().ConfigureAwait(false) ?? new { };
+                var result = await action() ?? new { };
 
                 if (result is DataSet dataSet)
                 {
@@ -365,7 +365,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
             return CleanupText(normalizedErrorMessage);
         }
 
-        private object[] PopulateMethodParameters(MethodInfo method)
+        private async Task<object[]> PopulateMethodParameters(MethodInfo method)
         {
 	        var parameters = new List<object>();
 
@@ -378,7 +378,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
 			        case "caseArtifactID":
 			        case "caseContextArtifactID":
 			        case "appID":
-				        parameters.Add(GetTestWorkspaceId());
+				        parameters.Add(await GetTestWorkspaceId());
 				        continue;
 			        case "correlationID":
 				        parameters.Add("TestCorrelationId");

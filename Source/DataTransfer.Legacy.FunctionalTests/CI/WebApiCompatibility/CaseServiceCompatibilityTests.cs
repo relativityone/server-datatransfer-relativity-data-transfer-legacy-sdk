@@ -59,7 +59,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         [IdentifiedTest("9B442373-20E4-4F86-B477-327EDEBD66EB")]
         public async Task GetAllDocumentFolderPathsForCase_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            var workspaceId = GetTestWorkspaceId();
+            var workspaceId = await GetTestWorkspaceId();
             
             string[] webApiResult = null;
             string[] keplerResult = null;
@@ -81,7 +81,7 @@ namespace Relativity.DataTransfer.Legacy.FunctionalTests.CI.WebApiCompatibility
         [IdentifiedTest("EF71DF51-3746-485F-A33F-8B68042954C1")]
         public async Task Read_ShouldReturnTheSameResultForWebApiAndKepler()
         {
-            var workspaceId = GetTestWorkspaceId();
+            var workspaceId = await GetTestWorkspaceId();
 
             kCura.EDDS.WebAPI.CaseManagerBase.CaseInfo webApiResult = null;
             DataTransfer.Legacy.SDK.ImportExport.V1.Models.CaseInfo keplerResult = null;
