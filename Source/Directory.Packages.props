@@ -75,6 +75,7 @@
     <PackageVersion Include="AutoBogus" Version="2.13.0" />
     <PackageVersion Include="AutoMapper" Version="$(AutoMapper)" />
     <PackageVersion Include="Castle.Core" Version="$(CastleCore)" />
+    <PackageVersion Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
     <PackageVersion Include="Castle.Windsor" Version="$(CastleWindsor)" />
     <PackageVersion Include="Combinatorics" Version="1.1.0.19" />
     <PackageVersion Include="CompareNETObjects" Version="4.73.0" />

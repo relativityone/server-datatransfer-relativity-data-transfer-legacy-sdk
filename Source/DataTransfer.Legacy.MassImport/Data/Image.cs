@@ -500,7 +500,9 @@ SELECT
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
-			string sqlFormat = ImportSql.ManageHasImages();
+			string sqlFormat = isProductionImagesImport
+				? ImportSql.ManageHasImagesForProductionImport()
+				: ImportSql.ManageHasImagesForImagesImport();
 			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();

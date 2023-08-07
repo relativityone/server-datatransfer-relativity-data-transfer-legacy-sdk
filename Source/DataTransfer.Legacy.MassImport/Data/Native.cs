@@ -8,7 +8,6 @@ using Relativity.Core.Service;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLockKey;
-using DataTransfer.Legacy.MassImport.Data.Cache;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
 
