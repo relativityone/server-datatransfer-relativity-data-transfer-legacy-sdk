@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
@@ -89,9 +87,10 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				AuditLevel = ImportAuditLevel.FullAudit,
 				Billable = true,
 				BulkLoadFileFieldDelimiter = fieldDelimiter,
-				CodeFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters).ConfigureAwait(false),
-				DataFileName = await BcpFileHelper.CreateAsync(this.TestParameters, dataFileContent).ConfigureAwait(false),
-				DataGridFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters).ConfigureAwait(false),
+				CodeFileName =  await BcpFileHelper.CreateEmptyAsync(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false),
+
+				DataFileName = await BcpFileHelper.CreateAsync(this.TestParameters, this.TestWorkspace.WorkspaceId, dataFileContent).ConfigureAwait(false),
+				DataGridFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false),
 				DisableUserSecurityCheck = false,
 				ExecutionSource = ExecutionSource.ImportAPI,
 				KeyFieldArtifactID = 1003667,
@@ -99,7 +98,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				LoadImportedFullTextFromServer = false,
 				MappedFields = fields,
 				MoveDocumentsInAppendOverlayMode = false,
-				ObjectFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters).ConfigureAwait(false),
+				ObjectFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false),
 				OnBehalfOfUserToken = null,
 				Overlay = OverwriteType.Append,
 				OverlayArtifactID = -1,
@@ -112,24 +111,5 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				UseBulkDataImport = true,
 			};
 		}
-
-		private string GetMetadata(string fieldDelimiter, DataTable fieldValues)
-		{
-			StringBuilder metadataBuilder = new StringBuilder();
-			string postfix = $"{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
-
-			for (int i = 0; i < fieldValues.Rows.Count; i++)
-			{
-				string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}1003697{fieldDelimiter}";
-				metadataBuilder.Append(prefix);
-
-				string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
-				metadataBuilder.Append(values);
-
-				metadataBuilder.Append(postfix);
-			}
-
-			return metadataBuilder.ToString();
-		}
-	}
+    }
 }

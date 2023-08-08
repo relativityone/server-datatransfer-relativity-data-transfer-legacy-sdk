@@ -272,7 +272,7 @@ INSERT INTO AuditRecord (
 		[DeleteFlag] = 0
 	FROM [Resource].[{tableNames.Objects}] O
 	JOIN [Resource].[{tableNames.Native}] N
-		ON O.DocumentIdentifier = N.{keyFieldColumnName}
+		ON O.DocumentIdentifier = N.[{keyFieldColumnName}]
 	WHERE
 		O.[ObjectArtifactID] = -1
 		AND
@@ -293,7 +293,7 @@ UPDATE O
 SET ObjectArtifactID=(SELECT ArtifactID from #InsertedArtifactIDsTable WHERE #InsertedArtifactIDsTable.ObjectName COLLATE DATABASE_DEFAULT = O.ObjectName COLLATE DATABASE_DEFAULT)
 FROM [Resource].[{tableNames.Objects}] O
 	JOIN [Resource].[{tableNames.Native}] N
-		ON O.DocumentIdentifier = N.{keyFieldColumnName}
+		ON O.DocumentIdentifier = N.[{keyFieldColumnName}]
 WHERE
 	O.[ObjectArtifactID] = -1
 	AND
@@ -326,9 +326,9 @@ INSERT INTO [ArtifactAncestry](
 			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject}
 			FROM [Resource].[{tableNames.Native}] N
 				JOIN [Resource].[{tableNames.Objects}] O
-					ON N.{keyFieldColumnName} = O.DocumentIdentifier
+					ON N.[{keyFieldColumnName}] = O.DocumentIdentifier
 				JOIN DuplicatedObjects D
-					ON O.ObjectName = D.ObjectName
+					ON O.[ObjectName] = D.ObjectName
 			WHERE O.[ObjectTypeId] = {associatedArtifactTypeID};
 		";
 		}
@@ -340,7 +340,7 @@ INSERT INTO [ArtifactAncestry](
 			SET objectartifactid = MO.ArtifactID
 			FROM [Resource].[{tableNames.Objects}] O 
 				JOIN [Resource].[{tableNames.Native}] N
-					ON O.DocumentIdentifier = N.{keyFieldColumnName}
+					ON O.DocumentIdentifier = N.[{keyFieldColumnName}]
 				JOIN [{associatedObjectTable}] MO
 					ON O.ObjectName = MO.[{associatedObjectIdentifierColumn}]
 			WHERE [ObjectArtifactID] = -1
