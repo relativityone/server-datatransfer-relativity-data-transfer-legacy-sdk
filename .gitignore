@@ -18,3 +18,4 @@ TestParameters.json
 !Source/DataTransfer.Legacy.Tests/WebAPIContract/*
 Source/DataTransfer.Legacy.FunctionalTests/Files/
 Source/DataTransfer.Legacy.FunctionalTests/oi/
+/CHANGELOG.md
