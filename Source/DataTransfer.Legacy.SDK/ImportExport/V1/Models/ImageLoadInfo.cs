@@ -38,6 +38,8 @@
 
 		public string BulkFileSharePath { get; set; }
 
+		public bool HasPDF { get; set; }
+
 		public override string ToString()
 		{
 			return this.ToSafeString();

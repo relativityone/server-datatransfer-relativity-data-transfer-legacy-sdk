@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Xml.Linq;
 using kCura.Data.RowDataGateway;
 using kCura.Utility;
 using Relativity.Data.MassImport;
@@ -39,6 +38,7 @@ namespace Relativity.MassImport.Data
 		private DataGridImportHelper _dgImportHelper;
 		private Relativity.Data.DataGridMappingMultiDictionary _dataGridMappings;
 		private static readonly string _PENDING_STATUS = ((long)Relativity.MassImport.DTO.ImportStatus.Pending).ToString();
+
 		#endregion
 
 		#region Constructors
@@ -116,7 +116,7 @@ namespace Relativity.MassImport.Data
 
 		private ImageImportSql ImportSql { get; set; }
 
-		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid || DoesFullTextColumnText();
+		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid && DoesFullTextColumnText();
 		#endregion
 
 		#region Public Accessors
@@ -303,9 +303,8 @@ SELECT
 			{
 				string collationString = string.IsNullOrEmpty(fullTextColumnCollation) ? string.Empty : string.Format(" COLLATE {0}", fullTextColumnCollation);
 				fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
-				if (!string.IsNullOrWhiteSpace(fullTextColumnCollation))
+				if (!HasDataGridWorkToDo && !string.IsNullOrWhiteSpace(fullTextColumnCollation))
 				{
-					fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
 					fullTextColumnSql = string.Format("[FullText] {0}VARCHAR(MAX) COLLATE {1},", extractedTextUnicodeMarker, fullTextColumnCollation);
 				}
 			}
@@ -452,6 +451,7 @@ SELECT
 		{
 			ImportMeasurements.StartMeasure();
 			string sqlFormat = ImportSql.DeleteExistingImageFiles();
+			int fileType = GetFileType(Settings.HasPDF);
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -462,7 +462,7 @@ SELECT
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp), QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, fileType), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 		}
 
@@ -472,6 +472,8 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
 			string sqlFormat = ImportSql.CreateImageFileRows();
+			int fileType = GetFileType(Settings.HasPDF);
+
 			string auditString = "";
 			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
@@ -482,18 +484,26 @@ SELECT
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0), new SqlParameter[] { parameter }, QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0, fileType), new SqlParameter[] { parameter }, QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
-		public void ManageHasImages()
+		/// <summary>
+		/// Add or updates the records in DB related to HasImage for particular document.
+		/// </summary>
+		/// <param name="isProductionImagesImport">Flag indicating whether update 'HasImages' is because of images import or productions import.
+		/// The behaviour for these two scenario is different. </param>
+		public void ManageHasImages(bool isProductionImagesImport = false)
 		{
+			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasImages");
-			string sqlFormat = ImportSql.ManageHasImages();
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
+			string sqlFormat = isProductionImagesImport
+				? ImportSql.ManageHasImagesForProductionImport()
+				: ImportSql.ManageHasImagesForImagesImport();
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
@@ -714,7 +724,7 @@ WHERE
 
 		public DataGridReader CreateDataGridReader(string bulkFileShareFolderPath, ILog correlationLogger)
 		{
-			correlationLogger.LogVerbose("Starting CreateDataGridTempFileReader");
+			correlationLogger.LogVerbose("Starting CreateDataGridReader");
 			if (!HasDataGridWorkToDo)
 			{
 				return null;
@@ -771,6 +781,7 @@ WHERE
 				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
 
 				var filter = new HashSet<int>();
+
 				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
 				{
 					while (reader.Read())
@@ -802,7 +813,6 @@ WHERE
 						}
 					}
 				}
-
 				ImportMeasurements.StopMeasure();
 			}
 		}
@@ -948,6 +958,11 @@ WHERE
 			var columnExistParameters = new[] { new SqlParameter("@columnName", SqlDbType.VarChar) { Value = FullTextField.GetColumnName() } };
 			bool doesColumnExist = _context.ExecuteSqlStatementAsScalar<int>(ImportSql.DoesColumnExistOnDocumentTable(), columnExistParameters) > 0;
 			return doesColumnExist;
+		}
+
+		private static int GetFileType(bool hasPDF)
+		{
+			return hasPDF ? Core.Constants.FileTypes.PDFFileType : Core.Constants.FileTypes.ImageFileType;
 		}
 		#endregion
 	}

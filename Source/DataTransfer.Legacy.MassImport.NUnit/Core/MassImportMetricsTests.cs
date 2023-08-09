@@ -261,7 +261,7 @@ namespace Relativity.MassImport.NUnit.Core
             ));
             _counterMock.Verify(x => x.Write(), Times.Once);
             _loggerMock.Verify(x => x.LogInformation(
-                "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
+				"Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
                 ExpectedJobStartedMetricName,
                 It.Is<Dictionary<string, object>>(y => VerifyCustomData(settings, importType, system, y))
             ));

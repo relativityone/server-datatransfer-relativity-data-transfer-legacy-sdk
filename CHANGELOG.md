@@ -8,6 +8,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - [REL-857954](https://jira.kcura.com/browse/REL-857954) -  Backport relativity-data-transfer-legacy-sdk - Backported from [REL-765639](https://jira.kcura.com/browse/REL-765639), [REL-766933](https://jira.kcura.com/browse/REL-766933) and [REL-728085](https://jira.kcura.com/browse/REL-728085) ticket
 
+
+## [0.15.0] - 08-03-2023
+
+### Changed
+
+- [REL-857947](https://jira.kcura.com/browse/REL-857947) - Backport relativity-data-transfer-legacy-sdk - Backported from [REL-743070](https://jira.kcura.com/browse/REL-743070),
+ [REL-759042](https://jira.kcura.com/browse/REL-759042), [REL-754154](https://jira.kcura.com/browse/REL-754154) ticket
+
 ## [0.14.0] - 08-02-2023
 
 ### Changed

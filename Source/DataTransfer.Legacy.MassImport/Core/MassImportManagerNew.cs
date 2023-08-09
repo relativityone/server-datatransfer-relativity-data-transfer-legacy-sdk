@@ -56,6 +56,12 @@ namespace Relativity.MassImport.Core
 		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
+
+			if (settings.HasPDF && !IsPDFImportSupported(context))
+			{
+				throw new System.Exception("PDF files import is not supported");
+			}
+
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
 			var image = new Data.Image(context.DBContext, settings);
 
@@ -254,6 +260,11 @@ namespace Relativity.MassImport.Core
 		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
+
+			if (settings.HasPDF && !IsPDFImportSupported(context))
+			{
+				throw new System.Exception("PDF files import is not supported");
+			}
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
 				throw new System.Exception("Invalid RunId");
@@ -351,6 +362,7 @@ namespace Relativity.MassImport.Core
 						}
 					}
 
+					image.ManageHasImages(true);
 					image.ImportMeasurements.StartMeasure(nameof(productionManager
 						.UpdateImportStatusForFilesAlreadyInProduction));
 					productionManager.UpdateImportStatusForFilesAlreadyInProduction(context, productionArtifactID,
@@ -729,6 +741,22 @@ namespace Relativity.MassImport.Core
 				{ nameof(settings.ExecutionSource), settings.ExecutionSource.ToString() },
 				{ nameof(settings.UploadFullText), settings.UploadFullText }
 			};
+		}
+
+		private bool IsPDFImportSupported(BaseContext context)
+		{
+			try
+			{
+				if (Relativity.Data.CodeType.GetCodeTypeID(context.DBContext, Constants.CodeTypeNames.HasPDFCodeTypeName) > 0)
+				{
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning(ex, "Failed to get ID of the code with name: 'Has PDF'");
+			}
+			return false;
 		}
 	}
 }

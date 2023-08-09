@@ -92,6 +92,7 @@ namespace Relativity.MassImport.Core
             _customData[nameof(settings.DestinationFolderArtifactID)] = settings.DestinationFolderArtifactID;
             _customData[nameof(settings.Billable)] = settings.Billable;
             _customData[nameof(settings.BulkFileSharePath)] = settings.BulkFileSharePath;
+            _customData[nameof(settings.HasPDF)] = settings.HasPDF;
 
             return this;
         }
