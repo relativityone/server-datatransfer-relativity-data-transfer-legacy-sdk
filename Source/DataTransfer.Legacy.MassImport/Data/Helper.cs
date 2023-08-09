@@ -3,7 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Xml.Linq;
+using Relativity.MassImport.Data.Cache;
+using Relativity.Data.MassImport;
 
 namespace Relativity.MassImport.Data
 {
@@ -77,8 +78,8 @@ FROM
 				throw new Exception("Invalid run ID");
 			}
 
-			var statements = from tableName in Constants.GetAllTempTableNames(runId)
-					.Concat(Constants.GetAllAuxiliaryTableNames(runId))
+			var statements = from tableName in TableNames.GetAllTempTableNames(runId)
+					.Concat(TableNames.GetAllAuxiliaryTableNames(runId))
 				select
 					$@"IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{tableName}')
 			BEGIN
@@ -269,7 +270,7 @@ ORDER BY
 
 		public static void TruncateTempTables(kCura.Data.RowDataGateway.BaseContext context, string runID)
 		{
-			var statements = from tableName in Relativity.MassImport.Constants.GetAllTempTableNames(runID)
+			var statements = from tableName in TableNames.GetAllTempTableNames(runID)
 				select
 					$@" IF EXISTS (SELECT * FROM [INFORMATION_SCHEMA].[TABLES] WHERE [TABLE_SCHEMA] = 'Resource' AND [TABLE_NAME] = '{ tableName }')
 BEGIN

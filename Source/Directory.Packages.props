@@ -58,12 +58,24 @@
     <Toggles>1.10.8</Toggles>
     <kCuraAssemblyAnalysis>48.2.26</kCuraAssemblyAnalysis>
     <RelativityTelemetryMetricsCollection>3005.0.0</RelativityTelemetryMetricsCollection>
+	<RelativityProductionsSDK>12.1.13</RelativityProductionsSDK>
+	  <RelativitySecretCatalog>1.0.19</RelativitySecretCatalog>
+	  <RelativitySharedSDK>1.7.0</RelativitySharedSDK>
+	  
+	  <StackExchangeRedis>1.0.328</StackExchangeRedis>
+	  <kCuraEDDSDocumentCompareGateway>11.3.1.22</kCuraEDDSDocumentCompareGateway>
+	  <RelativityApplicationBaseInvariantApi>11.3.1.22</RelativityApplicationBaseInvariantApi>
+
+	  <SystemWrapper>11.3.1.22</SystemWrapper>
+	  <RelativityAssistedReviewUtility>11.3.1.22</RelativityAssistedReviewUtility>
+	  <kCuraImaging>11.3.1.22</kCuraImaging>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" Version="3001.2.4" />
     <PackageVersion Include="AutoBogus" Version="2.13.0" />
     <PackageVersion Include="AutoMapper" Version="$(AutoMapper)" />
     <PackageVersion Include="Castle.Core" Version="$(CastleCore)" />
+    <PackageVersion Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
     <PackageVersion Include="Castle.Windsor" Version="$(CastleWindsor)" />
     <PackageVersion Include="Combinatorics" Version="1.1.0.19" />
     <PackageVersion Include="CompareNETObjects" Version="4.73.0" />
@@ -132,5 +144,14 @@
     <PackageVersion Include="Tdd-Toolkit" Version="2.0.1" />
     <PackageVersion Include="kCura.Assembly.Analysis" Version="$(kCuraAssemblyAnalysis)" />
     <PackageVersion Include="Relativity.Telemetry.MetricsCollection" Version="$(RelativityTelemetryMetricsCollection)" />
+	<PackageVersion Include="Relativity.Productions.SDK" Version="$(RelativityProductionsSDK)" />
+	  <PackageVersion Include="Relativity.SecretCatalog" Version="$(RelativitySecretCatalog)" />
+	  <PackageVersion Include="Relativity.Shared.SDK" Version="$(RelativitySharedSDK)" />
+	  <PackageVersion Include="StackExchange.Redis" Version="$(StackExchangeRedis)" />
+	  <PackageVersion Include="kCura.EDDS.DocumentCompareGateway" Version="$(kCuraEDDSDocumentCompareGateway)" />
+	  <PackageVersion Include="Relativity.ApplicationBase.InvariantApi" Version="$(RelativityApplicationBaseInvariantApi)" />
+	  <PackageVersion Include="kCura.Imaging" Version="$(kCuraImaging)" />
+	  <PackageVersion Include="System.Wrapper" Version="$(SystemWrapper)" />
+	  <PackageVersion Include="Relativity.AssistedReview.Utility" Version="$(RelativityAssistedReviewUtility)" />
   </ItemGroup>
 </Project>
