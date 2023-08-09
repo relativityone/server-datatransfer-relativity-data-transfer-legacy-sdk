@@ -327,6 +327,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(imageLoadInfo.OverlayArtifactID), imageLoadInfo.OverlayArtifactID);
 			metrics.PushProperty(nameof(imageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(imageLoadInfo.Billable), imageLoadInfo.Billable);
+			metrics.PushProperty(nameof(imageLoadInfo.HasPDF), imageLoadInfo.HasPDF);
 		}
 	}
 }

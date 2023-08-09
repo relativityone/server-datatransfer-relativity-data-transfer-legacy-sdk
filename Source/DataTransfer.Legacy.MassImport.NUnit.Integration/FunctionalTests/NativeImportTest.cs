@@ -3,8 +3,12 @@ using System.Data;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
+using Relativity;
 using Relativity.Core.Service;
 using Relativity.MassImport.DTO;
+using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
+using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
+using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -12,6 +16,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 	public class NativeImportTest : MassImportTestBase
 	{
 		private DataTable _expectedFieldValues;
+
+		[TearDown]
+		public async Task TearDownAsync()
+		{
+			await RdoHelper.DeleteAllObjectsByTypeAsync(TestParameters, TestWorkspace, (int)ArtifactType.Document).ConfigureAwait(false);
+		}
 
 		[Test]
 		public async Task ShouldRunNativeImport()

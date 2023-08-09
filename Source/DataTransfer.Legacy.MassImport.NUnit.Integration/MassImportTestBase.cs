@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
 using Relativity.Core;
 using Relativity.Core.Service;
+using Relativity.Data.AuditIngestion;
 using BaseContext = Relativity.Core.BaseContext;
 using Context = kCura.Data.RowDataGateway.Context;
 
@@ -68,6 +70,9 @@ namespace MassImport.NUnit.Integration
 		{
 			Context = new Context(this.TestWorkspace.ConnectionString);
 			Mock<BaseContext> baseContextMock = new Mock<BaseContext>();
+			Mock<IAuditRepository> auditRepositoryMock = new Mock<IAuditRepository>();
+			auditRepositoryMock.Setup(x => x.BeginTransaction()).Callback(() => Context.BeginTransaction());
+
 			baseContextMock.Setup(x => x.DBContext).Returns(Context);
 			baseContextMock.Setup(x => x.BeginTransaction()).Callback(() => Context.BeginTransaction());
 			baseContextMock.Setup(x => x.CommitTransaction()).Callback(() => Context.CommitTransaction());
@@ -77,7 +82,7 @@ namespace MassImport.NUnit.Integration
 			baseContextMock.Setup(x => x.UserID).Returns(USER_ID);
 			baseContextMock.Setup(x => x.AclUserID).Returns(USER_ID);
 			baseContextMock.Setup(x => x.RequestOrigination).Returns("TestRequest");
-
+			baseContextMock.Protected().Setup<IAuditRepository>("AuditRepository").Returns(auditRepositoryMock.Object);
 			baseContextMock.Setup(x => x.ChicagoContext).Returns(baseContextMock.Object);
 			this._coreContextMock.Setup(x => x.ChicagoContext).Returns(baseContextMock.Object);
 		}

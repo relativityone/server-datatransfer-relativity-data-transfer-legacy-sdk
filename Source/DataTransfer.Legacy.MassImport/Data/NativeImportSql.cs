@@ -125,7 +125,7 @@ WHERE
 ");
 		}
 
-		public InlineSqlQuery InsertAncestorsOfTopLevelObjects(TableNames tableNames)
+		public InlineSqlQuery InsertAncestorsOfTopLevelObjectsLegacy(TableNames tableNames)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO ArtifactAncestry(
@@ -146,6 +146,50 @@ INSERT INTO ArtifactAncestry(
 	JOIN [Resource].[{tableNames.Parent}] PARENT ON P.[kCura_Import_ID] = PARENT.[kCura_Import_ID]
 	WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = 0;
 ");
+		}
+
+		public SerialSqlQuery InsertAncestorsOfTopLevelObjects(TableNames tableNames)
+		{
+			var sql = new SerialSqlQuery();
+			
+			sql.Add(new InlineSqlQuery($@"
+DROP TABLE IF EXISTS [{tableNames.ParentAncestors}], [{tableNames.NewAncestors}];
+"));
+			
+			// add parent as the new record ancestor
+			sql.Add(new InlineSqlQuery($@"
+SELECT P.ArtifactID, PARENT.ParentArtifactID
+INTO [{tableNames.NewAncestors}]
+FROM [Resource].[{tableNames.Part}] P
+JOIN [Resource].[{tableNames.Parent}] PARENT ON P.[kCura_Import_ID] = PARENT.[kCura_Import_ID]
+WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = 0;
+"));
+
+			sql.Add(new InlineSqlQuery($@"
+ALTER TABLE [{tableNames.NewAncestors}] ADD PRIMARY KEY(ArtifactID);
+"));
+
+			// add all parent ancestors as the new record ancestors
+			sql.Add(new InlineSqlQuery($@"
+SELECT N.ArtifactID, A.AncestorArtifactID
+INTO [{tableNames.ParentAncestors}]
+FROM [{tableNames.NewAncestors}] N
+JOIN [EDDSDBO].ArtifactAncestry A ON A.ArtifactID = N.ParentArtifactID;
+"));
+
+			sql.Add(new InlineSqlQuery($@"
+ALTER TABLE [{tableNames.ParentAncestors}] ADD PRIMARY KEY(ArtifactID,AncestorArtifactID);
+"));
+
+			// insert all ancestors for the new record
+			sql.Add(new InlineSqlQuery($@"
+INSERT INTO [EDDSDBO].ArtifactAncestry(ArtifactID, AncestorArtifactID)
+SELECT ArtifactID, ParentArtifactID FROM [{tableNames.NewAncestors}]
+UNION ALL
+SELECT ArtifactID, AncestorArtifactID FROM [{tableNames.ParentAncestors}];
+"));
+		
+			return sql;
 		}
 
 		public InlineSqlQuery InsertAncestorsOfAssociateObjects(TableNames tableNames, string fieldArtifactId, string topLevelParentArtifactId)

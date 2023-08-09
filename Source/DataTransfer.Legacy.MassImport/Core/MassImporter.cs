@@ -13,8 +13,8 @@ using Relativity.MassImport.Data.DataGrid;
 
 namespace Relativity.Core.Service.MassImport
 {
-	// TODO: change to internal and adjust namespace, https://jira.kcura.com/browse/REL-477112 
-	public class MassImporter
+	// TODO: adjust namespace, https://jira.kcura.com/browse/REL-477112 
+	internal class MassImporter
 	{
 		private static IAPM APMClient => Client.APMClient;
 
@@ -73,39 +73,6 @@ namespace Relativity.Core.Service.MassImport
 			var input = ObjectImportInput.ForObjectManager(settings, returnAffectedArtifactIDs);
 			var results = ExecuteImport(pipeline, input, input.Settings, contextAndExecutorDto);
 			return results;
-		}
-
-		public static MassImportManagerBase.MassImportResults ImportObjectsForRSAPI(BaseContext baseContext, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool returnAffectedArtifactIDs, Action<TableNames> loadStagingTablesAction)
-		{
-			MassImportManagerBase.MassImportResults results;
-			if (settings.ArtifactTypeID == (int)ArtifactType.Document)
-			{
-				var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
-					baseContext,
-					settings,
-					Relativity.MassImport.Core.Constants.SystemNames.RSAPI,
-					Relativity.MassImport.Core.Constants.ImportType.Natives);
-				var pipelineBuilder = new NativePipelineBuilderForObjectManager(contextAndExecutorDto.PipelineExecutor, APMClient);
-				var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext, loadStagingTablesAction);
-				var input = NativeImportInput.ForRsapi(settings, null, returnAffectedArtifactIDs);
-				results = ExecuteImport(pipeline, input, input.Settings, contextAndExecutorDto);
-			}
-			else
-			{
-				var contextAndExecutorDto = CreateMassImportContextAndPipelineExecutor(
-					baseContext,
-					settings,
-					Relativity.MassImport.Core.Constants.SystemNames.RSAPI,
-					Relativity.MassImport.Core.Constants.ImportType.Objects);
-				var pipelineBuilder = new ObjectsPipelineBuilderForObjectManagerAndRSAPI(contextAndExecutorDto.PipelineExecutor, APMClient);
-				var pipeline = pipelineBuilder.BuildPipeline(contextAndExecutorDto.MassImportContext, loadStagingTablesAction);
-				var input = ObjectImportInput.ForObjectManager(settings, returnAffectedArtifactIDs);
-				results = ExecuteImport(pipeline, input, input.Settings, contextAndExecutorDto);
-			}
-
-			return results is MassImportManagerBase.DetailedMassImportResults ?
-				new MassImportManagerBase.DetailedMassImportResults(results as MassImportManagerBase.DetailedMassImportResults) :
-				new MassImportManagerBase.MassImportResults(results);
 		}
 
 		private static MassImportManagerBase.MassImportResults ExecuteImport<T>(
