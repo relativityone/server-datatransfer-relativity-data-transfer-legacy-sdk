@@ -74,7 +74,7 @@ namespace Relativity.MassImport.Core
             _apm.CountOperation(
                 name: bucketName,
                 correlationID: correlationId,
-                customData: customData);
+                customData: customData).Write();
 
             _logger.LogInformation(
                 "Relativity.MassImport metric. Bucket: {bucketName}, type: Counter, value: {@customData}",
