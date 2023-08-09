@@ -14,6 +14,10 @@ using TddEbook.TddToolkit;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 {
+	using Relativity.Core.Exception;
+	using Relativity.Services.Exceptions;
+	using Permission = Relativity.Core.Permission;
+
 	[TestFixture]
 	public class PermissionCheckInterceptorTests
 	{
@@ -154,6 +158,37 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
                 .Throw<PermissionDeniedException>().WithMessage($"Error during interceptor action {nameof(PermissionCheckInterceptor)} for {nameof(PermissionCheckInterceptorTestClass)}.{nameof(PermissionCheckInterceptorTestClass.RunWithWorkspaceLowerCase)} InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: Logged in user ID 10240454 does not have access to workspace ID 1018995.  If the logged in user is a member of the system administrators group, please ensure that the logged in user is added to any other group with access to this workspace.");
 			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceRelativityCase(workspaceId)).Should()
                 .Throw<PermissionDeniedException>().WithMessage($"Error during interceptor action {nameof(PermissionCheckInterceptor)} for {nameof(PermissionCheckInterceptorTestClass)}.{nameof(PermissionCheckInterceptorTestClass.RunWithWorkspaceRelativityCase)} InnerExceptionType: Relativity.Core.Exception.Permission, InnerExceptionMessage: Logged in user ID 10240454 does not have access to workspace ID 1018995.  If the logged in user is a member of the system administrators group, please ensure that the logged in user is added to any other group with access to this workspace.");
+		}
+
+
+		[Test]
+		public void ShouldThrowNotFoundExceptionWhenHasAdminOperationPermissionReturnsExceptionRelatedToWorskpaceUpgrating()
+		{
+			var workspaceId = Any.Integer();
+			var exception = Any.InstanceOf<WorkspaceStatusException>();
+			var serviceContext = Any.InstanceOf<BaseServiceContext>();
+			var expectedErrorMessage =
+				$"Error during call PermissionCheckInterceptor.EnsureUserHasPermissionsToUseWebApiReplacement. InnerExceptionType: Relativity.Core.Exception.WorkspaceStatusException, InnerExceptionMessage: {exception.Message}";
+			_serviceContextFactoryMock.Setup(x => x.GetBaseServiceContext(workspaceId)).Returns(serviceContext);
+
+			_relativityPermissionHelper
+				.Setup(x => x.HasAdminOperationPermission(serviceContext, It.IsAny<Permission>()))
+				.Throws(exception);
+
+			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceCamelCase(workspaceId)).Should()
+				.Throw<NotFoundException>()
+				.WithMessage(expectedErrorMessage)
+				.WithInnerException<WorkspaceStatusException>();
+			
+			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceLowerCase(workspaceId)).Should()
+				.Throw<NotFoundException>()
+				.WithMessage(expectedErrorMessage)
+				.WithInnerException<WorkspaceStatusException>();
+
+			FluentActions.Invoking(() => _interceptedObject.RunWithWorkspaceRelativityCase(workspaceId)).Should()
+				.Throw<NotFoundException>()
+				.WithMessage(expectedErrorMessage)
+				.WithInnerException<WorkspaceStatusException>();
 		}
 	}
 }
