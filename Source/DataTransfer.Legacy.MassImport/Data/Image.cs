@@ -152,7 +152,7 @@ namespace Relativity.MassImport.Data
 		{
 			ImportMeasurements.StartMeasure();
 			CreateMassImportImageTempTables(Settings.UploadFullText, Settings.OverlayArtifactID);
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => BulkImportImageFile(bulkFileShareFolderPath, Settings.BulkFileName), logger);
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => BulkImportImageFile(bulkFileShareFolderPath, Settings.BulkFileName), logger, ImportMeasurements);
 			ImportMeasurements.StopMeasure();
 
 			return _tableNames.RunId;

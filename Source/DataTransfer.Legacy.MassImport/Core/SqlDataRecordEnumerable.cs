@@ -8,6 +8,9 @@ namespace Relativity.MassImport.Core
 {
 	internal static class SqlDataRecordEnumerable
 	{
+		/// <summary>
+		/// Warning. Do not call ToArray, ToList methods on this because you will get N records, all with the same, duplicated values.
+		/// </summary>
 		public static IEnumerable<SqlDataRecord> GetFolderCandidates(this IEnumerable<FolderNode> folderNodes)
 		{
 			// The sqlDataRecord is reused. This is on purpose. Per MSDN, creating SqlDataRecord is expensive and this is the preferable way.
@@ -22,6 +25,9 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
+		/// <summary>
+		/// Warning. Do not call ToArray, ToList methods on this because you will get N records, all with the same, duplicated values.
+		/// </summary>
 		public static IEnumerable<SqlDataRecord> GetImportMapping(this IEnumerable<FolderNode> folderNodes, IEnumerable<FolderArtifactIDMapping> folderArtifactIdMappings)
 		{
 			// The sqlDataRecord is reused. This is on purpose. Per MSDN, creating SqlDataRecord is expensive and this is the preferable way.

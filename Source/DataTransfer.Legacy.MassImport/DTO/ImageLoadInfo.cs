@@ -35,6 +35,8 @@ namespace Relativity.MassImport.DTO
 
 		public string BulkFileSharePath { get; set; }
 
-		public bool HasPDF { get; set; }
+        public bool OverrideReferentialLinksRestriction { get; set; }
+
+        public bool HasPDF { get; set; }
 	}
 }

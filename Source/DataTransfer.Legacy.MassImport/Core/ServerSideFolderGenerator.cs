@@ -3,16 +3,19 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
+using kCura.Utility;
 using kCura.Utility.Extensions;
 using Microsoft.SqlServer.Server;
+using Relativity.Core;
 using Relativity.Core.Service;
+using Relativity.Logging;
 using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.Core
 {
 	internal class ServerSideFolderGenerator
 	{
-		public void CreateFolders(ILockHelper lockHelper, kCura.Utility.Timekeeper timekeeper, Relativity.Core.BaseContext context, Int32 activeWorkspaceID, Folder folder, Relativity.MassImport.DTO.NativeLoadInfo settings)
+		public void CreateFolders(ILockHelper lockHelper, Timekeeper timekeeper, BaseContext context, int activeWorkspaceID, Folder folder, DTO.NativeLoadInfo settings, ILog logger)
 		{
 			// If settings.RootFolderID is 0, the folders have been created with an old version of the client. New clients pass -1 for unset and > 0 for set, which does not create folders on the client.
 			// Check here to see whether the settings object has a Root Folder ID less than zero.
@@ -71,10 +74,27 @@ namespace Relativity.MassImport.Core
 									"''", string.Empty);
 							}
 
-							IEnumerable<SqlDataRecord> importMap =
-								folderNodes.GetImportMapping(folderArtifactIdMappings);
-							folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID,
-								settings.RootFolderID);
+							try
+							{
+								IEnumerable<SqlDataRecord> importMap = folderNodes.GetImportMapping(folderArtifactIdMappings);
+								folder.SetParentFolderIDsToRootFolderID(importMap, activeWorkspaceID, settings.RootFolderID);
+							}
+							catch (Exception ex)
+							{
+								logger.LogError(ex, "Failed to CreateFolders folderNodesCount: {nodesCount} folderCandidatesCount: {candidatesCount} folderArtifactIdMappingsCount: {mappingsCount}",
+									folderNodes.Count, folderCandidates.Count(), folderArtifactIdMappings.Count);
+								logger.LogError("folderArtifactIdMappings: {@mappings}", folderArtifactIdMappings);
+								foreach (var folderArtifactIdMapping in folderArtifactIdMappings)
+								{
+									logger.LogError("folderArtifactIdMapping: {@mapping}", folderArtifactIdMapping);
+								}
+								foreach (var folderNode in folderNodes)
+								{
+									logger.LogError("folderNode: {@node}", new { TempArtifactID = folderNode.TempArtifactID, LeafsCount = folderNode.LeafIDs.Count, Leafs = string.Join(",", folderNode.LeafIDs) });
+								}
+
+								throw;
+							}
 						}
 						else
 						{
