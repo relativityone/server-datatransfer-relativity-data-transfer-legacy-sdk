@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.19.0] - 08-17-2023
+ 
+### Changed
+ 
+- [REL-868461](https://jira.kcura.com/browse/REL-868461) - Create release branch for RAPCD
+- Official Relativity 2023 12.3 release.
+- The SUT configuration upgrades the previous release image to the latest release image.
+
 ## [0.18.0]   - 08-17-2023
 
 ### Changed
