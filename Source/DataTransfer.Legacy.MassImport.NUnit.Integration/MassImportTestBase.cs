@@ -1,13 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using Moq;
+using Moq.Protected;
 using NUnit.Framework;
 using Relativity.Core;
 using Relativity.Core.Service;
+using Relativity.Data.AuditIngestion;
 using BaseContext = Relativity.Core.BaseContext;
 using Context = kCura.Data.RowDataGateway.Context;
 
@@ -30,7 +32,7 @@ namespace MassImport.NUnit.Integration
 		}
 
 		[OneTimeSetUp]
-		public async Task OneTimeSetupAsync()
+		public async Task OneTimeBaseSetupAsync()
 		{
 			TestWorkspace = await OneTimeSetup.TestWorkspaceAsync.ConfigureAwait(false);
 			SettingsHelper.SetDefaultSettings();
@@ -45,10 +47,38 @@ namespace MassImport.NUnit.Integration
 			Assert.AreEqual(expectedArtifactsUpdated, result.ArtifactsUpdated, "Invalid number of updated artifacts");
 		}
 
+		protected string GetMetadata(string fieldDelimiter, DataTable fieldValues, string[] folders)
+		{
+			StringBuilder metadataBuilder = new StringBuilder();
+			string folderId = folders != null ? "-9" : "1003697";
+
+			for (int i = 0; i < fieldValues.Rows.Count; i++)
+			{
+				string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}{folderId}{fieldDelimiter}";
+				metadataBuilder.Append(prefix);
+
+				string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
+				metadataBuilder.Append(values);
+
+				string postfix = $"{fieldDelimiter}{GetFolderName(folders, i)}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
+				metadataBuilder.Append(postfix);
+			}
+
+			return metadataBuilder.ToString();
+		}
+
+		private string GetFolderName(string[] folders, int index)
+		{
+			return folders != null ? folders[index] : "";
+		}
+
 		private void SetupCoreContextMock()
 		{
 			Context = new Context(this.TestWorkspace.ConnectionString);
 			Mock<BaseContext> baseContextMock = new Mock<BaseContext>();
+			Mock<IAuditRepository> auditRepositoryMock = new Mock<IAuditRepository>();
+			auditRepositoryMock.Setup(x => x.BeginTransaction()).Callback(() => Context.BeginTransaction());
+
 			baseContextMock.Setup(x => x.DBContext).Returns(Context);
 			baseContextMock.Setup(x => x.BeginTransaction()).Callback(() => Context.BeginTransaction());
 			baseContextMock.Setup(x => x.CommitTransaction()).Callback(() => Context.CommitTransaction());
@@ -58,7 +88,7 @@ namespace MassImport.NUnit.Integration
 			baseContextMock.Setup(x => x.UserID).Returns(USER_ID);
 			baseContextMock.Setup(x => x.AclUserID).Returns(USER_ID);
 			baseContextMock.Setup(x => x.RequestOrigination).Returns("TestRequest");
-
+			baseContextMock.Protected().Setup<IAuditRepository>("AuditRepository").Returns(auditRepositoryMock.Object);
 			baseContextMock.Setup(x => x.ChicagoContext).Returns(baseContextMock.Object);
 			this._coreContextMock.Setup(x => x.ChicagoContext).Returns(baseContextMock.Object);
 		}

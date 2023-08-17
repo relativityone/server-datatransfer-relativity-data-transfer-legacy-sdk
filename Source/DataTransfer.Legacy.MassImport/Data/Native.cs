@@ -8,6 +8,8 @@ using Relativity.Core.Service;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using MassImportManagerLockKey = Relativity.MassImport.Core.MassImportManagerLockKey;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
@@ -61,7 +63,7 @@ namespace Relativity.MassImport.Data
 		public Native(
 			Relativity.Core.BaseContext context, 
 			IQueryExecutor queryExecutor,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
@@ -87,33 +89,6 @@ namespace Relativity.MassImport.Data
 			return "Document";
 		}
 
-		public string GetCreateDocumentsSqlStatement2(string requestOrigination, string recordOrigination, bool performAudit, bool includeExtractedTextEncoding, string codeArtifactTableName)
-		{
-			var sql = new SerialSqlQuery(
-				new InlineSqlQuery($"DECLARE @now DATETIME = GETUTCDATE()"), 
-				new InlineSqlQuery($"DECLARE @hasImagesCodeTypeID INT = (SELECT TOP 1 CodeTypeID FROM CodeType WHERE [Name] = 'HasImages')"), 
-				new InlineSqlQuery($"DECLARE @hasImagesCodeArtifactID INT = (SELECT TOP 1 [ArtifactID] FROM [Code] WHERE [Name]='No' AND CodeTypeID = @hasImagesCodeTypeID )"), 
-				new InlineSqlQuery($"DECLARE @addArtifactPermissionId INT = (SELECT TOP 1 ArtifactTypePermission.PermissionID FROM ArtifactTypePermission INNER JOIN Permission ON Permission.PermissionID = ArtifactTypePermission.PermissionID AND [Type] = 6 AND ArtifactTypeID = {{8}})"), 
-				new InlineSqlQuery($"DECLARE @containerArtifactID INT = (SELECT TOP 1 [ArtifactID] FROM [Artifact] WHERE [ParentArtifactID] IS NULL AND ArtifactTypeID = {(int) Relativity.ArtifactType.Case})"), 
-				new InlineSqlQuery($"/* UpdateStateWithError */"), 
-				new InlineSqlQuery($"/* UpdateStateWithErrorParentMustBeFolder */"), 
-				new InlineSqlQuery($"/* UpdateOverlayPermissionsForAppendOverlayMode */"), 
-				ArtifactTableInsertSql.WithDocument(
-					this._tableNames, 
-					this.IdentifierField.GetColumnName(), 
-					ObjectBase.TopFieldArtifactID), 
-				new InlineSqlQuery($"/* InsertObjectsOrDocuments */"), 
-				new InlineSqlQuery($"INSERT INTO ArtifactAncestry"), 
-				new InlineSqlQuery($"/* InsertAuditRecords */"), 
-				new InlineSqlQuery($"/* InsertDataGridRecordMapping */"), 
-				new InlineSqlQuery($"/* InsertIntoCodeArtifactTableForDocImages */"));
-
-			var queryBuilder = new StringBuilder();
-			sql.WriteTo(queryBuilder);
-
-			return queryBuilder.ToString();
-		}
-
 		public ISqlQueryPart GetCreateDocumentsSqlStatement(string requestOrigination, string recordOrigination, bool performAudit, bool includeExtractedTextEncoding, string codeArtifactTableName)
 		{
 			var sql = new SerialSqlQuery();
@@ -127,13 +102,21 @@ namespace Relativity.MassImport.Data
 				ObjectBase.TopFieldArtifactID));
 
 			sql.Add(GetInsertDocumentsSqlStatement());
-			sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
 
-			if (performAudit && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (ToggleProvider.Current.IsEnabled<UseLegacyInsertAncestorsQueryToggle>())
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjectsLegacy(this._tableNames));
+			}
+			else
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+			}
+
+			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				if (includeExtractedTextEncoding)
 				{
-					string fullTextOverlayDetail = this.Settings.AuditLevel == ImportAuditLevel.FullAudit ? this.GetExtractedTextDetail(exrtactedTextCodePageColumnName) : "''";
+					string fullTextOverlayDetail = this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit ? this.GetExtractedTextDetail(exrtactedTextCodePageColumnName) : "''";
 					sql.Add(this.ImportSql.CreateAuditClauseWithEnabledExtractedText(this._tableNames, ObjectBase.TopFieldArtifactID, fullTextOverlayDetail, recordOrigination, recordOrigination));
 				}
 				else
@@ -257,7 +240,7 @@ namespace Relativity.MassImport.Data
 			sql.Add(this.ImportSql.InsertAssociatedObjects(this._tableNames, associatedObjectTable, idFieldColumnName, field));
 			sql.Add(this.ImportSql.InsertAncestorsOfAssociateObjects(this._tableNames, field.ArtifactID.ToString(), this.ColumnDefinitionCache.TopLevelParentArtifactId.ToString()));
 			
-			if (performAudit && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sql.Add(this.ImportSql.CreateAuditClause(this._tableNames, field.ArtifactID, requestOrigination, recordOrigination));
 			}
@@ -363,12 +346,12 @@ namespace Relativity.MassImport.Data
 				// Insert to AuditRecord using OUTPUT INTO
 				if (performAudit)
 				{
-					if (this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+					if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 					{
 						sqlFormat = sqlFormat.Replace("/* UpdateAuditRecordsMerge */", this.ImportSql.UpdateAuditClauseMerge(this.ImportUpdateAuditAction, auditDetailsClause));
 					}
 
-					if (this.Settings.AuditLevel == ImportAuditLevel.FullAudit)
+					if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 					{
 						sqlFormat = sqlFormat.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
 					}
@@ -377,12 +360,12 @@ namespace Relativity.MassImport.Data
 			// Insert to AuditRecord using regular INSERT
 			else if (performAudit)
 			{
-				if (this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+				if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 				{
 					sqlFormat = sqlFormat.Replace("/* UpdateAuditRecordsInsert */", this.ImportSql.UpdateAuditClauseInsert(this._tableNames.Native, this.ImportUpdateAuditAction, auditDetailsClause));
 				}
 
-				if (this.Settings.AuditLevel == ImportAuditLevel.FullAudit)
+				if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 				{
 					sqlFormat = sqlFormat.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
 				}
@@ -467,7 +450,7 @@ INNER JOIN [Resource].[{ _tableNames.Native }] Tmp ON
 WHERE
 	Tmp.[kCura_Import_IsNew] = 0
 	AND
-	Tmp.[kCura_Import_Status] = { (long) ImportStatus.Pending }
+	Tmp.[kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 
 INSERT [{ textTable }] (
 	[ArtifactID],
@@ -480,7 +463,7 @@ FROM
 WHERE
 	NOT Tmp.[{ mappedField.GetColumnName() }] IS NULL
 	AND
-	Tmp.[kCura_Import_Status] = { (long) ImportStatus.Pending }
+	Tmp.[kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 ";
 			return singleFieldSql;
 		}
@@ -531,23 +514,19 @@ WHERE
 		public void DeleteExistingNativeFiles(int userID, bool auditEnabled, string requestOrig, string recordOrig)
 		{
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			this.ImportMeasurements.StartMeasure();
 			string sqlFormat = this.ImportSql.DeleteExistingNativeFiles();
 			string auditInnerString = string.Empty;
 
-			if (auditEnabled && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sqlFormat = this.ImportSql.AuditWrapper(sqlFormat);
 				auditInnerString = Relativity.MassImport.Data.Helper.GenerateOutputDeletedIntoClause(17, userID, requestOrig, recordOrig);
 			}
 
 			sqlFormat = sqlFormat.Replace("/*NativeImportAuditIntoClause*/", auditInnerString);
-
-			string sqlCheck = this.ImportSql.CheckForExistingNativeFiles();
-
-			while (Convert.ToInt32(this.Context.ExecuteSqlStatementAsScalar(string.Format(sqlCheck, this._tableNames.Native))) == 1)
-			{
-				this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native, Convert.ToInt32(Relativity.Data.Config.WebConfigSettings["MassDeleteBatchAmount"]), this.QueryTimeout));
-			}
+			this.Context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, this._tableNames.Native), this.QueryTimeout);
+			this.ImportMeasurements.StopMeasure();
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
@@ -556,11 +535,11 @@ WHERE
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string sqlFormat = this.ImportSql.CreateNativeFileRows();
 			string auditString = "";
-			if (auditEnabled && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new StringBuilder(Relativity.MassImport.Data.Helper.GenerateAuditInsertClause(16, userID, requestOrig, recordOrig, this._tableNames.Native));
 				sb.AppendFormat("WHERE{0}", Environment.NewLine);
-				sb.AppendFormat("{0}[{1}].[kCura_Import_Status] = {3}{2}", "\t", this._tableNames.Native, Environment.NewLine, (object)(long)ImportStatus.Pending);
+				sb.AppendFormat("{0}[{1}].[kCura_Import_Status] = {3}{2}", "\t", this._tableNames.Native, Environment.NewLine, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				sb.AppendFormat("{0}AND{1}", "\t", Environment.NewLine);
 				sb.AppendFormat("{0}NOT ISNULL([kCura_Import_FileGuid], '') = ''{1}", "\t", Environment.NewLine);
 				auditString = sb.ToString();

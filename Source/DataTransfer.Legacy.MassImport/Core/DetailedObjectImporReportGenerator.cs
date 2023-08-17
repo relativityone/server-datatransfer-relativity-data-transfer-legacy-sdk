@@ -12,14 +12,14 @@ namespace Relativity.MassImport.Core
 		public const string ISNEW_COLUMN_NAME = "IsNew";
 		public const string FILE_COUNT_COLUMN_NAME = "FileCount";
 
-		public static IMassImportManagerInternal.MassImportResults PopulateResultsObject(Objects importObject)
+		public static MassImportManagerBase.MassImportResults PopulateResultsObject(Objects importObject)
 		{
 			var dt = importObject.GetReturnReportData(true);
-			var result = new IMassImportManagerInternal.MassImportResults();
+			var result = new MassImportManagerBase.MassImportResults();
 			return PopulateResultsObject(dt, result);
 		}
 
-		private static IMassImportManagerInternal.MassImportResults PopulateResultsObject(DataTable dt, IMassImportManagerInternal.MassImportResults existingSettings)
+		private static MassImportManagerBase.MassImportResults PopulateResultsObject(DataTable dt, MassImportManagerBase.MassImportResults existingSettings)
 		{
 			var results = CreateDetailedMassImportResults(existingSettings);
 
@@ -46,9 +46,9 @@ namespace Relativity.MassImport.Core
 			return results;
 		}
 
-		private static IMassImportManagerInternal.DetailedMassImportResults CreateDetailedMassImportResults(IMassImportManagerInternal.MassImportResults existingSettings)
+		private static MassImportManagerBase.DetailedMassImportResults CreateDetailedMassImportResults(MassImportManagerBase.MassImportResults existingSettings)
 		{
-			var retval = new IMassImportManagerInternal.DetailedMassImportResults();
+			var retval = new MassImportManagerBase.DetailedMassImportResults();
 			if (existingSettings is object)
 			{
 				retval.ExceptionDetail = existingSettings.ExceptionDetail;

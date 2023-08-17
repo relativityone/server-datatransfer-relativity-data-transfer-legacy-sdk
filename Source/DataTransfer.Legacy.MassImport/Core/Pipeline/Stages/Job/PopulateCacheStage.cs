@@ -2,7 +2,7 @@
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Job
 {
-	internal class PopulateCacheStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>
+	internal class PopulateCacheStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly Pipeline.MassImportContext _context;
 

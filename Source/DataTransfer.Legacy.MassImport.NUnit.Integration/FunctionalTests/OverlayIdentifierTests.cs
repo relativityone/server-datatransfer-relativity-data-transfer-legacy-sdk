@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 using kCura.Data.RowDataGateway;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
-using Relativity;
 using Relativity.Core.Service;
 using Relativity.Core.Service.MassImport;
 using Relativity.Data.MassImport;
-using Relativity.MassImport;
+using Relativity.MassImport.DTO;
 using Relativity.MassImport.Api;
 using Relativity.MassImport.Core.Pipeline.Stages.Job.PopulateStagingTables;
-using Relativity.MassImport.Toggles;
 using BaseContext = Relativity.Core.BaseContext;
 using FieldHelper = MassImport.NUnit.Integration.Helpers.FieldHelper;
 using MassImportManager = Relativity.MassImport.Api.MassImportManager;
@@ -42,11 +40,9 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 		[OneTimeSetUp]
 		public async Task OneTimeSetUpAsync()
 		{
-			SettingsHelper.SetToggle<CreateItemErrorWhenIdentifierIsNullToggle>(true);
-
 			if (_isDocumentImport)
 			{
-				_objectTypeId = (int)ArtifactType.Document;
+				_objectTypeId = (int) Relativity.ArtifactType.Document;
 				_parentId = await FolderHelper.ReadRootFolderIdAsync(TestParameters, TestWorkspace).ConfigureAwait(false);
 			}
 			else
@@ -101,7 +97,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			{
 				ArtifactTypeID = _objectTypeId,
 				Overlay = OverwriteType.Append,
-				MappedFields = new FieldInfo[]
+				MappedFields = new Relativity.FieldInfo[]
 				{
 					_identifierField,
 				}
@@ -122,7 +118,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsCreated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier}"));
 		}
 
 		[TestCase(OverwriteType.Append)]
@@ -147,7 +143,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsCreated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier}"));
 		}
 
 		[TestCase(OverwriteType.Overlay)]
@@ -159,7 +155,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			{
 				ArtifactTypeID = _objectTypeId,
 				Overlay = OverwriteType.Append,
-				MappedFields = new FieldInfo[]
+				MappedFields = new Relativity.FieldInfo[]
 				{
 					_identifierField,
 					_uniqueIdField,
@@ -193,7 +189,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsUpdated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier}"));
 		}
 
 		[Test]
@@ -204,7 +200,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			{
 				ArtifactTypeID = _objectTypeId,
 				Overlay = OverwriteType.Append,
-				MappedFields = new FieldInfo[]
+				MappedFields = new Relativity.FieldInfo[]
 				{
 					_identifierField,
 					_uniqueIdField
@@ -227,7 +223,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			Assert.That(result.ArtifactsProcessed, Is.EqualTo(3), "Number of processed artifacts is invalid");
 			Assert.That(result.ArtifactsCreated, Is.EqualTo(2), "Number of created artifacts is invalid");
 			Assert.That(result.ItemErrors, Has.Count.EqualTo(1), "Number of item level errors is invalid");
-			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)ImportStatus.EmptyOverlayIdentifier}"));
+			Assert.That(result.ItemErrors.Single(), Is.EqualTo($"{(int)Relativity.MassImport.DTO.ImportStatus.EmptyOverlayIdentifier}"));
 		}
 
 		private MassImportArtifact CreateMassImportArtifact(string identifier, string uniqueId) =>
@@ -246,7 +242,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			{
 				ArtifactTypeID = _objectTypeId,
 				Overlay = overlayMode,
-				MappedFields = new FieldInfo[]
+				MappedFields = new Relativity.FieldInfo[]
 				{
 					_identifierField,
 					_uniqueIdField
@@ -268,8 +264,8 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var populateStagingTablesStage = new PopulateStagingTablesStage<TableNames>(context, artifacts, settings, artifactManager);
 			void LoadStagingTablesAction(TableNames tableNames) => populateStagingTablesStage.Execute(tableNames.Native, tableNames.Code, tableNames.Objects);
 
-			IMassImportManagerInternal.MassImportResults internalResult;
-			if (settings.ArtifactTypeID == (int)ArtifactType.Document)
+			MassImportManagerBase.MassImportResults internalResult;
+			if (settings.ArtifactTypeID == (int)Relativity.ArtifactType.Document)
 			{
 				internalResult = MassImporter.ImportNativesForObjectManager(
 					context,
@@ -301,7 +297,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			return result;
 		}
 
-		private static MassImportExceptionDetail ConvertExceptionDetail(SoapExceptionDetail exceptionDetail)
+		private static MassImportExceptionDetail ConvertExceptionDetail(Relativity.MassImport.DTO.SoapExceptionDetail exceptionDetail)
 		{
 			if (exceptionDetail == null)
 			{

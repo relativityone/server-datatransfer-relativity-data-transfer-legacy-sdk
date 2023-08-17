@@ -13,7 +13,7 @@ namespace Relativity.MassImport.NUnit.Extensions
 			// arrange
 			int keyFieldArtifactId = 7;
 			var keyField = new FieldInfo { ArtifactID = keyFieldArtifactId };
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				MappedFields = new[]
 				{
@@ -38,7 +38,7 @@ namespace Relativity.MassImport.NUnit.Extensions
 			int keyFieldArtifactId = 7;
 			var firstkeyField = new FieldInfo { ArtifactID = keyFieldArtifactId };
 			var secondkeyField = new FieldInfo { ArtifactID = keyFieldArtifactId };
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				MappedFields = new[]
 				{
@@ -61,7 +61,7 @@ namespace Relativity.MassImport.NUnit.Extensions
 		public void GetKeyField_ShouldReturnNullWhenKeyIsNotMapped()
 		{
 			// arrange
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				MappedFields = new[]
 				{
@@ -81,7 +81,7 @@ namespace Relativity.MassImport.NUnit.Extensions
 		public void GetKeyField_ShouldReturnNullWhenMappedFieldsArrayIsEmpty()
 		{
 			// arrange
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				MappedFields = new FieldInfo[0]
 			};
@@ -97,7 +97,7 @@ namespace Relativity.MassImport.NUnit.Extensions
 		public void GetKeyField_ShouldReturnNullWhenMappedFieldsArrayIsNull()
 		{
 			// arrange
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				MappedFields = null
 			};
@@ -113,7 +113,7 @@ namespace Relativity.MassImport.NUnit.Extensions
 		public void GetKeyField_ShouldThrowExceptionForNullInstance()
 		{
 			// arrange
-			NativeLoadInfo settings = null;
+			Relativity.MassImport.DTO.NativeLoadInfo settings = null;
 
 			// act&assert
 			Assert.Throws<ArgumentNullException>(() => settings.GetKeyField());

@@ -1,13 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity;
 using Relativity.Core.Service;
-using Relativity.MassImport;
+using Relativity.MassImport.DTO;
+using ExecutionSource = Relativity.MassImport.DTO.ExecutionSource;
+using ImportAuditLevel = Relativity.MassImport.DTO.ImportAuditLevel;
+using NativeLoadInfo = Relativity.MassImport.DTO.NativeLoadInfo;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -15,6 +17,13 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 	public class NativeImportTest : MassImportTestBase
 	{
 		private DataTable _expectedFieldValues;
+		private string[] _expectedFolders;
+
+		[TearDown]
+		public async Task TearDownAsync()
+		{
+			await RdoHelper.DeleteAllObjectsByTypeAsync(TestParameters, TestWorkspace, (int)ArtifactType.Document).ConfigureAwait(false);
+		}
 
 		[Test]
 		public async Task ShouldRunNativeImport()
@@ -34,17 +43,18 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			// Assert
 			this.ThenTheImportWasSuccessful(result, expectedArtifactsCreated, expectedArtifactsUpdated);
 			Validator.ThenTheFieldsHaveCorrectValues(this.TestWorkspace, this._expectedFieldValues);
+			Validator.ThenTheFoldersHaveCorrectValues(this.TestWorkspace, this._expectedFolders);
 		}
 
 		private async Task<NativeLoadInfo> CreateSampleNativeLoadInfoAsync(int numberOfArtifactsToCreate)
 		{
 			string fieldDelimiter = "þþKþþ";
-			FieldInfo[] fields =
+			Relativity.FieldInfo[] fields =
 			{
-				new FieldInfo
+				new Relativity.FieldInfo
 				{
 					ArtifactID = 1003667,
-					Category = FieldCategory.Identifier,
+					Category = Relativity.FieldCategory.Identifier,
 					CodeTypeID = 0,
 					DisplayName = WellKnownFields.ControlNumber,
 					EnableDataGrid = false,
@@ -52,12 +62,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					ImportBehavior = null,
 					IsUnicodeEnabled = true,
 					TextLength = 255,
-					Type = FieldTypeHelper.FieldType.Varchar,
+					Type = Relativity.FieldTypeHelper.FieldType.Varchar,
 				},
-				new FieldInfo
+				new Relativity.FieldInfo
 				{
 					ArtifactID = 1034247,
-					Category = FieldCategory.AutoCreate,
+					Category = Relativity.FieldCategory.AutoCreate,
 					CodeTypeID = 0,
 					DisplayName = WellKnownFields.SupportedByViewer,
 					EnableDataGrid = false,
@@ -65,12 +75,12 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					ImportBehavior = null,
 					IsUnicodeEnabled = false,
 					TextLength = 0,
-					Type = FieldTypeHelper.FieldType.Boolean,
+					Type = Relativity.FieldTypeHelper.FieldType.Boolean,
 				},
-				new FieldInfo
+				new Relativity.FieldInfo
 				{
 					ArtifactID = 1034248,
-					Category = FieldCategory.AutoCreate,
+					Category = Relativity.FieldCategory.AutoCreate,
 					CodeTypeID = 0,
 					DisplayName = WellKnownFields.RelativityNativeType,
 					EnableDataGrid = false,
@@ -78,21 +88,23 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 					ImportBehavior = null,
 					IsUnicodeEnabled = false,
 					TextLength = 255,
-					Type = FieldTypeHelper.FieldType.Varchar,
+					Type = Relativity.FieldTypeHelper.FieldType.Varchar,
 				},
 			};
 
 			this._expectedFieldValues = RandomHelper.GetFieldValues(fields, numberOfArtifactsToCreate);
-			string dataFileContent = GetMetadata(fieldDelimiter, _expectedFieldValues);
+			this._expectedFolders = GetFolders(numberOfArtifactsToCreate);
+			string dataFileContent = GetMetadata(fieldDelimiter, _expectedFieldValues, _expectedFolders);
 
 			return new NativeLoadInfo
 			{
 				AuditLevel = ImportAuditLevel.FullAudit,
 				Billable = true,
 				BulkLoadFileFieldDelimiter = fieldDelimiter,
-				CodeFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters).ConfigureAwait(false),
-				DataFileName = await BcpFileHelper.CreateAsync(this.TestParameters, dataFileContent).ConfigureAwait(false),
-				DataGridFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters).ConfigureAwait(false),
+				CodeFileName =  await BcpFileHelper.CreateEmptyAsync(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false),
+
+				DataFileName = await BcpFileHelper.CreateAsync(this.TestParameters, this.TestWorkspace.WorkspaceId, dataFileContent).ConfigureAwait(false),
+				DataGridFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false),
 				DisableUserSecurityCheck = false,
 				ExecutionSource = ExecutionSource.ImportAPI,
 				KeyFieldArtifactID = 1003667,
@@ -100,7 +112,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 				LoadImportedFullTextFromServer = false,
 				MappedFields = fields,
 				MoveDocumentsInAppendOverlayMode = false,
-				ObjectFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters).ConfigureAwait(false),
+				ObjectFileName = await BcpFileHelper.CreateEmptyAsync(this.TestParameters, this.TestWorkspace.WorkspaceId).ConfigureAwait(false),
 				OnBehalfOfUserToken = null,
 				Overlay = OverwriteType.Append,
 				OverlayArtifactID = -1,
@@ -114,23 +126,14 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			};
 		}
 
-		private string GetMetadata(string fieldDelimiter, DataTable fieldValues)
+		private string[] GetFolders(int numberOfArtifactsToCreate)
 		{
-			StringBuilder metadataBuilder = new StringBuilder();
-			string postfix = $"{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
-
-			for (int i = 0; i < fieldValues.Rows.Count; i++)
+			var folders = new List<string>();
+			for (int i = 0; i < numberOfArtifactsToCreate; i++)
 			{
-				string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}1003697{fieldDelimiter}";
-				metadataBuilder.Append(prefix);
-
-				string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
-				metadataBuilder.Append(values);
-
-				metadataBuilder.Append(postfix);
+				folders.Add($"Folder{i}");
 			}
-
-			return metadataBuilder.ToString();
+			return folders.ToArray();
 		}
 	}
 }

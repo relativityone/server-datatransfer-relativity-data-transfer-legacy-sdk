@@ -14,9 +14,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
-	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(PermissionCheckInterceptor))]
 	public class ProductionService : BaseService, IProductionService
 	{
 		private readonly ProductionManager _productionManager;

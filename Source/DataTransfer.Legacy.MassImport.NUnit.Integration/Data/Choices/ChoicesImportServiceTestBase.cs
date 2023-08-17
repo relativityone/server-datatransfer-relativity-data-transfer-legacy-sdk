@@ -19,7 +19,7 @@ using Relativity.Toggles;
 namespace MassImport.NUnit.Integration.Data.Choices
 {
 	[TestFixture]
-	public abstract class ChoicesImportServiceTestBase : EmptyWorkspaceTestBase
+	internal abstract class ChoicesImportServiceTestBase : EmptyWorkspaceTestBase
 	{
 		protected const int QueryTimeoutInSeconds = 5;
 
@@ -29,9 +29,9 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 		private List<string> _tablesToDeleteInTearDown;
 
-		private protected abstract IChoicesImportService CreateSut(NativeLoadInfo settings);
+		private protected abstract IChoicesImportService CreateSut(Relativity.MassImport.DTO.NativeLoadInfo settings);
 
-		protected abstract Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, OverlayBehavior overlayBehavior);
+		protected abstract Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior);
 
 		protected readonly FieldInfo IdentifierField = new FieldInfo
 		{
@@ -96,11 +96,11 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField, MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Both,
-				OverlayBehavior = OverlayBehavior.ReplaceAll,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Both,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
 				{
 					IdentifierField,
@@ -108,7 +108,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 					MultiChoiceField,
 				}
 			};
-			await SetOverlayBehaviorForFieldAsync(MultiChoiceField, OverlayBehavior.ReplaceAll).ConfigureAwait(false);
+			await SetOverlayBehaviorForFieldAsync(MultiChoiceField, Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll).ConfigureAwait(false);
 
 			var sut = CreateSut(settings);
 
@@ -133,16 +133,16 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			else
 			{
 				choiceField = MultiChoiceField;
-				await SetOverlayBehaviorForFieldAsync(choiceField, OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
+				await SetOverlayBehaviorForFieldAsync(choiceField, Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
 			}
 
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(choiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Both,
-				OverlayBehavior = OverlayBehavior.UseRelativityDefaults,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Both,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults,
 				MappedFields = new[]
 				{
 					IdentifierField,
@@ -176,16 +176,16 @@ namespace MassImport.NUnit.Integration.Data.Choices
 		[TestCase(true, OverwriteType.Both)]
 		[TestCase(false, OverwriteType.Overlay)]
 		[TestCase(false, OverwriteType.Both)]
-		public async Task ShouldLinkSingleChoiceForDocumentNotLinkedToAnyChoiceAsync(bool isNewDocument, OverwriteType overwriteType)
+		public async Task ShouldLinkSingleChoiceForDocumentNotLinkedToAnyChoiceAsync(bool isNewDocument, Relativity.MassImport.DTO.OverwriteType overwriteType)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
-				OverlayBehavior = OverlayBehavior.ReplaceAll,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
 				{
 					IdentifierField,
@@ -232,12 +232,12 @@ namespace MassImport.NUnit.Integration.Data.Choices
 		[TestCase(OverwriteType.Both,  OverlayBehavior.ReplaceAll)]
 		[TestCase(OverwriteType.Overlay,  OverlayBehavior.UseRelativityDefaults)]
 		[TestCase(OverwriteType.Both,  OverlayBehavior.UseRelativityDefaults)]
-		public async Task ShouldNotChangeExistingLinksForSingleChoiceAsync(OverwriteType overwriteType, OverlayBehavior overlayBehavior)
+		public async Task ShouldNotChangeExistingLinksForSingleChoiceAsync(Relativity.MassImport.DTO.OverwriteType overwriteType, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -289,16 +289,16 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 		[TestCase(OverwriteType.Overlay)]
 		[TestCase(OverwriteType.Both)]
-		public async Task ShouldReplaceSingleChoicesForValidDocuments(OverwriteType overwriteType)
+		public async Task ShouldReplaceSingleChoicesForValidDocuments(Relativity.MassImport.DTO.OverwriteType overwriteType)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
-				OverlayBehavior = OverlayBehavior.ReplaceAll,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
 				{
 					IdentifierField,
@@ -357,15 +357,15 @@ namespace MassImport.NUnit.Integration.Data.Choices
 		[TestCase(OverlayBehavior.MergeAll)]
 		[TestCase(OverlayBehavior.UseRelativityDefaults, OverlayBehavior.ReplaceAll)]
 		[TestCase(OverlayBehavior.UseRelativityDefaults, OverlayBehavior.MergeAll)]
-		public async Task ShouldNotChangeExistingLinksForMultiChoiceAsync(OverlayBehavior importOverlayBehavior, OverlayBehavior fieldOverlayBehavior = OverlayBehavior.UseRelativityDefaults)
+		public async Task ShouldNotChangeExistingLinksForMultiChoiceAsync(Relativity.MassImport.DTO.OverlayBehavior importOverlayBehavior, Relativity.MassImport.DTO.OverlayBehavior fieldOverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Overlay,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Overlay,
 				OverlayBehavior = importOverlayBehavior,
 				MappedFields = new[]
 				{
@@ -409,9 +409,9 @@ namespace MassImport.NUnit.Integration.Data.Choices
 				(1002, 1),
 			};
 
-			bool isMerge = importOverlayBehavior == OverlayBehavior.MergeAll ||
-						   (importOverlayBehavior == OverlayBehavior.UseRelativityDefaults &&
-							fieldOverlayBehavior == OverlayBehavior.MergeAll);
+			bool isMerge = importOverlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll ||
+						   (importOverlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults &&
+							fieldOverlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll);
 			(int choiceId, int documentId)[] expectedCreatedMappings = isMerge
 				? new (int, int)[] { }
 				: new[] { (1001, 1), (1002, 1) };
@@ -425,15 +425,15 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 		[TestCase(OverlayBehavior.MergeAll)]
 		[TestCase(OverlayBehavior.UseRelativityDefaults, OverlayBehavior.MergeAll)]
-		public async Task ShouldLinkMultiChoicesForValidNewDocuments(OverlayBehavior importOverlayBehavior, OverlayBehavior fieldOverlayBehavior = OverlayBehavior.UseRelativityDefaults)
+		public async Task ShouldLinkMultiChoicesForValidNewDocuments(Relativity.MassImport.DTO.OverlayBehavior importOverlayBehavior, Relativity.MassImport.DTO.OverlayBehavior fieldOverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Append,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Append,
 				OverlayBehavior = importOverlayBehavior,
 				MappedFields = new[]
 				{
@@ -490,15 +490,15 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 		[TestCase(OverlayBehavior.MergeAll)]
 		[TestCase(OverlayBehavior.UseRelativityDefaults, OverlayBehavior.MergeAll)]
-		public async Task ShouldMergeMultiChoicesForValidDocuments(OverlayBehavior importOverlayBehavior, OverlayBehavior fieldOverlayBehavior = OverlayBehavior.UseRelativityDefaults)
+		public async Task ShouldMergeMultiChoicesForValidDocuments(Relativity.MassImport.DTO.OverlayBehavior importOverlayBehavior, Relativity.MassImport.DTO.OverlayBehavior fieldOverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Overlay,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Overlay,
 				OverlayBehavior = importOverlayBehavior,
 				MappedFields = new[]
 				{
@@ -574,14 +574,14 @@ namespace MassImport.NUnit.Integration.Data.Choices
 		[TestCase(OverwriteType.Overlay, OverlayBehavior.UseRelativityDefaults, OverlayBehavior.ReplaceAll)]
 		[TestCase(OverwriteType.Both, OverlayBehavior.UseRelativityDefaults, OverlayBehavior.ReplaceAll)]
 		public async Task ShouldReplaceMultiChoicesForValidDocuments(
-			OverwriteType overwriteType,
-			OverlayBehavior importOverlayBehavior,
-			OverlayBehavior fieldOverlayBehavior = OverlayBehavior.UseRelativityDefaults)
+			Relativity.MassImport.DTO.OverwriteType overwriteType,
+			Relativity.MassImport.DTO.OverlayBehavior importOverlayBehavior,
+			Relativity.MassImport.DTO.OverlayBehavior fieldOverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -681,7 +681,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			else
 			{
 				choiceField = MultiChoiceField;
-				await SetOverlayBehaviorForFieldAsync(choiceField, OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
+				await SetOverlayBehaviorForFieldAsync(choiceField, Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
 			}
 
 			FieldInfo.ImportBehaviorChoice importBehavior = ignoredDuplicatesFieldEnabled
@@ -691,11 +691,11 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(choiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Overlay,
-				OverlayBehavior = OverlayBehavior.ReplaceAll,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Overlay,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
 				{
 					IdentifierField,
@@ -740,17 +740,17 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			else
 			{
 				choiceField = MultiChoiceField;
-				await SetOverlayBehaviorForFieldAsync(choiceField, OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
+				await SetOverlayBehaviorForFieldAsync(choiceField, Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
 			}
 			choiceField.ImportBehavior = FieldInfo.ImportBehaviorChoice.ChoiceFieldIgnoreDuplicates;
 
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(choiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
-				Overlay = OverwriteType.Overlay,
-				OverlayBehavior = OverlayBehavior.ReplaceAll,
+				Overlay = Relativity.MassImport.DTO.OverwriteType.Overlay,
+				OverlayBehavior = Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll,
 				MappedFields = new[]
 				{
 					IdentifierField,
@@ -793,12 +793,12 @@ namespace MassImport.NUnit.Integration.Data.Choices
 		[TestCase(OverwriteType.Both, OverlayBehavior.MergeAll)]
 		[TestCase(OverwriteType.Overlay, OverlayBehavior.ReplaceAll)]
 		[TestCase(OverwriteType.Both, OverlayBehavior.ReplaceAll)]
-		public async Task ShouldLinkSingleAndMultiChoices(OverwriteType overwriteType, OverlayBehavior importOverlayBehavior)
+		public async Task ShouldLinkSingleAndMultiChoices(Relativity.MassImport.DTO.OverwriteType overwriteType, Relativity.MassImport.DTO.OverlayBehavior importOverlayBehavior)
 		{
 			// arrange
 			await CreateZCodeTablesAndSetDefaultOverlayBehaviorForFieldsAsync(SingleChoiceField, MultiChoiceField).ConfigureAwait(false);
 
-			var settings = new NativeLoadInfo
+			var settings = new Relativity.MassImport.DTO.NativeLoadInfo
 			{
 				RunID = TableNames.RunId,
 				Overlay = overwriteType,
@@ -811,7 +811,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 				}
 			};
 
-			await SetOverlayBehaviorForFieldAsync(MultiChoiceField, OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
+			await SetOverlayBehaviorForFieldAsync(MultiChoiceField, Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
 
 			var documents = new[]
 			{
@@ -869,7 +869,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 
 			// assert - multi choice
 			(int choiceId, int documentId)[] expectedMappingForMultiChoice;
-			if (importOverlayBehavior == OverlayBehavior.ReplaceAll)
+			if (importOverlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.ReplaceAll)
 			{
 				expectedMappingForMultiChoice = new[]
 				{
@@ -908,7 +908,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 				sb.Append(createZCodeTable);
 				_tablesToDeleteInTearDown.Add(tableName);
 
-				await SetOverlayBehaviorForFieldAsync(choice, OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
+				await SetOverlayBehaviorForFieldAsync(choice, Relativity.MassImport.DTO.OverlayBehavior.UseRelativityDefaults).ConfigureAwait(false);
 			}
 
 			if (sb.Length == 0)

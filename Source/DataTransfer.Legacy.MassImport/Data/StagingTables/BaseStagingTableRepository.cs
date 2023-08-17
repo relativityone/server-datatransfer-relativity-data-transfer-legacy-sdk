@@ -9,6 +9,9 @@ using Relativity.MassImport.Data.Cache;
 
 namespace Relativity.MassImport.Data.StagingTables
 {
+	using Relativity.Logging;
+	using Relativity.MassImport.DTO;
+
 	internal abstract class BaseStagingTableRepository : IStagingTableRepository
 	{
 		private int? _timeoutValue;
@@ -31,7 +34,7 @@ namespace Relativity.MassImport.Data.StagingTables
 
 		public abstract void CreateStagingTables(
 			ColumnDefinitionCache columnDefinitionCache,
-			NativeLoadInfo settings, bool includeExtractedTextEncoding,
+			Relativity.MassImport.DTO.NativeLoadInfo settings, bool includeExtractedTextEncoding,
 			bool excludeFolderPathForOldClient);
 
 		public void TruncateStagingTables(
@@ -57,19 +60,19 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			Context.ExecuteNonQuerySQLStatement(sql, QueryTimeout);
 		}
 
-		public string BulkInsert(NativeLoadInfo settings, string bulkFileSharePath)
+		public string BulkInsert(Relativity.MassImport.DTO.NativeLoadInfo settings, string bulkFileSharePath, ILog logger)
 		{
 			try
 			{
 				ImportMeasurements.SqlBulkImportTime.Start();
 				string sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.DataFileName, TableNames.Native);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger, ImportMeasurements);
 
 				sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.CodeFileName, TableNames.Code);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger, ImportMeasurements);
 
 				sqlText = this.GetBulkInsertQuery(settings, bulkFileSharePath, settings.ObjectFileName, TableNames.Objects);
-				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText);
+				ExecuteBulkLoadWithRetryOnSqlTemporaryError(sqlText, logger, ImportMeasurements);
 			}
 			catch (ExecuteSQLStatementFailedException ex)
 			{
@@ -94,7 +97,7 @@ TRUNCATE TABLE [Resource].[{TableNames.Map}]";
 			return TableNames.RunId;
 		}
 
-		public abstract string Insert(ColumnDefinitionCache columnDefinitionCache, NativeLoadInfo settings, bool excludeFolderPathForOldClient);
+		public abstract string Insert(ColumnDefinitionCache columnDefinitionCache, Relativity.MassImport.DTO.NativeLoadInfo settings, bool excludeFolderPathForOldClient);
 
 		public IDictionary<int, int> ReadNumberOfChoicesPerCodeTypeId()
 		{
@@ -177,9 +180,8 @@ BEGIN
 		[CodeArtifactID] INT NOT NULL,
 		[CodeTypeID] INT NOT NULL,
 
-		INDEX IX_CodeTypeID_DocumentIdentifier CLUSTERED 
+		INDEX IX_DocumentIdentifier CLUSTERED 
 		(
-			[CodeTypeID] ASC,
 			[DocumentIdentifier] ASC
 		)
 	)
@@ -194,10 +196,9 @@ BEGIN
 		[ObjectTypeID] INT NOT NULL,
 		[FieldID] INT NOT NULL,
 
-		INDEX IX_DocumentIdentifier_ObjectTypeID CLUSTERED 
+		INDEX IX_DocumentIdentifier CLUSTERED 
 		(
-			[DocumentIdentifier] ASC,
-			[ObjectTypeID] ASC
+			[DocumentIdentifier] ASC
 		)
 	)
 
@@ -292,12 +293,12 @@ END
 			return info.GetColumnDescription(mappedField);
 		}
 
-		private void ExecuteBulkLoadWithRetryOnSqlTemporaryError(string sqlText)
+		private void ExecuteBulkLoadWithRetryOnSqlTemporaryError(string sqlText, ILog logger, ImportMeasurements importMeasurements)
 		{
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout));
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => Context.ExecuteNonQuerySQLStatement(sqlText, QueryTimeout), logger, importMeasurements);
 		}
 
-		private string GetBulkInsertQuery(NativeLoadInfo settings, string bulkFileSharePath, string bulkFileName, string tableName)
+		private string GetBulkInsertQuery(Relativity.MassImport.DTO.NativeLoadInfo settings, string bulkFileSharePath, string bulkFileName, string tableName)
 		{
 			if (string.IsNullOrWhiteSpace(bulkFileSharePath))
 			{

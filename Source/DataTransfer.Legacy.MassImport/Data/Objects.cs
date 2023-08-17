@@ -3,6 +3,8 @@ using System.Data.SqlClient;
 using System.Text;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
@@ -18,7 +20,7 @@ namespace Relativity.MassImport.Data
 		public Objects(
 			kCura.Data.RowDataGateway.BaseContext context,
 			IQueryExecutor queryExecutor,
-			ObjectLoadInfo settings,
+			Relativity.MassImport.DTO.ObjectLoadInfo settings,
 			int importUpdateAuditAction,
 			ImportMeasurements importMeasurements,
 			ColumnDefinitionCache columnDefinitionCache,
@@ -56,14 +58,23 @@ namespace Relativity.MassImport.Data
 			sql.Add(ArtifactTableInsertSql.WithObject(
 				this._tableNames, 
 				this.IdentifierField.GetColumnName(), 
+				keyField.GetColumnName(),
 				ObjectBase.TopFieldArtifactID, 
 				this.ArtifactTypeID, 
 				keyFieldCheck));
 
 			sql.Add(GetInsertObjectsSqlStatement());
-			sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
 
-			if (performAudit && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (ToggleProvider.Current.IsEnabled<UseLegacyInsertAncestorsQueryToggle>())
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjectsLegacy(this._tableNames));
+			}
+			else
+			{
+				sql.Add(this.ImportSql.InsertAncestorsOfTopLevelObjects(this._tableNames));
+			}
+
+			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sql.Add(this.ImportSql.CreateAuditClause(this._tableNames, ObjectBase.TopFieldArtifactID, requestOrigination, recordOrigination));
 			}
@@ -162,14 +173,14 @@ namespace Relativity.MassImport.Data
 				this.ColumnDefinitionCache.TopLevelParentAccessControlListId));
 
 			// This query fixes the problem with the duplicated records REL-438573 which does not occur in Overlay mode, however in Overlay mode it causes an SQL exception REL-558408
-			if (associatedArtifactTypeId == this.ArtifactTypeID && Settings.Overlay != OverwriteType.Overlay)
+			if (associatedArtifactTypeId == this.ArtifactTypeID && Settings.Overlay != Relativity.MassImport.DTO.OverwriteType.Overlay)
 			{
 				sql.Add(this.ImportSql.InsertSelfReferencedObjects(this._tableNames, idFieldColumnName, field, this.ColumnDefinitionCache.TopLevelParentAccessControlListId));
 			}
 
 			sql.Add(this.ImportSql.InsertAssociatedObjects(this._tableNames, associatedObjectTable, idFieldColumnName, field));
 			sql.Add(this.ImportSql.InsertAncestorsOfAssociateObjects(this._tableNames, field.ArtifactID.ToString(), this.ColumnDefinitionCache.TopLevelParentArtifactId.ToString()));
-			if (performAudit && this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (performAudit && this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sql.Add(this.ImportSql.CreateAuditClause(this._tableNames, field.ArtifactID, requestOrigination, recordOrigination));
 			}
@@ -246,7 +257,7 @@ namespace Relativity.MassImport.Data
 				// Insert to AuditRecord using OUTPUT INTO
 				if (performAudit)
 				{
-					if (this.Settings.AuditLevel == ImportAuditLevel.FullAudit)
+					if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 					{
 						if (fileFieldAuditSql != null)
 						{
@@ -256,7 +267,7 @@ namespace Relativity.MassImport.Data
 						sqlFormat = sqlFormat.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
 					}
 
-					if (this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+					if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 					{
 						sqlFormat = sqlFormat.Replace("/* UpdateAuditRecordsMerge */", this.ImportSql.UpdateAuditClauseMerge(this.ImportUpdateAuditAction, auditDetailsClause));
 					}
@@ -265,12 +276,12 @@ namespace Relativity.MassImport.Data
 			// Insert to AuditRecord using regular INSERT
 			else if (performAudit)
 			{
-				if (this.Settings.AuditLevel != ImportAuditLevel.NoAudit)
+				if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 				{
 					sqlFormat = sqlFormat.Replace("/* UpdateAuditRecordsInsert */", this.ImportSql.UpdateAuditClauseInsert(this._tableNames.Native, this.ImportUpdateAuditAction, auditDetailsClause));
 				}
 
-				if (this.Settings.AuditLevel == ImportAuditLevel.FullAudit)
+				if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 				{
 					if (fileFieldAuditSql != null)
 					{
@@ -324,7 +335,7 @@ namespace Relativity.MassImport.Data
 					if (auditEnabled)
 					{
 						var sb = new StringBuilder();
-						if (this.Settings.Overlay != OverwriteType.Append)
+						if (this.Settings.Overlay != Relativity.MassImport.DTO.OverwriteType.Append)
 						{
 							sb.Append(Helper.GenerateAuditInsertClause(17, userID, requestOrig, recordOrig, this._tableNames.Native));
 							sb.AppendFormat("WHERE{0}", System.Environment.NewLine);
@@ -341,7 +352,7 @@ namespace Relativity.MassImport.Data
 
 					string sqlFormat = this.ImportSql.PopulateFileTables();
 					sqlFormat = sqlFormat.Replace("/*CreateFileAuditClause*/", auditCreateFilesString);
-					if (this.Settings.Overlay != OverwriteType.Append)
+					if (this.Settings.Overlay != Relativity.MassImport.DTO.OverwriteType.Append)
 					{
 						sqlFormat = sqlFormat.Replace("/*DeleteFileAuditClause*/", auditDeleteFilesString);
 					}

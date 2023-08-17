@@ -9,7 +9,7 @@ using Relativity.MassImport.Data.Choices;
 namespace MassImport.NUnit.Integration.Data.Choices
 {
 	[TestFixture]
-	public class ChoicesImportServiceTests : ChoicesImportServiceTestBase
+	internal class ChoicesImportServiceTests : ChoicesImportServiceTestBase
 	{
 		private Mock<IColumnDefinitionCache> _columnDefinitionCacheMock;
 
@@ -19,7 +19,7 @@ namespace MassImport.NUnit.Integration.Data.Choices
 			_columnDefinitionCacheMock = new Mock<IColumnDefinitionCache>();
 		}
 
-		private protected override IChoicesImportService CreateSut(NativeLoadInfo settings)
+		private protected override IChoicesImportService CreateSut(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			return new ChoicesImportService(
 				this.EddsdboContext,
@@ -31,11 +31,11 @@ namespace MassImport.NUnit.Integration.Data.Choices
 				QueryTimeoutInSeconds);
 		}
 
-		protected override Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, OverlayBehavior overlayBehavior)
+		protected override Task SetOverlayBehaviorForFieldAsync(FieldInfo choiceField, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
 		{
 			var columnDefinitionInfo = new ColumnDefinitionInfo
 			{
-				OverlayMergeValues = overlayBehavior == OverlayBehavior.MergeAll
+				OverlayMergeValues = overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
 			};
 
 			_columnDefinitionCacheMock.Setup(x => x[choiceField.ArtifactID]).Returns(columnDefinitionInfo);

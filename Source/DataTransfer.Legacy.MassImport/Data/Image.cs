@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Xml.Linq;
 using kCura.Data.RowDataGateway;
 using kCura.Utility;
 using Relativity.Data.MassImport;
@@ -34,15 +33,16 @@ namespace Relativity.MassImport.Data
 		private const bool _FILTER_BY_ORDER = true;
 		private FieldInfo _fullTextField;
 		private Relativity.Data.DataGridContext _dgContext;
-		private ImageLoadInfo _settings;
+		private Relativity.MassImport.DTO.ImageLoadInfo _settings;
 		private TableNames _tableNames;
 		private DataGridImportHelper _dgImportHelper;
 		private Relativity.Data.DataGridMappingMultiDictionary _dataGridMappings;
-		private static readonly string _PENDING_STATUS = ((long)ImportStatus.Pending).ToString();
+		private static readonly string _PENDING_STATUS = ((long)Relativity.MassImport.DTO.ImportStatus.Pending).ToString();
+
 		#endregion
 
 		#region Constructors
-		public Image(BaseContext context, ImageLoadInfo settings)
+		public Image(BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings)
 		{
 			_context = context;
 			_keyFieldID = settings.KeyFieldArtifactID;
@@ -70,7 +70,7 @@ namespace Relativity.MassImport.Data
 		#region Private Accessors
 		private string TableNameArtifactTemp => _tableNames.ImagePart;
 
-		private ImageLoadInfo Settings => _settings;
+		private Relativity.MassImport.DTO.ImageLoadInfo Settings => _settings;
 
 		public DGRelativityRepository DGRelativityRepository { get; set; }
 		public DataGrid.DGFieldInformationLookupFactory DGFieldInformationLookupFactory { get; set; }
@@ -116,7 +116,7 @@ namespace Relativity.MassImport.Data
 
 		private ImageImportSql ImportSql { get; set; }
 
-		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid || DoesFullTextColumnText();
+		private bool IsTextMigrationInProgress => !FullTextField.EnableDataGrid && DoesFullTextColumnText();
 		#endregion
 
 		#region Public Accessors
@@ -148,11 +148,11 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Temp Table Manipulation
-		public string InitializeBulkTable(string bulkFileShareFolderPath)
+		public string InitializeBulkTable(string bulkFileShareFolderPath, ILog logger)
 		{
 			ImportMeasurements.StartMeasure();
 			CreateMassImportImageTempTables(Settings.UploadFullText, Settings.OverlayArtifactID);
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => BulkImportImageFile(bulkFileShareFolderPath, Settings.BulkFileName));
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(() => BulkImportImageFile(bulkFileShareFolderPath, Settings.BulkFileName), logger, ImportMeasurements);
 			ImportMeasurements.StopMeasure();
 
 			return _tableNames.RunId;
@@ -303,9 +303,8 @@ SELECT
 			{
 				string collationString = string.IsNullOrEmpty(fullTextColumnCollation) ? string.Empty : string.Format(" COLLATE {0}", fullTextColumnCollation);
 				fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
-				if (!string.IsNullOrWhiteSpace(fullTextColumnCollation))
+				if (!HasDataGridWorkToDo && !string.IsNullOrWhiteSpace(fullTextColumnCollation))
 				{
-					fullTextEncodingColumnDefinition = string.Format("[ExtractedTextEncodingPageCode] {0}VARCHAR(MAX){1},", extractedTextUnicodeMarker, collationString);
 					fullTextColumnSql = string.Format("[FullText] {0}VARCHAR(MAX) COLLATE {1},", extractedTextUnicodeMarker, fullTextColumnCollation);
 				}
 			}
@@ -369,7 +368,7 @@ SELECT
 							{
 								string identifier = GetStringValue(reader[2]);
 								string documentIdentifier = GetStringValue(reader[1]);
-								errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}{0}{4}\"", "\",\"", GetIntegerValue(reader[0]), GetStringValue(reader[1]), identifier, Relativity.MassImport.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(5), identifier, GetStringValue(reader[7]), int.Parse(GetIntegerValue(reader[8])), documentIdentifier, reader[9] == null ? null : GetStringValue(reader[9]))));
+								errorFile.WriteLine(string.Format("\"{1}{0}{2}{0}{3}{0}{4}\"", "\",\"", GetIntegerValue(reader[0]), GetStringValue(reader[1]), identifier, Relativity.MassImport.DTO.ImportStatusHelper.GetCsvErrorLine(reader.GetInt64(5), identifier, GetStringValue(reader[7]), int.Parse(GetIntegerValue(reader[8])), documentIdentifier, reader[9] == null ? null : GetStringValue(reader[9]))));
 								string newRecordMarker = GetIntegerValue(reader[4]) == "0" ? "Y" : string.Empty;
 								errorRows.WriteLine(string.Format("{0},{1},{2},{3},,,", identifier, _tableNames.RunId, GetStringValue(reader[6]), newRecordMarker));
 							}
@@ -417,7 +416,7 @@ SELECT
 
 			ImportMeasurements.StartMeasure();
 
-			long combinedStatus = (long)(ImportStatus.InvalidImageFormat | ImportStatus.FileSpecifiedDne | ImportStatus.IdentifierOverlap);
+			long combinedStatus = (long)(Relativity.MassImport.DTO.ImportStatus.InvalidImageFormat | Relativity.MassImport.DTO.ImportStatus.FileSpecifiedDne | Relativity.MassImport.DTO.ImportStatus.IdentifierOverlap);
 			string sql = $"SELECT [Location] FROM [Resource].[{ this.TableNameImageTemp }] WHERE [Status] > 1 AND ([Status] & {combinedStatus} = 0)";
 
 			var dt = _context.ExecuteSqlStatementAsDataTable(sql);
@@ -452,17 +451,18 @@ SELECT
 		{
 			ImportMeasurements.StartMeasure();
 			string sqlFormat = ImportSql.DeleteExistingImageFiles();
+			int fileType = GetFileType(Settings.HasPDF);
 			string auditString = "";
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(14, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.Append(" WHERE" + Environment.NewLine);
-				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)ImportStatus.Pending);
+				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				auditString = sb.ToString();
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp), QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, fileType), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 		}
 
@@ -472,28 +472,38 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			var parameter = new SqlParameter("@fileLocation", Settings.Repository);
 			string sqlFormat = ImportSql.CreateImageFileRows();
+			int fileType = GetFileType(Settings.HasPDF);
+
 			string auditString = "";
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(13, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.Append(" WHERE" + Environment.NewLine);
-				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)Relativity.MassImport.ImportStatus.Pending);
+				sb.AppendFormat("{0}[Status] = {2}{1}", "\t", Environment.NewLine, (long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				auditString = sb.ToString();
 			}
 
 			sqlFormat = sqlFormat.Replace("/*ImageInsertAuditRecords*/", auditString);
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0), new SqlParameter[] { parameter }, QueryTimeout);
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, inRepository ? 1 : 0, Settings.Billable ? 1 : 0, fileType), new SqlParameter[] { parameter }, QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
 
-		public void ManageHasImages()
+		/// <summary>
+		/// Add or updates the records in DB related to HasImage for particular document.
+		/// </summary>
+		/// <param name="isProductionImagesImport">Flag indicating whether update 'HasImages' is because of images import or productions import.
+		/// The behaviour for these two scenario is different. </param>
+		public void ManageHasImages(bool isProductionImagesImport = false)
 		{
+			string codeTypeName = Settings.HasPDF ? Core.Constants.CodeTypeNames.HasPDFCodeTypeName : Core.Constants.CodeTypeNames.HasImagesCodeTypeName;
 			ImportMeasurements.StartMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
-			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, "HasImages");
-			string sqlFormat = ImportSql.ManageHasImages();
-			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName), QueryTimeout);
+			string codeArtifactTableName = Relativity.Data.CodeHelper.GetCodeArtifactTableNameByCodeTypeName(_context, codeTypeName);
+			string sqlFormat = isProductionImagesImport
+				? ImportSql.ManageHasImagesForProductionImport()
+				: ImportSql.ManageHasImagesForImagesImport();
+			_context.ExecuteNonQuerySQLStatement(string.Format(sqlFormat, TableNameImageTemp, codeArtifactTableName, codeTypeName), QueryTimeout);
 			ImportMeasurements.StopMeasure();
 			ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 		}
@@ -514,11 +524,11 @@ SELECT
 			ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			string sqlFormat = ImportSql.CreateProductionImageFileRows();
 			string auditString = "";
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				var sb = new System.Text.StringBuilder(Helper.GenerateAuditInsertClause(15, userID, requestOrig, recordOrig, TableNameImageTemp));
 				sb.AppendFormat(" WHERE{0}", Environment.NewLine);
-				sb.AppendFormat("{0}[{1}].[Status] = {3}{2}", "\t", TableNameImageTemp, Environment.NewLine, (long)Relativity.MassImport.ImportStatus.Pending);
+				sb.AppendFormat("{0}[{1}].[Status] = {3}{2}", "\t", TableNameImageTemp, Environment.NewLine, (long)Relativity.MassImport.DTO.ImportStatus.Pending);
 				auditString = sb.ToString();
 			}
 
@@ -547,12 +557,12 @@ SELECT
 				formatString = formatString.Replace("/* HasPermissionsToAddCheck */", HasPermissionsToaddCheck());
 			}
 
-			if (auditEnabled && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (auditEnabled && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				if (Settings.UploadFullText)
 				{
 					formatString = formatString.Replace("/* InsertAuditRecords */", ImportSql.CreateWhenExtractedTextIsEnabledAuditClause());
-					string fullTextOverlayDetail = Settings.AuditLevel == ImportAuditLevel.FullAudit ? GetFullTextOverlayDetail() : "''";
+					string fullTextOverlayDetail = Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit ? GetFullTextOverlayDetail() : "''";
 					formatString = formatString.Replace("/* FullTextOverlayDetail */", fullTextOverlayDetail);
 					formatString = formatString.Replace("/* DetailsValueColumnName */", extractedTextEncodingColumnName);
 				}
@@ -594,7 +604,7 @@ End
 		{
 			return $@"
 IF @HasPermissionToAdd = 0 BEGIN
-	UPDATE [Resource].[{{0}}] SET [Status] = [Status] + { (long)ImportStatus.SecurityAdd } WHERE NOT EXISTS(SELECT ArtifactID FROM [Document] (NOLOCK) WHERE [Document].[{{2}}] = [{{0}}].[DocumentIdentifier])
+	UPDATE [Resource].[{{0}}] SET [Status] = [Status] + { (long)Relativity.MassImport.DTO.ImportStatus.SecurityAdd } WHERE NOT EXISTS(SELECT ArtifactID FROM [Document] (NOLOCK) WHERE [Document].[{{2}}] = [{{0}}].[DocumentIdentifier])
 END
 ";
 		}
@@ -622,7 +632,7 @@ END
 		public void UpdateDocumentMetadata(int userID, string reqOrig, string recOrig, bool performAudit)
 		{
 			string sqlFormat;
-			if (performAudit && Settings.AuditLevel != ImportAuditLevel.NoAudit)
+			if (performAudit && Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
 			{
 				sqlFormat = ImportSql.UpdateAuditClause();
 				if (Settings.UploadFullText)
@@ -630,7 +640,7 @@ END
 					ImportMeasurements.StartMeasure();
 
 					string fullTextColumnDefinition = FullTextField.EnableDataGrid ? string.Empty : ",[FullText] = CASE WHEN ISNULL([ExtractedTextEncodingPageCode], '-1') <> '-1' THEN ISNULL([FullText], N'') ELSE [FullText] END ";
-					string auditDetailsClause = Settings.AuditLevel == ImportAuditLevel.FullAudit ? GenerateAuditDetailsClause() : "''";
+					string auditDetailsClause = Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit ? GenerateAuditDetailsClause() : "''";
 
 					string toRun = string.Format(sqlFormat, TableNameImageTemp, auditDetailsClause, "Document", DocumentIdentifierFieldColumnName, fullTextColumnDefinition);
 					var parameters = new SqlParameter[3];
@@ -714,7 +724,7 @@ WHERE
 
 		public DataGridReader CreateDataGridReader(string bulkFileShareFolderPath, ILog correlationLogger)
 		{
-			correlationLogger.LogVerbose("Starting CreateDataGridTempFileReader");
+			correlationLogger.LogVerbose("Starting CreateDataGridReader");
 			if (!HasDataGridWorkToDo)
 			{
 				return null;
@@ -771,6 +781,7 @@ WHERE
 				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
 
 				var filter = new HashSet<int>();
+
 				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
 				{
 					while (reader.Read())
@@ -802,7 +813,6 @@ WHERE
 						}
 					}
 				}
-
 				ImportMeasurements.StopMeasure();
 			}
 		}
@@ -830,6 +840,12 @@ WHERE
 				if (!HasDataGridWorkToDo)
 				{
 					return;
+				}
+
+				if (loader == null)
+				{
+					correlationLogger.LogError("DataGridReader is null. {HasDataGridWorkToDo}", HasDataGridWorkToDo);
+					throw new ArgumentNullException(nameof(loader));
 				}
 
 				using (var mappingReader = CreateDataGridMappingDataReader())
@@ -942,6 +958,11 @@ WHERE
 			var columnExistParameters = new[] { new SqlParameter("@columnName", SqlDbType.VarChar) { Value = FullTextField.GetColumnName() } };
 			bool doesColumnExist = _context.ExecuteSqlStatementAsScalar<int>(ImportSql.DoesColumnExistOnDocumentTable(), columnExistParameters) > 0;
 			return doesColumnExist;
+		}
+
+		private static int GetFileType(bool hasPDF)
+		{
+			return hasPDF ? Core.Constants.FileTypes.PDFFileType : Core.Constants.FileTypes.ImageFileType;
 		}
 		#endregion
 	}

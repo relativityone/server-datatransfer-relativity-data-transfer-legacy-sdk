@@ -14,7 +14,7 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 	{
 		public NativePipelineBuilder(IPipelineExecutor pipelineExecutor, IAPM apm) : base(pipelineExecutor, apm) { }
 
-		public IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildPipeline(MassImportContext context)
+		public IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildPipeline(MassImportContext context)
 		{
 			IStagingTableRepository stagingTableRepository = new NativeStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
@@ -35,7 +35,7 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 			return new ExecuteIfJobNotInitializedStage<NativeImportInput>(PipelineExecutor, jobStage, stagingTableRepository);
 		}
 
-		private IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildBatchExecutionStage(
+		private IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildBatchExecutionStage(
 			MassImportContext context,
 			IStagingTableRepository stagingTableRepository,
 			IMassImportMetricsService metricsService)
@@ -52,19 +52,22 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 			createFoldersStage = ExecuteInTransactionDecoratorStage.New(createFoldersStage, PipelineExecutor, context);
 			createFoldersStage = RetryOnExceptionDecoratorStage.New(createFoldersStage, PipelineExecutor, context, "creating folders");
 
+			IPipelineStage<NativeImportInput, NativeImportInput> importMetadataFilesToStagingTablesStage = new ImportMetadataFilesToStagingTablesStage<NativeImportInput>(context, stagingTableRepository);
+			importMetadataFilesToStagingTablesStage = RetryOnExceptionDecoratorStage.New(importMetadataFilesToStagingTablesStage, PipelineExecutor, context, "bulk insert temp files");
+
 			return new ValidateSettingsStage<NativeImportInput>()
 				.AddNextStage(new TruncateStagingTablesStage<NativeImportInput>(stagingTableRepository), PipelineExecutor)
 				.AddNextStage(new LoadColumnDefinitionCacheStage<NativeImportInput>(context), PipelineExecutor)
-				.AddNextStage(new ImportMetadataFilesToStagingTablesStage<NativeImportInput>(context, stagingTableRepository), PipelineExecutor)
+				.AddNextStage(importMetadataFilesToStagingTablesStage, PipelineExecutor)
 				.AddNextStage(new SendMetricWithPreImportStagingTablesDetails<NativeImportInput>(context, stagingTableRepository, metricsService), PipelineExecutor)
 				.AddNextStage(createFoldersStage, PipelineExecutor)
 				.AddNextStage(new CopyFullTextFromFileShareLocationStage(context), PipelineExecutor)
 				.AddNextStage(new CopyExtratedTextFilesToDataGridStage(context), PipelineExecutor);
 		}
 
-		private IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> BuildImportStage(MassImportContext context)
+		private IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> BuildImportStage(MassImportContext context)
 		{
-			IPipelineStage<NativeImportInput, IMassImportManagerInternal.MassImportResults> importStage = new ImportNativesStage(context);
+			IPipelineStage<NativeImportInput, MassImportManagerBase.MassImportResults> importStage = new ImportNativesStage(context);
 			importStage = ExecuteInTransactionDecoratorStage.New(importStage, PipelineExecutor, context);
 			importStage = RetryOnExceptionDecoratorStage.New(importStage, PipelineExecutor, context, actionName: "importing natives");
 			importStage = new SendLegacyImportMetricDecoratorStage<NativeImportInput>(

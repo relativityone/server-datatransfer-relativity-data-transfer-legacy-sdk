@@ -8,13 +8,14 @@ namespace Relativity.MassImport.Data
 	{
 		public static ArtifactTableInsertSql WithDocument(
 			TableNames tableNames, 
-			string textIdentifierColumn, 
+			string textIdentifierColumn,
 			int fieldArtifactId)
 		{
 			return new ArtifactTableInsertSql(
 				WithObjectPart(
 					tableNames, 
 					textIdentifierColumn, 
+					textIdentifierColumn,
 					fieldArtifactId, 
 					(int) ArtifactType.Document, 
 					string.Empty),
@@ -24,7 +25,8 @@ namespace Relativity.MassImport.Data
 
 		public static ArtifactTableInsertSql WithObject(
 			TableNames tableNames, 
-			string textIdentifierColumn, 
+			string textIdentifierColumn,
+			string keyFieldIdentifierColumn,
 			int fieldArtifactId, 
 			int artifactTypeId, 
 			string keyFieldCheck)
@@ -33,6 +35,7 @@ namespace Relativity.MassImport.Data
 				WithObjectPart(
 					tableNames, 
 					textIdentifierColumn, 
+					keyFieldIdentifierColumn,
 					fieldArtifactId, 
 					artifactTypeId, 
 					keyFieldCheck), 
@@ -125,6 +128,7 @@ SELECT @@ROWCOUNT
 		private static ISqlQueryPart WithObjectPart(
 			TableNames tableNames, 
 			string textIdentifierColumn, 
+			string keyFieldIdentifierColumn,
 			int fieldArtifactId, 
 			int artifactTypeId, 
 			string keyFieldCheck)
@@ -148,7 +152,7 @@ SELECT @@ROWCOUNT
 		[kCura_Import_ID]
 		FROM [Resource].[{tableNames.Native}] N
 		WHERE
-			N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+			N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 			AND
 			N.[{textIdentifierColumn}] IS NOT NULL {keyFieldCheck}
 			AND
@@ -158,7 +162,7 @@ SELECT @@ROWCOUNT
 				FROM [Resource].[{tableNames.Part}] P
 				JOIN [Resource].[{tableNames.Native}] N2
 				ON P.kCura_Import_ID = N2.kCura_Import_ID
-				WHERE N2.[{textIdentifierColumn}] = N.[{textIdentifierColumn}]
+				WHERE N2.[{keyFieldIdentifierColumn}] = N.[{keyFieldIdentifierColumn}]
 				AND P.[kCura_Import_IsNew] = 0
 				AND P.FieldArtifactId = {fieldArtifactId}
 			)
@@ -187,7 +191,7 @@ SELECT @@ROWCOUNT
 		[kCura_Import_ID] = MIN([kCura_Import_ID])
 		FROM [Resource].[{tableNames.Native}] N
 		WHERE
-			N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+			N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 			AND
 			N.[{textIdentifierColumn}] IS NOT NULL
 			AND

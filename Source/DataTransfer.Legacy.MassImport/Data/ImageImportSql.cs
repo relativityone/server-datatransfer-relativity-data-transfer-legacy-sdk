@@ -14,7 +14,7 @@
 UPDATE
 	[Resource].[{{0}}]
 SET
-	[Status] = [Status] + {(long) ImportStatus.ErrorAppend}
+	[Status] = [Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAppend}
 WHERE
 	EXISTS(SELECT [ArtifactID] FROM [Document] WHERE [Document].[{{1}}] = [{{0}}].[DocumentIdentifier])";
 		}
@@ -29,7 +29,7 @@ WHERE
 SELECT count(DISTINCT [DocumentIdentifier])
 FROM [Resource].[{{0}}]
 WHERE
-	[Status] = {(long) ImportStatus.Pending}
+	[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	AND NOT EXISTS(SELECT TOP 1 [ArtifactID] FROM [Document] WHERE [Document].[{{1}}] = [{{0}}].[DocumentIdentifier])";
 		}
 
@@ -49,14 +49,14 @@ SELECT DISTINCT
 		WHEN
 			[Document].[ArtifactID] IS NULL
 		THEN
-			{(long) ImportStatus.ErrorBates}
+			{(long)Relativity.MassImport.DTO.ImportStatus.ErrorBates}
 
 		WHEN
 			NOT [Document].[ArtifactID] IS NULL
 			AND
 			[Document].[{{1}}] NOT IN (SELECT [DocumentIdentifier] FROM [Resource].[{{0}}])
 		THEN
-			{(long) ImportStatus.ErrorBates}
+			{(long)Relativity.MassImport.DTO.ImportStatus.ErrorBates}
 
 		WHEN
 			NOT [Document].[ArtifactID] IS NULL
@@ -65,7 +65,7 @@ SELECT DISTINCT
 			AND
 			NOT [Document].[ArtifactID] = [File].[DocumentArtifactID]
 		THEN
-			{(long) ImportStatus.ErrorBates}
+			{(long)Relativity.MassImport.DTO.ImportStatus.ErrorBates}
 	END,
 	[{{0}}].[DocumentIdentifier]
 FROM
@@ -75,7 +75,7 @@ LEFT JOIN eddsdbo.[Document] ON
 INNER JOIN [Resource].[{{0}}_ExistingFile] [File] ON
 	[File].[FileIdentifier] = [{{0}}].[FileIdentifier]
 WHERE
-	[{{0}}].[Status] = {(long) ImportStatus.Pending}
+	[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 )
 
 UPDATE
@@ -141,6 +141,8 @@ END";
 		/// ---------------
 		/// 0: img temp table
 		/// 1: InRepository
+		/// 2: Billable
+		/// 3: Type: 1 - image, 6 - pdf
 		/// </summary>
 		public string CreateImageFileRows()
 		{
@@ -162,7 +164,7 @@ INSERT INTO [File](
 		[ArtifactID],
 		[Filename],
 		[Order],
-		1,
+		{{3}},
 		-1,
 		[FileIdentifier],
 		[Location],
@@ -172,7 +174,7 @@ INSERT INTO [File](
 	FROM
 		[Resource].[{{0}}] tmp
 	WHERE
-		tmp.[Status] = {(long) ImportStatus.Pending}
+		tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 /*ImageInsertAuditRecords*/";
 		}
@@ -315,7 +317,7 @@ INSERT INTO Artifact (
 		[DeleteFlag] = 0
 	FROM [Resource].[{{0}}] tmp
 	LEFT JOIN [Document] ON [Document].[{{2}}] = DocumentIdentifier
-	WHERE [Document].[ArtifactID] IS NULL AND tmp.[Status] = {(long) ImportStatus.Pending}
+	WHERE [Document].[ArtifactID] IS NULL AND tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 INSERT INTO [Document] (
 	[ArtifactID],
@@ -404,7 +406,7 @@ INSERT INTO [File](
 	FROM
 		[Resource].[{{0}}] tmp
 	WHERE
-		tmp.[Status] = {(long) ImportStatus.Pending}
+		tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 /*ImageInsertAuditRecords*/";
 		}
@@ -419,7 +421,7 @@ INSERT INTO [File](
 	FROM
 		[Resource].[{{0}}]
 	WHERE
-		[Status] = {(long) ImportStatus.Pending}
+		[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 		AND
 		ISNULL([ExtractedTextEncodingPageCode], '-1') <> '-1'
 )
@@ -453,6 +455,7 @@ LEFT JOIN [ImportExtractedText] T ON
 		/// Format replace:
 		/// ---------------
 		/// 0: img temp table
+		/// 1: Type: 1 - image, 6 - pdf
 		/// </summary>
 		public string DeleteExistingImageFiles()
 		{
@@ -466,9 +469,9 @@ WHILE @rowsAffected > 0 BEGIN
 		[Guid] IN (
 			SELECT TOP 1000 [Guid]
 			FROM [File]
-			WHERE [Type] = 1
+			WHERE [Type] = {{1}}
 				AND
-				EXISTS(SELECT ArtifactID FROM [Resource].[{{0}}] WHERE ArtifactID = [DocumentArtifactID] AND [Status] = {(long) ImportStatus.Pending})
+				EXISTS(SELECT ArtifactID FROM [Resource].[{{0}}] WHERE ArtifactID = [DocumentArtifactID] AND [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
 		)
 	SET @rowsAffected = @@ROWCOUNT
 END
@@ -537,7 +540,7 @@ CREATE CLUSTERED INDEX [IX_LookupFast] ON [Resource].[{{0}}_ExistingFile]
 	LEFT JOIN [EDDSDBO].[Document] Document ON
 		Document.ArtifactID = EF.[DocumentArtifactID] 
 	WHERE
-		NOT [Status] = {(long) ImportStatus.Pending}
+		NOT [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	ORDER BY
 		[OriginalLineNumber]
 
@@ -547,13 +550,13 @@ CREATE CLUSTERED INDEX [IX_LookupFast] ON [Resource].[{{0}}_ExistingFile]
 		public string GetReturnReport()
 		{
 			return $@"DECLARE @docCreateCount INT
-SET @docCreateCount = ISNULL((SELECT COUNT(DISTINCT [DocumentIdentifier]) FROM [Resource].[{{0}}] WHERE EXISTS(SELECT TOP 1 [ArtifactID] FROM [Resource].[{{1}}] WHERE [Resource].[{{0}}].[ArtifactID] = [{{1}}].[ArtifactID]) AND [Status] = {(long)ImportStatus.Pending} AND NOT ArtifactID = 0), 0)
+SET @docCreateCount = ISNULL((SELECT COUNT(DISTINCT [DocumentIdentifier]) FROM [Resource].[{{0}}] WHERE EXISTS(SELECT TOP 1 [ArtifactID] FROM [Resource].[{{1}}] WHERE [Resource].[{{0}}].[ArtifactID] = [{{1}}].[ArtifactID]) AND [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending} AND NOT ArtifactID = 0), 0)
 
 DECLARE @docUpdateCount INT
-SET @docUpdateCount = ISNULL((SELECT COUNT(DISTINCT [DocumentIdentifier]) FROM [Resource].[{{0}}] WHERE NOT EXISTS(SELECT TOP 1 [ArtifactID] FROM [Resource].[{{1}}] WHERE [Resource].[{{0}}].[ArtifactID] = [{{1}}].[ArtifactID]) AND [Status] = {(long)ImportStatus.Pending} AND NOT ArtifactID = 0), 0)
+SET @docUpdateCount = ISNULL((SELECT COUNT(DISTINCT [DocumentIdentifier]) FROM [Resource].[{{0}}] WHERE NOT EXISTS(SELECT TOP 1 [ArtifactID] FROM [Resource].[{{1}}] WHERE [Resource].[{{0}}].[ArtifactID] = [{{1}}].[ArtifactID]) AND [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending} AND NOT ArtifactID = 0), 0)
 
 DECLARE @fileCount INT
-SET @fileCount = ISNULL((SELECT COUNT([Guid]) FROM [Resource].[{{0}}] WHERE [Status] = {(long) ImportStatus.Pending} AND NOT ArtifactID = 0 AND NOT ISNULL([Guid], '') = '' ), 0)
+SET @fileCount = ISNULL((SELECT COUNT([Guid]) FROM [Resource].[{{0}}] WHERE [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending} AND NOT ArtifactID = 0 AND NOT ISNULL([Guid], '') = '' ), 0)
 
 SELECT
 	NewDocument = @docCreateCount,
@@ -618,16 +621,53 @@ SELECT
 )";
 		}
 
+
+		/// <summary>
+		/// Format replace:
+		/// ---------------
+		/// 0: img temp table
+		/// 1: CodeArtifact partition table name for HasImages
+		/// 2: CodeType Name: HasImages or HasPDF
+		/// </summary>
+		public string ManageHasImagesForProductionImport()
+		{
+			return $@"
+		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'No' AND [CodeType].[Name] = 'HasImages')
+
+		INSERT INTO [{{1}}] (
+		[CodeArtifactID],
+		[AssociatedArtifactID]
+		) SELECT
+			@hasImagesCodeArtifactID,
+			ArtifactID
+			FROM
+			[Document]
+			WHERE
+			EXISTS(
+				SELECT
+					ArtifactID 
+				FROM [Resource].[{{0}}]
+				WHERE [{{0}}].ArtifactID = [Document].[ArtifactID] AND [{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+				AND NOT EXISTS (
+							SELECT 1
+							FROM [{{1}}]
+							WHERE [{{1}}].[AssociatedArtifactID] = [{{0}}].[ArtifactID]
+								)
+					)
+";
+		}
+
+
 		/// <summary>
 		/// Format replace:
 		/// ---------------
 		/// 0: img temp table
 		/// 1: CodeArtifact partition table name for HasImages
 		/// </summary>
-		public string ManageHasImages()
+		public string ManageHasImagesForImagesImport()
 		{
 			return $@"
-		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = 'HasImages')
+		DECLARE @hasImagesCodeArtifactID INT SET @hasImagesCodeArtifactID = (SELECT TOP 1 [ArtifactID] FROM [Code] JOIN [CodeType] ON [Code].[CodeTypeID] = [CodeType].[CodeTypeID] WHERE [Code].[Name]= 'Yes' AND [CodeType].[Name] = '{{2}}')
 
 		DELETE FROM
 		[{{1}}]
@@ -640,7 +680,7 @@ SELECT
 			WHERE
 			[{{0}}].ArtifactID = [{{1}}].[AssociatedArtifactID]
 			AND
-			[{{0}}].[Status] = {(long) ImportStatus.Pending}
+			[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 		)
 
 		INSERT INTO [{{1}}] (
@@ -653,7 +693,7 @@ SELECT
 			[Document]
 			WHERE
 			EXISTS(
-				SELECT ArtifactID FROM [Resource].[{{0}}] WHERE [{{0}}].ArtifactID = [Document].[ArtifactID] AND [{{0}}].[Status] = {(long) ImportStatus.Pending})
+				SELECT ArtifactID FROM [Resource].[{{0}}] WHERE [{{0}}].ArtifactID = [Document].[ArtifactID] AND [{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
 ";
 		}
 
@@ -678,12 +718,12 @@ INNER JOIN [Resource].[{{0}}] tmp ON
 	AND
 	NOT tmp.[FullText] IS NULL
 	AND
-	tmp.[Status] = {(long) ImportStatus.Pending}
+	tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 DELETE FROM
 	[DocumentPage]
 WHERE
-	EXISTS(SELECT [ArtifactID] FROM [Resource].[{{0}}] N WHERE N.ArtifactID = [DocumentPage].[DocumentArtifactID] AND NOT N.[FullText] IS NULL AND N.[Status] = {(long) ImportStatus.Pending})
+	EXISTS(SELECT [ArtifactID] FROM [Resource].[{{0}}] N WHERE N.ArtifactID = [DocumentPage].[DocumentArtifactID] AND NOT N.[FullText] IS NULL AND N.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
 
 INSERT INTO [DocumentPage] (
 	[DocumentArtifactID],
@@ -698,7 +738,7 @@ INSERT INTO [DocumentPage] (
 	WHERE
 		NOT tmp.[FullText] IS NULL
 		AND
-		tmp.[Status] = {(long) ImportStatus.Pending}";
+		tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}";
 		}
 
 		/// <summary>
@@ -714,9 +754,9 @@ UPDATE
 	[Resource].[{{0}}]
 SET
 	[Status] = [Status] + CASE
-		WHEN [doc].[count_function] IS NULL OR [doc].[count_function] = 0 THEN {(long) ImportStatus.ErrorOverwrite}
-		WHEN [doc].[count_function] >= 2 THEN {(long) ImportStatus.ErrorOverwriteMultipleKey}
-															ELSE {(long) ImportStatus.Pending}
+		WHEN [doc].[count_function] IS NULL OR [doc].[count_function] = 0 THEN {(long)Relativity.MassImport.DTO.ImportStatus.ErrorOverwrite}
+		WHEN [doc].[count_function] >= 2 THEN {(long)Relativity.MassImport.DTO.ImportStatus.ErrorOverwriteMultipleKey}
+															ELSE {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	END
 	FROM [Resource].[{{0}}] as rit
 	LEFT OUTER JOIN (SELECT [d].[{{1}}],
@@ -751,7 +791,7 @@ FROM
 INNER JOIN [Document] ON
 	[Document].[{{1}}] = [{{0}}].DocumentIdentifier
 WHERE
-	[{{0}}].[Status] = {(long) ImportStatus.Pending}
+	[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 /* UpdateOverlayPermissions */";
 		}
@@ -762,13 +802,13 @@ WHERE
 UPDATE
 	tmp
 SET
-	tmp.[Status] |= {(long) ImportStatus.ErrorRedaction}
+	tmp.[Status] |= {(long)Relativity.MassImport.DTO.ImportStatus.ErrorRedaction}
 FROM
 	[Resource].[{imageTempTableName}] AS tmp
 INNER JOIN [Document] AS d ON
 	d.[{identifierColumnName}] = tmp.[DocumentIdentifier]
 WHERE
-	tmp.[Status] = {(long) ImportStatus.Pending}
+	tmp.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	AND
 	EXISTS(
 		SELECT
@@ -807,7 +847,7 @@ FROM
 INNER JOIN [Resource].[{{0}}] ON
 	[Artifact].[ArtifactID] = [{{0}}].[ArtifactID]
 WHERE
-	[{{0}}].[Status] = {(long) ImportStatus.Pending}";
+	[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}";
 		}
 
 		/// <summary>
@@ -831,7 +871,7 @@ WHERE
 	FROM
 		[Resource].[{{0}}]
 	WHERE
-		[Status] = {(long) ImportStatus.Pending}
+		[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 		AND
 		[IsNew] = 0
 		AND
@@ -877,7 +917,7 @@ INNER JOIN [{{2}}] ON
 			FROM
 				[Resource].[{{0}}] Z
 			WHERE
-				Z.[Status] = {(long) ImportStatus.Pending}
+				Z.[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 			GROUP BY
 				Z.ArtifactID
 		)
@@ -907,11 +947,11 @@ WHERE
 UPDATE
 	[Resource].[{{0}}]
 SET
-	[Status] = [Status] + {(long) ImportStatus.SecurityUpdate}
+	[Status] = [Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
 WHERE
 	NOT [{{0}}].IsNew = 1
 	AND
-	[{{0}}].[Status] = {(long) ImportStatus.Pending}
+	[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	AND
 	NOT EXISTS(SELECT AccessControlListID FROM [Artifact] INNER JOIN EditList ON EditList.EditAcl = [Artifact].[AccessControlListID] AND [Artifact].[ArtifactID] = [{{0}}].[ArtifactID])";
 		}
@@ -931,7 +971,7 @@ WHERE
 UPDATE
 	[Resource].[{{0}}]
 SET
-	[Status] = [Status] + {(long) ImportStatus.SecurityUpdate}
+	[Status] = [Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
 FROM
 	[Resource].[{{0}}]
 LEFT JOIN [Document]
@@ -939,7 +979,7 @@ LEFT JOIN [Document]
 WHERE
 	NOT [Document].[ArtifactID] IS NULL
 	AND
-	[{{0}}].[Status] = {(long) ImportStatus.Pending}
+	[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	AND
 	NOT EXISTS(SELECT AccessControlListID FROM [Artifact] INNER JOIN EditList ON EditList.EditAcl = [Artifact].[AccessControlListID] AND [Artifact].[ArtifactID] = [Document].[ArtifactID])";
 		}

@@ -5,6 +5,7 @@
 		internal static class SystemNames
 		{
 			public const string WebApi = "WebAPI";
+			public const string Kepler = "Kepler";
 			public const string ObjectManager = "ObjectManager";
 			public const string RSAPI = "RSAPI";
 		}
@@ -22,6 +23,19 @@
 			public const string JobStarted = "Relativity.MassImport.JobStarted";
 			public const string BatchCompleted = "Relativity.MassImport.BatchImportTime";
 			public const string PreImportStagingTableDetails = "Relativity.MassImport.StagingTableDetailsBeforeImport";
+			public const string FieldDetails = "Relativity.MassImport.FieldDetails";
+		}
+
+		internal class CodeTypeNames
+		{
+			public const string HasImagesCodeTypeName = "HasImages";
+			public const string HasPDFCodeTypeName = "HasPDF";
+		}
+
+		internal class FileTypes
+		{
+			public const int ImageFileType = 1;
+			public const int PDFFileType = 6;
 		}
 	}
 }

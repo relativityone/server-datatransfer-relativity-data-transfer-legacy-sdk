@@ -63,6 +63,29 @@ namespace MassImport.NUnit.Integration.Helpers
 			}
 		}
 
+		public static async Task<IList<RelativityObject>> QueryDocuments(
+			IntegrationTestParameters parameters,
+			TestWorkspace workspace,
+			string[] fieldNames)
+		{
+			var query = new QueryRequest
+			{
+				ObjectType = new ObjectTypeRef { ArtifactTypeID = WellKnownFields.DocumentArtifactTypeId},
+				Fields = fieldNames.Select(x => new FieldRef { Name = x }).ToArray()
+			};
+
+			const int CountLimit = 10_000;
+
+			QueryResult result;
+			using (var objectManager = ServiceHelper.GetServiceProxy<IObjectManager>(parameters))
+			{
+				result = await objectManager.QueryAsync(workspace.WorkspaceId, query, 0, CountLimit).ConfigureAwait(false);
+			}
+
+			return result.Objects;
+
+		}
+
 		public static async Task<Dictionary<string, Dictionary<string, object>>> ReadObjects(
 			IntegrationTestParameters parameters,
 			TestWorkspace workspace,

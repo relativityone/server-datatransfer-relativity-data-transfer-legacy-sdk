@@ -4,7 +4,7 @@ using Relativity.MassImport.Data.SqlFramework;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 {
-	internal class CreateFoldersStage<T> : Framework.IPipelineStage<T> where T : Input.Interface.IImportSettingsInput<NativeLoadInfo>
+	internal class CreateFoldersStage<T> : Framework.IPipelineStage<T> where T : Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly MassImportContext _context;
 
@@ -25,7 +25,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 				int activeWorkspaceID = _context.BaseContext.AppArtifactID; // For anything that MUST differ by workspace (ie: folderManager caches mappings of a workspace's folders to their aritfactID)
 				var folderGenerator = new ServerSideFolderGenerator();
 				ILockHelper lockHelper = new LockHelper(new AppLockProvider());
-				folderGenerator.CreateFolders(lockHelper, _context.Timekeeper, _context.BaseContext, activeWorkspaceID, folder, settings);
+				folderGenerator.CreateFolders(lockHelper, _context.Timekeeper, _context.BaseContext, activeWorkspaceID, folder, settings, _context.Logger);
 				InjectionManager.Instance.Evaluate("37e91129-74aa-4dc7-8409-446afd242a9d");
 				_context.ImportMeasurements.SecondaryArtifactCreationTime.Stop();
 			}

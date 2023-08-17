@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Relativity.Logging;
@@ -14,6 +15,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 	{
 		private const string ActionName = "RetryTests";
 		private const int NumberOfRetries = 3;
+		private const int NumberOfBCPRetries = 5;
 
 		private Mock<IPipelineStage<int>> _stageMock;
 		private Mock<ILog> _loggerMock;
@@ -32,7 +34,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 				.Returns(_loggerMock.Object);
 
 			_massImportContext = new MassImportContext(
-				 baseContext: null, // not used by ExecuteInTransactionDecoratorStage
+				baseContext: null, // not used by ExecuteInTransactionDecoratorStage
 				new LoggingContext("correlationId", "clientName", _loggerMock.Object),
 				jobDetails: null, // not used by ExecuteInTransactionDecoratorStage
 				caseSystemArtifactId: -1); // not used by ExecuteInTransactionDecoratorStage
@@ -43,7 +45,8 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 				_massImportContext,
 				ActionName,
 				exponentialWaitTimeBase: 0,
-				NumberOfRetries);
+				NumberOfRetries,
+				NumberOfBCPRetries);
 		}
 
 		[Test]
@@ -66,6 +69,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 
 		[TestCase(MassImportErrorCategory.SqlCategory)]
 		[TestCase(MassImportErrorCategory.UnknownCategory)]
+		[TestCase(MassImportErrorCategory.DataGridCategory)]
 		public void ShouldThrowExceptionWithoutRetryWhenErrorIsNonRetryable(string errorCategory)
 		{
 			// arrange
@@ -79,11 +83,13 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 
 			// assert
 			Assert.That(_massImportContext.ImportMeasurements.GetCounters(), Is.Empty, "It should not retry when error is not retryable.");
-			_loggerMock.Verify(x => x.LogError(expectedException, "Error occurred while {action}", ActionName));
+			_loggerMock.Verify(x => x.LogError(expectedException, "Non Retryable Error {category} occurred while {action}", expectedException.ErrorCategory, ActionName));
 		}
 
 		[TestCase(MassImportErrorCategory.TimeoutCategory)]
 		[TestCase(MassImportErrorCategory.DeadlockCategory)]
+		[TestCase(MassImportErrorCategory.BcpCategory)]
+		[TestCase(MassImportErrorCategory.SqlAppLockCategory)]
 		public void ShouldRetryWhenFirstCallFailed(string errorCategory)
 		{
 			// arrange
@@ -103,14 +109,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			Assert.That(counter.Key, Is.EqualTo($"Retry-'{ActionName}'"));
 			Assert.That(counter.Value, Is.EqualTo(1));
 
-			if (errorCategory == MassImportErrorCategory.TimeoutCategory)
-			{
-				_loggerMock.Verify(x => x.LogError(expectedException, "Timeout occurred while {action}.", ActionName));
-			}
-			else if (errorCategory == MassImportErrorCategory.DeadlockCategory)
-			{
-				_loggerMock.Verify(x => x.LogError(expectedException, "Deadlock occurred while {action}.", ActionName));
-			}
+			_loggerMock.Verify(x => x.LogWarning(expectedException, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", errorCategory, ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
 		}
 
 		[Test]
@@ -132,8 +131,8 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			Assert.That(counter.Key, Is.EqualTo($"Retry-'{ActionName}'"));
 			Assert.That(counter.Value, Is.EqualTo(1));
 
-			_loggerMock.Verify(x => x.LogError(retryableException, "Deadlock occurred while {action}.", ActionName));
-			_loggerMock.Verify(x => x.LogError(nonRetryableException, "Error occurred while {action}", ActionName));
+			_loggerMock.Verify(x => x.LogWarning(retryableException, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", MassImportErrorCategory.DeadlockCategory, ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()));
+			_loggerMock.Verify(x => x.LogError(nonRetryableException, "Non Retryable Error {category} occurred while {action}", nonRetryableException.ErrorCategory, ActionName));
 		}
 
 		[Test]
@@ -153,28 +152,16 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Shared
 			Assert.That(counter.Key, Is.EqualTo($"Retry-'{ActionName}'"));
 			Assert.That(counter.Value, Is.EqualTo(NumberOfRetries));
 
-			_loggerMock.Verify(x => x.LogError(expectedException, "Deadlock occurred while {action}.", ActionName), Times.Exactly(NumberOfRetries));
+			_loggerMock.Verify(x => x.LogWarning(expectedException, "{Category} error occurred while executing {action}. Retry '{retryNumber}' out of '{maxNumberOfRetries}'. Waiting for {waitTime} before next retry attempt.", MassImportErrorCategory.DeadlockCategory, ActionName, It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()), Times.Exactly(NumberOfRetries));
 		}
 
-		/// <summary>
-		/// 2 is a default exponential base, so for 8 retries, it will wait for 510 seconds in total.
-		/// </summary>
 		[Test]
-		public void ShouldDoNotRetryMoreThanEightTimes()
+		public void ShouldRetryFiveTimesForBcpErrorCategory()
 		{
 			// arrange
-			const int requestedNumberOfRetries = 9;
-			const int expectedNumberOfRetries = 8;
+			const int expectedNumberOfRetries = 5;
 
-			_sut = new RetryOnExceptionDecoratorStage<int, int>(
-				_stageMock.Object,
-				_pipelineExecutor,
-				_massImportContext,
-				ActionName,
-				exponentialWaitTimeBase: 0,
-				requestedNumberOfRetries);
-
-			var expectedException = new MassImportExecutionException("message", "stage", MassImportErrorCategory.DeadlockCategory, inner: null);
+			var expectedException = new MassImportExecutionException("message", "stage", MassImportErrorCategory.BcpCategory, inner: null);
 			_stageMock
 				.Setup(x => x.Execute(It.IsAny<int>()))
 				.Throws(expectedException);

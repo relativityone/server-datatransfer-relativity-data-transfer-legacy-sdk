@@ -24,9 +24,11 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    
     <PackageReference Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" />
     <PackageReference Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
     <PackageReference Include="Castle.Windsor" VersionOverride="$(CastleWindsorOverride)" />
+    
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Mono.Cecil" />
     <PackageReference Include="Invariant.Services.Interfaces" />
@@ -67,6 +69,17 @@
     <PackageReference Include="Relativity.Testing.Framework" />
     <PackageReference Include="Relativity.Toggles" />
     <PackageReference Include="System.ValueTuple" />
+
+	  <PackageReference Include="Relativity.Productions.SDK" />
+	  <PackageReference Include="Relativity.SecretCatalog" />
+	  <PackageReference Include="Relativity.Shared.SDK" />
+	  <PackageReference Include="StackExchange.Redis" />
+	  <PackageReference Include="kCura.EDDS.DocumentCompareGateway" />
+
+	  <PackageReference Include="Relativity.ApplicationBase.InvariantApi" />
+	  <PackageReference Include="kCura.Imaging" />
+	  <PackageReference Include="System.Wrapper" />
+	  <PackageReference Include="Relativity.AssistedReview.Utility" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />
@@ -84,5 +97,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
   </ItemGroup>
 </Project>

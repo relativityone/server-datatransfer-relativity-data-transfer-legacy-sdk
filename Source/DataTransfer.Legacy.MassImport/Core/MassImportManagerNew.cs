@@ -12,7 +12,7 @@ using Relativity.Telemetry.APM;
 
 namespace Relativity.MassImport.Core
 {
-	internal class MassImportManagerNew : IMassImportManagerInternal
+	internal class MassImportManagerNew
 	{
 		private readonly ILockHelper _lockHelper;
 		private bool CollectIDsOnCreate { get; set; }
@@ -53,9 +53,15 @@ namespace Relativity.MassImport.Core
 			}
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("7f572655-d2d6-4084-8feb-243a1e060bf8");
+
+			if (settings.HasPDF && !IsPDFImportSupported(context))
+			{
+				throw new System.Exception("PDF files import is not supported");
+			}
+
 			var massImportMetric = new MassImportMetrics(CorrelationLogger, APMClient);
 			var image = new Data.Image(context.DBContext, settings);
 
@@ -75,9 +81,13 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
+				context.GetBcpSharePath() :
+				settings.BulkFileSharePath;
+
 			if (settings.UseBulkDataImport)
 			{
-				settings.RunID = image.InitializeBulkTable(context.GetBcpSharePath());
+				settings.RunID = image.InitializeBulkTable(bulkFileShareFolderPath, this.CorrelationLogger);
 			}
 			else
 			{
@@ -86,14 +96,14 @@ namespace Relativity.MassImport.Core
 
 			if (image.IsNewJob)
 			{
-				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.WebApi);
+				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Images, system: Constants.SystemNames.Kepler);
 			}
 
 			timekeeper.MarkEnd("TempFileInitialization");
-			if (image.HasDataGridWorkToDo && image.IsDataGridInputValid())
+			if (image.IsDataGridInputValid())
 			{
-				var loader = image.CreateDataGridReader(context.GetBcpSharePath(), this.CorrelationLogger);
-				image.WriteToDataGrid(loader, context.AppArtifactID, context.GetBcpSharePath(), this.CorrelationLogger);
+				var loader = image.CreateDataGridReader(bulkFileShareFolderPath, this.CorrelationLogger);
+				image.WriteToDataGrid(loader, context.AppArtifactID, bulkFileShareFolderPath, this.CorrelationLogger);
 				image.MapDataGridRecords(this.CorrelationLogger);
 			}
 
@@ -108,7 +118,7 @@ namespace Relativity.MassImport.Core
 						"SELECT TOP 1 ColumnName FROM ArtifactViewField INNER JOIN [Field] ON [Field].[ArtifactViewFieldID] = [ArtifactViewField].[ArtifactViewFieldID] AND [Field].[ArtifactID] = " +
 						settings.KeyFieldArtifactID).ToString();
 					image.ImportMeasurements.StopMeasure(nameof(image.SetOutsideFieldName));
-					if (settings.Overlay == OverwriteType.Overlay)
+					if (settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay)
 					{
 						image.ManageOverwriteErrors();
 					}
@@ -117,7 +127,7 @@ namespace Relativity.MassImport.Core
 					image.ManageRedactionErrors();
 					switch (settings.Overlay)
 					{
-						case OverwriteType.Append:
+						case Relativity.MassImport.DTO.OverwriteType.Append:
 						{
 							image.ManageAppendErrors();
 							if (Relativity.Core.Config.EnforceDocumentLimit)
@@ -133,7 +143,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Overlay:
+						case Relativity.MassImport.DTO.OverwriteType.Overlay:
 						{
 							image.PopulateArtifactIdOnInitialTempTable(context.UserID, true);
 							image.UpdateDocumentMetadata(context.UserID, context.RequestOrigination,
@@ -143,7 +153,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Both:
+						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							if (Relativity.Core.Config.EnforceDocumentLimit)
 							{
@@ -164,8 +174,8 @@ namespace Relativity.MassImport.Core
 
 					switch (settings.Overlay)
 					{
-						case OverwriteType.Overlay:
-						case OverwriteType.Both:
+						case Relativity.MassImport.DTO.OverwriteType.Overlay:
+						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							image.DeleteExistingImageFiles(context.UserID, Relativity.Core.Config.AuditingEnabled,
 								context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination());
@@ -240,16 +250,21 @@ namespace Relativity.MassImport.Core
 					precalculatedMilliseconds: image.ImportMeasurements.SqlImportTime.ElapsedMilliseconds,
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
-				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.WebApi, retval, image.ImportMeasurements);
+				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Images, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
 			}
 
 			retval.RunID = settings.RunID;
 			return retval;
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunProductionImageImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			InjectionManager.Instance.Evaluate("32c593bc-b1e1-4f8e-be13-98fec84da43c");
+
+			if (settings.HasPDF && !IsPDFImportSupported(context))
+			{
+				throw new System.Exception("PDF files import is not supported");
+			}
 			if (!SQLInjectionHelper.IsValidRunId(settings.RunID))
 			{
 				throw new System.Exception("Invalid RunId");
@@ -270,9 +285,13 @@ namespace Relativity.MassImport.Core
 			var importStopWatch = new Stopwatch();
 			importStopWatch.Start();
 
+			var bulkFileShareFolderPath = string.IsNullOrEmpty(settings.BulkFileSharePath) ?
+				context.GetBcpSharePath() :
+				settings.BulkFileSharePath;
+
 			if (settings.UseBulkDataImport)
 			{
-				settings.RunID = image.InitializeBulkTable(context.GetBcpSharePath());
+				settings.RunID = image.InitializeBulkTable(bulkFileShareFolderPath, this.CorrelationLogger);
 			}
 			else
 			{
@@ -281,7 +300,7 @@ namespace Relativity.MassImport.Core
 
 			if (image.IsNewJob)
 			{
-				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.WebApi);
+				massImportMetric.SendJobStarted(settings, importType: Constants.ImportType.Production, system: Constants.SystemNames.Kepler);
 			}
 
 			image.ImportMeasurements.StartMeasure(nameof(productionManager.CreateProductionDocumentFileTableForProduction));
@@ -298,7 +317,7 @@ namespace Relativity.MassImport.Core
 
 					switch (settings.Overlay)
 					{
-						case OverwriteType.Append:
+						case Relativity.MassImport.DTO.OverwriteType.Append:
 						{
 							image.ManageAppendErrors();
 							if (Relativity.Core.Config.EnforceDocumentLimit)
@@ -314,7 +333,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Overlay:
+						case Relativity.MassImport.DTO.OverwriteType.Overlay:
 						{
 							image.ImportMeasurements.StartMeasure(nameof(image.SetOutsideFieldName));
 							image.SetOutsideFieldName = context.DBContext.ExecuteSqlStatementAsScalar(
@@ -327,7 +346,7 @@ namespace Relativity.MassImport.Core
 							break;
 						}
 
-						case OverwriteType.Both:
+						case Relativity.MassImport.DTO.OverwriteType.Both:
 						{
 							if (Relativity.Core.Config.CloudInstance)
 							{
@@ -343,6 +362,7 @@ namespace Relativity.MassImport.Core
 						}
 					}
 
+					image.ManageHasImages(true);
 					image.ImportMeasurements.StartMeasure(nameof(productionManager
 						.UpdateImportStatusForFilesAlreadyInProduction));
 					productionManager.UpdateImportStatusForFilesAlreadyInProduction(context, productionArtifactID,
@@ -376,8 +396,8 @@ namespace Relativity.MassImport.Core
 
 					if (image.IsDataGridInputValid())
 					{
-						var loader = image.CreateDataGridReader(context.GetBcpSharePath(), this.CorrelationLogger);
-						image.WriteToDataGrid(loader, context.AppArtifactID, context.GetBcpSharePath(),
+						var loader = image.CreateDataGridReader(bulkFileShareFolderPath, this.CorrelationLogger);
+						image.WriteToDataGrid(loader, context.AppArtifactID, bulkFileShareFolderPath,
 							this.CorrelationLogger);
 						image.MapDataGridRecords(this.CorrelationLogger);
 					}
@@ -431,7 +451,7 @@ namespace Relativity.MassImport.Core
 					precalculatedMilliseconds: image.ImportMeasurements.SqlImportTime.ElapsedMilliseconds,
 					customData: CreateSqlImportMetricsCustomData(settings, retval, image.ImportMeasurements));
 
-				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.WebApi, retval, image.ImportMeasurements);
+				massImportMetric.SendBatchCompleted(settings.RunID, importStopWatch.ElapsedMilliseconds, Constants.ImportType.Production, Constants.SystemNames.Kepler, retval, image.ImportMeasurements);
 			}
 
 			retval.RunID = settings.RunID;
@@ -447,7 +467,7 @@ namespace Relativity.MassImport.Core
 
 			var timekeeper = new Timekeeper();
 			timekeeper.MarkStart("Generate Errors");
-			var settings = new ImageLoadInfo();
+			var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 			settings.RunID = runID;
 			settings.KeyFieldArtifactID = keyFieldID;
 			var x = new Data.Image(icc.ChicagoContext.DBContext, settings).GenerateErrorFiles(caseArtifactID, writeHeader);
@@ -466,7 +486,7 @@ namespace Relativity.MassImport.Core
 			bool retval = (bool)icc.ChicagoContext.DBContext.ExecuteSqlStatementAsScalar(string.Format("SELECT CASE WHEN EXISTS(SELECT TOP 1 [DocumentIdentifier] FROM [Resource].[{0}] WHERE NOT [Status] = 0) THEN CAST(1 AS BIT) ELSE CAST(0 AS BIT) END", Relativity.MassImport.Constants.IMAGE_TEMP_TABLE_PREFIX + runId));
 			if (!retval)
 			{
-				var settings = new ImageLoadInfo();
+				var settings = new Relativity.MassImport.DTO.ImageLoadInfo();
 				settings.RunID = runId;
 				settings.KeyFieldArtifactID = -1;
 				var x = new Data.Image(icc.ChicagoContext.DBContext, settings);
@@ -476,19 +496,19 @@ namespace Relativity.MassImport.Core
 			return retval;
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunNativeImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, Timekeeper timekeeper, MassImportManagerBase.MassImportResults retval)
 		{
 			var input = NativeImportInput.ForWebApi(settings, inRepository, includeExtractedTextEncoding);
 			return MassImporter.ImportNatives(context, input);
 		}
 
-		public IMassImportManagerInternal.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, IMassImportManagerInternal.MassImportResults retval)
+		public MassImportManagerBase.MassImportResults AttemptRunObjectImport(Relativity.Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, MassImportManagerBase.MassImportResults retval)
 		{
 			var input = ObjectImportInput.ForWebApi(settings, CollectIDsOnCreate);
 			return MassImporter.ImportObjects(context, input);
 		}
 
-		public IMassImportManagerInternal.MassImportResults PostImportDocumentLimitLogic(Relativity.Core.BaseServiceContext sc, int workspaceId, IMassImportManagerInternal.MassImportResults importResults)
+		public MassImportManagerBase.MassImportResults PostImportDocumentLimitLogic(Relativity.Core.BaseServiceContext sc, int workspaceId, MassImportManagerBase.MassImportResults importResults)
 		{
 			if (importResults.ArtifactsCreated != 0)
 			{
@@ -497,7 +517,7 @@ namespace Relativity.MassImport.Core
 				if (docLimit != 0 & newDocumentCount > docLimit)
 				{
 					string errorMessage = "The document import was canceled. The import would have exceeded the document limit for the workspace.";
-					importResults.ExceptionDetail = new SoapExceptionDetail(new System.Exception(errorMessage));
+					importResults.ExceptionDetail = new Relativity.MassImport.DTO.SoapExceptionDetail(new System.Exception(errorMessage));
 				}
 			}
 
@@ -610,10 +630,10 @@ namespace Relativity.MassImport.Core
 			return null;
 		}
 
-		public bool AuditImport(Relativity.Core.BaseServiceContext icc, string runID, bool isFatalError, ImportStatistics importStats)
+		public bool AuditImport(Relativity.Core.BaseServiceContext icc, string runID, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
 		{
 			var context = icc.ChicagoContext;
-			var auditor = new ImportAuditor(context.DBContext);
+			var auditor = new ImportAuditor(context.DBContext, CorrelationLogger);
 			string xmlSnapshot = auditor.GetImportAuditXmlSnapshot(importStats, !isFatalError);
 			int systemArtifactID = Relativity.Core.Service.SystemArtifactQuery.Instance().RetrieveArtifactIDByIdentifier(context, "System");
 
@@ -631,19 +651,7 @@ namespace Relativity.MassImport.Core
 			return SendImportAuditNotificationEmailNew(icc, isFatalError, importStats);
 		}
 
-		public IMassImportManagerInternal.MassImportResults RunObjectImportForAPI(ICoreContext icc, ObjectLoadInfo settings, Relativity.Data.MassImportOld.Objects importObjects)
-		{
-			// not needed for toggle on
-			throw new NotImplementedException();
-		}
-
-		public IMassImportManagerInternal.MassImportResults RunNativeImportForAPI(ICoreContext icc, NativeLoadInfo settings, Relativity.Data.MassImportOld.Native importNative)
-		{
-			// not needed for toggle on
-			throw new NotImplementedException();
-		}
-
-		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, ImportStatistics importStats)
+		private bool SendImportAuditNotificationEmailNew(Relativity.Core.BaseServiceContext icc, bool isFatalError, Relativity.MassImport.DTO.ImportStatistics importStats)
 		{
 			string destinationPath = null;
 			try
@@ -679,7 +687,7 @@ namespace Relativity.MassImport.Core
 				destinationPath = destinationPath.Replace(".", "_") + ".csv";
 				using (var sw = new System.IO.StreamWriter(destinationPath, false, System.Text.Encoding.Default))
 				{
-					sw.Write(new ImportAuditor(icc.ChicagoContext.DBContext).GetAuditCsvSnapshot(importStats));
+					sw.Write(new ImportAuditor(icc.ChicagoContext.DBContext, CorrelationLogger).GetAuditCsvSnapshot(importStats));
 				}
 
 				msg.Attachments.Add(new System.Net.Mail.Attachment(destinationPath));
@@ -707,14 +715,14 @@ namespace Relativity.MassImport.Core
 			return Relativity.Core.PermissionsHelper.HasAdminOperationPermission(context, Relativity.Core.Permission.AllowDesktopClientImport);
 		}
 
-		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(ImageLoadInfo settings, IMassImportManagerInternal.MassImportResults results, Data.ImportMeasurements importMeasurements)
+		private Dictionary<string, object> CreateDataGridImportMetricsCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
 		{
 			var dict = CreateImportMetricCustomData(settings, results);
 			dict.Add(nameof(importMeasurements.DataGridFileSize), importMeasurements.DataGridFileSize);
 			return dict;
 		}
 
-		private Dictionary<string, object> CreateSqlImportMetricsCustomData(ImageLoadInfo settings, IMassImportManagerInternal.MassImportResults results, Data.ImportMeasurements importMeasurements)
+		private Dictionary<string, object> CreateSqlImportMetricsCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results, Data.ImportMeasurements importMeasurements)
 		{
 			var dict = CreateImportMetricCustomData(settings, results);
 			dict.Add(nameof(settings.AuditLevel), settings.AuditLevel.ToString());
@@ -725,7 +733,7 @@ namespace Relativity.MassImport.Core
 			return dict;
 		}
 
-		private Dictionary<string, object> CreateImportMetricCustomData(ImageLoadInfo settings, IMassImportManagerInternal.MassImportResults results)
+		private Dictionary<string, object> CreateImportMetricCustomData(Relativity.MassImport.DTO.ImageLoadInfo settings, MassImportManagerBase.MassImportResults results)
 		{
 			return new Dictionary<string, object>()
 			{
@@ -733,6 +741,22 @@ namespace Relativity.MassImport.Core
 				{ nameof(settings.ExecutionSource), settings.ExecutionSource.ToString() },
 				{ nameof(settings.UploadFullText), settings.UploadFullText }
 			};
+		}
+
+		private bool IsPDFImportSupported(BaseContext context)
+		{
+			try
+			{
+				if (Relativity.Data.CodeType.GetCodeTypeID(context.DBContext, Constants.CodeTypeNames.HasPDFCodeTypeName) > 0)
+				{
+					return true;
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogWarning(ex, "Failed to get ID of the code with name: 'Has PDF'");
+			}
+			return false;
 		}
 	}
 }

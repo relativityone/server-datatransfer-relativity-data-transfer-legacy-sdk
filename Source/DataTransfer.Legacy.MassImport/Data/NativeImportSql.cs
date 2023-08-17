@@ -63,7 +63,7 @@ JOIN [{associatedObjectTable}] D ON D.[{keyFieldColumn}] = N.[{textIdentifierCol
 			return new InlineSqlQuery($@"
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAppend}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAppend}
 FROM [Resource].[{tableNames.Native}] N
 WHERE EXISTS
 (
@@ -77,7 +77,7 @@ WHERE EXISTS
 			return new InlineSqlQuery($@"
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAppendNoParent}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAppendNoParent}
 FROM [Resource].[{tableNames.Native}] N
 WHERE N.[kCura_Import_ParentFolderID] = -1 AND N.[kCura_Import_Status] = 0;
 ");
@@ -93,7 +93,7 @@ WHERE N.[kCura_Import_ParentFolderID] = -1 AND N.[kCura_Import_Status] = 0;
 			return new InlineSqlQuery($@"
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAppendNoParent}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAppendNoParent}
 FROM [Resource].[{tableNames.Native}] N
 WHERE N.[kCura_Import_ParentFolderID] = -1
 	AND NOT EXISTS
@@ -121,11 +121,11 @@ JOIN [Resource].[{tableNames.Part}] P ON
 JOIN [Resource].[{tableNames.Native}] N2 ON
 	N2.[{field.GetColumnName()}] = N.[{field.GetColumnName()}]
 WHERE
-	N2.[kCura_Import_Status] = {(long)ImportStatus.Pending};
+	N2.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending};
 ");
 		}
 
-		public InlineSqlQuery InsertAncestorsOfTopLevelObjects(TableNames tableNames)
+		public InlineSqlQuery InsertAncestorsOfTopLevelObjectsLegacy(TableNames tableNames)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO ArtifactAncestry(
@@ -146,6 +146,50 @@ INSERT INTO ArtifactAncestry(
 	JOIN [Resource].[{tableNames.Parent}] PARENT ON P.[kCura_Import_ID] = PARENT.[kCura_Import_ID]
 	WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = 0;
 ");
+		}
+
+		public SerialSqlQuery InsertAncestorsOfTopLevelObjects(TableNames tableNames)
+		{
+			var sql = new SerialSqlQuery();
+			
+			sql.Add(new InlineSqlQuery($@"
+DROP TABLE IF EXISTS [{tableNames.ParentAncestors}], [{tableNames.NewAncestors}];
+"));
+			
+			// add parent as the new record ancestor
+			sql.Add(new InlineSqlQuery($@"
+SELECT P.ArtifactID, PARENT.ParentArtifactID
+INTO [{tableNames.NewAncestors}]
+FROM [Resource].[{tableNames.Part}] P
+JOIN [Resource].[{tableNames.Parent}] PARENT ON P.[kCura_Import_ID] = PARENT.[kCura_Import_ID]
+WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = 0;
+"));
+
+			sql.Add(new InlineSqlQuery($@"
+ALTER TABLE [{tableNames.NewAncestors}] ADD PRIMARY KEY(ArtifactID);
+"));
+
+			// add all parent ancestors as the new record ancestors
+			sql.Add(new InlineSqlQuery($@"
+SELECT N.ArtifactID, A.AncestorArtifactID
+INTO [{tableNames.ParentAncestors}]
+FROM [{tableNames.NewAncestors}] N
+JOIN [EDDSDBO].ArtifactAncestry A ON A.ArtifactID = N.ParentArtifactID;
+"));
+
+			sql.Add(new InlineSqlQuery($@"
+ALTER TABLE [{tableNames.ParentAncestors}] ADD PRIMARY KEY(ArtifactID,AncestorArtifactID);
+"));
+
+			// insert all ancestors for the new record
+			sql.Add(new InlineSqlQuery($@"
+INSERT INTO [EDDSDBO].ArtifactAncestry(ArtifactID, AncestorArtifactID)
+SELECT ArtifactID, ParentArtifactID FROM [{tableNames.NewAncestors}]
+UNION ALL
+SELECT ArtifactID, AncestorArtifactID FROM [{tableNames.ParentAncestors}];
+"));
+		
+			return sql;
 		}
 
 		public InlineSqlQuery InsertAncestorsOfAssociateObjects(TableNames tableNames, string fieldArtifactId, string topLevelParentArtifactId)
@@ -272,7 +316,7 @@ INSERT INTO AuditRecord (
 		[DeleteFlag] = 0
 	FROM [Resource].[{tableNames.Objects}] O
 	JOIN [Resource].[{tableNames.Native}] N
-		ON O.DocumentIdentifier = N.{keyFieldColumnName}
+		ON O.DocumentIdentifier = N.[{keyFieldColumnName}]
 	WHERE
 		O.[ObjectArtifactID] = -1
 		AND
@@ -293,7 +337,7 @@ UPDATE O
 SET ObjectArtifactID=(SELECT ArtifactID from #InsertedArtifactIDsTable WHERE #InsertedArtifactIDsTable.ObjectName COLLATE DATABASE_DEFAULT = O.ObjectName COLLATE DATABASE_DEFAULT)
 FROM [Resource].[{tableNames.Objects}] O
 	JOIN [Resource].[{tableNames.Native}] N
-		ON O.DocumentIdentifier = N.{keyFieldColumnName}
+		ON O.DocumentIdentifier = N.[{keyFieldColumnName}]
 WHERE
 	O.[ObjectArtifactID] = -1
 	AND
@@ -323,12 +367,12 @@ INSERT INTO [ArtifactAncestry](
 				HAVING COUNT(*) > 1
 			)
 			UPDATE N
-			SET kCura_Import_Status = kCura_Import_Status | {(long)ImportStatus.ErrorDuplicateAssociatedObject}
+			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject}
 			FROM [Resource].[{tableNames.Native}] N
 				JOIN [Resource].[{tableNames.Objects}] O
-					ON N.{keyFieldColumnName} = O.DocumentIdentifier
+					ON N.[{keyFieldColumnName}] = O.DocumentIdentifier
 				JOIN DuplicatedObjects D
-					ON O.ObjectName = D.ObjectName
+					ON O.[ObjectName] = D.ObjectName
 			WHERE O.[ObjectTypeId] = {associatedArtifactTypeID};
 		";
 		}
@@ -340,7 +384,7 @@ INSERT INTO [ArtifactAncestry](
 			SET objectartifactid = MO.ArtifactID
 			FROM [Resource].[{tableNames.Objects}] O 
 				JOIN [Resource].[{tableNames.Native}] N
-					ON O.DocumentIdentifier = N.{keyFieldColumnName}
+					ON O.DocumentIdentifier = N.[{keyFieldColumnName}]
 				JOIN [{associatedObjectTable}] MO
 					ON O.ObjectName = MO.[{associatedObjectIdentifierColumn}]
 			WHERE [ObjectArtifactID] = -1
@@ -385,7 +429,7 @@ INSERT INTO [ArtifactAncestry](
 		FROM
 		[Resource].[{{0}}] tmp
 		WHERE
-		tmp.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+		tmp.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 		AND
 		NOT ISNULL([kCura_Import_FileGuid], '') = ''
 
@@ -435,7 +479,7 @@ WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {fieldArtifactId};
 */
 SELECT 1 WHERE EXISTS (
     SELECT 1 FROM [Resource].[{{0}}]
-    WHERE [kCura_Import_Status] = {(long)ImportStatus.Pending}
+    WHERE [kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
     AND   EXISTS (
         SELECT 1 FROM EDDSDBO.[File] WHERE [Type] = 0 AND DocumentArtifactID = ArtifactID
     )
@@ -449,10 +493,8 @@ SELECT 1 WHERE EXISTS (
   Format replace:
   ---------------
   0: native temp table
-  1: MassDeleteBatchAmount
 */
 	DELETE
-		TOP ({{1}})
 	FROM
 		[File]
 	/*NativeImportAuditIntoClause*/
@@ -467,7 +509,7 @@ SELECT 1 WHERE EXISTS (
 			WHERE
 				ArtifactID = [DocumentArtifactID]
 				AND
-				[kCura_Import_Status] = {(long)ImportStatus.Pending}
+				[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 		)
 	";
 		}
@@ -533,7 +575,7 @@ SELECT
 FROM
 	[Resource].[{{0}}] N
 WHERE
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending}";
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}";
 		}
 
 		public string GetDetailedReturnReport()
@@ -557,7 +599,7 @@ JOIN
 ON
 	N.[kCura_Import_ID] = A.[kCura_Import_ID] AND A.[FieldArtifactID] = 0
 WHERE
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending}";
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}";
 		}
 
 		public InlineSqlQuery InsertAssociatedObjects(TableNames tableNames, string associatedObjectTable, string idFieldColumnName, FieldInfo field)
@@ -573,7 +615,7 @@ SELECT DISTINCT
 FROM
 	[Resource].[{tableNames.Part}] P
 INNER JOIN [Resource].[{tableNames.Native}] N ON
-	N.[kCura_Import_ID] = P.[kCura_Import_ID] AND N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+	N.[kCura_Import_ID] = P.[kCura_Import_ID] AND N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 WHERE P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {field.ArtifactID};
 ");
 		}
@@ -607,7 +649,7 @@ FROM
 INNER JOIN [Resource].[{tableNames.Part}] P ON P.[kCura_Import_ID] = N.[kCura_Import_ID]
 INNER JOIN [Resource].[{tableNames.Parent}] PARENT ON PARENT.[kCura_Import_ID] = N.[kCura_Import_ID]
 WHERE
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending} AND P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {topFieldArtifactID};
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending} AND P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {topFieldArtifactID};
 ");
 		}
 
@@ -623,7 +665,7 @@ FROM
 INNER JOIN [Resource].[{tableNames.Part}] P ON
 	P.[kCura_Import_ID] = N.[kCura_Import_ID]
 WHERE
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending} AND P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {fieldArtifactId};
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending} AND P.[kCura_Import_IsNew] = 1 AND P.[FieldArtifactID] = {fieldArtifactId};
 ");
 		}
 
@@ -651,7 +693,7 @@ INSERT INTO [{codeArtifactTableName}] (
 			return new InlineSqlQuery($@"
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + IIF(EXISTING_OBJECTS.CountValue IS NULL, {(long)ImportStatus.ErrorOverwrite}, {(long)ImportStatus.ErrorOverwriteMultipleKey})
+	[kCura_Import_Status] = [kCura_Import_Status] + IIF(EXISTING_OBJECTS.CountValue IS NULL, {(long)Relativity.MassImport.DTO.ImportStatus.ErrorOverwrite}, {(long)ImportStatus.ErrorOverwriteMultipleKey})
 FROM [Resource].[{tableNames.Native}] N
 LEFT OUTER JOIN
 (
@@ -685,7 +727,7 @@ FROM
 INNER JOIN [Resource].[{tableNames.Part}] P ON
 	P.[kCura_Import_ID] = N.[kCura_Import_ID] AND P.[FieldArtifactID] = 0
 WHERE
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending};
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending};
 ";
 		}
 
@@ -726,7 +768,7 @@ WHILE @rowsAffected > 0 BEGIN
 	WHERE EXISTS(
 		SELECT ArtifactID
 		FROM [Resource].[{{1}}]
-		WHERE ArtifactID = [{{0}}].[ObjectArtifactID] AND [{{1}}].[kCura_Import_Status] = {(long)ImportStatus.Pending}
+		WHERE ArtifactID = [{{0}}].[ObjectArtifactID] AND [{{1}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	)
 	SET @rowsAffected=@@ROWCOUNT
 
@@ -771,7 +813,7 @@ FROM
 	[Resource].[{{1}}]
 WHERE
 	NOT [{{2}}] IS NULL
-	AND [{{1}}].[kCura_Import_Status] = {(long)ImportStatus.Pending}
+	AND [{{1}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 UPDATE
 	[{{5}}]
@@ -785,7 +827,7 @@ LEFT JOIN @tbl T ON
 INNER JOIN [Resource].[{{1}}] ON
 	[{{1}}].[ArtifactID] = [{{5}}].[ArtifactID]
 	AND
-	[{{1}}].[kCura_Import_Status] = {(long)ImportStatus.Pending}
+	[{{1}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 SELECT @@ROWCOUNT
 
@@ -817,7 +859,7 @@ INSERT INTO
 	INNER JOIN @tbl T ON
 		T.[ObjectArtifactID] = [{{1}}].[ArtifactID]
 		AND
-		[{{1}}].[kCura_Import_Status] = {(long)ImportStatus.Pending}
+		[{{1}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 /*CreateFileAuditClause*/";
 		}
@@ -842,7 +884,7 @@ BEGIN
 	FROM [{{0}}]
 	OUTPUT DELETED.[{{1}}], DELETED.[{{2}}], @fieldID, 0 INTO [Resource].[{{7}}]
 	WHERE
-		[{{1}}] in (SELECT ArtifactID FROM [Resource].[{{5}}] WHERE kCura_Import_Status = {(long)ImportStatus.Pending})
+		[{{1}}] in (SELECT ArtifactID FROM [Resource].[{{5}}] WHERE kCura_Import_Status = {(long)Relativity.MassImport.DTO.ImportStatus.Pending})
 
 	INSERT INTO [{{0}}] ([{{1}}],[{{2}}])
 	OUTPUT INSERTED.[{{1}}], INSERTED.[{{2}}], @fieldID, 1 INTO [Resource].[{{7}}]
@@ -852,7 +894,7 @@ BEGIN
 	FROM [Resource].[{{4}}] tmp
 	INNER JOIN [Resource].[{{5}}] ON [{{5}}].[{{3}}] = tmp.DocumentIdentifier
 	WHERE
-		FieldID = @fieldID AND [{{5}}].[kCura_Import_Status] = {(long)ImportStatus.Pending}
+		FieldID = @fieldID AND [{{5}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 END
 ELSE
 BEGIN
@@ -868,7 +910,7 @@ BEGIN
     AND
     [ExistingObjects].[{{2}}] = [ObjectArtifactID]
 	WHERE
-		FieldID = @fieldID AND [{{5}}].[kCura_Import_Status] = {(long)ImportStatus.Pending}
+		FieldID = @fieldID AND [{{5}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
     AND
     [ExistingObjects].[{{1}}] IS NULL
     AND
@@ -919,7 +961,7 @@ FROM
 WHERE
 	N.[kCura_Import_IsNew] = 0
 	AND
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending};
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending};
 ";
 		}
 
@@ -982,7 +1024,7 @@ INNER JOIN [Resource].[{{0}}] N ON
 WHERE
 	N.[kCura_Import_IsNew] = 0
 	AND
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 
 SELECT @@ROWCOUNT
 				   ";
@@ -1003,7 +1045,7 @@ INNER JOIN [Resource].[{{4}}] P ON P.[kCura_Import_ID] = N.[kCura_Import_ID] AND
 /* FileFieldAuditJoin */
 /* MapFieldsAuditJoin */
 WHERE
-	N.[kCura_Import_Status] = {(long)ImportStatus.Pending};
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending};
 ";
 		}
 
@@ -1028,7 +1070,7 @@ INNER JOIN [Resource].[{tempTableName}] tmp ON
 WHERE
 	tmp.[kCura_Import_IsNew] = 0
 	AND
-	tmp.[kCura_Import_Status] = {(long)ImportStatus.Pending}";
+	tmp.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}";
 		}
 
 		public InlineSqlQuery UpdateOverlayPermissions(TableNames tableNames, int artifactTypeId, int userID, int topFieldArtifactID)
@@ -1047,12 +1089,12 @@ WHERE
 UPDATE
 	N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.SecurityUpdate}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
 FROM [Resource].[{tableNames.Native}] N
 	JOIN [Resource].[{tableNames.Part}] P ON N.kCura_Import_ID = P.kCura_Import_ID
 WHERE
 	NOT P.[kCura_Import_IsNew] = 1
-	AND N.[kCura_Import_Status] = {(long)ImportStatus.Pending}
+	AND N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	AND P.[FieldArtifactID] = {topFieldArtifactID}
 	AND NOT EXISTS
 	(
@@ -1065,20 +1107,24 @@ WHERE
 	");
 		}
 
-		public virtual string VerifyExistenceOfAssociatedMultiObjects()
+		public virtual string VerifyExistenceOfAssociatedMultiObjects(TableNames tableNames, string importedIdentifierColumn, string idFieldColumnName, string associatedObjectTable, FieldInfo field)
 		{
 			return $@"/*craete errors for associated multi objects that do not exist*/
-UPDATE [Resource].[{{0}}]
-SET [kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAssociatedObjectIsMissing}
-WHERE [{{0}}].[{{2}}] IN (SELECT [{{0}}].[{{2}}]
-	FROM [Resource].[{{0}}] INNER JOIN
-		[Resource].[{{1}}] ON [{{1}}].[DocumentIdentifier] = [{{0}}].[{{2}}]
-	WHERE NOT EXISTS(SELECT [{{3}}] FROM [{{5}}] WHERE [{{1}}].ObjectArtifactID = [{{5}}].[ArtifactID])
-	AND [{{1}}].FieldID = {{6}}
-	AND [{{0}}].[{{4}}] IS NOT NULL
-	AND [kCura_Import_Status] {"& "}{(long)ImportStatus.ErrorAssociatedObjectIsMissing} = 0)
+UPDATE N
+SET 
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
+	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
+FROM [Resource].[{tableNames.Native}] N
+WHERE N.[{importedIdentifierColumn}] IN (SELECT [{tableNames.Native}].[{importedIdentifierColumn}]
+	FROM [Resource].[{tableNames.Native}] INNER JOIN
+		[Resource].[{tableNames.Objects}] ON [{tableNames.Objects}].[DocumentIdentifier] = [{tableNames.Native}].[{importedIdentifierColumn}]
+	WHERE NOT EXISTS(SELECT [{idFieldColumnName}] FROM [{associatedObjectTable}] WHERE [{tableNames.Objects}].ObjectArtifactID = [{associatedObjectTable}].[ArtifactID])
+	AND [{tableNames.Objects}].FieldID = {field.ArtifactID}
+	AND [{tableNames.Native}].[{field.GetColumnName()}] IS NOT NULL
+	AND [kCura_Import_Status] {"& "}{(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing} = 0)
 ";
 		}
+
 
 		public InlineSqlQuery InsertSelfReferencedObjects(TableNames tableNames, string idFieldColumnName, FieldInfo singleObjectField, int parentAccessControlListId)
 		{
@@ -1118,12 +1164,12 @@ FROM [Resource].[{nativeTableName}] N
 
 		public InlineSqlQuery ValidateIdentifierIsNonNull(TableNames tableNames, string identifierColumnName)
 		{
-			return ValidateColumnIsNonNull(tableNames, identifierColumnName, (long)ImportStatus.EmptyIdentifier);
+			return ValidateColumnIsNonNull(tableNames, identifierColumnName, (long)Relativity.MassImport.DTO.ImportStatus.EmptyIdentifier);
 		}
 
 		public InlineSqlQuery ValidateOverlayIdentifierIsNonNull(TableNames tableNames, string overlayIdentifierColumnName)
 		{
-			return ValidateColumnIsNonNull(tableNames, overlayIdentifierColumnName, (long)ImportStatus.EmptyOverlayIdentifier);
+			return ValidateColumnIsNonNull(tableNames, overlayIdentifierColumnName, (long)Relativity.MassImport.DTO.ImportStatus.EmptyOverlayIdentifier);
 		}
 
 		private InlineSqlQuery ValidateColumnIsNonNull(TableNames tableNames, string columnName, long errorCode)

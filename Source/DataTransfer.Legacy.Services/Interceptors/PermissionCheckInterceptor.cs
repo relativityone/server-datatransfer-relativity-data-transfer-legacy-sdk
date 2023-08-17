@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using Castle.DynamicProxy;
 using Relativity.API;
-using Relativity.Core;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.Services.Objects.Exceptions;
 
 namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 {
+	using System;
+	using Relativity.Core.Exception;
+	using Relativity.Services.Exceptions;
+	using Permission = Relativity.Core.Permission;
+
 	public class PermissionCheckInterceptor : InterceptorBase
 	{
 		private readonly IServiceContextFactory _serviceContextFactory;
@@ -42,9 +46,25 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 
 		private void EnsureUserHasPermissionsToUseWebApiReplacement(int workspaceID)
 		{
-			var baseServiceContext = _serviceContextFactory.GetBaseServiceContext(workspaceID);
-			var importPermission = _relativityPermissionHelper.HasAdminOperationPermission(baseServiceContext, Permission.AllowDesktopClientImport);
-			var exportPermission = _relativityPermissionHelper.HasAdminOperationPermission(baseServiceContext, Permission.AllowDesktopClientExport);
+			var importPermission = false;
+			var exportPermission = false;
+
+			try
+			{
+				var baseServiceContext = _serviceContextFactory.GetBaseServiceContext(workspaceID);
+				importPermission =
+					_relativityPermissionHelper.HasAdminOperationPermission(baseServiceContext,
+						Permission.AllowDesktopClientImport);
+				exportPermission =
+					_relativityPermissionHelper.HasAdminOperationPermission(baseServiceContext,
+						Permission.AllowDesktopClientExport);
+			}
+			catch (WorkspaceStatusException exception)
+			{
+				Logger.LogError(exception, "There was an error during call {type}.{method} - {message} because of workspace upgrading.", nameof(PermissionCheckInterceptor), nameof(EnsureUserHasPermissionsToUseWebApiReplacement), exception.Message);
+				
+				throw new NotFoundException($"Error during call {nameof(PermissionCheckInterceptor)}.{nameof(EnsureUserHasPermissionsToUseWebApiReplacement)}. {InterceptorHelper.BuildErrorMessageDetails(exception)}", exception);
+			}
 
 			if (!importPermission && !exportPermission)
 			{
