@@ -2,7 +2,7 @@
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Job
 {
-	internal class TruncateStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IExtractedTextInput, Pipeline.Input.Interface.IImportSettingsInput<NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
+	internal class TruncateStagingTablesStage<T> : Pipeline.Framework.IPipelineStage<T> where T : Pipeline.Input.Interface.IExtractedTextInput, Pipeline.Input.Interface.IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>, Pipeline.Input.Interface.IColumnDefinitionCacheInput
 	{
 		private readonly IStagingTableRepository _stagingTableRepository;
 

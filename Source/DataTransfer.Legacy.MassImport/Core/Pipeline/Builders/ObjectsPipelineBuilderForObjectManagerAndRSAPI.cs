@@ -18,12 +18,12 @@ namespace Relativity.MassImport.Core.Pipeline.Builders
 	{
 		public ObjectsPipelineBuilderForObjectManagerAndRSAPI(IPipelineExecutor pipelineExecutor, IAPM apm) : base(pipelineExecutor, apm) { }
 
-		public IPipelineStage<ObjectImportInput, IMassImportManagerInternal.MassImportResults> BuildPipeline(MassImportContext context, Action<TableNames> loadStagingTables)
+		public IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> BuildPipeline(MassImportContext context, Action<TableNames> loadStagingTables)
 		{
 			IStagingTableRepository stagingTableRepository = new ObjectsStagingTableRepository(context.BaseContext.DBContext, context.JobDetails.TableNames, context.ImportMeasurements);
 			IMassImportMetricsService metricsService = CreateMassImportMetrics(context);
 
-			IPipelineStage<ObjectImportInput, IMassImportManagerInternal.MassImportResults> importStage = new Stages.Objects.ImportObjectsStage(context, new LockHelper(new AppLockProvider()));
+			IPipelineStage<ObjectImportInput, MassImportManagerBase.MassImportResults> importStage = new Stages.Objects.ImportObjectsStage(context, new LockHelper(new AppLockProvider()));
 			importStage = ExecuteInTransactionDecoratorStage.New(importStage, PipelineExecutor, context);
 			importStage = RetryOnExceptionDecoratorStage.New(importStage, PipelineExecutor, context, actionName: "importing Objects");
 

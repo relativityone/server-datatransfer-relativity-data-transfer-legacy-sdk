@@ -21,7 +21,7 @@ namespace Relativity.MassImport.NUnit.Core.Pipeline.Stages.Job
 		public void SetUp()
 		{
 			var pipelineExecutor = new PipelineExecutor();
-			_input = NativeImportInput.ForWebApi(new NativeLoadInfo(), inRepository: false, includeExtractedTextEncoding: false);
+			_input = NativeImportInput.ForWebApi(new Relativity.MassImport.DTO.NativeLoadInfo(), inRepository: false, includeExtractedTextEncoding: false);
 
 			_innerStageMock = new Mock<IPipelineStage<NativeImportInput>>();
 			_innerStageMock.Setup(x => x.Execute(_input)).Returns(_input);

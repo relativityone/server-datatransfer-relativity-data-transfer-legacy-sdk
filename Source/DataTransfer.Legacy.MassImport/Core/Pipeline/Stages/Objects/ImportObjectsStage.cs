@@ -9,7 +9,7 @@ using Relativity.Toggles;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 {
-	internal class ImportObjectsStage : Framework.IPipelineStage<Input.ObjectImportInput, IMassImportManagerInternal.MassImportResults>
+	internal class ImportObjectsStage : Framework.IPipelineStage<Input.ObjectImportInput, MassImportManagerBase.MassImportResults>
 	{
 		private readonly MassImportContext _context;
 		private readonly ILockHelper _lockHelper;
@@ -20,12 +20,12 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			_lockHelper = lockHelper;
 		}
 
-		public IMassImportManagerInternal.MassImportResults Execute(ObjectImportInput input)
+		public MassImportManagerBase.MassImportResults Execute(ObjectImportInput input)
 		{
 			return AttemptRunObjectImportNew(input);
 		}
 
-		private IMassImportManagerInternal.MassImportResults AttemptRunObjectImportNew(ObjectImportInput input)
+		private MassImportManagerBase.MassImportResults AttemptRunObjectImportNew(ObjectImportInput input)
 		{
 			var settings = input.Settings;
 			var queryExecutor = new QueryExecutor(_context.BaseContext.DBContext, _context.Logger);
@@ -36,8 +36,8 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return result;
 		}
 
-		private IMassImportManagerInternal.MassImportResults ExecuteObjectImport(
-			ObjectLoadInfo settings, 
+		private MassImportManagerBase.MassImportResults ExecuteObjectImport(
+			Relativity.MassImport.DTO.ObjectLoadInfo settings, 
 			Data.Objects importObject,
 			IChoicesImportService choicesImportService,
 			bool collectCreatedIDs)
@@ -47,8 +47,8 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			sql.Add(PrepareErrorUpdateQuery(settings, importObject));
 			importObject.ExecuteQueryAndSendMetrics(new StatisticsTimeOnQuery(sql));
 			int auditUserId = Relativity.Core.Service.Audit.ImpersonationToolkit.GetCaseAuditUserId(_context.BaseContext, settings.OnBehalfOfUserToken);
-			bool isAppend = settings.Overlay == Relativity.MassImport.OverwriteType.Append;
-			bool isAppendOrOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Both;
+			bool isAppend = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Append;
+			bool isAppendOrOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Both;
 			bool isAppendOrBoth = isAppend || isAppendOrOverlay;
 			int artifactsCreated = 0;
 
@@ -65,7 +65,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 				}
 			});
 
-			bool isOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Overlay;
+			bool isOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay;
 			importObject.PopulateArtifactIdOnInitialTempTable(_context.BaseContext.UserID, isOverlay);
 			
 			_lockHelper.Lock(_context.BaseContext, MassImportManagerLockKey.LockType.Choice, () =>
@@ -89,7 +89,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			}
 
 			importObject.ClearTempTableAndSaveErrors();
-			var result = new IMassImportManagerInternal.MassImportResults();
+			var result = new MassImportManagerBase.MassImportResults();
 			if (collectCreatedIDs)
 			{
 				result = DetailedObjectImporReportGenerator.PopulateResultsObject(importObject);
@@ -110,24 +110,24 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return sql;
 		}
 
-		private SerialSqlQuery PrepareErrorUpdateQuery(ObjectLoadInfo settings, Data.Objects importObject)
+		private SerialSqlQuery PrepareErrorUpdateQuery(Relativity.MassImport.DTO.ObjectLoadInfo settings, Data.Objects importObject)
 		{
 			var sql = new SerialSqlQuery();
 			switch (settings.Overlay)
 			{
-				case Relativity.MassImport.OverwriteType.Append:
+				case Relativity.MassImport.DTO.OverwriteType.Append:
 					{
 						sql.Add(new PrintSectionQuery(importObject.ManageAppendErrors(), nameof(importObject.ManageAppendErrors)));
 						break;
 					}
 
-				case Relativity.MassImport.OverwriteType.Overlay:
+				case Relativity.MassImport.DTO.OverwriteType.Overlay:
 					{
 						sql.Add(new PrintSectionQuery(importObject.ManageOverwriteErrors(), nameof(importObject.ManageOverwriteErrors)));
 						break;
 					}
 
-				case Relativity.MassImport.OverwriteType.Both:
+				case Relativity.MassImport.DTO.OverwriteType.Both:
 					{
 						sql.Add(new PrintSectionQuery(importObject.ManageAppendOverlayParentMissingErrors(), nameof(importObject.ManageAppendOverlayParentMissingErrors)));
 						break;
@@ -136,8 +136,8 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 
 			if (!settings.DisableUserSecurityCheck)
 			{
-				sql.Add(new PrintSectionQuery(importObject.ManageCheckAddingPermissions(_context.BaseContext.UserID), nameof(importObject.ManageCheckAddingPermissions)));
-				if (settings.Overlay == Relativity.MassImport.OverwriteType.Both || settings.Overlay == Relativity.MassImport.OverwriteType.Overlay)
+				sql.Add(new PrintSectionQuery(importObject.ManageCheckAddingPermissions(_context.BaseContext.AclUserID), nameof(importObject.ManageCheckAddingPermissions)));
+				if (settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Both || settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay)
 				{
 					sql.Add(new PrintSectionQuery(importObject.ManageUpdateOverlayPermissions(_context.BaseContext.UserID), nameof(importObject.ManageUpdateOverlayPermissions)));
 				}
@@ -175,10 +175,16 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Objects
 			return willExceedLimit;
 		}
 
-		private IChoicesImportService CreateChoicesImportService(NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
+		private IChoicesImportService CreateChoicesImportService(Relativity.MassImport.DTO.NativeLoadInfo settings, ColumnDefinitionCache columnDefinitionCache)
 		{
-			var factory = new ChoiceImportServiceFactory(ToggleProvider.Current);
-			return factory.Create(_context, settings, columnDefinitionCache);
+			return new ChoicesImportService(
+				_context.BaseContext.DBContext,
+				ToggleProvider.Current,
+				_context.JobDetails.TableNames,
+				_context.ImportMeasurements,
+				settings,
+				columnDefinitionCache,
+				Relativity.Data.Config.MassImportSqlTimeout);
 		}
 	}
 }

@@ -13,16 +13,18 @@ namespace Relativity.DataTransfer.Legacy.Services
 {
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
-	[Interceptor(typeof(PermissionCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
 	[Interceptor(typeof(MetricsInterceptor))]
+	[Interceptor(typeof(PermissionCheckInterceptor))]
 	public class CodeService : BaseService, ICodeService
 	{
 		private readonly CodeManagerImplementation _codeManager;
+		private readonly RetryPolicyFactory _retryPolicyFactory;
 
-		public CodeService(IServiceContextFactory serviceContextFactory)
+		public CodeService(IServiceContextFactory serviceContextFactory, RetryPolicyFactory retryPolicyFactory)
 			: base(serviceContextFactory)
 		{
+			_retryPolicyFactory = retryPolicyFactory;
 			_codeManager = new CodeManagerImplementation();
 		}
 
@@ -35,7 +37,8 @@ namespace Relativity.DataTransfer.Legacy.Services
 		public Task<object> CreateEncodedAsync(int workspaceID, Code code, string correlationID)
 		{
 			code.Name = new string(Encoding.UTF8.GetChars(HttpServerUtility.UrlTokenDecode(code.Name)));
-			var result = _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false);
+			var result = _retryPolicyFactory.CreateDeadlockExceptionAndResultRetryPolicy().Execute(() => _codeManager.ExternalCreate(GetBaseServiceContext(workspaceID), code.Map<Core.DTO.Code>(), false));
+			
 			return Task.FromResult(result);
 		}
 

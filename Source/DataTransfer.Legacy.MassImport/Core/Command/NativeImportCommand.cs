@@ -24,7 +24,7 @@ namespace Relativity.MassImport.Core.Command
 			Native native, 
 			IDataGridInputReaderProvider dataGridInputReaderProvider, 
 			int auditUserId, 
-			NativeLoadInfo settings, 
+			Relativity.MassImport.DTO.NativeLoadInfo settings, 
 			bool inRepository, 
 			bool includeExtractedTextEncoding, 
 			NativeImportInput input,
@@ -38,9 +38,9 @@ namespace Relativity.MassImport.Core.Command
 			Settings = settings;
 			InRepository = inRepository;
 			IncludeExtractedTextEncoding = includeExtractedTextEncoding;
-			IsAppend = settings.Overlay == Relativity.MassImport.OverwriteType.Append;
-			IsOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Overlay;
-			IsAppendOrOverlay = settings.Overlay == Relativity.MassImport.OverwriteType.Both;
+			IsAppend = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Append;
+			IsOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Overlay;
+			IsAppendOrOverlay = settings.Overlay == Relativity.MassImport.DTO.OverwriteType.Both;
 			IsOverlayOrBoth = IsOverlay || IsAppendOrOverlay;
 			IsAppendOrBoth = IsAppend || IsAppendOrOverlay;
 			MoveDocumentsInAppendOverlay = IsOverlayOrBoth & settings.MoveDocumentsInAppendOverlayMode;
@@ -59,11 +59,11 @@ namespace Relativity.MassImport.Core.Command
 		protected bool IsOverlayOrBoth { get; private set; }
 		protected bool MoveDocumentsInAppendOverlay { get; private set; }
 		protected Native Native { get; private set; }
-		protected NativeLoadInfo Settings { get; private set; }
+		protected Relativity.MassImport.DTO.NativeLoadInfo Settings { get; private set; }
 		protected NativeImportInput Input { get; private set; }
 		private IDataGridInputReaderProvider DataGridInputReaderProvider { get; set; }
 
-		public IMassImportManagerInternal.MassImportResults ExecuteNativeImport()
+		public MassImportManagerBase.MassImportResults ExecuteNativeImport()
 		{
 			this.CorrelationLogger.LogDebug("Starting Transaction");
 			var sql = new SerialSqlQuery();
@@ -108,7 +108,7 @@ namespace Relativity.MassImport.Core.Command
 			Native.ImportMeasurements.SqlImportTime.Stop();
 			this.TimeKeeper.GenerateCsvReportItemsAsColumns("_webapi", @"C:\");
 			this.CorrelationLogger.LogDebug("Ending Transaction");
-			return new IMassImportManagerInternal.MassImportResults()
+			return new MassImportManagerBase.MassImportResults()
 			{
 				ArtifactsCreated = artifactsCreated,
 				ArtifactsUpdated = artifactsUpdated,
@@ -174,8 +174,8 @@ namespace Relativity.MassImport.Core.Command
 			{
 				switch (Settings.Overlay)
 				{
-					case Relativity.MassImport.OverwriteType.Both:
-					case Relativity.MassImport.OverwriteType.Overlay:
+					case Relativity.MassImport.DTO.OverwriteType.Both:
+					case Relativity.MassImport.DTO.OverwriteType.Overlay:
 						{
 							this.Execute(() => Native.DeleteExistingNativeFiles(this.Context.UserID, Relativity.Core.Config.AuditingEnabled, this.Context.RequestOrigination, Relativity.Core.AuditHelper.GetRecordOrigination()), "DeleteExistingNativeFiles");
 							break;

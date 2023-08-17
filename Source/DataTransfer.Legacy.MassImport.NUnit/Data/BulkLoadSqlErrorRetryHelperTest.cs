@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using kCura.Utility;
 using Moq;
 using NUnit.Framework;
 using Relativity.MassImport.Data;
 
 namespace Relativity.MassImport.NUnit.Data
 {
+	using Relativity.Logging;
+
 	[TestFixture]
 	public class BulkLoadSqlErrorRetryHelperTest
 	{
@@ -17,33 +18,35 @@ namespace Relativity.MassImport.NUnit.Data
 		private const int _RETRY_WAIT_TIME_IN_MILLISECONDS = 10;
 
 		private Mock<Action> _actionMock;
-		private Mock<IRetryLogger> _logger;
+		private Mock<ILog> _logger;
+		private ImportMeasurements importMeasurements;
 
 		private static List<int> SqlErrorsToRetry()
 		{
-			return new List<int>() { 4860, 4861 };
+			return new List<int>() { 4860, 4861, 12704 };
 		}
 
 		[SetUp()]
 		public void SetUp()
 		{
 			_actionMock = new Mock<Action>();
-			_logger = new Mock<IRetryLogger>();
+			_logger = new Mock<ILog>();
+			importMeasurements = new ImportMeasurements();
 		}
 
 		[Test]
-		public void SholdExecuteActionOnceWhenNoExceptionIsThrown()
+		public void ShouldExecuteActionOnceWhenNoExceptionIsThrown()
 		{
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object);
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements);
 			_actionMock.Verify(action => action(), Times.Once());
 		}
 
 		[Test]
-		public void SholdExecuteActionOnceAndThrowExceptionWhenNonSqlExceptionIsThrown()
+		public void ShouldExecuteActionOnceAndThrowExceptionWhenNonSqlExceptionIsThrown()
 		{
 			_actionMock.Setup(action => action()).Throws(new ArgumentOutOfRangeException());
 
-			Assert.Throws(typeof(ArgumentOutOfRangeException), () => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object));
+			Assert.Throws(typeof(ArgumentOutOfRangeException), () => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements));
 
 			_actionMock.Verify(action => action(), Times.Once());
 		}
@@ -51,27 +54,27 @@ namespace Relativity.MassImport.NUnit.Data
 		[TestCase(1)]
 		[TestCase(5001)]
 		[TestCase(4862)]
-		public void SholdExecuteActionOnceAndThrowWhenNotListedSqlExceptionIsThrown(int sqlErrorNumber)
+		public void ShouldExecuteActionOnceAndThrowWhenNotListedSqlExceptionIsThrown(int sqlErrorNumber)
 		{
 			_actionMock.Setup(action => action()).Throws(SqlExceptionCreator.NewSqlException(sqlErrorNumber));
 
-			Assert.Throws(typeof(SqlException), () => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object));
+			Assert.Throws(typeof(SqlException), () => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements));
 
 			_actionMock.Verify(action => action(), Times.Once());
 		}
 
 		[TestCaseSource(nameof(SqlErrorsToRetry))]
-		public void SholdExecuteActionWithRetryAndThrowWhenListedSqlExceptionIsThrown(int sqlErrorNumber)
+		public void ShouldExecuteActionWithRetryAndThrowWhenListedSqlExceptionIsThrown(int sqlErrorNumber)
 		{
 			_actionMock.Setup(action => action()).Throws(SqlExceptionCreator.NewSqlException(sqlErrorNumber));
 
-			Assert.Throws(typeof(SqlException), () => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object));
+			Assert.Throws(typeof(SqlException), () => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements));
 
-			_actionMock.Verify(action => action(), Times.Exactly(_RETRY_COUNT));
+			_actionMock.Verify(action => action(), Times.Exactly(_RETRY_COUNT + 1));
 		}
 
 		[TestCaseSource(nameof(SqlErrorsToRetry))]
-		public void SholdExecuteActionWithRetryAndNotThrowWhenLatterExecutionIsSuccessful(int sqlErrorNumber)
+		public void ShouldExecuteActionWithRetryAndNotThrowWhenLatterExecutionIsSuccessful(int sqlErrorNumber)
 		{
 			int numberOfCalls = 0;
 			_actionMock.Setup(action => action()).Callback(() =>
@@ -83,7 +86,7 @@ namespace Relativity.MassImport.NUnit.Data
 				}
 			});
 
-			Assert.DoesNotThrow(() => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object));
+			Assert.DoesNotThrow(() => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements));
 
 			_actionMock.Verify(action => action(), Times.Exactly(_RETRY_COUNT));
 		}
@@ -91,9 +94,9 @@ namespace Relativity.MassImport.NUnit.Data
 		[Test]
 		public void NoRetryIsLoggedWhenNoExceptionIsThrown()
 		{
-			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object);
+			BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements);
 
-			_logger.Verify(logger => logger.LogRetry(It.IsAny<Exception>(), It.IsAny<int>(), It.IsAny<int>()), Times.Never());
+			_logger.Verify(logger => logger.LogWarning(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()), Times.Never());
 		}
 
 		[TestCaseSource(nameof(SqlErrorsToRetry))]
@@ -109,12 +112,15 @@ namespace Relativity.MassImport.NUnit.Data
 					throw SqlExceptionCreator.NewSqlException(sqlErrorNumber);
 				}
 
-				_logger.Verify(logger => logger.LogRetry(It.IsAny<Exception>(), It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(numberOfCalls - 1));
+				_logger.Verify(logger => logger.LogWarning(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()), Times.Exactly(numberOfCalls - 1));
 			});
 
-			Assert.DoesNotThrow(() => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object));
+			Assert.DoesNotThrow(() => BulkLoadSqlErrorRetryHelper.RetryOnBulkLoadSqlTemporaryError(_actionMock.Object, _RETRY_COUNT, _RETRY_WAIT_TIME_IN_MILLISECONDS, _logger.Object, importMeasurements));
 
-			_logger.Verify(logger => logger.LogRetry(It.IsAny<Exception>(), It.IsAny<int>(), It.IsAny<int>()), Times.Exactly(_RETRY_COUNT - 1));
+			_logger.Verify(logger => logger.LogWarning(It.IsAny<Exception>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<TimeSpan>()), Times.Exactly(_RETRY_COUNT - 1));
+			var counters = importMeasurements.GetCounters();
+			Assert.That(counters, Contains.Key("Retry-'BulkInsert'"));
+			Assert.That(counters.Single(x => x.Key == "Retry-'BulkInsert'").Value, Is.EqualTo(_RETRY_COUNT - 1));
 		}
 
 		[TestCaseSource(nameof(IsTooBigExceptionSetupVariablesList))]

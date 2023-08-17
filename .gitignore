@@ -18,3 +18,5 @@ TestParameters.json
 !Source/DataTransfer.Legacy.Tests/WebAPIContract/*
 Source/DataTransfer.Legacy.FunctionalTests/Files/
 Source/DataTransfer.Legacy.FunctionalTests/oi/
+# Outside In nuget package
+**/oi/

@@ -7,7 +7,9 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 		public const string TimeoutCategory = "Timeout";
 		public const string DeadlockCategory = "Deadlock";
 		public const string SqlCategory = "Sql";
-		public const string DataGrid = "DataGrid";
+		public const string SqlAppLockCategory = "SqlAppLock";
+		public const string DataGridCategory = "DataGrid";
+		public const string BcpCategory = "BCP";
 		public const string UnknownCategory = "Unknown";
 
 		public static IReadOnlyDictionary<string, string> CategoryToErrorDescriptionMap => _categoryToErrorDescriptionMapping;
@@ -18,12 +20,14 @@ namespace Relativity.MassImport.Core.Pipeline.Errors
 		{
 			[TimeoutCategory] = "Please try to lower import batch size.",
 			[DeadlockCategory] = "Please try to lower number of concurrent imports to this workspace.",
+			[SqlAppLockCategory] = "Please try to lower number of concurrent imports to this workspace.",
 		};
 
 		private static readonly string[] _retryableErrorCategories =
 		{
 			TimeoutCategory,
-			DeadlockCategory
+			DeadlockCategory,
+			SqlAppLockCategory,
 		};
 	}
 }

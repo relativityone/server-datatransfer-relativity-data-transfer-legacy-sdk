@@ -7,10 +7,10 @@ namespace Relativity.Core.Service
 {
 	public abstract class MassImportManagerBase
 	{
-		protected abstract MassImportResults AttemptRunImageImport(Core.BaseContext context, ImageLoadInfo settings, bool inRepository, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunNativeImport(Core.BaseContext context, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
-		protected abstract MassImportResults AttemptRunObjectImport(Core.BaseContext context, ObjectLoadInfo settings, bool inRepository, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunProductionImageImport(Core.BaseContext context, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunNativeImport(Core.BaseContext context, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding, kCura.Utility.Timekeeper timekeeper, MassImportResults retval);
+		protected abstract MassImportResults AttemptRunObjectImport(Core.BaseContext context, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository, MassImportResults retval);
 
 		public virtual int GetCaseAuditUserId(Core.BaseContext context, string onBehalfOfUserToken)
 		{
@@ -66,7 +66,7 @@ namespace Relativity.Core.Service
 			}
 			catch (System.Exception ex)
 			{
-				retval.ExceptionDetail = new SoapExceptionDetail(ex);
+				retval.ExceptionDetail = new Relativity.MassImport.DTO.SoapExceptionDetail(ex);
 				retval.ExceptionDetail.Details.Add("RunID:" + retval.RunID);
 				var logger = Log.Logger.ForContext<MassImportManagerBase>();
 				logger.LogError(ex, "MassImportManager.AttemptRun Failure");
@@ -81,22 +81,22 @@ namespace Relativity.Core.Service
 			return caseSystemArtifactID;
 		}
 
-		public MassImportResults RunImageImport(Core.ICoreContext icc, ImageLoadInfo settings, bool inRepository)
+		public MassImportResults RunImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, bool inRepository)
 		{
 			return AttemptRun((results, timekeeper) => this.AttemptRunImageImport(icc.ChicagoContext, settings, inRepository, timekeeper, results));
 		}
 
-		public MassImportResults RunProductionImageImport(Core.ICoreContext icc, ImageLoadInfo settings, int productionArtifactID, bool inRepository)
+		public MassImportResults RunProductionImageImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ImageLoadInfo settings, int productionArtifactID, bool inRepository)
 		{
 			return AttemptRun((results, timekeeper) => this.AttemptRunProductionImageImport(icc.ChicagoContext, settings, productionArtifactID, inRepository, results));
 		}
 
-		public MassImportResults RunNativeImport(Core.ICoreContext icc, NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding)
+		public MassImportResults RunNativeImport(Core.ICoreContext icc, Relativity.MassImport.DTO.NativeLoadInfo settings, bool inRepository, bool includeExtractedTextEncoding)
 		{
 			return AttemptRun((results, timekeeper) => this.AttemptRunNativeImport(icc.ChicagoContext, settings, inRepository, includeExtractedTextEncoding, timekeeper, results));
 		}
 
-		public MassImportResults RunObjectImport(Core.ICoreContext icc, ObjectLoadInfo settings, bool inRepository)
+		public MassImportResults RunObjectImport(Core.ICoreContext icc, Relativity.MassImport.DTO.ObjectLoadInfo settings, bool inRepository)
 		{
 			return AttemptRun((results, timekeeper) => this.AttemptRunObjectImport(icc.ChicagoContext, settings, inRepository, results));
 		}
@@ -107,31 +107,19 @@ namespace Relativity.Core.Service
 			public int FilesProcessed = 0;
 			public int ArtifactsCreated = 0;
 			public int ArtifactsUpdated = 0;
-			public SoapExceptionDetail ExceptionDetail = null;
+			public Relativity.MassImport.DTO.SoapExceptionDetail ExceptionDetail = null;
 			// TODO:            Public ParentArtifactsCreated As Int32 = 0
 			public string RunID;
 
 			public MassImportResults() { }
 
-			public MassImportResults(IMassImportManagerInternal.MassImportResults source)
+			public MassImportResults(MassImportManagerBase.MassImportResults source)
 			{
 				FilesProcessed = source.FilesProcessed;
 				ArtifactsCreated = source.ArtifactsCreated;
 				ArtifactsUpdated = source.ArtifactsUpdated;
 				ExceptionDetail = source.ExceptionDetail;
 				RunID = source.RunID;
-			}
-
-			public virtual IMassImportManagerInternal.MassImportResults ToOldType()
-			{
-				return new IMassImportManagerInternal.MassImportResults()
-				{
-					FilesProcessed = this.FilesProcessed,
-					ArtifactsCreated = this.ArtifactsCreated,
-					ArtifactsUpdated = this.ArtifactsUpdated,
-					ExceptionDetail = this.ExceptionDetail,
-					RunID = this.RunID,
-				};
 			}
 		}
 
@@ -141,7 +129,9 @@ namespace Relativity.Core.Service
 			public int[] AffectedIDs { get; set; }
 			public Dictionary<string, List<int>> KeyFieldToArtifactIDMapping { get; set; }
 
-			public DetailedMassImportResults(IMassImportManagerInternal.DetailedMassImportResults source)
+			public DetailedMassImportResults() { }
+
+			public DetailedMassImportResults(MassImportManagerBase.DetailedMassImportResults source)
 			{
 				FilesProcessed = source.FilesProcessed;
 				ArtifactsCreated = source.ArtifactsCreated;
@@ -150,20 +140,6 @@ namespace Relativity.Core.Service
 				RunID = source.RunID;
 				AffectedIDs = source.AffectedIDs;
 				KeyFieldToArtifactIDMapping = source.KeyFieldToArtifactIDMapping;
-			}
-
-			public override IMassImportManagerInternal.MassImportResults ToOldType()
-			{
-				return new IMassImportManagerInternal.DetailedMassImportResults()
-				{
-					FilesProcessed = this.FilesProcessed,
-					ArtifactsCreated = this.ArtifactsCreated,
-					ArtifactsUpdated = this.ArtifactsUpdated,
-					ExceptionDetail = this.ExceptionDetail,
-					RunID = this.RunID,
-					AffectedIDs = this.AffectedIDs,
-					KeyFieldToArtifactIDMapping = this.KeyFieldToArtifactIDMapping,
-				};
 			}
 		}
 	}

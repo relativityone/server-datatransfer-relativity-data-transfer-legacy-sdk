@@ -7,13 +7,15 @@ namespace Relativity.MassImport.Data
     internal class ImportAuditor
     {
         private kCura.Data.RowDataGateway.BaseContext _context;
+        private readonly Logging.ILog _correlationLogger;
 
-        public ImportAuditor(kCura.Data.RowDataGateway.BaseContext dbContext)
+        public ImportAuditor(kCura.Data.RowDataGateway.BaseContext dbContext, Logging.ILog correlationLogger)
         {
             _context = dbContext;
+            _correlationLogger = correlationLogger;
         }
 
-        public string GetImportAuditXmlSnapshot(ImportStatistics statistics, bool success)
+        public string GetImportAuditXmlSnapshot(Relativity.MassImport.DTO.ImportStatistics statistics, bool success)
         {
             IDictionary auditDictionary = this.GetImportAuditDictionary(statistics);
             if (success)
@@ -23,7 +25,7 @@ namespace Relativity.MassImport.Data
             return kCura.Utility.XmlHelper.GenerateAuditElement("import", "item", auditDictionary);
         }
 
-        public string GetAuditCsvSnapshot(ImportStatistics statistics)
+        public string GetAuditCsvSnapshot(Relativity.MassImport.DTO.ImportStatistics statistics)
         {
             IDictionary auditDictionary = this.GetImportAuditDictionary(statistics);
             string[] keys = new string[auditDictionary.Keys.Count - 1 + 1];
@@ -36,12 +38,20 @@ namespace Relativity.MassImport.Data
         }
 
 
-        public IDictionary GetImportAuditDictionary(ImportStatistics statistics)
+        public IDictionary GetImportAuditDictionary(Relativity.MassImport.DTO.ImportStatistics statistics)
         {
             System.Collections.Specialized.HybridDictionary auditDictionary = new System.Collections.Specialized.HybridDictionary();
             if (statistics.DestinationFolderArtifactID > 0)
             {
-	            auditDictionary.Add("Destination Folder", @"\" + Relativity.Data.Folder.GetFolderPath(_context, statistics.DestinationFolderArtifactID));
+	            try
+	            {
+		            auditDictionary.Add("Destination Folder", @"\" + Relativity.Data.Folder.GetFolderPath(_context, statistics.DestinationFolderArtifactID));
+                }
+	            catch (InvalidCastException ex)
+	            {
+		            auditDictionary.Add("Destination Folder", statistics.DestinationFolderArtifactID);
+                    _correlationLogger.LogWarning(ex, "Error getting the Folder.GetFolderPath, with param: {DestinationFolderArtifactID}", statistics.DestinationFolderArtifactID);
+	            }
             }
 
             string filesCopiedToRepository = statistics.FilesCopiedToRepository;
@@ -60,7 +70,7 @@ namespace Relativity.MassImport.Data
 
             try
             {
-                if (statistics.Overwrite != OverwriteType.Append)
+                if (statistics.Overwrite != Relativity.MassImport.DTO.OverwriteType.Append)
                 {
                     Relativity.Data.Field field = new Relativity.Data.Field(_context, statistics.OverlayIdentifierFieldArtifactID);
                     auditDictionary.Add("Load Overlay Identifier", field.DisplayName);
@@ -69,29 +79,29 @@ namespace Relativity.MassImport.Data
             catch (Exception)
             {
             }
-            auditDictionary.Add("Load Method", OverwriteTypeHelper.ConvertToDisplayString(statistics.Overwrite));
+            auditDictionary.Add("Load Method", Relativity.MassImport.DTO.OverwriteTypeHelper.ConvertToDisplayString(statistics.Overwrite));
             auditDictionary.Add("Load Mode", statistics.RepositoryConnection.ToString());
             auditDictionary.Add("Load Began on Record #", statistics.StartLine.ToString());
             auditDictionary.Add("Total Bytes Loaded - Images or Natives", statistics.TotalFileSize.ToString());
             auditDictionary.Add("Total Bytes Loaded - Metadata and Extracted Text", statistics.TotalMetadataBytes.ToString());
-            if (statistics is ImageImportStatistics)
+            if (statistics is Relativity.MassImport.DTO.ImageImportStatistics)
             {
-	            this.AddImageImportAuditItems(auditDictionary, (ImageImportStatistics)statistics);
+	            this.AddImageImportAuditItems(auditDictionary, (Relativity.MassImport.DTO.ImageImportStatistics)statistics);
             }
-            else if (statistics is ObjectImportStatistics)
+            else if (statistics is Relativity.MassImport.DTO.ObjectImportStatistics)
             {
-	            this.AddObjectImportAuditItems(auditDictionary, (ObjectImportStatistics)statistics);
+	            this.AddObjectImportAuditItems(auditDictionary, (Relativity.MassImport.DTO.ObjectImportStatistics)statistics);
             }
 
             if (statistics.BatchSizes.Length > 0)
             {
 	            auditDictionary.Add("Batch Size History", FormatBatchSizes(statistics.BatchSizes));
             }
-            auditDictionary.Add("Multi-Select Field Overlay Behavior", OverlayBehaviorHelper.ConvertToDisplayString(statistics.OverlayBehavior));
+            auditDictionary.Add("Multi-Select Field Overlay Behavior", Relativity.MassImport.DTO.OverlayBehaviorHelper.ConvertToDisplayString(statistics.OverlayBehavior));
             return auditDictionary;
         }
 
-        private void AddImageImportAuditItems(IDictionary auditDictionary, ImageImportStatistics statistics)
+        private void AddImageImportAuditItems(IDictionary auditDictionary, Relativity.MassImport.DTO.ImageImportStatistics statistics)
         {
             string extractedTextReplaced = "No";
             if (statistics.ExtractedTextReplaced)
@@ -121,7 +131,7 @@ namespace Relativity.MassImport.Data
 	            auditDictionary.Add("Load Type", "Image");
             }
         }
-        private void AddObjectImportAuditItems(IDictionary auditDictionary, ObjectImportStatistics statistics)
+        private void AddObjectImportAuditItems(IDictionary auditDictionary, Relativity.MassImport.DTO.ObjectImportStatistics statistics)
         {
             auditDictionary.Add("Load Object", Relativity.Data.ObjectType.GetDisplayNameFromArtifactTypeID(_context, statistics.ArtifactTypeID));
             auditDictionary.Add("Load File Column Delimiter", string.Format("{0} ({1})", statistics.Delimiter, (int) statistics.Delimiter));

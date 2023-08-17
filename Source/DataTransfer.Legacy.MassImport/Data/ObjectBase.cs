@@ -16,7 +16,6 @@ using Relativity.MassImport.Data.DataGrid;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
-using Relativity.MassImport.Toggles;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 
 namespace Relativity.MassImport.Data
@@ -31,7 +30,7 @@ namespace Relativity.MassImport.Data
 		protected readonly int _artifactTypeID = 0;
 		private Relativity.Data.DataGridContext _dgContext;
 		private FieldInfo _fullTextField;
-		private NativeLoadInfo _settings;
+		private Relativity.MassImport.DTO.NativeLoadInfo _settings;
 		private FieldInfo _identifierField;
 		private const string _STATUS_COLUMN_NAME = "kCura_Import_Status";
 		private const bool _FILTER_BY_ORDER = false;
@@ -46,7 +45,7 @@ namespace Relativity.MassImport.Data
 		protected ObjectBase(
 			kCura.Data.RowDataGateway.BaseContext context,
 			IQueryExecutor queryExecutor,
-			NativeLoadInfo settings,
+			Relativity.MassImport.DTO.NativeLoadInfo settings,
 			NativeImportSql importSql,
 			int artifactTypeID,
 			int importUpdateAuditAction,
@@ -84,7 +83,7 @@ namespace Relativity.MassImport.Data
 		#endregion
 
 		#region Accessors
-		protected NativeLoadInfo Settings => _settings;
+		protected Relativity.MassImport.DTO.NativeLoadInfo Settings => _settings;
 
 		protected NativeImportSql ImportSql { get; set; }
 
@@ -316,15 +315,13 @@ namespace Relativity.MassImport.Data
 		public virtual void VerifyExistenceOfAssociatedObjectsForMultiObjectByArtifactId(FieldInfo field, int userID, int? auditUserId)
 		{
 			string importedIdentifierColumn = IdentifierField.GetColumnName();
-			string associatedObjectSqlFormat = ImportSql.VerifyExistenceOfAssociatedMultiObjects();
-
 			string objectTypeName = ColumnDefinitionCache[field.ArtifactID].ObjectTypeName;
 			string associatedObjectTable = Relativity.Data.FieldHelper.GetColumnName(objectTypeName);
 			string idFieldColumnName = ColumnDefinitionCache[field.ArtifactID].ColumnName;
 
 			// create errors for associated objects that do not exist
-			associatedObjectSqlFormat = string.Format(associatedObjectSqlFormat, _tableNames.Native, _tableNames.Objects, importedIdentifierColumn, idFieldColumnName, field.GetColumnName(), associatedObjectTable, (object)field.ArtifactID);
-			ExecuteNonQuerySQLStatement(associatedObjectSqlFormat, new SqlParameter[] { new SqlParameter("@userID", userID), new SqlParameter("@auditUserID", auditUserId.Value) });
+			string query = ImportSql.VerifyExistenceOfAssociatedMultiObjects(_tableNames, importedIdentifierColumn, idFieldColumnName, associatedObjectTable, field);
+			ExecuteNonQuerySQLStatement(query);
 		}
 
 		private void CheckForChildAssociatedObjects(int artifactTypeID, string fieldName, int fieldArtifactId)
@@ -334,7 +331,7 @@ namespace Relativity.MassImport.Data
 			if (associatedParentId != (int) ArtifactType.Case)
 			{
 				// Child object! WHOA
-				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? ImportStatus.ErrorAssociatedObjectIsDocument : ImportStatus.ErrorAssociatedObjectIsChild);
+				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild);
 				string childObjectCreations = string.Format("SELECT DISTINCT [DocumentIdentifier] FROM [Resource].[{0}] WHERE [ObjectTypeID] = @artifactTypeID AND [ObjectArtifactID] = -1", _tableNames.Objects);
 				string produceLineErrors = string.Format("UPDATE [Resource].[{0}] SET [kCura_Import_Status] = [kCura_Import_Status] | {1}, [kCura_Import_ErrorData] = '{4}' WHERE [{2}] in ({3})", 
 					_tableNames.Native, (object)errorStatusCode, IdentifierField.GetColumnName(), childObjectCreations, fieldName);
@@ -410,11 +407,6 @@ namespace Relativity.MassImport.Data
 		{
 			var result = new SerialSqlQuery();
 
-			if (!Relativity.Toggles.ToggleProvider.Current.IsEnabled<CreateItemErrorWhenIdentifierIsNullToggle>())
-			{
-				return result;
-			}
-
 			bool isIdentifierFieldMapped = this.Settings.MappedFields.Any(x => x.ArtifactID == IdentifierField.ArtifactID);
 			if (isIdentifierFieldMapped)
 			{
@@ -474,7 +466,7 @@ WHERE
 			{
 				ImportMeasurements.StartMeasure();
 				var filePathResults = ExecuteSqlStatementAsDataTable(string.Format("SELECT [kCura_Import_ID], [{0}] FROM [Resource].[{1}] WHERE [kCura_Import_Status] = {2} AND [{0}] IS NOT NULL", 
-					FullTextFieldColumnName, _tableNames.Native, (object)(long)ImportStatus.Pending));
+					FullTextFieldColumnName, _tableNames.Native, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending));
 				var reader = new FullTextFileImportDataReader(filePathResults);
 				var parameters = new kCura.Data.RowDataGateway.SqlBulkCopyParameters() { EnableStreaming = true, DestinationTableName = $"[Resource].[{_tableNames.FullText}]" };
 				Context.ExecuteBulkCopy(reader, parameters);
@@ -544,7 +536,7 @@ WHERE
 			string sql = $@"
 															SELECT [kCura_Import_ID], [{ tempTableName }].[{ identifierFieldName }], NULL, [kCura_Import_ID]
 															FROM [Resource].[{ tempTableName }]
-															WHERE [kCura_Import_Status] = { (long) ImportStatus.Pending }
+															WHERE [kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
 ";
 			return ExecuteSQLStatementAsReader(sql);
 		}
@@ -597,7 +589,7 @@ WHERE
 			return IsDataGridInputValid(Settings);
 		}
 
-		public static bool IsDataGridInputValid(NativeLoadInfo settings)
+		public static bool IsDataGridInputValid(Relativity.MassImport.DTO.NativeLoadInfo settings)
 		{
 			return !string.IsNullOrEmpty(settings.DataGridFileName) && SQLInjectionHelper.IsValidFileName(settings.DataGridFileName);
 		}

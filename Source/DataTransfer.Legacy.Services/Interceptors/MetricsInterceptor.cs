@@ -109,9 +109,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				{
 					var objectLoadInfo = (SDK.ImportExport.V1.Models.ObjectLoadInfo) invocationArgument;
 					PushObjectLoadInfoMetrics(generalMetrics, objectLoadInfo);
-
-					await SendFieldInfoMetrics(invocation, parameters, objectLoadInfo, elapsedMilliseconds);
-
 					continue;
 				}
 
@@ -119,9 +116,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 				{
 					var nativeLoadInfo = (SDK.ImportExport.V1.Models.NativeLoadInfo) invocationArgument;
 					PushNativeLoadInfoMetrics(generalMetrics, nativeLoadInfo);
-
-					await SendFieldInfoMetrics(invocation, parameters, nativeLoadInfo, elapsedMilliseconds);
-
 					continue;
 				}
 
@@ -280,60 +274,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			PushNativeLoadInfoMetrics(metrics, objectLoadInfo);
 		}
 
-		private async Task SendFieldInfoMetrics(IInvocation invocation, ParameterInfo[] parameters, SDK.ImportExport.V1.Models.NativeLoadInfo objectLoadInfo, long elapsedMilliseconds)
-		{
-			if (objectLoadInfo.MappedFields == null)
-			{
-				return;
-			}
-
-			var workspaceID = string.Empty;
-			var firstParameter = parameters.First();
-			if (firstParameter?.Name == "workspaceID")
-			{
-				workspaceID = invocation.Arguments.First()?.ToString();
-			}
-
-			var correlationID = string.Empty;
-			var lastParameter = parameters.Last();
-			if (lastParameter?.Name == "correlationID")
-			{
-				correlationID = invocation.Arguments.Last()?.ToString();
-			}
-
-			foreach (var fieldInfo in objectLoadInfo.MappedFields)
-			{
-				await SendFieldInfoMetric(fieldInfo, workspaceID, objectLoadInfo.RunID, invocation.TargetType.Name,
-					invocation.Method.Name, elapsedMilliseconds, correlationID);
-			}
-		}
-
-		private async Task SendFieldInfoMetric(SDK.ImportExport.V1.Models.FieldInfo fieldInfo, string workspaceID, string runID, string targetType, string method, long elapsedMilliseconds, string correlationID)
-		{
-			var metrics = _metricsContextFactory.Invoke();
-
-			metrics.PushProperty("FieldInfoMetrics", "1");
-			metrics.PushProperty(nameof(fieldInfo.ArtifactID), fieldInfo.ArtifactID.ToString());
-			metrics.PushProperty(nameof(fieldInfo.Category), Enum.GetName(typeof(FieldCategory), fieldInfo.Category));
-			metrics.PushProperty(nameof(fieldInfo.Type), Enum.GetName(typeof(FieldType), fieldInfo.Type));
-			metrics.PushProperty(nameof(fieldInfo.ImportBehavior), fieldInfo.ImportBehavior.HasValue ? Enum.GetName(typeof(ImportBehaviorChoice), fieldInfo.ImportBehavior) : "null");
-			metrics.PushProperty(nameof(fieldInfo.DisplayName), fieldInfo.DisplayName);
-			metrics.PushProperty(nameof(fieldInfo.TextLength), fieldInfo.TextLength.ToString());
-			metrics.PushProperty(nameof(fieldInfo.CodeTypeID), fieldInfo.CodeTypeID.ToString());
-			metrics.PushProperty(nameof(fieldInfo.EnableDataGrid), fieldInfo.EnableDataGrid.ToString());
-			metrics.PushProperty(nameof(fieldInfo.FormatString), fieldInfo.FormatString);
-			metrics.PushProperty(nameof(fieldInfo.IsUnicodeEnabled), fieldInfo.IsUnicodeEnabled.ToString());
-
-			metrics.PushProperty($"workspaceID", workspaceID);
-			metrics.PushProperty($"runID", runID);
-			metrics.PushProperty($"correlationID", correlationID);
-			metrics.PushProperty($"TargetType", targetType);
-			metrics.PushProperty($"Method", method);
-			metrics.PushProperty($"ElapsedMilliseconds", elapsedMilliseconds);
-
-			await metrics.Publish();
-		}
-
 		private void PushNativeLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.NativeLoadInfo nativeLoadInfo)
 		{
 			metrics.PushProperty("NativeLoadInfoMetrics", "1");
@@ -368,7 +308,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(nativeLoadInfo.MoveDocumentsInAppendOverlayMode), nativeLoadInfo.MoveDocumentsInAppendOverlayMode.ToString());
 			metrics.PushProperty(nameof(nativeLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), nativeLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(nativeLoadInfo.Billable), nativeLoadInfo.Billable.ToString());
-		}
+            metrics.PushProperty(nameof(nativeLoadInfo.OverrideReferentialLinksRestriction), nativeLoadInfo.OverrideReferentialLinksRestriction);
+        }
 
 		private void PushImageLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ImageLoadInfo imageLoadInfo)
 		{
@@ -387,6 +328,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(imageLoadInfo.OverlayArtifactID), imageLoadInfo.OverlayArtifactID);
 			metrics.PushProperty(nameof(imageLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), imageLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(imageLoadInfo.Billable), imageLoadInfo.Billable);
-		}
+			metrics.PushProperty(nameof(imageLoadInfo.HasPDF), imageLoadInfo.HasPDF);
+            metrics.PushProperty(nameof(imageLoadInfo.OverrideReferentialLinksRestriction), imageLoadInfo.OverrideReferentialLinksRestriction);
+        }
 	}
 }

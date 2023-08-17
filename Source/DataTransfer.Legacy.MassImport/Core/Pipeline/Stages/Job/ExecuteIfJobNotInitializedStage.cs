@@ -5,7 +5,7 @@ using Relativity.MassImport.Data.StagingTables;
 
 namespace Relativity.MassImport.Core.Pipeline.Stages.Job
 {
-	internal class ExecuteIfJobNotInitializedStage<TInput> : ConditionalStage<TInput> where TInput : IImportSettingsInput<NativeLoadInfo>
+	internal class ExecuteIfJobNotInitializedStage<TInput> : ConditionalStage<TInput> where TInput : IImportSettingsInput<Relativity.MassImport.DTO.NativeLoadInfo>
 	{
 		private readonly IStagingTableRepository _stagingTableRepository;
 

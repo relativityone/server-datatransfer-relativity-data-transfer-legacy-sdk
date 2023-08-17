@@ -18,7 +18,7 @@ namespace Relativity.MassImport.Data
 			return new InlineSqlQuery($@"/*Prevent creating associated objects of type document*/
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAssociatedObjectIsDocument}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument}
 FROM [Resource].[{tableNames.Native}] N
 WHERE
 	N.[{field.GetColumnName()}] IS NOT NULL
@@ -32,7 +32,7 @@ WHERE
 			P.[FieldArtifactID] = {field.ArtifactID}
 			AND N2.[{field.GetColumnName()}] = N.[{field.GetColumnName()}]
 	)
-	AND [kCura_Import_Status] & {(long)ImportStatus.ErrorAssociatedObjectIsDocument} = 0;");
+	AND [kCura_Import_Status] & {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument} = 0;");
 		}
 
 		public static string ValidateAssociatedObjectsReferencedByArtifactIdExist(
@@ -44,7 +44,8 @@ WHERE
 			return $@"/*create errors for associated objects that do not exist*/
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAssociatedObjectIsMissing}
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
+	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
 FROM [Resource].[{tableNames.Native}] N
 WHERE
 	N.[{field.GetColumnName()}] IS NOT NULL
@@ -54,7 +55,7 @@ WHERE
 		FROM [{associatedObjectTable}] 
 		WHERE [{associatedObjectTable}].[{associatedObjectIdentifierColumn}] = N.[{field.GetColumnName()}]
 	)
-	AND [kCura_Import_Status] & {(long)ImportStatus.ErrorAssociatedObjectIsMissing} = 0;";
+	AND [kCura_Import_Status] & {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing} = 0;";
 		}
 
 		private static InlineSqlQuery CreateErrorsForDuplicatedObjects(
@@ -73,14 +74,14 @@ WHERE
 
 UPDATE N2
 SET
-	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + {(long)ImportStatus.ErrorDuplicateAssociatedObject}
+	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject}
 FROM
 	[Resource].[{tableNames.Native}] N
 JOIN [DuplicatedAssociatedObjects] ON
 	N.[kCura_Import_ID] = [DuplicatedAssociatedObjects].[kCura_Import_ID]
 JOIN [Resource].[{tableNames.Native}] N2 ON
 	N.[{field.GetColumnName()}] = N2.[{field.GetColumnName()}]
-WHERE N2.[kCura_Import_Status] & {(long)ImportStatus.ErrorDuplicateAssociatedObject} = 0;");
+WHERE N2.[kCura_Import_Status] & {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject} = 0;");
 		}
 
 		private static InlineSqlQuery CreateErrorsForMissingChildObjects(
@@ -105,7 +106,7 @@ END;
 
 UPDATE N
 SET
-	[kCura_Import_Status] = [kCura_Import_Status] + {(long)ImportStatus.ErrorAssociatedObjectIsChild},
+	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild},
     [kCura_Import_ErrorData] = @fieldDisplayName
 FROM [Resource].[{tableNames.Native}] N
 WHERE
@@ -121,7 +122,7 @@ WHERE
 			P.[FieldArtifactID] = {field.ArtifactID}
 			AND N2.[{field.GetColumnName()}] = N.[{field.GetColumnName()}]
 	)	
-	AND N.[kCura_Import_Status] & {(long)ImportStatus.ErrorAssociatedObjectIsChild} = 0;");
+	AND N.[kCura_Import_Status] & {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild} = 0;");
 		}
 	}
 }

@@ -58,7 +58,11 @@
 
 		public bool Billable { get; set; }
 
-		public override string ToString()
+		public string BulkFileSharePath { get; set; }
+
+        public bool OverrideReferentialLinksRestriction { get; set; }
+
+        public override string ToString()
 		{
 			return this.ToSafeString();
 		}
