@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [0.18.0]   - 08-17-2023
+
+### Changed
+- Cumulative merge of all backported changes
+
 ## [0.17.0]   - 08-07-2023
 
  ## Changed
