@@ -524,6 +524,10 @@ WHERE
 			ImportMeasurements.StartMeasure();
 			foreach (FieldInfo field in Settings.MappedFields)
 			{
+				// TODO: move hardcoded values to private member
+				string[] tagFieldsNames = new[] { "Relativity Source Case", "Relativity Source Job" };
+				Log.Logger.LogWarning("ChangeOverwriteModeForSyncTagFieldsToggle is introduced"); //TBD
+
 				if (field.Type == FieldTypeHelper.FieldType.Objects)
 				{
 					string objectsFieldTable = ColumnDefinitionCache[field.ArtifactID].RelationalTableSchemaName;
@@ -535,7 +539,18 @@ WHERE
 
 					string sql = ImportSql.SetObjectsFieldEntries();
 
-					string fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					string fieldOverlayExpression;
+
+					if (ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>())
+					{
+						fieldOverlayExpression = tagFieldsNames.Contains(field.DisplayName)
+						 ? "1" // "1" means merge/append
+						 : Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					}
+					else
+					{
+						fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					}
 
 					string queryToRun = string.Format(
 						sql, 
