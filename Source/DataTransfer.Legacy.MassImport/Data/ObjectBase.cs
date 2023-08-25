@@ -47,6 +47,7 @@ namespace Relativity.MassImport.Data
 		private const int _retryCount = 3;
 		private const int _retrySleepDurationMilliseconds = 500;
 		private Lazy<List<FieldInfo>> _mismatchedDataGridFieldsLazy;
+		private string[] tagFieldsNames = new[] { "Relativity Source Case", "Relativity Source Job" };
 		protected const int TopFieldArtifactID = 0;
 
 		#region Constructors
@@ -521,13 +522,9 @@ WHERE
 
 		public void PopulateObjectsListTable()
 		{
-			Log.Logger.LogWarning("ChangeOverwriteModeForSyncTagFieldsToggle is introduced with value: " + ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>()); //TBD
 			ImportMeasurements.StartMeasure();
 			foreach (FieldInfo field in Settings.MappedFields)
 			{
-				// TODO: move hardcoded values to private member
-				string[] tagFieldsNames = new[] { "Relativity Source Case", "Relativity Source Job" };
-
 				if (field.Type == FieldTypeHelper.FieldType.Objects)
 				{
 					string objectsFieldTable = ColumnDefinitionCache[field.ArtifactID].RelationalTableSchemaName;
@@ -541,16 +538,9 @@ WHERE
 
 					string fieldOverlayExpression;
 
-					if (ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>())
-					{
-						fieldOverlayExpression = tagFieldsNames.Contains(field.DisplayName)
-						 ? "1" // "1" means merge/append
+					fieldOverlayExpression = tagFieldsNames.Contains(field.DisplayName, StringComparer.OrdinalIgnoreCase) && ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>()
+						 ? "1" 
 						 : Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
-					}
-					else
-					{
-						fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
-					}
 
 					string queryToRun = string.Format(
 						sql, 
