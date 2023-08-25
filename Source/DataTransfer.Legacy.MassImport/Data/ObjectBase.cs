@@ -521,12 +521,12 @@ WHERE
 
 		public void PopulateObjectsListTable()
 		{
+			Log.Logger.LogWarning("ChangeOverwriteModeForSyncTagFieldsToggle is introduced with value: " + ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>()); //TBD
 			ImportMeasurements.StartMeasure();
 			foreach (FieldInfo field in Settings.MappedFields)
 			{
 				// TODO: move hardcoded values to private member
 				string[] tagFieldsNames = new[] { "Relativity Source Case", "Relativity Source Job" };
-				Log.Logger.LogWarning("ChangeOverwriteModeForSyncTagFieldsToggle is introduced"); //TBD
 
 				if (field.Type == FieldTypeHelper.FieldType.Objects)
 				{
