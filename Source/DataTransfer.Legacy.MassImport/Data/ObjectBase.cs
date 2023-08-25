@@ -538,9 +538,15 @@ WHERE
 
 					string fieldOverlayExpression;
 
-					fieldOverlayExpression = tagFieldsNames.Contains(field.DisplayName, StringComparer.OrdinalIgnoreCase) && ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>()
-						 ? "1" 
-						 : Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					if(tagFieldsNames.Contains(field.DisplayName, StringComparer.OrdinalIgnoreCase) && ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>())
+					{
+						fieldOverlayExpression = "1";
+						Log.Logger.LogWarning("Set MergeAll Overlay Behavior for Sync Tagging field - {field}", field.DisplayName);
+					}
+					else
+					{
+						fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					}
 
 					string queryToRun = string.Format(
 						sql, 
