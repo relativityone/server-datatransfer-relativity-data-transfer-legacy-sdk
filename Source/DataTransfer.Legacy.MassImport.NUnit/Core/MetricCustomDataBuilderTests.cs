@@ -302,7 +302,18 @@ namespace Relativity.MassImport.NUnit.Core
             VerifyAllPropertiesAreIncluded(fieldInfo, new[] { nameof(FieldInfo.FormatString) }, actualCustomData, shouldConvertAllPropertiesToString: true);
         }
 
-        private void VerifySettingsInCustomData(Relativity.MassImport.DTO.NativeLoadInfo settings, Dictionary<string, object> customData)
+        [TestCase("E01F2EE5-67B4-45F3-B7C1-F0F37B3FD03D", "E01F2EE5-67B4-45F3-B7C1-F0F37B3FD03D")]
+        [TestCase("2982FF20_30D0_4080_997D_71A9F182C6DF", "2982FF20-30D0-4080-997D-71A9F182C6DF")]
+		public void WithDataSourceId_AddFormattedDataSourceIdToCustomData(string dataSourceId, string formattedDataSourceId)
+        {
+	        // act
+	        var actualCustomData = MetricCustomDataBuilder.New().WithDataSourceId(dataSourceId).Build();
+
+			// assert
+			AssertThatDictionaryContainsKeyValuePair(actualCustomData, "data_source.id", formattedDataSourceId);
+        }
+
+		private void VerifySettingsInCustomData(Relativity.MassImport.DTO.NativeLoadInfo settings, Dictionary<string, object> customData)
         {
             string[] propertiesNotIncludedInCustomData =
             {

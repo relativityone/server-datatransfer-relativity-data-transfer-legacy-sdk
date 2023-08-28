@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.49]
+- REL-864048 - Import Service - Observability - correlate metrics from Import Service, legacy import and mass import
+
 ## [0.3.48]
 - REL-865352 - Bump Relativity.Storage to 1.9
 

@@ -27,6 +27,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		{
 			var @event = new EventJobStart();
 			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = settings.RunID;
+			@event.Attributes[TelemetryConstants.AttributeNames.DataSourceID] = settings.RunID;
 			@event.Attributes[TelemetryConstants.AttributeNames.ImportObjectType] = importType;
 			@event.Attributes[TelemetryConstants.AttributeNames.Billable] = settings.Billable;
 			@event.Attributes[TelemetryConstants.AttributeNames.CustomerApplicationName] = settings.ExecutionSource.ToString();
@@ -41,6 +42,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		{
 			var @event = new EventJobStart();
 			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = settings.RunID;
+			@event.Attributes[TelemetryConstants.AttributeNames.DataSourceID] = settings.RunID;
 			@event.Attributes[TelemetryConstants.AttributeNames.ImportObjectType] = importType;
 			@event.Attributes[TelemetryConstants.AttributeNames.Billable] = settings.Billable;
 			@event.Attributes[TelemetryConstants.AttributeNames.CustomerApplicationName] = settings.ExecutionSource.ToString();
@@ -72,6 +74,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		{
 			var @event = new EventJobBatchCompleted();
 			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = results.RunID;
+			@event.Attributes[TelemetryConstants.AttributeNames.DataSourceID] = results.RunID;
 			@event.Attributes[TelemetryConstants.AttributeNames.JobStatus] = results.ExceptionDetail is null ? "success" : "failed";
 			@event.Attributes[TelemetryConstants.AttributeNames.ArtifactsCreatedCount] = results.ArtifactsCreated;
 			@event.Attributes[TelemetryConstants.AttributeNames.ArtifactsUpdatedCount] = results.ArtifactsUpdated;
@@ -84,6 +87,7 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry.MetricsEventsBuilders
 		{
 			var @event = new EventGeneralStatistics();
 			@event.Attributes[TelemetryConstants.AttributeNames.RunID] = runID;
+			@event.Attributes[TelemetryConstants.AttributeNames.DataSourceID] = runID;
 			@event.Attributes[TelemetryConstants.AttributeNames.R1WorkspaceID] = workspaceID;
 
 			return @event;
