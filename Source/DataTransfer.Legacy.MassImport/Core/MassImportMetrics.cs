@@ -25,6 +25,7 @@ namespace Relativity.MassImport.Core
             var customData = MetricCustomDataBuilder
                 .New()
                 .WithContext(importType, system)
+                .WithDataSourceId(settings.RunID)
                 .WithSettings(settings)
                 .Build();
             SendCounter(Constants.MassImportMetricsBucketNames.JobStarted, settings.RunID, customData);
@@ -35,7 +36,8 @@ namespace Relativity.MassImport.Core
             var customData = MetricCustomDataBuilder
                 .New()
                 .WithContext(importType, system)
-                .WithSettings(settings)
+                .WithDataSourceId(settings.RunID)
+				.WithSettings(settings)
                 .Build();
             SendCounter(Constants.MassImportMetricsBucketNames.JobStarted, settings.RunID, customData);
         }
@@ -50,7 +52,8 @@ namespace Relativity.MassImport.Core
             var customData = MetricCustomDataBuilder
                 .New()
                 .WithContext(importType, system)
-                .WithResult(result)
+                .WithDataSourceId(correlationId)
+				.WithResult(result)
                 .WithMeasurements(importMeasurements)
                 .Build();
 
@@ -67,7 +70,8 @@ namespace Relativity.MassImport.Core
         {
             var customData = MetricCustomDataBuilder
                 .New()
-                .WithFieldInfo(field)
+                .WithDataSourceId(correlationId)
+				.WithFieldInfo(field)
                 .Build();
 
             SendCounter(Constants.MassImportMetricsBucketNames.FieldDetails, correlationId, customData);

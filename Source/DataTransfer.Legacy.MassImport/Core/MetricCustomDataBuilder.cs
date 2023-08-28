@@ -30,7 +30,15 @@ namespace Relativity.MassImport.Core
 			return this;
         }
 
-        public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.NativeLoadInfo settings)
+        public MetricCustomDataBuilder WithDataSourceId(string dataSourceId)
+        {
+	        var formattedDataSourceId = dataSourceId.Replace('_', '-');
+			_customData[TelemetryConstants.AttributeNames.DataSourceID] = formattedDataSourceId;
+
+			return this;
+        }
+
+		public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.NativeLoadInfo settings)
         {
             // Import settings
             _customData[nameof(settings.ExecutionSource)] = settings.ExecutionSource.ToString();
@@ -78,7 +86,7 @@ namespace Relativity.MassImport.Core
                 _customData[nameof(settingsAsObjectLoadInfo.ArtifactTypeID)] = settingsAsObjectLoadInfo.ArtifactTypeID;
             }
 
-            return this;
+			return this;
         }
 
         public MetricCustomDataBuilder WithSettings(Relativity.MassImport.DTO.ImageLoadInfo settings)
@@ -108,7 +116,7 @@ namespace Relativity.MassImport.Core
             _customData[nameof(results.ArtifactsUpdated)] = results.ArtifactsUpdated;
             _customData[nameof(results.FilesProcessed)] = results.FilesProcessed;
 
-            return this;
+			return this;
         }
 
         public MetricCustomDataBuilder WithMeasurements(ImportMeasurements importMeasurements)

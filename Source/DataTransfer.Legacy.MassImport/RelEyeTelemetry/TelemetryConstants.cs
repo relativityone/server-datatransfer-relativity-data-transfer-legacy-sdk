@@ -210,6 +210,11 @@ namespace DataTransfer.Legacy.MassImport.RelEyeTelemetry
 			public const string RunID = "import.run_id";
 
 			/// <summary>
+			/// [string] Import Data Source ID.
+			/// </summary>
+			public const string DataSourceID = "data_source.id";
+
+			/// <summary>
 			/// [string] Service name.
 			/// </summary>
 			public const string ServiceName = "service.name";
