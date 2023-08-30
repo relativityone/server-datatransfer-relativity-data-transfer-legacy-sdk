@@ -3,7 +3,7 @@
 	using Relativity.Toggles;
 
 	[Description("Change overwrite mode to Append for document fields containing tagging values in Sync", "")]
-	[DefaultValue(true)]
+	[DefaultValue(false)]
 	[ExpectedRemovalDate(2024, 1, 1)]
 	public class ChangeOverwriteModeForSyncTagFieldsToggle: IToggle
 	{
