@@ -47,6 +47,7 @@ namespace Relativity.MassImport.Data
 		private const int _retryCount = 3;
 		private const int _retrySleepDurationMilliseconds = 500;
 		private Lazy<List<FieldInfo>> _mismatchedDataGridFieldsLazy;
+		private string[] tagFieldsNames = new[] { "Relativity Source Case", "Relativity Source Job" };
 		protected const int TopFieldArtifactID = 0;
 
 		#region Constructors
@@ -535,7 +536,17 @@ WHERE
 
 					string sql = ImportSql.SetObjectsFieldEntries();
 
-					string fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					string fieldOverlayExpression;
+
+					if(tagFieldsNames.Contains(field.DisplayName, StringComparer.OrdinalIgnoreCase) && ToggleProvider.Current.IsEnabled<ChangeOverwriteModeForSyncTagFieldsToggle>())
+					{
+						fieldOverlayExpression = "1";
+						Log.Logger.LogWarning("Set MergeAll Overlay Behavior for Sync Tagging field - {field}", field.DisplayName);
+					}
+					else
+					{
+						fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
+					}
 
 					string queryToRun = string.Format(
 						sql, 
