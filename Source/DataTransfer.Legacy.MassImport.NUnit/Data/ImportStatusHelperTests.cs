@@ -42,7 +42,19 @@ namespace Relativity.MassImport.NUnit.Data
 		public void GetCsvErrorLineShouldReturnTemplateMessageInCaseOfEmptyErrorData()
 		{
 			var result = DTO.ImportStatusHelper.GetCsvErrorLine(_logMock.Object, (long)ImportStatus.ErrorDuplicateAssociatedObject, "someIdentifier", "", -1, "DocIdentifier", null, "");
-			result.Should().Be(" - A non unique associated object '{0}' is specified for the '{1}' object in the field '{2}'");
+			result.Should().Be(" - A non unique associated object 'NULL' is specified for the 'NULL' object in the field 'NULL'");
+
+			_logMock.Verify(x => x.LogError(It.IsAny<FormatException>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
+		}
+
+		[Test]
+		public void GetCsvErrorLineShouldReturnEscapedTemplateMessage()
+		{
+			var result = DTO.ImportStatusHelper.GetCsvErrorLine(_logMock.Object, (long)ImportStatus.ErrorDuplicateAssociatedObject, "someIdentifier", "", -1, "DocIdentifier", null, "");
+			result.Should().Be(" - A non unique associated object 'NULL' is specified for the 'NULL' object in the field 'NULL'");
+			
+			var formattedResult = string.Format(result);
+			formattedResult.Should().Be(" - A non unique associated object 'NULL' is specified for the 'NULL' object in the field 'NULL'");
 
 			_logMock.Verify(x => x.LogError(It.IsAny<FormatException>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Never);
 		}
@@ -51,7 +63,19 @@ namespace Relativity.MassImport.NUnit.Data
 		public void GetCsvErrorLineShouldReturnTemplateMessageInCaseOfFormatException()
 		{
 			var result = DTO.ImportStatusHelper.GetCsvErrorLine(_logMock.Object, (long)ImportStatus.ErrorDuplicateAssociatedObject, "someIdentifier", "", -1, "DocIdentifier", null, "Object1|Object2");
-			result.Should().Be(" - A non unique associated object '{0}' is specified for the '{1}' object in the field '{2}' - Object1|Object2");
+			result.Should().Be(" - A non unique associated object 'NULL' is specified for the 'NULL' object in the field 'NULL' - Object1|Object2");
+
+			_logMock.Verify(x => x.LogError(It.IsAny<FormatException>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
+		}
+
+		[Test]
+		public void GetCsvErrorLineShouldReturnEscapedTemplateMessageThatWillNotFailAnotherStringFormat()
+		{
+			var result = DTO.ImportStatusHelper.GetCsvErrorLine(_logMock.Object, (long)ImportStatus.ErrorDuplicateAssociatedObject, "someIdentifier", "", -1, "DocIdentifier", null, "Object1|Object2");
+			result.Should().Be(" - A non unique associated object 'NULL' is specified for the 'NULL' object in the field 'NULL' - Object1|Object2");
+
+			var formattedResult = string.Format(result);
+			formattedResult.Should().Be(" - A non unique associated object 'NULL' is specified for the 'NULL' object in the field 'NULL' - Object1|Object2");
 
 			_logMock.Verify(x => x.LogError(It.IsAny<FormatException>(), It.IsAny<string>(), It.IsAny<object[]>()), Times.Once);
 		}

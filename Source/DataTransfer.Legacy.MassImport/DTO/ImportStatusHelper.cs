@@ -3,6 +3,7 @@ using Relativity.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Relativity.MassImport.DTO
 {
@@ -89,7 +90,7 @@ namespace Relativity.MassImport.DTO
 		{
 			if (string.IsNullOrEmpty(errorData))
 			{
-				return messageTemplate;
+				return FormatTemplateWithNulls(messageTemplate);
 			}
 
 			try
@@ -102,10 +103,23 @@ namespace Relativity.MassImport.DTO
 			{
 				logger.LogError(ex, "Failed to format error for template: {messageTemplate} and data: {errorData} for {identifier} and {documentIdentifier}", messageTemplate, errorData, identifier, documentIdentifier);
 				TraceHelper.SetStatusError(Activity.Current, $"Failed to format error for template: {messageTemplate} and data: {errorData}: {ex.Message}", ex);
-
-				return $"{messageTemplate} - {errorData}";
+				return FormatTemplateWithNulls($"{messageTemplate} - {errorData}");
 			}
 		}
+
+		private static string FormatTemplateWithNulls(string messageTemplate)
+		{
+			var count = messageTemplate.Count(x => x == '{');
+			object[] args = new object[count];
+			for (int i = 0; i < count; i++)
+			{
+				args[i] = "NULL";
+			}
+			
+			return string.Format(messageTemplate, args);
+		}
+
+
 
 		private static Dictionary<ImportStatus, string> SimpleImportStatusErrorMessageDictionary
 		{

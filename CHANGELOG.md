@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.51]
+- REL-866813 - In case of FormatException format message template with NULL
+
 ## [0.3.50]
 - REL-859824 - [SYNC][IAPI2.0] Hardcode Tagging column name inside IAPI 2.0 code
 
