@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [23000.19.1] - 09-08-2023
+
+### Changed
+
+- Bumped the application version to align with the Server 2023 application versioning strategy ADR.
+
 ## [23000.19.0] - 09-04-2023
 
 ### Changed
