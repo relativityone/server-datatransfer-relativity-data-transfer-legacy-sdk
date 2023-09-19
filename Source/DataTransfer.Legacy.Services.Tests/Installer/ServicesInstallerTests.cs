@@ -20,8 +20,12 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Installer
 		public void SetUp()
 		{
 			_container = new WindsorContainer();
-			RegisterMock<IHelper>();
-			RegisterMock<IToggleProvider>();
+			_container
+				.Register(Component.For<IHelper>()
+					.Instance(new Mock<IServiceHelper> { DefaultValue = DefaultValue.Mock }.Object));
+			_container
+				.Register(Component.For<IToggleProvider>()
+					.Instance(new Mock<IToggleProvider> { DefaultValue = DefaultValue.Mock }.Object));
 
 			var installer = new ServicesInstaller();
 			installer.Install(_container, new DefaultConfigurationStore());
@@ -51,13 +55,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Installer
 
 			// assert
 			actual.Should().NotBeNull();
-		}
-
-		private void RegisterMock<T>() where T : class
-		{
-			_container
-				.Register(Component.For<T>()
-					.Instance(new Mock<T> { DefaultValue = DefaultValue.Mock }.Object));
 		}
 	}
 }

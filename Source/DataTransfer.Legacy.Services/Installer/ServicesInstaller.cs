@@ -47,7 +47,9 @@ namespace Relativity.DataTransfer.Legacy.Services.Installer
 
 			container.Register(Component.For<IInstanceSettingsBundle>()
 				.UsingFactoryMethod((x, c) => x.Resolve<IHelper>().GetInstanceSettingBundle()));
-
+			container.Register(Component.For<IServiceHelper>().UsingFactoryMethod(() => (IServiceHelper)container.Resolve<IHelper>()).LifestyleSingleton());
+			container.Register(Component.For<IAuthenticationMgr>()
+				.UsingFactoryMethod(x => x.Resolve<IServiceHelper>().GetAuthenticationManager(), managedExternally: true).LifestyleTransient());
 			container.Register(Component.For<IBatchResultCache>().ImplementedBy<BatchResultCache>().LifestyleTransient());
 			container.Register(Component.For<ISqlExecutor>().ImplementedBy<DbContextToSqlExecutorAdapter>().LifestyleTransient());
 			container.Register(Component.For<ISqlRetryPolicy>().ImplementedBy<SqlRetryPolicy>().LifestyleTransient());
