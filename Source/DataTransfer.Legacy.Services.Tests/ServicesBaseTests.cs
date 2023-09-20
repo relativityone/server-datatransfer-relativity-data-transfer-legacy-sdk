@@ -42,6 +42,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		protected Mock<ITraceGenerator> TraceGeneratorMock;
 		protected Mock<IRedactedNativesValidator> RedactedNativesValidatorMock;
 		protected Mock<IFileRepositoryExternalService> FileRepositoryExternalServiceMock;
+		protected Mock<IAuthenticationMgr> AuthenticationManagerMock;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
@@ -61,6 +62,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			TraceGeneratorMock = new Mock<ITraceGenerator>();
 			RedactedNativesValidatorMock = new Mock<IRedactedNativesValidator>();
 			FileRepositoryExternalServiceMock = new Mock<IFileRepositoryExternalService>();
+			AuthenticationManagerMock = new Mock<IAuthenticationMgr>();
 
 			Container = new WindsorContainer();
 			Container.Register(Component.For<ISqlExecutor>().Instance(SqlExecutorMock.Object));
@@ -73,6 +75,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<ITraceGenerator>().Instance(TraceGeneratorMock.Object));
 			Container.Register(Component.For<IRedactedNativesValidator>().Instance(RedactedNativesValidatorMock.Object));
 			Container.Register(Component.For<IFileRepositoryExternalService>().Instance(FileRepositoryExternalServiceMock.Object));
+			Container.Register(Component.For<IAuthenticationMgr>().Instance(AuthenticationManagerMock.Object));
 			Container.Register(Component.For<ToggleCheckInterceptor>());
 			Container.Register(Component.For<PermissionCheckInterceptor>());
 			Container.Register(Component.For<LogInterceptor>());

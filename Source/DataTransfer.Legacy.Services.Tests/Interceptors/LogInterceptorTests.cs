@@ -11,6 +11,7 @@ using NUnit.Framework;
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
 using Relativity.DataTransfer.Legacy.Services.Tests.Interceptors.TestClasses;
+using Relativity.Services.Interfaces.UserInfo.Models;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 {
@@ -22,8 +23,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		private const int Addend1 = 1;
 		private const int Addend2 = 2;
 		private const int ExpectedSum = 3;
+		private const int ExpectedNumberOfItemsInContext = 6;
 
 		private Mock<IAPILog> _loggerMock;
+		private Mock<IAuthenticationMgr> _authenticationManagerMock;
 		private ILogInterceptorTestClass _interceptedObject;
 
 		/// <summary>
@@ -38,9 +41,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		public void LogInterceptorTestsSetup()
 		{
 			_loggerMock = new Mock<IAPILog>();
+			_authenticationManagerMock = new Mock<IAuthenticationMgr>();
 
 			var container = new WindsorContainer();
 			container.Register(Component.For<IAPILog>().Instance(_loggerMock.Object));
+			container.Register(Component.For<IAuthenticationMgr>().Instance(_authenticationManagerMock.Object));
 			container.Register(Component.For<LogInterceptor>());
 			container.Register(Component.For<ILogInterceptorTestClass>().ImplementedBy<LogInterceptorTestClass>());
 
@@ -57,10 +62,19 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			// Arrange
 			const string NameController = "Controller";
 			const string NameEndpointCalled = "EndpointCalled";
+			const string NameUserId = "UserId";
+			const string NameWorkspaceUserId = "WorkspaceUserId";
 			const string NameAddend1 = "a";
 			const string NameAddend2 = "b";
 
+			const int ExpectedUserId = 8;
+			const int ExpectedWorkspaceUserId = 9;
+
 			_loggerMock.Setup(m => m.LogContextPushProperty(It.IsAny<string>(), It.IsAny<string>()));
+			var userInfoMock = new Mock<IUserInfo>();
+			userInfoMock.SetupGet(x => x.ArtifactID).Returns(ExpectedUserId);
+			userInfoMock.SetupGet(x => x.WorkspaceUserArtifactID).Returns(ExpectedWorkspaceUserId);
+			_authenticationManagerMock.SetupGet(x => x.UserInfo).Returns(userInfoMock.Object);
 
 			// Act
 			_interceptedObject.AddValues1(Addend1, Addend2);
@@ -68,6 +82,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			// Assert
 			_loggerMock.Verify(m => m.LogContextPushProperty(NameController, nameof(LogInterceptorTestClass)), Times.Once);
 			_loggerMock.Verify(m => m.LogContextPushProperty(NameEndpointCalled, nameof(LogInterceptorTestClass.AddValues1)), Times.Once);
+			_loggerMock.Verify(m => m.LogContextPushProperty(NameUserId, ExpectedUserId), Times.Once);
+			_loggerMock.Verify(m => m.LogContextPushProperty(NameWorkspaceUserId, ExpectedWorkspaceUserId), Times.Once);
 			_loggerMock.Verify(m => m.LogContextPushProperty(NameAddend1, Addend1.ToString()), Times.Once);
 			_loggerMock.Verify(m => m.LogContextPushProperty(NameAddend2, Addend2.ToString()), Times.Once);
 		}
@@ -126,7 +142,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		{
 			// Arrange
 			var disposableMock = new Mock<IDisposable>();
-			const int NumberOfCalls = 4;
 
 			_loggerMock.Setup(m => m.LogContextPushProperty(It.IsAny<string>(), It.IsAny<string>()))
 				.Returns(disposableMock.Object);
@@ -143,7 +158,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			await _interceptedObject.AddValues5(Addend1, Addend2);
 
 			// Assert
-			disposableMock.Verify(m => m.Dispose(), Times.Exactly(NumberOfCalls));
+			disposableMock.Verify(m => m.Dispose(), Times.Exactly(ExpectedNumberOfItemsInContext));
 		}
 
 		/// <summary>
@@ -156,7 +171,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		{
 			// Arrange
 			var disposableMock = new Mock<IDisposable>();
-			const int NumberOfCalls = 4;
 
 			_loggerMock.Setup(m => m.LogContextPushProperty(It.IsAny<string>(), It.IsAny<string>()))
 				.Returns(disposableMock.Object);
@@ -173,7 +187,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			await _interceptedObject.AddValues6(Addend1, Addend2);
 
 			// Assert
-			disposableMock.Verify(m => m.Dispose(), Times.Exactly(NumberOfCalls));
+			disposableMock.Verify(m => m.Dispose(), Times.Exactly(ExpectedNumberOfItemsInContext));
 		}
 
 		/// <summary>
@@ -185,7 +199,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 		{
 			// Arrange
 			var disposableMock = new Mock<IDisposable>();
-			const int NumberOfCalls = 4;
 
 			_loggerMock.Setup(m => m.LogContextPushProperty(It.IsAny<string>(), It.IsAny<string>()))
 				.Returns(disposableMock.Object);
@@ -202,7 +215,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_interceptedObject.AddValues7(Addend1, Addend2);
 
 			// Assert
-			disposableMock.Verify(m => m.Dispose(), Times.Exactly(NumberOfCalls));
+			disposableMock.Verify(m => m.Dispose(), Times.Exactly(ExpectedNumberOfItemsInContext));
 		}
 
 
@@ -261,7 +274,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Interceptors
 			_loggerMock.Verify(m => m.LogContextPushProperty("testClass", It.Is<string>(x => x.Contains(hashedSensitiveData))), Times.Once);
 
 			//Make sure sensitive data has never been logged even under different name
-			_loggerMock.Verify(m => m.LogContextPushProperty(It.IsAny<string>(), It.Is<string>(x => x.Contains(sensitiveData))), Times.Never);
+			_loggerMock.Verify(m => m.LogContextPushProperty(It.IsAny<string>(), It.Is<string>(x => x!= null && x.Contains(sensitiveData))), Times.Never);
 		}
 
 		[Test]
