@@ -16,16 +16,14 @@ namespace Relativity.MassImport.Data
 		private readonly TableNames _tableNames;
 		private readonly int _queryTimeout;
 		private readonly string importServiceGuidId = "21f65fdc-3016-4f2b-9698-de151a6186a2";
-		private readonly string createMissingFolders;
-		private readonly string folderCandidateTableType;
+		private readonly string createMissingFolders = $"CreateMissingFolders";
+		private readonly string folderCandidateTableType = $"FolderCandidateTableType";
 
 		public Folder(kCura.Data.RowDataGateway.BaseContext context, TableNames tableNames)
 		{
 			_context = context;
 			_tableNames = tableNames;
 			_queryTimeout = InstanceSettings.MassImportSqlTimeout;
-			createMissingFolders = $"CreateMissingFolders_{importServiceGuidId}";
-			folderCandidateTableType = $"FolderCandidateTableType_{importServiceGuidId}";
 		}
 
 		public DataTable GetFolderPathsForFoldersWithoutIDs(int workspaceID)
@@ -52,15 +50,15 @@ END
 			string storedProcedureToUse = string.Empty;
 			if (AreNewElementsCreatedInDatabase() && ToggleProvider.Current.IsEnabled<EnableNonLatinCharFolderErrorFreeCreateNewFolderToggle>())
 			{
-				storedProcedureToUse = createMissingFolders;
+				storedProcedureToUse = $"{createMissingFolders}_{importServiceGuidId}";
 				var candidateParameter = new SqlParameter("@candidate", candidate);
 				candidateParameter.SqlDbType = SqlDbType.Structured;
-				candidateParameter.TypeName = $"EDDSDBO.{folderCandidateTableType}";
+				candidateParameter.TypeName = $"EDDSDBO.{folderCandidateTableType}_{importServiceGuidId}";
 				parameterList.Add(candidateParameter);
 			}
 			else
 			{
-				storedProcedureToUse = "CreateMissingFolders";
+				storedProcedureToUse = createMissingFolders;
 				var candidateParameter = new SqlParameter("@candidate", candidate);
 				candidateParameter.SqlDbType = SqlDbType.Structured;
 				candidateParameter.TypeName = "EDDSDBO.FolderCandidateTableType";
@@ -132,7 +130,7 @@ END
 
 		private bool AreNewElementsCreatedInDatabase()
 		{
-			string sql = $@"IF (object_id('{createMissingFolders}') IS NULL) OR (type_id('{folderCandidateTableType}') IS NULL)
+			string sql = $@"IF (object_id('{createMissingFolders}_{importServiceGuidId}') IS NULL) OR (type_id('{folderCandidateTableType}_{importServiceGuidId}') IS NULL)
 BEGIN
 select 0
 END
@@ -140,8 +138,7 @@ ELSE
 BEGIN
 select 1;	
 END";
-			var t = _context.ExecuteSqlStatementAsScalar(sql);
-			int numberOfTypeUsages = (int)t;
+			int numberOfTypeUsages = (int)_context.ExecuteSqlStatementAsScalar(sql);
 			return numberOfTypeUsages == 1;
 		}
 	}
