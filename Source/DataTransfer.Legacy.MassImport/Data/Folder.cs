@@ -5,6 +5,8 @@ using System.Data.SqlClient;
 using Microsoft.SqlServer.Server;
 using Relativity.Data.MassImport;
 using DataTransfer.Legacy.MassImport.Data.Cache;
+using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
 {
@@ -13,12 +15,17 @@ namespace Relativity.MassImport.Data
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
 		private readonly TableNames _tableNames;
 		private readonly int _queryTimeout;
+		private readonly string importServiceGuidId = "21f65fdc-3016-4f2b-9698-de151a6186a2";
+		private readonly string createMissingFolders;
+		private readonly string folderCandidateTableType;
 
 		public Folder(kCura.Data.RowDataGateway.BaseContext context, TableNames tableNames)
 		{
 			_context = context;
 			_tableNames = tableNames;
 			_queryTimeout = InstanceSettings.MassImportSqlTimeout;
+			createMissingFolders = $"CreateMissingFolders_{importServiceGuidId}";
+			folderCandidateTableType = $"FolderCandidateTableType_{importServiceGuidId}";
 		}
 
 		public DataTable GetFolderPathsForFoldersWithoutIDs(int workspaceID)
@@ -42,11 +49,23 @@ END
 		public List<FolderArtifactIDMapping> CreateMissingFolders(IEnumerable<SqlDataRecord> candidate, int rootFolderID, int tempRootFolderID, int userID)
 		{
 			var parameterList = new List<SqlParameter>();
-
-			var candidateParameter = new SqlParameter("@candidate", candidate);
-			candidateParameter.SqlDbType = SqlDbType.Structured;
-			candidateParameter.TypeName = "EDDSDBO.FolderCandidateTableType";
-			parameterList.Add(candidateParameter);
+			string storedProcedureToUse = string.Empty;
+			if (AreNewElementsCreatedInDatabase() && ToggleProvider.Current.IsEnabled<EnableNonLatinCharFolderErrorFreeCreateNewFolderToggle>())
+			{
+				storedProcedureToUse = createMissingFolders;
+				var candidateParameter = new SqlParameter("@candidate", candidate);
+				candidateParameter.SqlDbType = SqlDbType.Structured;
+				candidateParameter.TypeName = $"EDDSDBO.{folderCandidateTableType}";
+				parameterList.Add(candidateParameter);
+			}
+			else
+			{
+				storedProcedureToUse = "CreateMissingFolders";
+				var candidateParameter = new SqlParameter("@candidate", candidate);
+				candidateParameter.SqlDbType = SqlDbType.Structured;
+				candidateParameter.TypeName = "EDDSDBO.FolderCandidateTableType";
+				parameterList.Add(candidateParameter);
+			}
 
 			var rootFolderIDParameter = new SqlParameter("@rootFolderID", rootFolderID);
 			rootFolderIDParameter.SqlDbType = SqlDbType.Int;
@@ -61,7 +80,7 @@ END
 			parameterList.Add(userIDParameter);
 
 			var folderArtifactIdMappings = new List<FolderArtifactIDMapping>();
-			using (var reader = _context.ExecuteProcedureAsReader("CreateMissingFolders", parameterList))
+			using (var reader = _context.ExecuteProcedureAsReader(storedProcedureToUse, parameterList))
 			{
 				while (reader.Read())
 				{
@@ -109,6 +128,21 @@ END
 			parameterList.Add(rootFolderIDParameter);
 
 			_context.ExecuteNonQuerySQLStatement(sqlStatement, parameterList, _queryTimeout);
+		}
+
+		private bool AreNewElementsCreatedInDatabase()
+		{
+			string sql = $@"IF (object_id('{createMissingFolders}') IS NULL) OR (type_id('{folderCandidateTableType}') IS NULL)
+BEGIN
+select 0
+END
+ELSE
+BEGIN
+select 1;	
+END";
+			var t = _context.ExecuteSqlStatementAsScalar(sql);
+			int numberOfTypeUsages = (int)t;
+			return numberOfTypeUsages == 1;
 		}
 	}
 }
