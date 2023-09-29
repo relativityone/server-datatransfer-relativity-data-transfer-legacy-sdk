@@ -375,6 +375,9 @@ namespace Relativity.MassImport.NUnit.Core
             AssertThatDictionaryContainsKeyValuePair(customData, "ImportType", importType);
             AssertThatDictionaryContainsKeyValuePair(customData, "System", system);
             AssertThatDictionaryContainsKeyValuePair(customData, "r1.team.id", "PTCI-4941411");
+            AssertThatDictionaryContainsKeyValuePair(customData, "service.name", "data-transfer-legacy-rap-kepler-api");
+            AssertThatDictionaryContainsKeyValuePair(customData, "service.namespace", "data-transfer-legacy-rap");
+            AssertThatDictionaryContainsKeyValuePair(customData, "application.name", "DataTransfer.Legacy");
         }
 
         private void VerifyAllPropertiesAreIncluded<T>(

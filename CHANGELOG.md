@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.53]
+- DEVOPS-199332  - add service.name to your RelEye telemetry
+
 ## [0.3.52]
 - REL-842617 - Added UserId and WorkspaceUserId to log context
 
