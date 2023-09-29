@@ -15,9 +15,10 @@ namespace Relativity.MassImport.Data
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
 		private readonly TableNames _tableNames;
 		private readonly int _queryTimeout;
-		private readonly string importServiceGuidId = "21f65fdc-3016-4f2b-9698-de151a6186a2";
-		private readonly string createMissingFolders = $"CreateMissingFolders";
-		private readonly string folderCandidateTableType = $"FolderCandidateTableType";
+		private const string CreateMissingFolders_21f65fdc_3016_4f2b_9698_de151a6186a2 = "CreateMissingFolders_21f65fdc-3016-4f2b-9698-de151a6186a2";
+		private const string FolderCandidateTableType_21f65fdc_3016_4f2b_9698_de151a6186a2 = "FolderCandidateTableType_21f65fdc-3016-4f2b-9698-de151a6186a2";
+		private const string CreateMissingFoldersName = "CreateMissingFolders";
+		private const string FolderCandidateTableTypeName = "FolderCandidateTableType";
 
 		public Folder(kCura.Data.RowDataGateway.BaseContext context, TableNames tableNames)
 		{
@@ -46,47 +47,24 @@ END
 
 		public List<FolderArtifactIDMapping> CreateMissingFolders(IEnumerable<SqlDataRecord> candidate, int rootFolderID, int tempRootFolderID, int userID)
 		{
-			var parameterList = new List<SqlParameter>();
-			string storedProcedureToUse = string.Empty;
-			if (AreNewElementsCreatedInDatabase() && ToggleProvider.Current.IsEnabled<EnableNonLatinCharFolderErrorFreeCreateNewFolderToggle>())
+			try
 			{
-				storedProcedureToUse = $"{createMissingFolders}_{importServiceGuidId}";
-				var candidateParameter = new SqlParameter("@candidate", candidate);
-				candidateParameter.SqlDbType = SqlDbType.Structured;
-				candidateParameter.TypeName = $"EDDSDBO.{folderCandidateTableType}_{importServiceGuidId}";
-				parameterList.Add(candidateParameter);
-			}
-			else
-			{
-				storedProcedureToUse = createMissingFolders;
-				var candidateParameter = new SqlParameter("@candidate", candidate);
-				candidateParameter.SqlDbType = SqlDbType.Structured;
-				candidateParameter.TypeName = "EDDSDBO.FolderCandidateTableType";
-				parameterList.Add(candidateParameter);
-			}
-
-			var rootFolderIDParameter = new SqlParameter("@rootFolderID", rootFolderID);
-			rootFolderIDParameter.SqlDbType = SqlDbType.Int;
-			parameterList.Add(rootFolderIDParameter);
-
-			var tempRootFolderIDParameter = new SqlParameter("@tempRootFolderID", tempRootFolderID);
-			tempRootFolderIDParameter.SqlDbType = SqlDbType.Int;
-			parameterList.Add(tempRootFolderIDParameter);
-
-			var userIDParameter = new SqlParameter("@userID", userID);
-			userIDParameter.SqlDbType = SqlDbType.Int;
-			parameterList.Add(userIDParameter);
-
-			var folderArtifactIdMappings = new List<FolderArtifactIDMapping>();
-			using (var reader = _context.ExecuteProcedureAsReader(storedProcedureToUse, parameterList))
-			{
-				while (reader.Read())
+				if (ToggleProvider.Current.IsEnabled<EnableNonLatinCharFolderErrorFreeCreateNewFolderToggle>())
 				{
-					folderArtifactIdMappings.Add(new FolderArtifactIDMapping(Convert.ToInt32(reader[0]), Convert.ToInt32(reader[1]), Convert.ToBoolean(reader[2])));
+					return CreateMissingFoldersRunStoreProcedure(CreateMissingFolders_21f65fdc_3016_4f2b_9698_de151a6186a2, FolderCandidateTableType_21f65fdc_3016_4f2b_9698_de151a6186a2, candidate, rootFolderID, tempRootFolderID, userID);
 				}
-			}
 
-			return folderArtifactIdMappings;
+				return CreateMissingFoldersRunStoreProcedure(CreateMissingFoldersName, FolderCandidateTableTypeName, candidate, rootFolderID, tempRootFolderID, userID);
+			}
+			catch (Exception ex)
+			{
+				if (ex.InnerException.Message == "Could not find stored procedure 'CreateMissingFolders_21f65fdc-3016-4f2b-9698-de151a6186a2'.")
+				{
+					return CreateMissingFoldersRunStoreProcedure(CreateMissingFoldersName, FolderCandidateTableTypeName, candidate, rootFolderID, tempRootFolderID, userID);
+				}
+
+				throw;
+			}
 		}
 
 		public void SetParentFolderIDsToRootFolderID(int workspaceID, int rootFolderID)
@@ -128,18 +106,37 @@ END
 			_context.ExecuteNonQuerySQLStatement(sqlStatement, parameterList, _queryTimeout);
 		}
 
-		private bool AreNewElementsCreatedInDatabase()
+		private List<FolderArtifactIDMapping> CreateMissingFoldersRunStoreProcedure(string storeProcedureName, string typeName, IEnumerable<SqlDataRecord> candidate, int rootFolderID, int tempRootFolderID, int userID)
 		{
-			string sql = $@"IF (object_id('{createMissingFolders}_{importServiceGuidId}') IS NULL) OR (type_id('{folderCandidateTableType}_{importServiceGuidId}') IS NULL)
-BEGIN
-select 0
-END
-ELSE
-BEGIN
-select 1;	
-END";
-			int numberOfTypeUsages = (int)_context.ExecuteSqlStatementAsScalar(sql);
-			return numberOfTypeUsages == 1;
+			var parameterList = new List<SqlParameter>();
+
+			var candidateParameter = new SqlParameter("@candidate", candidate);
+			candidateParameter.SqlDbType = SqlDbType.Structured;
+			candidateParameter.TypeName = $"EDDSDBO.{typeName}";
+			parameterList.Add(candidateParameter);
+
+			var rootFolderIDParameter = new SqlParameter("@rootFolderID", rootFolderID);
+			rootFolderIDParameter.SqlDbType = SqlDbType.Int;
+			parameterList.Add(rootFolderIDParameter);
+
+			var tempRootFolderIDParameter = new SqlParameter("@tempRootFolderID", tempRootFolderID);
+			tempRootFolderIDParameter.SqlDbType = SqlDbType.Int;
+			parameterList.Add(tempRootFolderIDParameter);
+
+			var userIDParameter = new SqlParameter("@userID", userID);
+			userIDParameter.SqlDbType = SqlDbType.Int;
+			parameterList.Add(userIDParameter);
+
+			var folderArtifactIdMappings = new List<FolderArtifactIDMapping>();
+			using (var reader = _context.ExecuteProcedureAsReader(storeProcedureName, parameterList))
+			{
+				while (reader.Read())
+				{
+					folderArtifactIdMappings.Add(new FolderArtifactIDMapping(Convert.ToInt32(reader[0]), Convert.ToInt32(reader[1]), Convert.ToBoolean(reader[2])));
+				}
+			}
+
+			return folderArtifactIdMappings;
 		}
 	}
 }
