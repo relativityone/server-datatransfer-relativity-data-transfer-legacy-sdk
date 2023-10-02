@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.Services.Metrics;
@@ -32,8 +34,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 		{
 			await _uut.Publish();
 
-			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 1)), Times.Once);
-			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 1)), Times.Once);
+			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 4)), Times.Once);
+			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 4)), Times.Once);
 		}
 
 		[Test]
@@ -45,8 +47,8 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 
 			await _uut.Publish();
 
-			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 2 && y[propertyName] == propertyValue)), Times.Once);
-			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 2 && y[propertyName] == propertyValue)), Times.Once);
+			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 5 && y[propertyName] == propertyValue)), Times.Once);
+			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 5 && y[propertyName] == propertyValue)), Times.Once);
 		}
 
 		[Test]
@@ -61,10 +63,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 
 			await _uut.Publish();
 
-			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 3
+			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 6
 				&& y[propertyName1] == propertyValue1
 				&& y[propertyName2] == propertyValue2)), Times.Once);
-			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 3
+			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 6
 				&& y[propertyName1] == propertyValue1
 				&& y[propertyName2] == propertyValue2)), Times.Once);
 		}
@@ -80,10 +82,10 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 
 			await _uut.Publish();
 
-			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 3
+			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 6
 				&& (long)y[propertyName] == propertyValue1 + propertyValue2
 				&& (long)y[$"{propertyName}:CallsCount"] == 2L)), Times.Once);
-			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 3
+			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 6
 				&& (long)y[propertyName] == propertyValue1 + propertyValue2
 				&& (long)y[$"{propertyName}:CallsCount"] == 2L)), Times.Once);
 		}
@@ -101,24 +103,35 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.Metrics
 
 			await _uut.Publish();
 
-			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 3
+			_metricsPublisher1Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 6
 				&& (long)y[propertyName] == propertyValue1 + propertyValue2 + propertyValue3
 				&& (long)y[$"{propertyName}:CallsCount"] == 3L)), Times.Once);
-			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 3
+			_metricsPublisher2Mock.Verify(x => x.Publish(It.Is<Dictionary<string, object>>(y => y.Count == 6
 				&& (long)y[propertyName] == propertyValue1 + propertyValue2 + propertyValue3
 				&& (long)y[$"{propertyName}:CallsCount"] == 3L)), Times.Once);
 		}
 
 		[Test]
-		public void ShouldPublishHaveTeamIdMetrics_WhenContextIsCreated()
+		public void ShouldPublishHaveBasicServiceMetrics_WhenContextIsCreated()
 		{
 			// Act
 			_uut.Publish();
 
 			// Assert
 			_metricsPublisher1Mock.Verify(x =>
-				x.Publish(It.Is<Dictionary<string, object>>(di =>
-					di.ContainsKey("r1.team.id") && di["r1.team.id"].Equals("PTCI-4941411"))));
+				x.Publish(It.Is<Dictionary<string, object>>(di => CheckDefaults(di))
+				));
+		}
+
+		private bool CheckDefaults(Dictionary<string, object> dictionary)
+		{
+			dictionary.Should().ContainKeys(new[] { "r1.team.id", "service.name", "service.namespace", "application.name" });
+			dictionary["r1.team.id"].Should().Be("PTCI-4941411");
+			dictionary["service.name"].Should().Be("data-transfer-legacy-rap-kepler-api");
+			dictionary["service.namespace"].Should().Be("data-transfer-legacy-rap");
+			dictionary["application.name"].Should().Be("DataTransfer.Legacy");
+
+			return true;
 		}
 	}
 }

@@ -26,7 +26,9 @@ namespace Relativity.MassImport.Core
             _customData["ImportType"] = importType;
             _customData["System"] = system;
             _customData[TelemetryConstants.AttributeNames.R1TeamID] = TelemetryConstants.Values.R1TeamID;
-
+            _customData[TelemetryConstants.AttributeNames.ServiceName] = TelemetryConstants.Values.ServiceName;
+            _customData[TelemetryConstants.AttributeNames.ServiceNamespace] = TelemetryConstants.Values.ServiceNamespace;
+            _customData[TelemetryConstants.AttributeNames.ApplicationName] = TelemetryConstants.Values.ApplicationName;
 			return this;
         }
 
