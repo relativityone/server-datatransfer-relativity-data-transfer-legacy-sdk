@@ -348,7 +348,7 @@ SELECT
 	[{identifierColumnName}]
 FROM [Resource].[{tableName}]
 WHERE
-	[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+	[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending} AND [ArtifactID] > 0
 ORDER BY
 	kCura_Import_OriginalLineNumber";
 
