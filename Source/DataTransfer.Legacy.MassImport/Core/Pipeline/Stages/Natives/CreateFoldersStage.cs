@@ -19,7 +19,7 @@ namespace Relativity.MassImport.Core.Pipeline.Stages.Natives
 			bool useFolderLogic = settings.RootFolderID != 0; // Clients which contain old settings objects will end up passing 0 as RootFolderID
 			if (useFolderLogic)
 			{
-				var folder = new Folder(_context.BaseContext.DBContext, _context.JobDetails.TableNames);
+				var folder = new Folder(_context.BaseContext.DBContext, _context.JobDetails.TableNames, _context.Logger);
 				_context.ImportMeasurements.SecondaryArtifactCreationTime.Start();
 				InjectionManager.Instance.Evaluate("88dbcdc5-e396-4457-945d-b7734ddfa7b2");
 				int activeWorkspaceID = _context.BaseContext.AppArtifactID; // For anything that MUST differ by workspace (ie: folderManager caches mappings of a workspace's folders to their aritfactID)

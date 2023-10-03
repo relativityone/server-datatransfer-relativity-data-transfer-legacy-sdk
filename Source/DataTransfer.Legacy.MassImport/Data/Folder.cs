@@ -6,6 +6,7 @@ using Microsoft.SqlServer.Server;
 using Relativity.Data.MassImport;
 using DataTransfer.Legacy.MassImport.Data.Cache;
 using DataTransfer.Legacy.MassImport.Toggles;
+using Relativity.Kepler.Logging;
 using Relativity.Toggles;
 
 namespace Relativity.MassImport.Data
@@ -15,16 +16,18 @@ namespace Relativity.MassImport.Data
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
 		private readonly TableNames _tableNames;
 		private readonly int _queryTimeout;
+		private readonly Relativity.Logging.ILog _logger;
 		private const string CreateMissingFolders_21f65fdc_3016_4f2b_9698_de151a6186a2 = "CreateMissingFolders_21f65fdc-3016-4f2b-9698-de151a6186a2";
 		private const string FolderCandidateTableType_21f65fdc_3016_4f2b_9698_de151a6186a2 = "FolderCandidateTableType_21f65fdc-3016-4f2b-9698-de151a6186a2";
 		private const string CreateMissingFoldersName = "CreateMissingFolders";
 		private const string FolderCandidateTableTypeName = "FolderCandidateTableType";
 
-		public Folder(kCura.Data.RowDataGateway.BaseContext context, TableNames tableNames)
+		public Folder(kCura.Data.RowDataGateway.BaseContext context, TableNames tableNames, Relativity.Logging.ILog logger)
 		{
 			_context = context;
 			_tableNames = tableNames;
 			_queryTimeout = InstanceSettings.MassImportSqlTimeout;
+			_logger = logger;
 		}
 
 		public DataTable GetFolderPathsForFoldersWithoutIDs(int workspaceID)
@@ -60,6 +63,7 @@ END
 			{
 				if (ex.InnerException.Message == "Could not find stored procedure 'CreateMissingFolders_21f65fdc-3016-4f2b-9698-de151a6186a2'.")
 				{
+					_logger.LogWarning(ex, "DataTransfer.Legacy failed to use CreateMissingFolders_21f65fdc-3016-4f2b-9698-de151a6186a2 - most likely toggle EnableNonLatinCharFolderErrorFreeCreateNewFolderToggle is ON but store procedure and/or user-defined table type does not exist in workspace database.");
 					return CreateMissingFoldersRunStoreProcedure(CreateMissingFoldersName, FolderCandidateTableTypeName, candidate, rootFolderID, tempRootFolderID, userID);
 				}
 
