@@ -363,7 +363,7 @@ ORDER BY
 	FROM
 		[Resource].[{tableName}]
 	WHERE
-		[Status] = {(long) Relativity.MassImport.DTO.ImportStatus.Pending}
+		[Status] = {(long) Relativity.MassImport.DTO.ImportStatus.Pending} AND [ArtifactID] > 0
 	ORDER BY
 		[OriginalLineNumber]";
 
