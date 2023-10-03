@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.55]
+- REL-790684 add EnableNonLatinCharFolderErrorFreeCreateNewFolderStoreProcedureToggle which anbles using of fixed store procedure for creating missing folders (CreateMissingFolders_21f65fdc-3016-4f2b-9698-de151a6186a2)
+
 ## [0.3.54]
 - REL-878708 - Fix for import pipeline reports success for natives even when errors occurred during folder creation
 
