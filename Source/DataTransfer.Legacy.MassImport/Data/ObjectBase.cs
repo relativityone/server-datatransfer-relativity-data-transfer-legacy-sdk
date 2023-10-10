@@ -365,10 +365,10 @@ namespace Relativity.MassImport.Data
 				// Child object! WHOA
 				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild);
 				string childObjectCreations = string.Format("SELECT DISTINCT [DocumentIdentifier] FROM [Resource].[{0}] WHERE [ObjectTypeID] = @artifactTypeID AND [ObjectArtifactID] = -1", _tableNames.Objects);
-				string produceLineErrors = string.Format("UPDATE [Resource].[{0}] SET [kCura_Import_Status] = [kCura_Import_Status] | {1}, [kCura_Import_ErrorData] = '{4}' WHERE [{2}] in ({3})", 
-					_tableNames.Native, (object)errorStatusCode, IdentifierField.GetColumnName(), childObjectCreations, fieldName);
-				
-				ExecuteNonQuerySQLStatement(produceLineErrors, new[] { new SqlParameter("@artifactTypeID", artifactTypeID) });
+				string produceLineErrors = string.Format("UPDATE [Resource].[{0}] SET [kCura_Import_Status] = [kCura_Import_Status] | {1}, [kCura_Import_ErrorData] = @fieldName WHERE [{2}] in ({3})", 
+					_tableNames.Native, (object)errorStatusCode, IdentifierField.GetColumnName(), childObjectCreations);
+
+				ExecuteNonQuerySQLStatement(produceLineErrors, new[] { new SqlParameter("@artifactTypeID", artifactTypeID), new SqlParameter("@fieldName", fieldName) });
 
 				// Delete the problem documents from the Objects creation (need the inner select to prevent the document from getting borked during objects import
 				string sql = string.Format("DELETE FROM [Resource].[{0}] WHERE [DocumentIdentifier] in ({1})", _tableNames.Objects, childObjectCreations);
@@ -382,10 +382,10 @@ namespace Relativity.MassImport.Data
 			{
 				// this method updates the temp artifact table to add ids for any known RDOs that may be about to be imported from a single or multi object field.
 				string sql = new SerialSqlQuery(
-					new InlineSqlQuery(ImportSql.ValidateReferencedObjectsAreNotDuplicated(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID, field.DisplayName)),
+					new InlineSqlQuery(ImportSql.ValidateReferencedObjectsAreNotDuplicated(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID)),
 					new InlineSqlQuery(ImportSql.SetArtifactIdForExistingMultiObjects(_tableNames, GetKeyField().GetColumnName(), associatedObjectTable, idFieldColumnName, associatedArtifactTypeID))
 					).ToString();
-				ExecuteNonQuerySQLStatement(sql);
+				ExecuteNonQuerySQLStatement(sql, new[] { new SqlParameter("@fieldName", field.DisplayName)});
 			}
 			catch (kCura.Data.RowDataGateway.ExecuteSQLStatementFailedException ex)
 			{
