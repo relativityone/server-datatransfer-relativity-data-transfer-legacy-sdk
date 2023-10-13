@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.57]
+- REL-878172 - Parametrize fieldName to avoid SQLi vulnerability in Import if a field display name is maliciously crafted
+
 ## [0.3.56]
 - REL-879623 - Fix for import pipeline reports success for images even when errors occurred before documents imported
 
