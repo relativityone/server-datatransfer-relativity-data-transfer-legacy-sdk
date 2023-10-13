@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Text;
 using System.Threading.Tasks;
+using DataTransfer.Legacy.MassImport.NUnit.Integration.Helpers;
 using MassImport.NUnit.Integration.Helpers;
 using NUnit.Framework;
 using Relativity.Core.Service;
 using Relativity.MassImport.Api;
 using Relativity.MassImport.DTO;
 using MassImportManager = Relativity.Core.Service.MassImportManager;
-using Moq;
-using Relativity.API;
-using Relativity.Productions.Services.Private.V1;
 
 namespace MassImport.NUnit.Integration.FunctionalTests
 {
@@ -122,7 +118,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
             // build object file content
 
-            var objectsFile = new[] { new ObjectStagingTableRow
+            var objectsFile = new[] { new ObjectHelper.ObjectStagingTableRow
                 {
                     PrimaryObjectName = "ORDER_1",
                     ObjectTypeID = _ordersArtifactTypeId,
@@ -130,7 +126,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
                     SecondaryObjectName = "ORDER_2"
                 }
             };
-            string objectsFileContent = GetObjectsFile(fieldDelimiter, objectsFile);
+            string objectsFileContent = ObjectHelper.GetObjectsFile(fieldDelimiter, objectsFile);
 
             return new ObjectLoadInfo
             {
@@ -159,37 +155,6 @@ namespace MassImport.NUnit.Integration.FunctionalTests
                 UploadFiles = false,
                 UseBulkDataImport = true,
             };
-        }
-
-        private static string GetObjectsFile(string fieldDelimiter, IEnumerable<ObjectStagingTableRow> objectsRows)
-        {
-            StringBuilder metadataBuilder = new StringBuilder();
-            foreach (var objectRow in objectsRows)
-            {
-                metadataBuilder.AppendLine(string.Join(fieldDelimiter, objectRow.GetValues()));
-            }
-
-            return metadataBuilder.ToString();
-        }
-
-        private class ObjectStagingTableRow
-        {
-            public string PrimaryObjectName { get; set; }
-            public string SecondaryObjectName { get; set; }
-            public int ObjectTypeID { get; set; }
-            public int FieldID { get; set; }
-
-            public string[] GetValues()
-            {
-                return new string[]
-                {
-                    PrimaryObjectName,
-                    SecondaryObjectName,
-                    "-1",
-                    ObjectTypeID.ToString(),
-                    FieldID.ToString(),
-                };
-            }
         }
     }
 }
