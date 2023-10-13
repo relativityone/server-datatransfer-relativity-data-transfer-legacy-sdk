@@ -353,7 +353,7 @@ namespace Relativity.MassImport.Data
 
 			// create errors for associated objects that do not exist
 			string query = ImportSql.VerifyExistenceOfAssociatedMultiObjects(_tableNames, importedIdentifierColumn, idFieldColumnName, associatedObjectTable, field);
-			ExecuteNonQuerySQLStatement(query);
+			ExecuteNonQuerySQLStatement(query, new[] { new SqlParameter("@fieldName", field.DisplayName) });
 		}
 
 		private void CheckForChildAssociatedObjects(int artifactTypeID, string fieldName, int fieldArtifactId)
