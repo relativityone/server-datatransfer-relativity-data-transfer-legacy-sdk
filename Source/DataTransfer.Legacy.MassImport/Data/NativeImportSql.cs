@@ -1092,7 +1092,7 @@ WHERE
 UPDATE N
 SET 
 	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
-	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
+	[kCura_Import_ErrorData] = '@fieldName|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
 FROM [Resource].[{tableNames.Native}] N
 WHERE N.[{importedIdentifierColumn}] IN (SELECT [{tableNames.Native}].[{importedIdentifierColumn}]
 	FROM [Resource].[{tableNames.Native}] INNER JOIN
