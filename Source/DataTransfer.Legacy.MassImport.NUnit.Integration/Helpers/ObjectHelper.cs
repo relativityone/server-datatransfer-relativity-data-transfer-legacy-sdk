@@ -25,11 +25,13 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Integration.Helpers
 
 			public string[] GetValues()
 			{
+				int objectArtifactId = -1;
+
 				return new string[]
 				{
 					PrimaryObjectName,
 					SecondaryObjectName,
-					"-1",
+					objectArtifactId.ToString(),
 					ObjectTypeID.ToString(),
 					FieldID.ToString(),
 				};
