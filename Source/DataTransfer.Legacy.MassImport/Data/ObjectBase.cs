@@ -299,7 +299,7 @@ namespace Relativity.MassImport.Data
 			string associatedObjectTable = Relativity.Data.FieldHelper.GetColumnName(ColumnDefinitionCache[field.ArtifactID].ObjectTypeName);
 
 			string query = AssociatedObjectsValidationSql.ValidateAssociatedObjectsReferencedByArtifactIdExist(_tableNames, field, associatedObjectTable, idFieldLinkArg);
-			ExecuteNonQuerySQLStatement(query);
+			ExecuteNonQuerySQLStatement(query, new[] { new SqlParameter("@fieldDisplayName", field.DisplayName) });
 		}
 
 		public virtual void CreateAssociatedObjectsForMultiObjectFieldByName(FieldInfo field, int userID, string requestOrigination, string recordOrigination, bool performAudit)
