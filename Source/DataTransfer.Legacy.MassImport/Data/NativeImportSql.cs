@@ -351,7 +351,7 @@ INSERT INTO [ArtifactAncestry](
 		#InsertedArtifactIDsTable ";
 		}
 
-		public FormattableString ValidateReferencedObjectsAreNotDuplicated(TableNames tableNames, string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID, string fieldDisplayName)
+		public FormattableString ValidateReferencedObjectsAreNotDuplicated(TableNames tableNames, string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID)
 		{
 			return $@"
 			;WITH DuplicatedObjects(ObjectName) AS
@@ -363,7 +363,7 @@ INSERT INTO [ArtifactAncestry](
 			)
 			UPDATE N
 			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject},
-				kCura_Import_ErrorData = D.ObjectName + '|{associatedObjectTable}' + '|{fieldDisplayName}'
+				kCura_Import_ErrorData = D.ObjectName + '|{associatedObjectTable}' + '|@fieldName'
 			FROM [Resource].[{tableNames.Native}] N
 				JOIN [Resource].[{tableNames.Objects}] O
 					ON N.[{keyFieldColumnName}] = O.DocumentIdentifier
@@ -1092,7 +1092,7 @@ WHERE
 UPDATE N
 SET 
 	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
-	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
+	[kCura_Import_ErrorData] = '@fieldName|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
 FROM [Resource].[{tableNames.Native}] N
 WHERE N.[{importedIdentifierColumn}] IN (SELECT [{tableNames.Native}].[{importedIdentifierColumn}]
 	FROM [Resource].[{tableNames.Native}] INNER JOIN

@@ -46,7 +46,7 @@ WHERE
 UPDATE N
 SET
 	[kCura_Import_Status] = [kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsMissing},
-	[kCura_Import_ErrorData] = '{field.DisplayName}|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
+	[kCura_Import_ErrorData] = '@fieldDisplayName|' + N.[{field.GetColumnName()}] + '|{associatedObjectTable}'
 FROM [Resource].[{tableNames.Native}] N
 WHERE
 	N.[{field.GetColumnName()}] IS NOT NULL
@@ -77,7 +77,7 @@ WHERE
 UPDATE N2
 SET
 	N2.[kCura_Import_Status] = N2.[kCura_Import_Status] + {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject},
-	N2.[kCura_Import_ErrorData] = N.[{field.GetColumnName()}] + '|{associatedObjectTable}' + '|{field.DisplayName}'
+	N2.[kCura_Import_ErrorData] = N.[{field.GetColumnName()}] + '|{associatedObjectTable}' + '|@fieldDisplayName'
 FROM
 	[Resource].[{tableNames.Native}] N
 JOIN [DuplicatedAssociatedObjects] ON
