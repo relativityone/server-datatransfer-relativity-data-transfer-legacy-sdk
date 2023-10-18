@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.0] - 10-18-2023
+
+### Changed
+ 
+- Prepared branch for the next official Relativity 2024 release.
+- Used the latest SUT release image.
+
 ## [23000.19.1] - 09-08-2023
 
 ### Changed
