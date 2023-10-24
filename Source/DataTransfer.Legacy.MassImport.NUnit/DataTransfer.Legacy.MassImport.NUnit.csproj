@@ -69,6 +69,20 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Resources\NativeSqlQueryTest\ExpecteCreateAssociatedObjectsForSingleObjectFieldByName.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ObjectsSqlQueryTest\ExpectedCreateAssociatedObjectsForSelfReferencedSingleObjectFieldByName.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ObjectsSqlQueryTest\ExpectedCreateAssociatedObjectsForSingleObjectDocumentFieldByName.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\ObjectsSqlQueryTest\ExpectedCreateAssociatedObjectsForSingleObjectFieldByName.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Target Name="CopyCustomContent" BeforeTargets="Build">
     <Copy SourceFiles="@(DataGridTestFiles)" DestinationFolder="$(OutDir)\Resources\" SkipUnchangedFiles="true" />
   </Target>
