@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Relativity.Data;
@@ -36,12 +37,12 @@ namespace Relativity.MassImport.NUnit.Data
 			var uri = new UriBuilder(codeBase);
 			string path = Uri.UnescapeDataString(uri.Path);
 			string directoryPath = System.IO.Path.GetDirectoryName(path);
-			string tempResourcesPath = string.Format(@"{0}\Resources", directoryPath);
+			string tempResourcesPath = $@"{directoryPath}\Resources";
 
-			_testFilePath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile.txt");
-			_testFileAlternateDelimiterPath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile_AlternateDelimiter.txt");
-			_testFileWithDataGridIDPath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile_WithDataGridID.txt");
-			_testFileWithDataGridIDNoFieldsPath = string.Format(@"{0}\{1}", tempResourcesPath, "DataGridBulkLoadTestFile_WithDataGridID_NoFields.txt");
+			_testFilePath = $@"{tempResourcesPath}\{"DataGridBulkLoadTestFile.txt"}";
+			_testFileAlternateDelimiterPath = $@"{tempResourcesPath}\{"DataGridBulkLoadTestFile_AlternateDelimiter.txt"}";
+			_testFileWithDataGridIDPath = $@"{tempResourcesPath}\{"DataGridBulkLoadTestFile_WithDataGridID.txt"}";
+			_testFileWithDataGridIDNoFieldsPath = $@"{tempResourcesPath}\{"DataGridBulkLoadTestFile_WithDataGridID_NoFields.txt"}";
 
 			_dgLookupContextMock = new Mock<DataGridContext>(new Mock<DataGridContextBase>().Object);		
 
@@ -166,11 +167,12 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA2", "DOCAAA3" };
 			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
@@ -198,11 +200,12 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			CollectionAssert.AreEquivalent(Enumerable.Empty<string>(), foundIdentifiers);
 			builder.Verify(b => b.AddDocument(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
@@ -224,14 +227,16 @@ namespace Relativity.MassImport.NUnit.Data
 				ReadFullTextFromFileLocation = false
 			};
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA2", "DOCAAA3" };
 			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
+			skippedIdentifiers.Should().BeEmpty();
 			builder.Verify(b => b.AddDocument(1, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(2, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(3, "document", It.IsAny<string>()), Times.Once());
@@ -250,13 +255,15 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFilePath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			CollectionAssert.AreEquivalent(Enumerable.Empty<string>(), foundIdentifiers);
+			skippedIdentifiers.Should().BeEmpty();
 			builder.Verify(b => b.AddDocument(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -279,14 +286,16 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|", Relativity.Constants.ENDLINETERMSTRING, _testFileAlternateDelimiterPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsMissingOneRecord(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsMissingOneRecord(), foundIdentifiers, skippedIdentifiers);
 
 			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA3" };
 			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
+			skippedIdentifiers.Should().BeEquivalentTo("DOCAAA2", "\r\n");
 			builder.Verify(b => b.AddDocument(1, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(2, "document", It.IsAny<string>()), Times.Once());
 		}
@@ -308,14 +317,16 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA2", "DOCAAA3" };
 			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
+			skippedIdentifiers.Should().BeEmpty();
 			builder.Verify(b => b.AddDocument(1, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(2, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(3, "document", It.IsAny<string>()), Times.Once());
@@ -334,13 +345,15 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			CollectionAssert.AreEquivalent(Enumerable.Empty<string>(), foundIdentifiers);
+			skippedIdentifiers.Should().BeEmpty();
 			builder.Verify(b => b.AddDocument(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<string>()), Times.Never());
 		}
 
@@ -361,14 +374,16 @@ namespace Relativity.MassImport.NUnit.Data
 			};
 
 			var foundIdentifiers = new HashSet<string>();
+			var skippedIdentifiers = new HashSet<string>();
 			var reader = new DataGridTempFileDataReader(options, "|x", Relativity.Constants.ENDLINETERMSTRING, _testFileWithDataGridIDPath, new NullLogger(), 0, 0) { MaximumDataGridFieldSize = 104857600L };
 			var loader = new DataGridReader(_dgLookupContextMock.Object, _caseContextMock.Object, options, reader, new NullLogger(), new List<FieldInfo>(), new Mock<IDataGridSqlTempReader>().Object);
 			var builder = new Mock<IDataGridRecordBuilder>();
 
-			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers);
+			await loader.ReadDataGridDocumentsFromDataReader(builder.Object, GetMappingsFull(), foundIdentifiers, skippedIdentifiers);
 
 			var expectedIdentifiers = new List<string>() { "DOCAAA1", "DOCAAA2", "DOCAAA3" };
 			CollectionAssert.AreEquivalent(expectedIdentifiers, foundIdentifiers);
+			skippedIdentifiers.Should().BeEmpty();
 			builder.Verify(b => b.AddDocument(1, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(2, "document", It.IsAny<string>()), Times.Once());
 			builder.Verify(b => b.AddDocument(3, "document", It.IsAny<string>()), Times.Once());

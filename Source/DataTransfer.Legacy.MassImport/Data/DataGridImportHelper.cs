@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
 using Relativity.Logging;
@@ -67,12 +68,14 @@ namespace Relativity.MassImport.Data
 
 				FileSystemRecordBuilder recordBuilder = new FileSystemRecordBuilder(writer, Relativity.Data.Config.DataGridConfiguration.DataGridImportSmallFieldThreshold, Relativity.Data.Config.DataGridConfiguration.DataGridWriteParallelism);
 				var foundIdentifiers = new HashSet<string>();
+				var skippedIdentifiers = new HashSet<string>();
 				try
 				{
-					loader.ReadDataGridDocumentsFromDataReader(recordBuilder, dataGridMappings, foundIdentifiers).Wait();
+					loader.ReadDataGridDocumentsFromDataReader(recordBuilder, dataGridMappings, foundIdentifiers, skippedIdentifiers).Wait();
 				}
 				catch (AggregateException ex)
 				{
+					logger.LogError(ex, "Write to Data Grid failed");
 					throw new Exception($"Write to Data Grid failed: {ex.InnerExceptions.First().Message}", ex.InnerExceptions.First());
 				}
 
@@ -83,9 +86,8 @@ namespace Relativity.MassImport.Data
 
 				// REL-108860: Something is happening where records don't end up in the data grid temp file.
 				// This emits document level errors instead of crashing
-				IEnumerable<DataGridImportIdentity> docsWithNullGuids;
-				docsWithNullGuids = dataGridMappings.ExceptByDocumentIdentifier(foundIdentifiers);
-				if (docsWithNullGuids.Any())
+				DataGridImportIdentity[] docsWithNullGuids = dataGridMappings.ExceptByDocumentIdentifier(foundIdentifiers).ToArray();
+				if (docsWithNullGuids.Length > 0)
 				{
 					logger.LogError("Some identifiers expected in the data file were not found: [{@missingIdentifiers}]", docsWithNullGuids);
 					TraceHelper.SetStatusError(Activity.Current, $"Some identifiers expected in the data file were not found: [{docsWithNullGuids}]");
@@ -94,10 +96,26 @@ namespace Relativity.MassImport.Data
 					logger.LogWarning("Import Identifiers with null guids: {nullGuids}", docsWithNullGuids.Select(doc => doc.ImportID));
 					foreach (DataGridImportIdentity identifier in docsWithNullGuids)
 					{
-						errorManager.AddErrorStatuses(identifier.ArtifactID, "Unexpected Null Field. No Data Grid text has been written. Please retry").Wait();
+						errorManager.AddErrorStatuses(identifier.ArtifactID, "Unexpected Null Field. No Data Grid text has been written. Please retry").GetAwaiter().GetResult();
 					}
 				}
 				// End REL-108860
+				if (skippedIdentifiers.Count > 0)
+				{
+					logger.LogWarning("Some identifiers were skipped: [{@skippedIdentifiers}]", skippedIdentifiers);
+				}
+
+				if (skippedIdentifiers.Count > 0 && docsWithNullGuids.Length > 0)
+				{
+					foreach (var docWithNullGuid in docsWithNullGuids)
+					{
+						logger.LogWarning("Document Identifier with null guid: {id}, length: {length}, bytes: {@bytes} ", docWithNullGuid.DocumentIdentifier, docWithNullGuid.DocumentIdentifier.Length, Encoding.Unicode.GetBytes(docWithNullGuid.DocumentIdentifier));
+					}
+					foreach (var skippedIdentifier in skippedIdentifiers)
+					{
+						logger.LogWarning("Skipped Identifier: {id}, length: {length}, bytes: {@bytes} ", skippedIdentifier, skippedIdentifier.Length, Encoding.Unicode.GetBytes(skippedIdentifier));
+					}
+				}
 
 				if (anyPendingDocuments)
 				{

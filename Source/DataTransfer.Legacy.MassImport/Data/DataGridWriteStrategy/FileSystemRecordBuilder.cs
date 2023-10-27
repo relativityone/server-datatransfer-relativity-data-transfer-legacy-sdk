@@ -28,14 +28,6 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 			public TaskCompletionSource<bool> Completion { get; set; }
 		}
 
-		private class IndexingRequest
-		{
-			public string DataGridID { get; set; }
-			public string Type { get; set; }
-			public DataGridFieldInfo Field { get; set; }
-			public FieldInfo FieldValue { get; set; }
-		}
-
 		public FileSystemRecordBuilder(IDataGridWriter writer, int shortFieldLengthLimit, int writeParallelism)
 		{
 			_writer = writer;

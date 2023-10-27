@@ -30,7 +30,7 @@ namespace Relativity.MassImport.Data
 			_sqlTempReader = sqlTempReader;
 		}
 
-		public async Task ReadDataGridDocumentsFromDataReader(IDataGridRecordBuilder builder, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, HashSet<string> foundIdentifiers)
+		public async Task ReadDataGridDocumentsFromDataReader(IDataGridRecordBuilder builder, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, HashSet<string> foundIdentifiers, HashSet<string> skippedIdentifiers)
 		{
 			var logger = _correlationLogger.ForContext("Method", nameof(ReadDataGridDocumentsFromDataReader), true);
 			logger.LogVerbose("Starting");
@@ -64,6 +64,10 @@ namespace Relativity.MassImport.Data
 					if (!dataGridMappings.ContainsByDocumentIdentifier(identifier))
 					{
 						logger.LogDebug("Skipping unmapped record: {identifier}", identifier);
+						if (!string.IsNullOrEmpty(identifier))
+						{
+							skippedIdentifiers.Add(identifier);
+						}
 						continue; // skip unmapped records
 					}
 

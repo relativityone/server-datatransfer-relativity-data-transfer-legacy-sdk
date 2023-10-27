@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.59]
+- REL-886322 - Add logging the skipping identifiers for DataGrid
+
 ## [0.3.58]
 - REL-878172 - Fix for fieldDisplayName parameters
 

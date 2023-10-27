@@ -188,7 +188,6 @@ namespace Relativity.MassImport.Data
 		{
 			Func<FileStream> openFileStream = () =>
 			{
-				var fileInfoSize = kCura.Utility.File.Instance.GetFileSize(fileName);
 				var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, _BUFFER_SIZE);
 				foreach (byte bomByte in _encoding.GetPreamble())
 				{
@@ -200,10 +199,6 @@ namespace Relativity.MassImport.Data
 
 				// Using FileStream.Length because sometimes FileInfo.Length is giving us invalid length
 				_fileSize = fs.Length;
-				if (fileInfoSize != _fileSize)
-				{
-					_correlationLogger.LogWarning("FileSize {fileSize} is different then stream length {streamLength}", fileInfoSize, _fileSize);
-				}
 
 				return fs;
 			};
