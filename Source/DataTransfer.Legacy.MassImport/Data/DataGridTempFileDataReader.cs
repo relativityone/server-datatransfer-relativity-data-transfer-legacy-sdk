@@ -29,28 +29,28 @@ namespace Relativity.MassImport.Data
 		private long _length = 0;
 
 		public DataGridTempFileDataReader(
-			DataGridReaderOptions options, 
-			string fieldDelimiter, 
-			string lineDelimiter, 
-			string dataGridFilePath, 
+			DataGridReaderOptions options,
+			string fieldDelimiter,
+			string lineDelimiter,
+			string dataGridFilePath,
 			ILog correlationLogger) : this(
-				options, 
-				fieldDelimiter, 
-				lineDelimiter, 
-				dataGridFilePath, 
-				correlationLogger, 
-				Relativity.Data.Config.MassImportOnFileLockRetryWaitTimeInMilliseconds, 
+				options,
+				fieldDelimiter,
+				lineDelimiter,
+				dataGridFilePath,
+				correlationLogger,
+				Relativity.Data.Config.MassImportOnFileLockRetryWaitTimeInMilliseconds,
 				Relativity.Data.Config.MassImportOnFileLockRetryCount)
 		{
 		}
 
 		public DataGridTempFileDataReader(
-			DataGridReaderOptions options, 
-			string fieldDelimiter, 
-			string lineDelimiter, 
-			string dataGridFilePath, 
-			ILog correlationLogger, 
-			int massImportOnFileLockRetryCount, 
+			DataGridReaderOptions options,
+			string fieldDelimiter,
+			string lineDelimiter,
+			string dataGridFilePath,
+			ILog correlationLogger,
+			int massImportOnFileLockRetryCount,
 			int massImportOnFileLockRetryWaitTimeInMilliseconds)
 		{
 			_encoding = System.Text.Encoding.Unicode;
@@ -191,8 +191,15 @@ namespace Relativity.MassImport.Data
 				var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, _BUFFER_SIZE);
 				foreach (byte bomByte in _encoding.GetPreamble())
 				{
-					if (bomByte != fs.ReadByte()) // advance through the file's BOM before starting to read import data
+					int actualByte = fs.ReadByte();
+					if (bomByte != actualByte) // advance through the file's BOM before starting to read import data
 					{
+						this._correlationLogger.LogError(
+							"Expected to find BOM byte: {bomByte}, but found {actualByte} in the Data Grid bulk file. File size: {position}/{length}.",
+							bomByte,
+							actualByte,
+							fs.Position,
+							fs.Length);
 						throw new Exception($"Expected the Data Grid bulk file to begin with a {_encoding.EncodingName} preamble byte sequence but it was not found.");
 					}
 				}
