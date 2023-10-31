@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net472</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyName>Relativity.DataTransfer.Legacy.SDK</AssemblyName>
     <RootNamespace>Relativity.DataTransfer.Legacy.SDK</RootNamespace>
     <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
