@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.61]
+- REL-888313 - Added log in DataGridTempFileDataReader for bulk files without BOM.
+
 ## [0.3.60]
 - REL-885468 Change the .NET version of 'DataTransfer.Legacy.SDK' from 4.7.2 back to 4.6.2
 
