@@ -4,7 +4,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using MassImport.NUnit.Integration.Helpers;
 using Moq;
@@ -109,20 +108,24 @@ namespace MassImport.NUnit.Integration
 			Assert.AreEqual(expectedArtifactsUpdated, result.ArtifactsUpdated, "Invalid number of updated artifacts");
 		}
 
-		protected string GetMetadata(string fieldDelimiter, DataTable fieldValues, string[] folders)
+		protected string GetMetadata(string fieldDelimiter, DataTable fieldValues, string[] folders, bool includeMetadataFileId)
 		{
 			StringBuilder metadataBuilder = new StringBuilder();
 			string folderId = folders != null ? "-9" : "1003697";
 
 			for (int i = 0; i < fieldValues.Rows.Count; i++)
 			{
+				// kCura_Import_ID = 0; kCura_Import_Status = 0; kCura_Import_IsNew = 0; ArtifactID = 0; kCura_Import_OriginalLineNumber = i; kCura_Import_FileGuid; kCura_Import_FileName; kCura_Import_Location; kCura_Import_OriginalFileLocation; kCura_Import_FileSize = 0; kCura_Import_ParentFolderID = folderId
 				string prefix = $"0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}0{fieldDelimiter}{i}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}0{fieldDelimiter}{folderId}{fieldDelimiter}";
 				metadataBuilder.Append(prefix);
-
+				
+				// each field value
 				string values = string.Join(fieldDelimiter, fieldValues.Rows[i].ItemArray.Select(item => item.ToString()));
 				metadataBuilder.Append(values);
-
-				string postfix = $"{fieldDelimiter}{GetFolderName(folders, i)}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
+				
+				string metadataID = includeMetadataFileId ? $"{fieldDelimiter}{Guid.NewGuid()}" : string.Empty;
+				// ExtractedTextEncodingPageCode; kCura_Import_ParentFolderPath = FolderName; kCura_Import_MetadataFileIdColumn = metadataID; kCura_DataGrid_Exception; kCura_Import_ErrorData
+				string postfix = $"{fieldDelimiter}{GetFolderName(folders, i)}{metadataID}{fieldDelimiter}{fieldDelimiter}{fieldDelimiter}{Environment.NewLine}";
 				metadataBuilder.Append(postfix);
 			}
 

@@ -58,8 +58,9 @@ namespace Relativity.MassImport.Core
             _customData[nameof(settings.Billable)] = settings.Billable;
             _customData[nameof(settings.BulkFileSharePath)] = settings.BulkFileSharePath;
             _customData[nameof(settings.OverrideReferentialLinksRestriction)] =
-                settings.OverrideReferentialLinksRestriction;
-            _customData[$"{nameof(settings.Range)}Defined"] = settings.Range != null;
+	            settings.OverrideReferentialLinksRestriction;
+            _customData[nameof(settings.HasMetadataFileIdColumn)] = settings.HasMetadataFileIdColumn;
+			_customData[$"{nameof(settings.Range)}Defined"] = settings.Range != null;
             _customData[$"{nameof(settings.Range)}Start"] = settings.Range?.StartIndex;
             _customData[$"{nameof(settings.Range)}Count"] = settings.Range?.Count;
 

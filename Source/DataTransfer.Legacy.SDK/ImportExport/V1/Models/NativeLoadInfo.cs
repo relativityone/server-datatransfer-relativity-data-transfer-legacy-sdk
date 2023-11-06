@@ -63,9 +63,11 @@
 
 		public string BulkFileSharePath { get; set; }
 
-        public bool OverrideReferentialLinksRestriction { get; set; }
+		public bool OverrideReferentialLinksRestriction { get; set; }
 
-        public override string ToString()
+		public bool HasMetadataFileIdColumn { get; set; }
+
+		public override string ToString()
 		{
 			return this.ToSafeString();
 		}

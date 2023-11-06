@@ -342,6 +342,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Interceptors
 			metrics.PushProperty(nameof(nativeLoadInfo.ExecutionSource), Enum.GetName(typeof(ExecutionSource), nativeLoadInfo.ExecutionSource));
 			metrics.PushProperty(nameof(nativeLoadInfo.Billable), nativeLoadInfo.Billable.ToString());
             metrics.PushProperty(nameof(nativeLoadInfo.OverrideReferentialLinksRestriction), nativeLoadInfo.OverrideReferentialLinksRestriction);
+            metrics.PushProperty(nameof(nativeLoadInfo.HasMetadataFileIdColumn), nativeLoadInfo.HasMetadataFileIdColumn);
         }
 
 		private void PushImageLoadInfoMetrics(IMetricsContext metrics, SDK.ImportExport.V1.Models.ImageLoadInfo imageLoadInfo)

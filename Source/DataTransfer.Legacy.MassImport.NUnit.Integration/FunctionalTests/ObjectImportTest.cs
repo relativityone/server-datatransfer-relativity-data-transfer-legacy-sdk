@@ -114,7 +114,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
             object[] values = new[] { "ORDER_1" };
             fieldValues.Rows.Add(values);
 
-            string dataFileContent = GetMetadata(fieldDelimiter, fieldValues, folders: null);
+            string dataFileContent = GetMetadata(fieldDelimiter, fieldValues, folders: null, includeMetadataFileId: false);
 
             // build object file content
 

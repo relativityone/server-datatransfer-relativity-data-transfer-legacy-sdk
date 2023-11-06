@@ -183,6 +183,11 @@ namespace Relativity.MassImport.Data.StagingTables
 				metadataColumnClause.AppendLine("		[kCura_Import_ParentFolderPath] NVARCHAR(MAX),");
 			}
 
+			if (settings.HasMetadataFileIdColumn)
+			{
+				metadataColumnClause.AppendLine("		[kCura_Import_MetadataFileIdColumn] NVARCHAR(MAX),");
+			}
+
 			this.CreateStagingTablesBase(columnDefinitionCache, settings.MappedFields, metadataColumnClause.ToString(), settings.KeyFieldArtifactID, settings.LoadImportedFullTextFromServer);
 		}
 

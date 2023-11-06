@@ -92,7 +92,9 @@ namespace Relativity.MassImport.DTO
 
         public bool OverrideReferentialLinksRestriction { get; set; }
 
-        public bool HasDataGridWorkToDo
+		public bool HasMetadataFileIdColumn { get; set; }
+
+		public bool HasDataGridWorkToDo
         {
 	        get
 	        {

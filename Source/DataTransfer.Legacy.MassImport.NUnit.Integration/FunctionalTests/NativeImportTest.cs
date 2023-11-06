@@ -145,7 +145,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 
 			this._expectedFieldValues = RandomHelper.GetFieldValues(fields, numberOfArtifactsToCreate);
 			this._expectedFolders = GetFolders(numberOfArtifactsToCreate);
-			string dataFileContent = GetMetadata(_fieldDelimiter, _expectedFieldValues, _expectedFolders);
+			string dataFileContent = GetMetadata(_fieldDelimiter, _expectedFieldValues, _expectedFolders, includeMetadataFileId: false);
 
 			return await CreateLoadFileInfo(_fieldDelimiter, dataFileContent, string.Empty, fields);
 		}
@@ -227,7 +227,7 @@ namespace MassImport.NUnit.Integration.FunctionalTests
 			var objectsFile = GetObjectFileContent(this._expectedFieldValues, multiObjectField.ArtifactID, multiObjectField.AssociativeArtifactTypeID);
 			string objectsFileContent = ObjectHelper.GetObjectsFile(_fieldDelimiter, objectsFile);
 			
-			string dataFileContent = GetMetadata(_fieldDelimiter, _expectedFieldValues, _expectedFolders);
+			string dataFileContent = GetMetadata(_fieldDelimiter, _expectedFieldValues, _expectedFolders, includeMetadataFileId: false);
 
 			return await CreateLoadFileInfo(_fieldDelimiter, dataFileContent, objectsFileContent, fields);
 		}
