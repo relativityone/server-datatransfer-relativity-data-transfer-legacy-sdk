@@ -8,9 +8,13 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.Toggles;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	using Relativity.DataTransfer.Legacy.Services.Toggles;
+	using Relativity.Services.Exceptions;
+
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
@@ -19,12 +23,27 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class RelativityService : BaseService, IRelativityService
 	{
-		public RelativityService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
+		private readonly IToggleProvider _toggleProvider;
 
-		public Task<string> RetrieveCurrencySymbolAsync(string correlationID)
+		public RelativityService(IServiceContextFactory serviceContextFactory, IToggleProvider toggleProvider) : base(serviceContextFactory)
 		{
+			_toggleProvider = toggleProvider;
+		}
+
+		public async Task<string> RetrieveCurrencySymbolAsync(string correlationID)
+		{
+			var isRdcDisabled = await _toggleProvider.IsEnabledAsync<DisableRdcAndImportApiToggle>();
+			if (isRdcDisabled)
+			{
+				var importExportDocUrl =
+					"https://help.relativity.com/RelativityOne/Content/Relativity/Import_Export/Import_Export_Overview.htm";
+				var message =
+					$"The Relativity Desktop Client (RDC) and Aspera Transfer Service have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers in RelativityOne. {importExportDocUrl}";
+				throw new NotFoundException(message);
+
+			}
 			var result = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
-			return Task.FromResult(result);
+			return result;
 		}
 
 		public Task<string> GetImportExportWebApiVersionAsync(string correlationID)
