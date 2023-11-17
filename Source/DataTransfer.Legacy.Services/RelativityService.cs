@@ -12,6 +12,7 @@ using Relativity.Toggles;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	using Relativity.API;
 	using Relativity.DataTransfer.Legacy.Services.Toggles;
 	using Relativity.Services.Exceptions;
 
@@ -24,17 +25,22 @@ namespace Relativity.DataTransfer.Legacy.Services
 	public class RelativityService : BaseService, IRelativityService
 	{
 		private readonly IToggleProvider _toggleProvider;
+		private readonly IAPILog _logger;
 
-		public RelativityService(IServiceContextFactory serviceContextFactory, IToggleProvider toggleProvider) : base(serviceContextFactory)
+		public RelativityService(IServiceContextFactory serviceContextFactory, IToggleProvider toggleProvider, IAPILog logger) : base(serviceContextFactory)
 		{
 			_toggleProvider = toggleProvider;
+			_logger = logger;
 		}
 
 		public async Task<string> RetrieveCurrencySymbolAsync(string correlationID)
 		{
 			var isRdcDisabled = await _toggleProvider.IsEnabledAsync<DisableRdcAndImportApiToggle>();
+
 			if (isRdcDisabled)
 			{
+				_logger.LogWarning("RDC and Import API have been have been deprecated in this RelativityOne instance.");
+
 				var importExportDocUrl =
 					"https://help.relativity.com/RelativityOne/Content/Relativity/Import_Export/Import_Export_Overview.htm";
 				var message =

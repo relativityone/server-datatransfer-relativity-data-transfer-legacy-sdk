@@ -1,19 +1,18 @@
 ﻿using System.Threading.Tasks;
 using FluentAssertions;
 using NUnit.Framework;
-using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
+using Relativity.DataTransfer.Legacy.SDK.ImportExport.V2;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.Services.Exceptions;
 using TddEbook.TddToolkit;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests
 {
-	using System;
 	using Moq;
 	using Relativity.DataTransfer.Legacy.Services.Toggles;
 
 	[TestFixture]
-	public class RelativityServiceTests : ServicesBaseTests
+	public class RelativityServiceV2Tests : ServicesBaseTests
 	{
 		private IRelativityService _uut;
 
@@ -43,37 +42,20 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 					_uut.RetrieveRdcConfigurationAsync(Any.String()))
 				.Should().Throw<ServiceException>()
 				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
-
-			// GetImportExportWebApiVersionAsync, ValidateSuccessfulLoginAsync, GetRelativityUrlAsync omitted as they are marked as obsolete
 		}
 
-		[Test]
-		public void RetrieveCurrencySymbolAsync_ShouldThrowNotFoundException_WhenDisableRdcAndImportApiToggleIsOn()
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task RetrieveCurrencySymbolAsync_Return_RegardlessOfDisableRdcAndIApiToggleValue(bool toggleValue)
 		{
 			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
 				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
 
 			ToggleProviderMock.Setup(x => x.IsEnabledAsync<DisableRdcAndImportApiToggle>())
-				.ReturnsAsync(true);
+				.ReturnsAsync(toggleValue);
 
-			FluentActions.Invoking(() =>
-					_uut.RetrieveCurrencySymbolAsync(Any.String()))
-				.Should().Throw<NotFoundException>()
-				.WithMessage("The Relativity Desktop Client (RDC) and Aspera Transfer Service have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers in RelativityOne. *");
-		}
-
-		[Test]
-		public void RetrieveCurrencySymbolAsync_ShouldReturns_WhenDisableRdcAndImportApiToggleIsOff()
-		{
-			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
-				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
-
-			ToggleProviderMock.Setup(x => x.IsEnabledAsync<DisableRdcAndImportApiToggle>())
-				.ReturnsAsync(false);
-
-			FluentActions.Invoking(() =>
-					_uut.RetrieveCurrencySymbolAsync(Any.String()))
-				.Should().NotThrow<Exception>();
+			var result = await _uut.RetrieveCurrencySymbolAsync(Any.String());
+			result.Should().NotBeEmpty();
 		}
 	}
 }
