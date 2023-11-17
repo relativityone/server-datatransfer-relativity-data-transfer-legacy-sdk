@@ -367,7 +367,7 @@ INSERT INTO [ArtifactAncestry](
 				HAVING COUNT(*) > 1
 			)
 			UPDATE N
-			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject}
+			SET kCura_Import_Status = kCura_Import_Status | {(long)Relativity.MassImport.DTO.ImportStatus.ErrorDuplicateAssociatedObject},
             kCura_Import_ErrorData = D.ObjectName + '|{associatedObjectTable}' + '|@fieldName'
 			FROM [Resource].[{tableNames.Native}] N
 				JOIN [Resource].[{tableNames.Objects}] O
