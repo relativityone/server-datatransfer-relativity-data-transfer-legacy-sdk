@@ -41,13 +41,9 @@ namespace Relativity.DataTransfer.Legacy.Services
 			{
 				_logger.LogWarning("RDC and Import API have been have been deprecated in this RelativityOne instance.");
 
-				var importExportDocUrl =
-					"https://help.relativity.com/RelativityOne/Content/Relativity/Import_Export/Import_Export_Overview.htm";
-				var message =
-					$"The Relativity Desktop Client (RDC) and Aspera Transfer Service have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers in RelativityOne. {importExportDocUrl}";
-				throw new NotFoundException(message);
-
+				throw new NotFoundException(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
 			}
+
 			var result = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
 			return result;
 		}

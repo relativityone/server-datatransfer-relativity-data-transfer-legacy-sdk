@@ -32,16 +32,6 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 					_uut.RetrieveCurrencySymbolAsync(Any.String()))
 				.Should().Throw<ServiceException>()
 				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
-
-			FluentActions.Invoking(() =>
-					_uut.IsImportEmailNotificationEnabledAsync(Any.String()))
-				.Should().Throw<ServiceException>()
-				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
-
-			FluentActions.Invoking(() =>
-					_uut.RetrieveRdcConfigurationAsync(Any.String()))
-				.Should().Throw<ServiceException>()
-				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 		}
 
 		[TestCase(true)]

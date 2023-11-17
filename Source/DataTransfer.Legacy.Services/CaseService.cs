@@ -9,9 +9,13 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.ExternalServices;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.DataTransfer.Legacy.Services.Toggles;
+using Relativity.Toggles;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	using Relativity.Services.Exceptions;
+
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
@@ -24,13 +28,15 @@ namespace Relativity.DataTransfer.Legacy.Services
 
 		private readonly IAPILog _logger;
 		private readonly IFileRepositoryExternalService _fileRepositoryExternalService;
+		private readonly IToggleProvider _toggleProvider;
 
-		public CaseService(IServiceContextFactory serviceContextFactory, IAPILog logger, IFileRepositoryExternalService fileRepositoryExternalService)
+		public CaseService(IServiceContextFactory serviceContextFactory, IAPILog logger, IFileRepositoryExternalService fileRepositoryExternalService, IToggleProvider toggleProvider)
 			: base(serviceContextFactory)
 		{
 			_caseManager = new CaseManager();
 			_logger = logger;
 			_fileRepositoryExternalService = fileRepositoryExternalService;
+			_toggleProvider = toggleProvider;
 		}
 
 		public Task<SDK.ImportExport.V1.Models.CaseInfo> ReadAsync(int workspaceID, string correlationID)
@@ -51,10 +57,19 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return await _fileRepositoryExternalService.GetAllDocumentFolderPathsForCase(workspaceID);
 		}
 
-		public Task<string[]> GetAllDocumentFolderPathsAsync(string correlationID)
+		public async Task<string[]> GetAllDocumentFolderPathsAsync(string correlationID)
 		{
+			var isRdcDisabled = await _toggleProvider.IsEnabledAsync<DisableRdcAndImportApiToggle>();
+
+			if (isRdcDisabled)
+			{
+				_logger.LogWarning("RDC and Import API have been have been deprecated in this RelativityOne instance.");
+
+				throw new NotFoundException(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
+
+			}
 			var result = _caseManager.GetAllDocumentFolderPaths(GetBaseServiceContext(AdminWorkspace));
-			return Task.FromResult(result);
+			return result;
 		}
 
 		public Task<DataSetWrapper> RetrieveAllEnabledAsync(string correlationID)

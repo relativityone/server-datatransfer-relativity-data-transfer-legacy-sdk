@@ -59,7 +59,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			FluentActions.Invoking(() =>
 					_uut.RetrieveCurrencySymbolAsync(Any.String()))
 				.Should().Throw<NotFoundException>()
-				.WithMessage("The Relativity Desktop Client (RDC) and Aspera Transfer Service have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers in RelativityOne. *");
+				.WithMessage(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
 		}
 
 		[Test]
