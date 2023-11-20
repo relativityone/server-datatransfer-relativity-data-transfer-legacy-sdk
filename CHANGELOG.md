@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - Prepared branch for the next official Relativity 2024 release.
 - Used the latest SUT release image.
 
+## [23000.19.1001] - 11-14-2023
+
+### Changed
+
+- [REL-886074](https://jira.kcura.com/browse/REL-886074) - SQLi vulnerability in Import if a field display name is maliciously crafted - Backported [REL-878172](https://jira.kcura.com/browse/REL-878172) ticket from server 2022 release
+
 ## [23000.19.1] - 09-08-2023
 
 ### Changed
