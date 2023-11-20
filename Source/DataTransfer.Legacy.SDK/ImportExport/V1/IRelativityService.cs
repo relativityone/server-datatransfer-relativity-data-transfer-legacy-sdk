@@ -14,6 +14,10 @@ namespace Relativity.DataTransfer.Legacy.SDK.ImportExport.V1
 		[Route("RetrieveCurrencySymbolAsync")]
 		Task<string> RetrieveCurrencySymbolAsync(string correlationID);
 
+		[HttpPost]
+		[Route("RetrieveCurrencySymbolV2Async")]
+		Task<string> RetrieveCurrencySymbolV2Async(string correlationID);
+
 		[Obsolete("I consider it not necessary anymore since we have Kepler versioning")]
 		[HttpPost]
 		[Route("GetImportExportWebApiVersionAsync")]

@@ -44,6 +44,11 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<ServiceException>()
 				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
 
+			FluentActions.Invoking(() =>
+					_uut.RetrieveCurrencySymbolV2Async(Any.String()))
+				.Should().Throw<ServiceException>()
+				.WithMessage("IAPI communication mode set to ForceWebAPI. Kepler service disabled.");
+
 			// GetImportExportWebApiVersionAsync, ValidateSuccessfulLoginAsync, GetRelativityUrlAsync omitted as they are marked as obsolete
 		}
 
@@ -74,6 +79,20 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			FluentActions.Invoking(() =>
 					_uut.RetrieveCurrencySymbolAsync(Any.String()))
 				.Should().NotThrow<Exception>();
+		}
+
+		[TestCase(true)]
+		[TestCase(false)]
+		public async Task RetrieveCurrencySymbolV2Async_ShouldReturnCurrencySymbol(bool toggleValue)
+		{
+			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
+				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
+
+			ToggleProviderMock.Setup(x => x.IsEnabledAsync<DisableRdcAndImportApiToggle>())
+				.ReturnsAsync(toggleValue);
+
+			var result = await _uut.RetrieveCurrencySymbolV2Async(Any.String());
+			result.Should().NotBeEmpty();
 		}
 	}
 }

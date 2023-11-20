@@ -75,5 +75,11 @@ namespace Relativity.DataTransfer.Legacy.Services
 		{
 			throw new NotSupportedException("This should not be used when using Kepler endpoints");
 		}
+
+		public Task<string> RetrieveCurrencySymbolV2Async(string correlationID)
+		{
+			var result = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+			return Task.FromResult(result);
+		}
 	}
 }
