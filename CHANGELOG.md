@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [23000.19.1002] - 11-20-2023
+
+### Changed
+
+- [REL-886074](https://jira.kcura.com/browse/REL-886074) Revoked expected result changes, that are not required for the backport.
+
+
 ## [23000.19.1001] - 11-14-2023
 
 ### Changed
