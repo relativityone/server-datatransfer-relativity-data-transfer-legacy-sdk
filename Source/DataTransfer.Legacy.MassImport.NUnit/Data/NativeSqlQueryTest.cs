@@ -67,8 +67,7 @@ namespace Relativity.MassImport.NUnit.Data
 			ThenSQLsAreEqual(actual, Resources.NativeSqlQueryTest_ExpectedCreateDocumentsSqlStatementWithExtractedText);
 		}
 
-		[Test] 
-		[Ignore("Local build successful, but Jenkins build fails")]
+		[Test]
 		public void ShouldExecuteCorrectQueryWhenCreateAssociatedObjectsForSingleObjectFieldByName()
 		{
 			// arrange
