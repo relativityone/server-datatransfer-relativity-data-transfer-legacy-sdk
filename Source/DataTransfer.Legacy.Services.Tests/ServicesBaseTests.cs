@@ -21,9 +21,10 @@ using Relativity.Productions.Services.Private.V1;
 using Relativity.Services.Interfaces.LibraryApplication;
 using TddEbook.TddToolkit;
 using Component = Castle.MicroKernel.Registration.Component;
-
 namespace Relativity.DataTransfer.Legacy.Services.Tests
 {
+	using Relativity.Toggles;
+
 	public abstract class ServicesBaseTests
 	{
 		protected Mock<IServiceContextFactory> ServiceContextFactoryMock;
@@ -43,6 +44,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		protected Mock<IRedactedNativesValidator> RedactedNativesValidatorMock;
 		protected Mock<IFileRepositoryExternalService> FileRepositoryExternalServiceMock;
 		protected Mock<IAuthenticationMgr> AuthenticationManagerMock;
+		protected Mock<IToggleProvider> ToggleProviderMock;
 
 		[OneTimeSetUp]
 		public void OneTimeSetup()
@@ -63,6 +65,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			RedactedNativesValidatorMock = new Mock<IRedactedNativesValidator>();
 			FileRepositoryExternalServiceMock = new Mock<IFileRepositoryExternalService>();
 			AuthenticationManagerMock = new Mock<IAuthenticationMgr>();
+			ToggleProviderMock = new Mock<IToggleProvider>();
 
 			Container = new WindsorContainer();
 			Container.Register(Component.For<ISqlExecutor>().Instance(SqlExecutorMock.Object));
@@ -109,6 +112,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 			Container.Register(Component.For<ISearchService>().ImplementedBy<SearchService>());
 			Container.Register(Component.For<IWebDistributedService>().ImplementedBy<WebDistributedService>());
 			Container.Register(Component.For<ResultToExportDataWrapperConverter>());
+			Container.Register(Component.For<IToggleProvider>().Instance(ToggleProviderMock.Object));
 
 			Mock<IHelper> helperMock = new Mock<IHelper>();
 			Container.Register(Component.For<IHelper>().UsingFactoryMethod(() => helperMock.Object).LifestyleSingleton());

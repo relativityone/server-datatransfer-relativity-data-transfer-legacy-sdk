@@ -19,5 +19,10 @@ namespace Relativity.DataTransfer.Legacy.Services
 			public const string REQUIRED_WORKSPACE_FILE_COUNT_PROCESSING = "Required.Workspace.FileCount.Processing";
 			public const string REQUIRED_WORKSPACE_FILE_COUNT_UNKNOWN = "Required.Workspace.FileCount.Unknown";
 		}
+		internal static class ErrorMessages
+		{
+			public const string RdcDeprecatedDisplayMessage =
+			"Relativity Desktop Client (RDC) and Import API have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers.";
+		}
 	}
 }

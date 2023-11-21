@@ -78,7 +78,10 @@ namespace Relativity.DataTransfer.Legacy.Tests
 						|| method == "ImageRunHasErrorsDoNotTruncateAsync"
 						|| method == "GenerateNonImageErrorFilesDoNotTruncateAsync"
 						|| method == "GenerateImageErrorFilesDoNotTruncateAsync")
-						);
+						)
+					|| (keplerService.Name == "IRelativityService" && method == "RetrieveCurrencySymbolV2Async");
+
+
 			}
 			missingMethods.Should().BeEmpty("All Kepler endpoints should have corresponding WebAPI endpoints");
 		}

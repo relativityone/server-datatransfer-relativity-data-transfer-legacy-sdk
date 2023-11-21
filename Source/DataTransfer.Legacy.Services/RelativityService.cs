@@ -8,9 +8,14 @@ using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
 using Relativity.DataTransfer.Legacy.Services.Helpers;
 using Relativity.DataTransfer.Legacy.Services.Interceptors;
+using Relativity.Toggles;
 
 namespace Relativity.DataTransfer.Legacy.Services
 {
+	using Relativity.API;
+	using Relativity.DataTransfer.Legacy.Services.Toggles;
+	using Relativity.Services.Exceptions;
+
 	[Interceptor(typeof(UnhandledExceptionInterceptor))]
 	[Interceptor(typeof(ToggleCheckInterceptor))]
 	[Interceptor(typeof(LogInterceptor))]
@@ -19,12 +24,28 @@ namespace Relativity.DataTransfer.Legacy.Services
 	[Interceptor(typeof(DistributedTracingInterceptor))]
 	public class RelativityService : BaseService, IRelativityService
 	{
-		public RelativityService(IServiceContextFactory serviceContextFactory) : base(serviceContextFactory) { }
+		private readonly IToggleProvider _toggleProvider;
+		private readonly IAPILog _logger;
 
-		public Task<string> RetrieveCurrencySymbolAsync(string correlationID)
+		public RelativityService(IServiceContextFactory serviceContextFactory, IToggleProvider toggleProvider, IAPILog logger) : base(serviceContextFactory)
 		{
+			_toggleProvider = toggleProvider;
+			_logger = logger;
+		}
+
+		public async Task<string> RetrieveCurrencySymbolAsync(string correlationID)
+		{
+			var isRdcDisabled = await _toggleProvider.IsEnabledAsync<DisableRdcAndImportApiToggle>();
+
+			if (isRdcDisabled)
+			{
+				_logger.LogWarning("RDC and Import API have been have been deprecated in this RelativityOne instance.");
+
+				throw new NotFoundException(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
+			}
+
 			var result = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
-			return Task.FromResult(result);
+			return result;
 		}
 
 		public Task<string> GetImportExportWebApiVersionAsync(string correlationID)
@@ -43,16 +64,31 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
+		public async Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
 		{
+			var isRdcDisabled =
+				await _toggleProvider.IsEnabledAsync<DisableRdcAndImportApiToggle>();
+
+			if (isRdcDisabled)
+			{
+				_logger.LogWarning("RDC and Import API have been have been deprecated in this RelativityOne instance.");
+
+				throw new NotFoundException(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
+			}
 
 			var result = WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace));
-			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
+			return result != null ? new DataSetWrapper(result.ToDataSet()) : null;
 		}
 
 		public Task<string> GetRelativityUrlAsync(string correlationID)
 		{
 			throw new NotSupportedException("This should not be used when using Kepler endpoints");
+		}
+
+		public Task<string> RetrieveCurrencySymbolV2Async(string correlationID)
+		{
+			var result = CultureInfo.CurrentCulture.NumberFormat.CurrencySymbol;
+			return Task.FromResult(result);
 		}
 	}
 }

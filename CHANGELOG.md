@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
+## [0.3.63]
+- REL-890385 Add DisableRdcAndImportApi toggle
+
 ## [0.3.62]
 - REL-885468 Add new property NativeLoadInfo.HasMetadataFileIdColumn
 

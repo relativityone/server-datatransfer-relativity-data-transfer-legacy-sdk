@@ -1,10 +1,12 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
 using Relativity.Core;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1.Models;
+using Relativity.DataTransfer.Legacy.Services.Toggles;
 using Relativity.Services.Exceptions;
 using Relativity.Services.Objects.Exceptions;
 using TddEbook.TddToolkit;
@@ -68,6 +70,39 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 				.Should().Throw<PermissionDeniedException>().WithMessage("User does not have permissions to use WebAPI Kepler replacement");
 
 			// As GetAllDocumentFolderPathsAsync and RetrieveAllEnabledAsync do not take workspaceId as an argument there is no possibility to check permissions - no assertion is done
+		}
+
+		[Test]
+		public void GetAllDocumentFolderPathsAsync_ShouldThrowNotFoundException_WhenDisableRdcAndImportApiToggleIsOn()
+		{
+			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
+				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
+
+			ToggleProviderMock.Setup(x => x.IsEnabledAsync<DisableRdcAndImportApiToggle>())
+				.ReturnsAsync(true);
+
+			FluentActions.Invoking(() =>
+					_uut.GetAllDocumentFolderPathsAsync(Any.String()))
+				.Should().Throw<NotFoundException>()
+				.WithMessage(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
+		}
+
+		[Test]
+        public void GetAllDocumentFolderPathsAsync_ShouldReturnAllDocumentFolderPaths_WhenDisableRdcAndImportApiToggleIsOff()
+		{
+			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
+				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
+
+			ToggleProviderMock.Setup(x => x.IsEnabledAsync<DisableRdcAndImportApiToggle>())
+				.ReturnsAsync(false);
+
+			FluentActions.Invoking(() =>
+					{
+						var result = _uut.GetAllDocumentFolderPathsAsync(Any.String());
+						result.Should().NotBeNull();
+					}
+					)
+				.Should().NotThrow<Exception>();
 		}
 	}
 }
