@@ -88,7 +88,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		}
 
 		[Test]
-		public void GetAllDocumentFolderPathsAsync_ShouldReturns_WhenDisableRdcAndImportApiToggleIsOff()
+        public void GetAllDocumentFolderPathsAsync_ShouldReturnAllDocumentFolderPaths_WhenDisableRdcAndImportApiToggleIsOff()
 		{
 			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
 				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
