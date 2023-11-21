@@ -68,7 +68,7 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests
 		}
 
 		[Test]
-		public void RetrieveCurrencySymbolAsync_ShouldReturns_WhenDisableRdcAndImportApiToggleIsOff()
+        public void RetrieveCurrencySymbolAsync_ShouldReturnCurrencySymbol_WhenDisableRdcAndImportApiToggleIsOff()
 		{
 			CommunicationModeStorageMock.Setup(x => x.TryGetModeAsync())
 				.Returns(Task.FromResult((true, IAPICommunicationMode.ForceKepler)));
