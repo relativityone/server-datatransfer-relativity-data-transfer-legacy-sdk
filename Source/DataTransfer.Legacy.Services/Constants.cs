@@ -22,7 +22,7 @@ namespace Relativity.DataTransfer.Legacy.Services
 		internal static class ErrorMessages
 		{
 			public const string RdcDeprecatedDisplayMessage =
-			"The Relativity Desktop Client (RDC) and Import API have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers in RelativityOne.";
+			"Relativity Desktop Client (RDC) and Import API have been deprecated in your RelativityOne instance and are no longer operational. Please use Import/Export for data transfers.";
 		}
 	}
 }

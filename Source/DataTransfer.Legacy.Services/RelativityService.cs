@@ -64,11 +64,20 @@ namespace Relativity.DataTransfer.Legacy.Services
 			return Task.FromResult(result);
 		}
 
-		public Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
+		public async Task<DataSetWrapper> RetrieveRdcConfigurationAsync(string correlationID)
 		{
+			var isRdcDisabled =
+				await _toggleProvider.IsEnabledAsync<DisableRdcAndImportApiToggle>();
+
+			if (isRdcDisabled)
+			{
+				_logger.LogWarning("RDC and Import API have been have been deprecated in this RelativityOne instance.");
+
+				throw new NotFoundException(Constants.ErrorMessages.RdcDeprecatedDisplayMessage);
+			}
 
 			var result = WebAPIHelper.RetrieveRdcConfiguration(GetBaseServiceContext(AdminWorkspace));
-			return Task.FromResult(result != null ? new DataSetWrapper(result.ToDataSet()) : null);
+			return result != null ? new DataSetWrapper(result.ToDataSet()) : null;
 		}
 
 		public Task<string> GetRelativityUrlAsync(string correlationID)
