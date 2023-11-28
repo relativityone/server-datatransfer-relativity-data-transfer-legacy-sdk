@@ -1,9 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<kCuraLogging masterLoggingConfiguration="Local">
-	<rules enabled="true">
-		<rule system="*" loggingLevel="Information" sink="Seq1"/>
-	</rules>
-	<sinks>
-		<seqSink name="Seq1" batchSizeLimit="50" waitPeriodSeconds="15" />
-	</sinks>
-</kCuraLogging>
