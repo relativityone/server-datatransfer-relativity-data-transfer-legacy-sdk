@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <ArtifactViewFields />
+  <Assemblies>
+      <Assembly>
+      <Keywords />
+      <Name>Castle.Core.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Castle.Windsor.dll</Name>
+      <Notes />
+    </Assembly>
+	  <Assembly>
+      <Keywords />
+      <Name>Relativity.DataTransfer.Legacy.SDK.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.DataTransfer.Legacy.Services.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>AutoMapper.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>BCrypt.Net-Core.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>dtSearchNetApi4.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>kCura.Assembly.Analysis.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>kCura.LongPath.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.DistributedJobs.Contracts.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>Relativity.DistributedJobs.Data.dll</Name>
+      <Notes />
+    </Assembly>
+    <Assembly>
+      <Keywords />
+      <Name>System.ValueTuple.dll</Name>
+      <Notes />
+    </Assembly>
+	<Assembly>
+      <ArtifactId>1329220</ArtifactId>
+      <Keywords />
+      <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
+      <Notes />
+	</Assembly>
+	<Assembly>
+      <Keywords />
+      <Name>DataTransfer.Legacy.MassImport.dll</Name>
+      <Notes />
+    </Assembly>
+  </Assemblies>
+  <ResourceFiles />
+  <ExternalTabs />
+  <ExtractionDate>2019-05-06T15:32:28.6965752Z</ExtractionDate>
+  <Guid>9F9D45FF-5DCD-462D-996D-B9033EA8CFCE</Guid>
+  <Name>DataTransfer.Legacy</Name>
+  <Objects />
+  <ParentTabs />
+  <RelativityVersion>11.0.158.1</RelativityVersion>
+  <Version>1.0.0.4</Version>
+  <TabDisplay>false</TabDisplay>
+  <OriginSignature>4f050142-2091-416f-9411-a023e105be75</OriginSignature>
+  <MasterScripts />
+  <ApplicationScripts />
+  <CustomPages />
+  <AgentTypes />
+  <IsRelativityApplication>true</IsRelativityApplication>
+  <InstallEventHandlers>
+    <InstallEventHandler>
+      <ArtifactId>1045283</ArtifactId>
+      <AssemblyArtifactId>1329220</AssemblyArtifactId>
+      <Name>Relativity.DataTransfer.Legacy.PostInstallEventHandler.PostInstallEventHandler</Name>
+      <Guid>bf653f0f-6b16-47de-a8b8-9e01e31931fd</Guid>
+      <Guids>263f7c7d-18c1-4ba6-99be-a7105364237a</Guids>
+      <ExecutionType>8</ExecutionType>
+      <Order>10</Order>
+      <AssemblyName>DataTransfer.Legacy.PostInstallEventHandler.dll</AssemblyName>
+      <ApplicationVersion>1.0.0.7</ApplicationVersion>
+      <RunTarget>1</RunTarget>
+    </InstallEventHandler>
+  </InstallEventHandlers>
+  <SavedSearches />
+  <SearchContainers />
+  <SearchProviders />
+  <EnvironmentVariables>
+    <SearchAsConditionCriteriaID>1000471</SearchAsConditionCriteriaID>
+    <FullTextAll>1000182</FullTextAll>
+  </EnvironmentVariables>
+  <GlobalApplication>true</GlobalApplication>
+  <RelativityScriptIds />
+  <ViewIds />
+  <DashboardIds />
+  <LayoutIds />
+  <FieldIds />
+  <ChoiceIds />
+  <ObjectTypeIds />
+  <TabIds />
+  <CustomPageIds />
+  <Locked>true</Locked>
+</Application>

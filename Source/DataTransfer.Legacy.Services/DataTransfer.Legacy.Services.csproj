@@ -1,0 +1,46 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <OutputType>Library</OutputType>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <RootNamespace>Relativity.DataTransfer.Legacy.Services</RootNamespace>
+    <AssemblyName>Relativity.DataTransfer.Legacy.Services</AssemblyName>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <LangVersion>7.3</LangVersion>
+    <OutputPath>bin</OutputPath>
+    <DebugSymbols>True</DebugSymbols>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>pdbonly</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="Castle.Windsor" />
+    <PackageReference Include="kCura" />
+    <PackageReference Include="kCura.Assembly.Analysis" />
+    <PackageReference Include="kCura.LongPath" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Relativity.API" />
+    <PackageReference Include="Relativity.Core"/>
+    <PackageReference Include="Relativity.Kepler"/>
+    <PackageReference Include="Relativity.Services.Interfaces.SDK" />
+    <PackageReference Include="Relativity.Telemetry.APM" />
+    <PackageReference Include="Relativity.Telemetry.DataContracts.Shared" />
+    <PackageReference Include="Relativity.Telemetry.MetricsCollection" />
+    <PackageReference Include="System.ValueTuple" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
+    <ProjectReference Include="..\DataTransfer.Legacy.SDK\DataTransfer.Legacy.SDK.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web.Services" />
+  </ItemGroup>
+</Project>

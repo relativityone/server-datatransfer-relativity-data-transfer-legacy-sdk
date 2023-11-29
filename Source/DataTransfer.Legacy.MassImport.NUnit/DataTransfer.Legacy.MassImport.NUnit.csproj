@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <OutputType>Library</OutputType>
+    <IsTestProject>true</IsTestProject>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+    <RootNamespace>DataTransfer.Legacy.MassImport.NUnit</RootNamespace>
+    <AssemblyName>DataTransfer.Legacy.MassImport.NUnit</AssemblyName>
+    <RunAnalyzersDuringLiveAnalysis>true</RunAnalyzersDuringLiveAnalysis>
+    <RunAnalyzersDuringBuild>true</RunAnalyzersDuringBuild>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>bin</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
+    <PackageReference Include="Castle.Windsor" VersionOverride="$(CastleWindsorOverride)" />
+    <PackageReference Include="Combinatorics" />
+    <PackageReference Include="CompareNETObjects" />
+    <PackageReference Include="Coverlet.msbuild" />
+    <PackageReference Include="FluentValidation" />
+    <!--TODO Delete these once we fix the Relativity.SDK.Services.Query nuget package to include these. -->
+    <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="FParsec-Big-Data-Edition" />
+    <PackageReference Include="kCura" />
+    <PackageReference Include="kCura.DataGrid.Services.Interfaces" />
+    <PackageReference Include="kCura.EventHandler" />
+    <PackageReference Include="kCura.Relativity.Client" />
+    <PackageReference Include="kCura.SearchProvider" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="NUnit" />
+    <PackageReference Include="NUnit3TestAdapter" />
+    <PackageReference Include="NunitXml.TestLogger" />
+    <!--Higher Moq versions bring in Castle.Core 4.0+ that has a public class CollectionExtensions which is not the real Extension method and was updated to drop the ForEach method in the 4.0+ series.
+	It is missing the function CollectionExtensions.ForEach which is needed by a transient dependency of kCura.Utility.LazyMemoryCache. https://github.com/castleproject/Core/issues/276
+	TODO: Find a way to force a different usage of CollectionExtentions that has ForEach-->
+    <PackageReference Include="Moq" />
+    <PackageReference Include="Moq.AutoMock" />
+    <PackageReference Include="Polly" />
+    <PackageReference Include="Relativity.API" />
+    <PackageReference Include="Relativity.DataGrid" />
+    <PackageReference Include="Relativity.SecureTokenService.Interfaces" />
+    <PackageReference Include="Relativity.ServiceBus" />
+    <PackageReference Include="Relativity.Services.Interfaces" />
+    <PackageReference Include="Relativity.Services.Interfaces.Private" />
+    <PackageReference Include="Relativity.Telemetry.APM" />
+    <PackageReference Include="Relativity.Toggles" />
+    <PackageReference Include="Relativity.Logging.Interfaces" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.ServiceModel" Private="True" />
+    <Reference Include="System.Web" Private="True" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\BaseSqlQueryTest.cs" />
+    <None Include="Data\BulkLoadSqlErrorRetryHelperTest.cs" />
+    <None Include="Data\Cache\ColumnDefinitionCacheTests.cs" />
+    <None Include="Data\ColumnDefinitionInfoTest.cs" />
+    <None Include="Data\DataGeidWriteStrategy\BulkDataGridWriterTests.cs" />
+    <None Include="Data\DataGeidWriteStrategy\ByteMeasuringWriterTests.cs" />
+    <None Include="Data\DataGeidWriteStrategy\FileSystemRecordBuilderTests.cs" />
+    <None Include="Data\DataGridReaderTests.cs" />
+    <None Include="Data\DataGridTempFileDataReaderTests.cs" />
+    <None Include="Data\NativeSqlQueryTest.cs" />
+    <None Include="Data\Native\ProcessMultiObjectFieldTests.cs" />
+    <None Include="Data\Native\ProcessSingleObjectFieldTests.cs" />
+    <None Include="Data\Native\UpdateBulkTableWithCreatedFoldersAndRetrieveFolderPathsToCreate.cs" />
+    <None Include="Data\ObjectsSqlQueryTest.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <DataGridTestFiles Include="Resources\DataGrid*.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DataTransfer.Legacy.MassImport\DataTransfer.Legacy.MassImport.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Target Name="CopyCustomContent" BeforeTargets="Build">
+    <Copy SourceFiles="@(DataGridTestFiles)" DestinationFolder="$(OutDir)\Resources\" SkipUnchangedFiles="true" />
+  </Target>
+</Project>
