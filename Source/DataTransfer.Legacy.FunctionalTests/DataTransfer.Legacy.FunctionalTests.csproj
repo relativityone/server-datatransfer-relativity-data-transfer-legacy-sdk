@@ -47,7 +47,7 @@
     <PackageReference Include="Relativity.Testing.Identification" />
     <PackageReference Include="Tdd-Toolkit" />
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <!-- <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="copy /Y $(ProjectDir)Verification.nunit $(TargetDir)" />
-  </Target>
+  </Target> -->
 </Project>

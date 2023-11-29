@@ -49,9 +49,9 @@ param(
 Set-StrictMode -Version 2.0
 
 $BaseDir = $PSScriptRoot
-$NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
-$ToolsDir = Join-Path $BaseDir "buildtools"
-$NugetExe = Join-Path $ToolsDir "nuget.exe"
+$ToolsDir = Join-Path $BaseDir 'buildtools'
+$NuGetFolder = Join-path $ToolsDir 'NuGet'
+$NugetExe = Join-Path $NuGetFolder 'nuget.exe'
 
 $ToolsConfig = Join-Path $ToolsDir "packages.config"
 
@@ -73,7 +73,19 @@ Write-Progress "Importing required Powershell modules..."
 $ToolsDir = Join-Path $PSScriptRoot "buildtools"
 Import-Module (Join-Path $ToolsDir "psake-rel.*\tools\psake\psake.psd1") -ErrorAction Stop
 Import-Module (Join-Path $ToolsDir "kCura.PSBuildTools.*\PSBuildTools.psd1") -ErrorAction Stop
-Install-Module VSSetup -Scope CurrentUser -Force
+
+if (!(Get-Module -Name VSSetup -ListAvailable))
+{
+    Install-Module VSSetup -Scope CurrentUser -Repository 'powershell-anthology' -Force
+}
+Import-Module VSSetup -Force
+
+$ReportGenerator = Join-Path $ToolsDir "reportgenerator.exe"
+if (-not (Test-Path $ReportGenerator))
+{
+    & dotnet tool install dotnet-reportgenerator-globaltool --version 4.1.9 --tool-path $ToolsDir
+    if ($LASTEXITCODE -ne 0) { throw "An error occured while restoring build tools." }
+}
 
 $Params = @{
 	taskList = $TaskList
@@ -91,6 +103,7 @@ $Params = @{
 	}
 	Verbose = $VerbosePreference
 	Debug = $DebugPreference
+	buildFile = (Join-Path $BaseDir "psakefile.ps1")
 }
 
 Try

@@ -23,7 +23,7 @@
   <ItemGroup>
     <PackageReference Include="Relativity.Kepler" />
   </ItemGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <!-- <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="COPY /Y $(ProjectDir)DataTransfer.Legacy.SDK.nuspec $(SolutionDir)..\Artifacts" />
-  </Target>
+  </Target> -->
 </Project>
