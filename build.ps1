@@ -56,13 +56,13 @@ $NugetUrl = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 
 $ToolsConfig = Join-Path $ToolsDir "packages.config"
 
-Write-Progress "Checking for NuGet in tools path..."
+Write-Host "Checking for NuGet in tools path..."
 if (-Not (Test-Path $NugetExe -Verbose:$VerbosePreference)) {
-	Write-Progress "Installing NuGet from $NugetUrl..."
+	Write-Host "Installing NuGet from $NugetUrl..."
 	Invoke-WebRequest $NugetUrl -OutFile $NugetExe -Verbose:$VerbosePreference -ErrorAction Stop
 }
 
-Write-Progress "Restoring tools from NuGet..."
+Write-Host "Restoring tools from NuGet..."
 $NuGetVerbosity = if ($VerbosePreference -gt "SilentlyContinue") { "normal" } else { "quiet" }
 & $NugetExe install $ToolsConfig -o $ToolsDir -Verbosity $NuGetVerbosity
 
@@ -70,7 +70,7 @@ if ($LASTEXITCODE -ne 0) {
 	Throw "An error occured while restoring NuGet tools."
 }
 
-Write-Progress "Importing required Powershell modules..."
+Write-Host "Importing required Powershell modules..."
 $ToolsDir = Join-Path $PSScriptRoot "buildtools"
 Import-Module (Join-Path $ToolsDir "psake-rel.*\tools\psake\psake.psd1") -ErrorAction Stop
 Import-Module (Join-Path $ToolsDir "kCura.PSBuildTools.*\PSBuildTools.psd1") -ErrorAction Stop
@@ -80,13 +80,6 @@ if (!(Get-Module -Name VSSetup -ListAvailable))
     Install-Module VSSetup -Scope CurrentUser -Repository 'powershell-anthology' -Force
 }
 Import-Module VSSetup -Force
-
-$ReportGenerator = Join-Path $ToolsDir "reportgenerator.exe"
-if (-not (Test-Path $ReportGenerator))
-{
-    & dotnet tool install dotnet-reportgenerator-globaltool --version 4.1.9 --tool-path $ToolsDir
-    if ($LASTEXITCODE -ne 0) { throw "An error occured while restoring build tools." }
-}
 
 $Params = @{
 	taskList = $TaskList
