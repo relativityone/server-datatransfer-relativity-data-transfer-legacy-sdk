@@ -84,7 +84,7 @@ Import-Module VSSetup -Force
 $Params = @{
 	taskList = $TaskList
 	nologo = $true
-	framework = "4.6"
+	framework = "4.8"
 	parameters = @{	
 		NugetExe = $NugetExe
 		BuildConfig = $Configuration
