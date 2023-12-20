@@ -27,7 +27,10 @@ For more information on RAP CD, [view the documentation in Einstein](https://ein
 
 ## History
 
-The server-main branch was migrated from https://git.kcura.com/projects/DTX/repos/relativity-data-transfer-legacy-sdk/browse/version.txt?at=refs%2Fheads%2Fserver-main by the Server Data Transfer Team. Tag: 24000.0.1-server Branch: server-main
+The server-main branch was migrated from https://git.kcura.com/projects/DTX/repos/relativity-data-transfer-legacy-sdk/browse/version.txt?at=refs%2Fheads%2Fserver-main by the Server Data Transfer Team. 
+Tag: 24000.0.1-server 
+Branch: server-main
 
 ## Maintainers
-This repository is owned by the Server Data Transfer Team. #help-server-data-transfer
+This repository is owned by the Server Data Transfer Team. 
+#help-server-data-transfer
