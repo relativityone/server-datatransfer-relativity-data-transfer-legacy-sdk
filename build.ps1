@@ -47,6 +47,7 @@ param(
 	)
 	
 Set-StrictMode -Version 2.0
+. $profile
 
 $BaseDir = $PSScriptRoot
 $ToolsDir = Join-Path $BaseDir 'buildtools'
@@ -74,7 +75,6 @@ Write-Host "Importing required Powershell modules..."
 $ToolsDir = Join-Path $PSScriptRoot "buildtools"
 Import-Module (Join-Path $ToolsDir "psake-rel.*\tools\psake\psake.psd1") -ErrorAction Stop
 Import-Module (Join-Path $ToolsDir "kCura.PSBuildTools.*\PSBuildTools.psd1") -ErrorAction Stop
-
 if (!(Get-Module -Name VSSetup -ListAvailable))
 {
     Install-Module VSSetup -Scope CurrentUser -Repository 'powershell-anthology' -Force
