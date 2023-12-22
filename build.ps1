@@ -47,6 +47,7 @@ param(
 	)
 	
 Set-StrictMode -Version 2.0
+. $profile
 
 $BaseDir = $PSScriptRoot
 $ToolsDir = Join-Path $BaseDir 'buildtools'
