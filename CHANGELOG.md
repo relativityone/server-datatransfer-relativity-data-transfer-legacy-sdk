@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.2] - 11-29-2023
+
+### Changed
+ 
+- [REL-891063](https://jira.kcura.com/browse/REL-891063) Cloned repo from BitBucket to GitHub and created pipeline in AzDO.
+
 ## [24000.0.0] - 10-18-2023
 
 ### Changed
