@@ -62,5 +62,29 @@ namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler.Tests
 		{
 			throw new Exception("Exemplary exception");
 		}
-	}
+
+        [Test]
+        [Category("Unit")]
+        public void RetryPolicyProvider_Constructor_InitializesRetryTimes()
+        {
+            // Arrange
+            var expectedRetryTimes = new[]
+            {
+                TimeSpan.FromSeconds(2),
+                TimeSpan.FromSeconds(4),
+                TimeSpan.FromSeconds(61)
+            };
+
+            // Act
+            var retryPolicyProvider = new RetryPolicyProvider(new Mock<IAPILog>().Object);
+        }
+
+        [Test]
+        [Category("Unit")]
+        public void RetryPolicyProvider_Constructor_ThrowsArgumentNullExceptionWhenLoggerIsNull()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => new RetryPolicyProvider(null));
+        }
+    }
 }

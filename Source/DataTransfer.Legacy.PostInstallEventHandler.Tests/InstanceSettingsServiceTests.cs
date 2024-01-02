@@ -102,5 +102,33 @@ namespace Relativity.DataTransfer.Legacy.PostInstallEventHandler.Tests
 			instanceSettingManagerMock.Verify(x => x.QueryAsync(It.IsAny<Services.Query>()), Times.Once);
 			instanceSettingManagerMock.Verify(x => x.CreateSingleAsync(It.IsAny<Services.InstanceSetting.InstanceSetting>()), Times.Once);
 		}
-	}
+
+        [Test]
+        [Category("Unit")]
+        public async Task CreateInstanceSettingsTextTypeReturnsFalseOnQueryFailure()
+        {
+            // Arrange
+            string agentName = "Paolo";
+            string sectionName = "importini";
+            string value = "sample value";
+            string desc = "sample description";
+
+            var instanceSettingManagerMock = new Mock<IInstanceSettingManager>();
+            instanceSettingManagerMock
+                .Setup(m => m.QueryAsync(It.IsAny<Services.Query>()))
+                .ReturnsAsync(new InstanceSettingQueryResultSet() { Success = false });
+
+            _helperMock
+                .Setup(m => m.GetServicesManager().CreateProxy<IInstanceSettingManager>(It.IsAny<ExecutionIdentity>()))
+                .Returns(instanceSettingManagerMock.Object);
+
+            // Act
+            var result = await _sut.CreateInstanceSettingsTextType(agentName, sectionName, value, desc).ConfigureAwait(false);
+
+            // Assert
+            _loggerMock.Verify(x => x.LogWarning("DataTransfer.Legacy PostInstallEventHandler: could not read instance settings from db."), Times.Once);
+            Assert.IsFalse(result);
+        }
+
+    }
 }
