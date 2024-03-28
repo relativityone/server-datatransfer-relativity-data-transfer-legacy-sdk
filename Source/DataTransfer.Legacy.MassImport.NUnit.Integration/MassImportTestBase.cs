@@ -40,6 +40,14 @@ namespace MassImport.NUnit.Integration
 			this.SetupConfigMock();
 		}
 
+
+		protected async Task CreateNewTestWorkspace()
+		{
+			await AssemblySetup.OneTimeTearDownAsync().ConfigureAwait(false);
+			AssemblySetup.OneTimeSetUp();
+			await OneTimeBaseSetupAsync().ConfigureAwait(false);
+		}
+
 		protected void ThenTheImportWasSuccessful(MassImportManagerBase.MassImportResults result, int expectedArtifactsCreated, int expectedArtifactsUpdated)
 		{
 			Assert.IsNull(result.ExceptionDetail, $"An error occurred when running import: {result.ExceptionDetail?.ExceptionMessage}");
@@ -95,7 +103,7 @@ namespace MassImport.NUnit.Integration
 
 		private void SetupConfigMock()
 		{
-			kCura.Data.RowDataGateway.Config.SetConnectionString(this.TestWorkspace.ConnectionString);
+			kCura.Data.RowDataGateway.Config.SetConnectionString(this.TestWorkspace.EddsConnectionString);
 		}
 	}
 }

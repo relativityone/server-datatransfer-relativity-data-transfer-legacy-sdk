@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using DataTransfer.Legacy.MassImport;
 using kCura.Data.RowDataGateway;
 using kCura.Utility;
 using Relativity.Data.MassImport;
@@ -14,6 +15,10 @@ using Relativity.MassImport.Data.DataGrid;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 using ILog = Relativity.Logging.ILog;
+using Relativity.Telemetry.APM;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
+
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
 
 namespace Relativity.MassImport.Data
 {
@@ -38,6 +43,8 @@ namespace Relativity.MassImport.Data
 		private DataGridImportHelper _dgImportHelper;
 		private Relativity.Data.DataGridMappingMultiDictionary _dataGridMappings;
 		private static readonly string _PENDING_STATUS = ((long)Relativity.MassImport.DTO.ImportStatus.Pending).ToString();
+		private readonly IRelEyeMetricsService _metricsService;
+
 
 		#endregion
 
@@ -50,6 +57,8 @@ namespace Relativity.MassImport.Data
 			_tableNames = new TableNames(settings.RunID);
 			ImportSql = new ImageImportSql();
 			ImportMeasurements = new ImportMeasurements();
+			_metricsService = new RelEyeMetricsService(new ApmTelemetryPublisher(Client.APMClient));
+
 			if (FullTextField.EnableDataGrid)
 			{
 				var dgSqlFactory = new DataGridSqlContextFactory((i) => context.Clone());
@@ -769,26 +778,41 @@ WHERE
 			return loader;
 		}
 
-		public void UpdateDgFieldMappingRecords(IEnumerable<DGImportFileInfo> dgImportFileInfoList, ILog correlationLogger)
+		public void UpdateDgFieldMappingRecords(DGImportFileInfo[] dgImportFileInfoList, ILog correlationLogger, int appID)
 		{
 			if (dgImportFileInfoList.Any())
 			{
 				ImportMeasurements.StartMeasure();
-				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status");
 
-				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
-				sqlParam.SqlDbType = SqlDbType.Structured;
-				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
+				var toProcessCount = dgImportFileInfoList.Length;
+				var withEmptyTextCount = dgImportFileInfoList.Count(x => string.IsNullOrEmpty(x.FileLocation) || x.FileSize == 0);
+				ImportMeasurements.SetCounter("DataGridItemsToProcess", toProcessCount);
+				ImportMeasurements.SetCounter("DataGridItemsWithEmptyText", withEmptyTextCount);
 
+				string createTableStatement = DGRelativityRepository.CreateDgFieldMappingTempTableSql();
+				bool hasLinkedTextColumn = _context.ExecuteSqlStatementAsScalar<int>(createTableStatement) == 1;
+
+				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status", hasLinkedTextColumn);
+
+				IDataReader dgImportFileInfoReader = dgImportFileInfoList.GetDgImportFileInfoAsDataReader();
+				SqlBulkCopyParameters bulkCopyParameters = DGRelativityRepository.GetDgFieldMappingTempTableBulkCopyParameters();
+				_context.ExecuteBulkCopy(dgImportFileInfoReader, bulkCopyParameters);
+
+				int itemsPendingCount = _context.ExecuteSqlStatementAsScalar<int>(DGRelativityRepository.CountDgRowsPendingTableSql(_tableNames.Image, "Status"));
+				ImportMeasurements.SetCounter("DataGridItemsPendingTableCount", itemsPendingCount);
 				var filter = new HashSet<int>();
-
-				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
+				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, QueryTimeout))
 				{
 					while (reader.Read())
 					{
+						ImportMeasurements.IncrementCounter("DataGridItemsProcessed");
 						filter.Add(Convert.ToInt32(reader[0]));
+						var action = reader[1].ToString();
+						ImportMeasurements.IncrementCounter($"DataGridItemsAction{action}");
 					}
 				}
+				_metricsService.PublishEvent(new EventDataGridRecordsProcessed(_tableNames.RunId, appID, toProcessCount, filter.Count, withEmptyTextCount));
+
 
 				var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
 				foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))

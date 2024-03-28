@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using NSubstitute.ExceptionExtensions;
 using NUnit.Framework;
 using Relativity.DataTransfer.Legacy.SDK.ImportExport.V1;
 using Relativity.Services.Exceptions;

@@ -17,11 +17,18 @@ using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
+using Array = System.Array;
+using kCura.Data.RowDataGateway;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry;
+using DataTransfer.Legacy.MassImport.RelEyeTelemetry.Events;
+using Relativity.Telemetry.APM;
+using DataTransfer.Legacy.MassImport.Extensions;
 
 namespace Relativity.MassImport.Data
 {
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
+		protected const int FieldsBatchSize = 255;
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
 		public TableNames _tableNames;
 		private string _auditRecordCollation = "";
@@ -40,6 +47,8 @@ namespace Relativity.MassImport.Data
 		private const int _retrySleepDurationMilliseconds = 500;
 		private Lazy<List<FieldInfo>> _mismatchedDataGridFieldsLazy;
 		protected const int TopFieldArtifactID = 0;
+		private readonly IRelEyeMetricsService _metricsService;
+
 
 		#region Constructors
 		protected ObjectBase(
@@ -64,6 +73,7 @@ namespace Relativity.MassImport.Data
 			ImportUpdateAuditAction = importUpdateAuditAction;
 			ImportMeasurements = importMeasurements;
 			ColumnDefinitionCache = columnDefinitionCache;
+			_metricsService = new RelEyeMetricsService(new ApmTelemetryPublisher(Client.APMClient));
 			CaseSystemArtifactId = caseSystemArtifactId;
 			if (settings.HasDataGridWorkToDo)
 			{
@@ -526,6 +536,45 @@ WHERE
 
 		protected int ImportUpdateAuditAction { get; private set; }
 
+
+		protected List<List<FieldInfo>> BatchFields(IEnumerable<FieldInfo> mappedFields)
+		{
+			List<List<FieldInfo>> fieldsBatches = mappedFields.Batch(FieldsBatchSize).ToList();
+			ImportMeasurements.SetCounter("NumberOfFieldsBatches", fieldsBatches.Count);
+			return fieldsBatches;
+		}
+
+		protected int UpdateArtifactTableForOverlaidRecords(int? auditUserID, string updateTextIdentifierValue)
+		{
+			var sqlParameters = new[]
+			{
+				new SqlParameter("@auditUserID", auditUserID),
+			};
+
+			var updateArtifactTableQuery = this.ImportSql.UpdateArtifactTableForOverlaidRecords(this._tableNames.Native, updateTextIdentifierValue);
+			return this.QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(updateArtifactTableQuery, sqlParameters, QueryTimeout);
+		}
+
+		protected void CreateTempTableForOverlayAudit()
+		{
+			var createTempTableAudit = ImportSql.CreateTempTableForOverlayAudit();
+			ExecuteNonQuerySQLStatement(createTempTableAudit);
+		}
+
+		protected void CopyRecordsFromTempAuditToAudit(int? auditUserID, string reqOrig, string recOrig)
+		{
+			var sqlParameters = new[]
+			{
+				new SqlParameter("@auditUserID", auditUserID),
+				new SqlParameter("@requestOrig", reqOrig),
+				new SqlParameter("@recordOrig", recOrig)
+			};
+
+			var copyAuditRecords = ImportSql.CopyRecordsFromTempAuditToAudit(this.ImportUpdateAuditAction);
+			int numberOfCopiedAuditRecords = QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(copyAuditRecords, sqlParameters, QueryTimeout);
+			ImportMeasurements.SetCounter("AuditsCopiedFromTempTable", numberOfCopiedAuditRecords);
+		}
+
 		#region DataGrid
 		public IDataReader CreateDataGridMappingDataReader()
 		{
@@ -674,40 +723,61 @@ WHERE
 			return output;
 		}
 
-		public void UpdateDgFieldMappingRecords(IEnumerable<DGImportFileInfo> dgImportFileInfoList, ILog correlationLogger)
+		public void UpdateDgFieldMappingRecords(DGImportFileInfo[] dgImportFileInfoList, ILog correlationLogger, int appID)
 		{
 			if (dgImportFileInfoList.Any())
 			{
 				ImportMeasurements.StartMeasure();
-				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Native, "kCura_Import_Status");
-				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
-				sqlParam.SqlDbType = SqlDbType.Structured;
-				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
+
+				var toProcessCount = dgImportFileInfoList.Length;
+				var withEmptyTextCount = dgImportFileInfoList.Count(x => string.IsNullOrEmpty(x.FileLocation) || x.FileSize == 0);
+				ImportMeasurements.SetCounter("DataGridItemsToProcess", toProcessCount);
+				ImportMeasurements.SetCounter("DataGridItemsWithEmptyText", withEmptyTextCount);
+
+				string createTableStatement = DGRelativityRepository.CreateDgFieldMappingTempTableSql();
+				bool hasLinkedTextColumn = _context.ExecuteSqlStatementAsScalar<int>(createTableStatement) == 1;
+
+				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Native, "kCura_Import_Status", hasLinkedTextColumn);
+
+				IDataReader dgImportFileInfoReader = dgImportFileInfoList.GetDgImportFileInfoAsDataReader();
+				SqlBulkCopyParameters bulkCopyParameters = DGRelativityRepository.GetDgFieldMappingTempTableBulkCopyParameters();
+				_context.ExecuteBulkCopy(dgImportFileInfoReader, bulkCopyParameters);
+
+				int itemsPendingCount = _context.ExecuteSqlStatementAsScalar<int>(DGRelativityRepository.CountDgRowsPendingTableSql(_tableNames.Native, "kCura_Import_Status"));
+				ImportMeasurements.SetCounter("DataGridItemsPendingTableCount", itemsPendingCount);
+
 				var filter = new HashSet<int>();
-				using (var reader = Context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
+				using (var reader = Context.ExecuteSQLStatementAsReader(sqlStatement, QueryTimeout))
 				{
 					while (reader.Read())
 					{
+						ImportMeasurements.IncrementCounter("DataGridItemsProcessed");
 						filter.Add(Convert.ToInt32(reader[0]));
+						var action = reader[1].ToString();
+						ImportMeasurements.IncrementCounter($"DataGridItemsAction{action}");
 					}
 				}
+				_metricsService.PublishEvent(new EventDataGridRecordsProcessed(RunID, appID, toProcessCount, filter.Count, withEmptyTextCount));
 
 				var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
 				foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))
 				{
 					string indexName = perIndexName.Key;
+					correlationLogger.LogDebug("DG try to remove for index: {indexName} count: {count}", indexName, perIndexName.Count());
 					foreach (var perFieldName in perIndexName.GroupBy(g => $"{g.FieldNamespace}.{g.FieldName}"))
 					{
 						string fieldName = perFieldName.Key;
+
+						correlationLogger.LogDebug("DG try to remove for: {fieldName} count: {count}", fieldName, perFieldName.Count());
 						try
 						{
 							DGFieldInformationLookupFactory.DeleteList = perFieldName;
 							var artifactIDs = perFieldName.Select(x => x.ImportId);
 							_dgContext.BaseDataGridContext.TryDeleteBulk(artifactIDs, Enumerable.Repeat(fieldName, 1), indexName);
 						}
-						catch (Exception)
+						catch (Exception ex)
 						{
-							correlationLogger.LogWarning("Cleanup of extracted text that failed to import failed for index {indexName} and field {fieldName}", indexName, fieldName);
+							correlationLogger.LogWarning(ex, "Cleanup of extracted text that failed to import failed for index {indexName} and field {fieldName}", indexName, fieldName);
 						}
 						finally
 						{

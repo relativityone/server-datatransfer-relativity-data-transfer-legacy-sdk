@@ -1,10 +1,12 @@
 ﻿using System.Data;
 using System.Data.SqlClient;
+using System.Collections.Generic;
 using System.Text;
 using Relativity.MassImport.Data.Cache;
 using Relativity.MassImport.Data.SqlFramework;
 using DataTransfer.Legacy.MassImport.Toggles;
 using Relativity.Toggles;
+using System.Linq;
 
 namespace Relativity.MassImport.Data
 {
@@ -199,6 +201,19 @@ namespace Relativity.MassImport.Data
 
 		public int UpdateObjectMetadata(int userID, int? auditUserID, string reqOrig, string recOrig, bool performAudit)
 		{
+			if (ToggleProvider.Current.IsEnabled<EnableUpdateMetadataOptimization>())
+			{
+				return UpdateObjectMetadataNew(userID, auditUserID, reqOrig, recOrig, performAudit);
+			}
+			else
+			{
+				return UpdateObjectMetadataOld(userID, auditUserID, reqOrig, recOrig, performAudit);
+			}
+		}
+	
+
+private int UpdateObjectMetadataOld(int userID, int? auditUserID, string reqOrig, string recOrig, bool performAudit)
+		{
 			this.ImportMeasurements.StartMeasure();
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
 			kCura.Utility.InjectionManager.Instance.Evaluate("21c880cd-5404-420d-92c5-d2bc08bd5058");
@@ -320,6 +335,185 @@ namespace Relativity.MassImport.Data
 
 			return updatedDocumentsCount;
 		}
+
+
+
+		private int UpdateObjectMetadataNew(int userID, int? auditUserID, string reqOrig, string recOrig, bool performAudit)
+		{
+			this.ImportMeasurements.StartMeasure();
+			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			if (!auditUserID.HasValue)
+			{
+				auditUserID = userID;
+			}
+			
+
+			List<List<FieldInfo>> fieldsBatches = BatchFields(this.Settings.MappedFields);
+			bool hasMoreThanOneBatch = fieldsBatches.Count > 1;
+
+			if (hasMoreThanOneBatch)
+			{
+				CreateTempTableForOverlayAudit();
+			}
+
+			string updateTextIdentifierValue = "/* Do not update text identifier when Identifier is a key field or is not mapped */";
+			bool isIdentifierMapped = this.Settings.MappedFields.Any(f => f.Category == FieldCategory.Identifier);
+			bool identifierMappedAndKeyFieldDifferent = false;
+			if (isIdentifierMapped)
+			{
+				var keyField = this.GetKeyField() ?? this.IdentifierField;
+				bool keyFieldIsIdentifierField = keyField.ArtifactID == this.IdentifierField.ArtifactID;
+				if (!keyFieldIsIdentifierField)
+				{
+					identifierMappedAndKeyFieldDifferent = true;
+					updateTextIdentifierValue = $", A.[TextIdentifier] = N.[{this.IdentifierField.GetColumnName()}]";
+				}
+			}
+
+			foreach (var fieldsBatch in fieldsBatches)
+			{
+				UpdateRdoFields(
+					userID,
+					auditUserID.Value,
+					reqOrig,
+					recOrig,
+					performAudit,
+					fieldsBatch,
+					identifierMappedAndKeyFieldDifferent,
+					useTempTableForAudit: hasMoreThanOneBatch);
+			}
+
+			if (hasMoreThanOneBatch)
+			{
+				CopyRecordsFromTempAuditToAudit(auditUserID, reqOrig, recOrig);
+			}
+
+			int updatedDocumentsCount = UpdateArtifactTableForOverlaidRecords(auditUserID, updateTextIdentifierValue);
+
+			this.ImportMeasurements.StopMeasure();
+			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
+
+			return updatedDocumentsCount;
+		}
+
+		private void UpdateRdoFields(
+			int userID,
+			int auditUserID,
+			string reqOrig,
+			string recOrig,
+			bool performAudit,
+			List<FieldInfo> fields,
+			bool identifierMappedAndKeyFieldDifferent,
+			bool useTempTableForAudit)
+		{
+			string updateObjectsQuery = this.ImportSql.UpdateMetadataNew();
+
+			string fileFieldAuditSql = null;
+			var setClause = new StringBuilder();
+				foreach (FieldInfo mappedField in fields)
+				{
+					if (mappedField.Type == FieldTypeHelper.FieldType.File)
+					{
+						fileFieldAuditSql = this.ImportSql.FileFieldAuditJoin("File" + mappedField.ArtifactID);
+					}
+					else if (this.FieldIsOnObjectTable(mappedField))
+					{
+							if (this.Settings.LoadImportedFullTextFromServer && mappedField.Category == FieldCategory.FullText)
+							{
+								
+								// if we are reading the file paths directly from their share location, skip the update clause for the text field and instead update the text afterward
+							}
+					else if (mappedField.Category != FieldCategory.Identifier || identifierMappedAndKeyFieldDifferent)
+									{
+										setClause.AppendFormat("	D.[{0}] = N.[{0}],", mappedField.GetColumnName());
+										setClause.AppendLine();
+									}
+					}
+				}
+
+			var auditBuilder = new AuditDetailsBuilder(this.Context, this.Settings, ColumnDefinitionCache, _tableNames, base.ArtifactTypeID);
+			var auditClauses = auditBuilder.GenerateAuditDetailsNew(performAudit, fields, false);
+			string auditDetailsClause = auditClauses.Item1;
+			
+			string auditMapClause = auditClauses.Item2;
+
+			// Check if the object table has to change
+			if (setClause.Length > 0)
+
+			{
+				// Add UPDATE statement
+				updateObjectsQuery = updateObjectsQuery.Replace("/* UpdateObjectOrDocTable */",
+					this.ImportSql.UpdateObjectOrDocTable());
+				// Insert to AuditRecord using OUTPUT INTO
+				if (performAudit)
+				{
+					if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
+					{
+						if (fileFieldAuditSql != null)
+						{
+							updateObjectsQuery =
+								updateObjectsQuery.Replace("/* FileFieldAuditJoin */", fileFieldAuditSql);
+						}
+
+						updateObjectsQuery = updateObjectsQuery.Replace("/* MapFieldsAuditJoin */",
+							this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
+					}
+
+					if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
+					{
+						updateObjectsQuery = updateObjectsQuery.Replace("/* UpdateAuditRecordsMerge */",
+							this.ImportSql.UpdateAuditClauseMergeNew(this.ImportUpdateAuditAction, auditDetailsClause,
+								useTempTableForAudit));
+					}
+				}
+
+			}
+			// Insert to AuditRecord using regular INSERT
+			else if (performAudit)
+			{
+				if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
+				{
+					updateObjectsQuery = updateObjectsQuery.Replace("/* UpdateAuditRecordsInsert */", this.ImportSql.UpdateAuditClauseInsertNew(this._tableNames.Native, this.ImportUpdateAuditAction, auditDetailsClause, useTempTableForAudit));
+				}
+
+				if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
+				{
+					if (fileFieldAuditSql != null)
+					{
+						updateObjectsQuery = updateObjectsQuery.Replace("/* FileFieldAuditJoin */", fileFieldAuditSql);
+					}
+
+					updateObjectsQuery = updateObjectsQuery.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
+				}
+			}
+
+			
+			updateObjectsQuery = string.Format(
+				updateObjectsQuery,
+				this._tableNames.Native,
+				setClause.Length == 0 ? string.Empty : setClause.ToString(0, setClause.Length - (",".Length + System.Environment.NewLine.Length)),
+				auditDetailsClause,
+				this.ArtifactTypeTableName,
+				this._tableNames.Part,
+				TopFieldArtifactID,
+				ImportUpdateAuditAction,
+				this._tableNames.Map,
+				auditMapClause);
+
+			var sqlParameters = new[]
+			{
+				
+				new SqlParameter("@userID", userID),
+				new SqlParameter("@auditUserID", auditUserID),
+				new SqlParameter("@requestOrig", reqOrig),
+				new SqlParameter("@recordOrig", recOrig)
+			
+		};
+
+			this.QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(updateObjectsQuery, sqlParameters, this.QueryTimeout);
+		}
+
+
 
 		public int PopulateFileTables(int userID, bool auditEnabled, string requestOrig, string recordOrig, string masterDbPrepend)
 		{

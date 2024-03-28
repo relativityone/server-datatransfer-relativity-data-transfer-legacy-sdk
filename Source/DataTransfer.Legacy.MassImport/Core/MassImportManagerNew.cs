@@ -198,8 +198,7 @@ namespace Relativity.MassImport.Core
 					if (image.HasDataGridWorkToDo && image.IsDataGridInputValid())
 					{
 						timekeeper.MarkStart("UpdateDataGridMapping");
-						image.UpdateDgFieldMappingRecords(image.DGRelativityRepository.ImportFileInfos,
-							this.CorrelationLogger);
+						image.UpdateDgFieldMappingRecords(image.DGRelativityRepository.ImportFileInfos.ToArray(), this.CorrelationLogger, context.AppArtifactID);
 						timekeeper.MarkEnd("UpdateDataGridMapping");
 					}
 

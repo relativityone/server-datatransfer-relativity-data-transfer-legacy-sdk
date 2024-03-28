@@ -30,7 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" />
-    <PackageReference Include="kCura"/>
+    <PackageReference Include="kCura" />
     <PackageReference Include="kCura.DataGrid.Services.Interfaces" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Polly" />
