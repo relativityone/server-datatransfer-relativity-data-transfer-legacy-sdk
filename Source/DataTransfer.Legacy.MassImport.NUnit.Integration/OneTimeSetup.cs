@@ -44,11 +44,9 @@ namespace MassImport.NUnit.Integration
 				$"{RelativityFacade.Instance.Config.RelativityInstance.ServerBindingType}://{RelativityFacade.Instance.Config.RelativityInstance.RestServicesHostAddress}");
 			Uri relativityRestApi = new Uri(relativityBaseUri, new Uri("relativity.rest/api", UriKind.Relative));
 			TestParameters =
-				new IntegrationTestParameters(
-					new Lazy<string>(
-						valueFactory: () =>
-							CreateSqlPrimaryServerBcpPath(RelativityFacade.Instance)))
-					{
+				new IntegrationTestParameters
+					
+				{
 						RelativityUrl = relativityBaseUri.ToString(),
 						RelativityRestUrl = relativityRestApi.ToString(),
 						RelativityUserName = RelativityFacade.Instance.Config.RelativityInstance.AdminUsername,

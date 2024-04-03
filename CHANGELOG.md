@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.3] - 03-Apr-2024
+
+### Changed
+ 
+- [REL-910470](https://jira.kcura.com/browse/REL-910470) [SYNC][IAPI] IAPI failed during MassImport -The query processor ran out of stack space during query optimization. Please simplify the query - Backported [REL-742829](https://jira.kcura.com/browse/REL-742829) ticket.
+
 ## [24000.0.2] - 11-29-2023
 
 ### Changed

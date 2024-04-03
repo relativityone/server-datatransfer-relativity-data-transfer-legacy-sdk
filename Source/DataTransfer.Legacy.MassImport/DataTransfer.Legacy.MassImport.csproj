@@ -41,6 +41,7 @@
     <PackageReference Include="Relativity.Telemetry.APM" />
     <PackageReference Include="Relativity.Toggles" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" />
+    <PackageReference Include="Castle.Windsor"/>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -60,6 +60,7 @@
     <PackageReference Include="Relativity.Telemetry.APM" />
     <PackageReference Include="Relativity.Toggles" />
     <PackageReference Include="Relativity.Logging.Interfaces" />
+    <PackageReference Include="FluentAssertions" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.ServiceModel" Private="True" />

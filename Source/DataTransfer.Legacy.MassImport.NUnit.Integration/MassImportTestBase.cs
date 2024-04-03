@@ -7,6 +7,7 @@ using MassImport.NUnit.Integration.Helpers;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
+using Relativity.API;
 using Relativity.Core;
 using Relativity.Core.Service;
 using Relativity.Data.AuditIngestion;
@@ -17,6 +18,8 @@ namespace MassImport.NUnit.Integration
 {
 	public abstract class MassImportTestBase
 	{
+		public Mock<IHelper> HelperMock;
+
 		private const int USER_ID = 9;
 		private readonly Mock<ICoreContext> _coreContextMock = new Mock<ICoreContext>();
 
@@ -28,6 +31,7 @@ namespace MassImport.NUnit.Integration
 
 		protected MassImportTestBase()
 		{
+
 			this.TestParameters = OneTimeSetup.TestParameters;
 		}
 
@@ -92,10 +96,15 @@ namespace MassImport.NUnit.Integration
 			baseContextMock.Setup(x => x.ChicagoContext).Returns(baseContextMock.Object);
 			this._coreContextMock.Setup(x => x.ChicagoContext).Returns(baseContextMock.Object);
 		}
-
+		protected async Task CreateNewTestWorkspace()
+		{
+			await AssemblySetup.OneTimeTearDownAsync().ConfigureAwait(false);
+			AssemblySetup.OneTimeSetUp();
+			await OneTimeBaseSetupAsync().ConfigureAwait(false);
+		}
 		private void SetupConfigMock()
 		{
-			kCura.Data.RowDataGateway.Config.SetConnectionString(this.TestWorkspace.ConnectionString);
+			kCura.Data.RowDataGateway.Config.SetConnectionString(this.TestWorkspace.EddsConnectionString);
 		}
 	}
 }

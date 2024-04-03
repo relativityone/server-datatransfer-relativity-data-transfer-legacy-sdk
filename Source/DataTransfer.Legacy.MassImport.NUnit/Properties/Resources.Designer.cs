@@ -119,6 +119,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
             }
         }
         
+
         /// <summary>
         ///   Looks up a localized string similar to CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
         ///		&apos;&lt;field id=&quot;100123&quot; type=&quot;8&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&gt;&apos; + 
@@ -171,6 +172,36 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
             }
         }
         
+/// <summary>
+		///   Looks up a localized string similar to 	CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+		///&apos;&lt;field id=&quot;100123&quot; type=&quot;13&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&gt;&apos; +
+		///			ISNULL(CAST(GM.[MultiCodeField IsNew] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;)  +
+		///&apos;&lt;/field&gt;&apos; +
+		///	&apos;&lt;/auditElement&gt;&apos;,.
+		/// </summary>
+		internal static string AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll
+		{
+			get
+			{
+				return ResourceManager.GetString("AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll", resourceCulture);
+			}
+		}
+
+        /// <summary>
+		///   Looks up a localized string similar to 	CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+		///&apos;&lt;field id=&quot;100123&quot; type=&quot;13&quot; name=&quot;MultiCode Field&quot; formatstring=&quot;&quot;&gt;&apos; +
+		///			ISNULL(CAST(GM.[MultiCodeField IsNew] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;)  +
+		///			ISNULL(CAST(GM.[MultiCodeField] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;)  +
+		///&apos;&lt;/field&gt;&apos; +
+		///	&apos;&lt;/auditElement&gt;&apos;,.
+		/// </summary>
+		internal static string AuditDetailsBuilderTests_Objects_detailsClause_MergeAll
+		{
+			get
+			{
+				return ResourceManager.GetString("AuditDetailsBuilderTests_Objects_detailsClause_MergeAll", resourceCulture);
+			}
+		}
         /// <summary>
         ///   Looks up a localized string similar to IF EXISTS (
         ///SELECT 
