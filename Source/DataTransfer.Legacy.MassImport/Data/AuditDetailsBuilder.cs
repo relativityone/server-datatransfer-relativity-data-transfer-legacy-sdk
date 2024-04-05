@@ -12,7 +12,8 @@ namespace Relativity.MassImport.Data
 		private kCura.Data.RowDataGateway.BaseContext Context { get; }
 		private Relativity.MassImport.DTO.NativeLoadInfo Settings { get; }
 		protected IColumnDefinitionCache ColumnDefinitionCache { get; private set; }
-		private bool IsDocument { get; }
+		private bool IsDocument { get; } 
+		private string detailsClause { get; set; }
 
 		public const string ExtractedTextCodePageColumnName = "ExtractedTextEncodingPageCode";
 		private readonly TableNames _tableNames;
@@ -38,10 +39,11 @@ namespace Relativity.MassImport.Data
 		{
 			var auditRecordDetailsCollation = ExecuteSqlStatementAsScalar<string>(
 				"SELECT collation_name FROM sys.columns WHERE [name] = 'Details' AND [object_id] = OBJECT_ID('[EDDSDBO].[AuditRecord]')");
-			var detailsClause = new System.Text.StringBuilder();
+			var detailsClauseOuter = new System.Text.StringBuilder();
 			var mapClause = new StringBuilder();
-			detailsClause.AppendLine("	CAST(N'<auditElement>' AS NVARCHAR(MAX)) +");
+			detailsClauseOuter.AppendLine("	CAST(N'<auditElement>' AS NVARCHAR(MAX)) +");
 			List<string> fieldClauseCollection = new List<string>();
+
 
 			if (performAudit && Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
 			{
@@ -51,22 +53,29 @@ namespace Relativity.MassImport.Data
 				}
 			}
 
+			if (fieldClauseCollection.Any())
+			{
+				//detailsClauseOuter.Append("'");
+				foreach (var fieldClause in fieldClauseCollection)
+				{
+					detailsClauseOuter.AppendLine();
+					detailsClauseOuter.Append(fieldClause);
+				}
+				//detailsClauseOuter.AppendLine("' +");
+			}
 			if (includeExtractedTextEncoding)
 			{
-				detailsClause.Append("	'<extractedTextEncodingPageCode>' + ");
-				detailsClause.AppendFormat("ISNULL(CAST(N.[{0}] AS NVARCHAR(200)), '-1') + ", ExtractedTextCodePageColumnName);
-				detailsClause.AppendLine("'</extractedTextEncodingPageCode>' +");
+				detailsClauseOuter.Append("	'<extractedTextEncodingPageCode>' + ");
+				detailsClauseOuter.AppendFormat("ISNULL(CAST(N.[{0}] AS NVARCHAR(200)), '-1') + ", ExtractedTextCodePageColumnName);
+				detailsClauseOuter.AppendLine("'</extractedTextEncodingPageCode>' +");
 			}
 
-			detailsClause.Append("	'</auditElement>',");
-			return Tuple.Create(detailsClause.ToString(), mapClause.ToString());
+			detailsClauseOuter.Append("	'</auditElement>',");
+			return Tuple.Create(detailsClauseOuter.ToString(), mapClause.ToString());
 		}
-
-
 
 		public Tuple<string, string> GenerateAuditDetailsNew(bool performAudit, IEnumerable<FieldInfo> fields, bool includeExtractedTextEncoding)
 		{
-
 			var detailsClauseOuter = new System.Text.StringBuilder();
 			var mapClause = new StringBuilder();
 			List<string> fieldClauseCollection = new List<string>();
@@ -76,34 +85,33 @@ namespace Relativity.MassImport.Data
 			{
 				foreach (FieldInfo mappedField in fields)
 				{
-
 					GenerateAuditDetailsForField(mappedField, _auditRecordDetailsCollationLazy.Value, fieldClauseCollection, mapClause);
 				}
 			}
 
 			if (fieldClauseCollection.Any())
 			{
-				detailsClauseOuter.Append("'");
+				//detailsClauseOuter.Append("'");
 				foreach (var fieldClause in fieldClauseCollection)
 				{
 					detailsClauseOuter.AppendLine();
 					detailsClauseOuter.Append(fieldClause);
 				}
-				detailsClauseOuter.AppendLine("'");
+				//detailsClauseOuter.AppendLine("'");
+				//detailsClause= TrimEnd(detailsClauseOuter.ToString());
 			}
 			if (includeExtractedTextEncoding)
 			{
-				if (detailsClauseOuter.Length > 0)
-				{
-					detailsClauseOuter.Append(" +");
-				}
+				
 				detailsClauseOuter.Append("	'<extractedTextEncodingPageCode>' + ");
 				detailsClauseOuter.AppendFormat("ISNULL(CAST(N.[{0}] AS NVARCHAR(200)), '-1') + ", ExtractedTextCodePageColumnName);
 				detailsClauseOuter.AppendLine("'</extractedTextEncodingPageCode>'");
 			}
-
+			
 			return Tuple.Create(detailsClauseOuter.ToString(), mapClause.ToString());
 		}
+
+
 
 		private void GenerateAuditDetailsForField(FieldInfo mappedField, string auditRecordDetailsCollation, List<string> fieldClauseCollection, StringBuilder mapClause)
 		{
@@ -123,7 +131,7 @@ namespace Relativity.MassImport.Data
 			}
 			else
 			{
-				detailsClause.AppendFormat("<field id=\"{0}\" ", mappedField.ArtifactID);
+				detailsClause.AppendFormat("'<field id=\"{0}\" ", mappedField.ArtifactID);
 				detailsClause.AppendFormat("type=\"{0}\" ", (int)mappedField.Type);
 				// Fully XML encoded, refactor for XML Attribute Encoding only
 				if (mappedField.EnableDataGrid)
@@ -131,32 +139,25 @@ namespace Relativity.MassImport.Data
 					detailsClause.Append("datagridenabled=\"true\" ");
 				}
 				detailsClause.AppendFormat("name=\"{0}\" ", System.Security.SecurityElement.Escape(mappedField.DisplayName));
-				detailsClause.AppendFormat("formatstring=\"{0}\">", mappedField.FormatString.Replace("'", "''"));
+				detailsClause.AppendFormat("formatstring=\"{0}\">' +", mappedField.FormatString.Replace("'", "''"));
 				string map = null;
 				string detail;
 				switch (mappedField.Type)
 				{
 					case FieldTypeHelper.FieldType.Boolean:
-						{
-							detail = "<{0}Value>' + CASE {1}.[{2}] WHEN 1 THEN 'True' WHEN 0 THEN 'False' ELSE '' END + '</{0}Value>";
+					{
+							detail = "'<{0}Value>' + CASE {1}.[{2}] WHEN 1 THEN 'True' WHEN 0 THEN 'False' ELSE '' END + '</{0}Value>'+";
 							break;
 						}
-
 
 					case FieldTypeHelper.FieldType.Code:
 						{
-
-
 							map = $@",
-		'<unsetChoice>' + (SELECT CAST(MappedArtifactID AS VARCHAR(10)) FROM[Resource].[{_tableNames.Map}] M1 WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = {mappedField.ArtifactID}
-											AND M1.IsNew = 0) +'</unsetChoice>'[{mappedField.GetColumnName()}]";
-
-							detail = $@"            ISNULL('<setChoice>' + NULLIF(N.[{mappedField.GetColumnName()}] COLLATE {auditRecordDetailsCollation}, '') +'</setChoice>', '') +
-			ISNULL(GM.[{mappedField.GetColumnName()}] COLLATE {auditRecordDetailsCollation}, '') ";
-
+		'<unsetChoice>' + (SELECT CAST(MappedArtifactID AS VARCHAR(10)) FROM [Resource].[{_tableNames.Map}] M1 WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = {mappedField.ArtifactID} AND M1.IsNew = 0)+' </unsetChoice>' [{mappedField.GetColumnName()}]";
+							detail = $@"			ISNULL('<setChoice>' + NULLIF(N.[{mappedField.GetColumnName()}] COLLATE {auditRecordDetailsCollation}, '') + '</setChoice>', '') +
+			ISNULL(GM.[{mappedField.GetColumnName()}] COLLATE {auditRecordDetailsCollation},'') ";
 							break;
 						}
-
 
 					case FieldTypeHelper.FieldType.MultiCode:
 						{
@@ -168,7 +169,6 @@ namespace Relativity.MassImport.Data
 			WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = {mappedField.ArtifactID} AND M1.IsNew = 1
 			FOR XML PATH (''), TYPE
 		) [{mappedField.GetColumnName()} IsNew]";
-
 							detail = $"			ISNULL(CAST(GM.[{mappedField.GetColumnName()} IsNew] AS NVARCHAR(MAX)) COLLATE {auditRecordDetailsCollation}, '') ";
 							if (!Helper.IsMergeOverlayBehavior(Settings.OverlayBehavior, mappedField.Type, ColumnDefinitionCache[mappedField.ArtifactID].OverlayMergeValues))
 							{
@@ -182,8 +182,6 @@ namespace Relativity.MassImport.Data
 		) [{mappedField.GetColumnName()}]";
 								detail = $@"{detail} +
 			ISNULL(CAST(GM.[{mappedField.GetColumnName()}] AS NVARCHAR(MAX)) COLLATE {auditRecordDetailsCollation}, '') ";
-
-
 							}
 
 							break;
@@ -191,25 +189,25 @@ namespace Relativity.MassImport.Data
 
 					case FieldTypeHelper.FieldType.Date:
 						{
-							detail = $"<{{0}}Value>' + ISNULL(CONVERT(NVARCHAR(23), {{1}}.[{{2}}], 120) COLLATE {auditRecordDetailsCollation}, '') + '</{{0}}Value>";
+							detail = $"'<{{0}}Value>' + ISNULL(CONVERT(NVARCHAR(23), {{1}}.[{{2}}], 120) COLLATE {auditRecordDetailsCollation}, '') + '</{{0}}Value>'+";
 							break;
 						}
 
 					case FieldTypeHelper.FieldType.Varchar:
 						{
-							detail = $"<{{0}}Value><![CDATA[' + ISNULL({{1}}.[{{2}}] COLLATE {auditRecordDetailsCollation}, '') + ']]></{{0}}Value>";
+							detail = $"'<{{0}}Value><![CDATA[' + ISNULL({{1}}.[{{2}}] COLLATE {auditRecordDetailsCollation}, '') + ']]></{{0}}Value>'+";
 							break;
 						}
 
 					case FieldTypeHelper.FieldType.Text:
 						{
-							detail = $"<{{0}}Value>' + IIF(DATALENGTH({{1}}.[{{2}}]) > 1000000, '<![CDATA[NOTE:Contents of field are longer than 1MB; value-audit skipped]]>', '<![CDATA[' + ISNULL({{1}}.[{{2}}] COLLATE {auditRecordDetailsCollation}, '') + ']]>') + '</{{0}}Value>";
+							detail = $"'<{{0}}Value>' + IIF(DATALENGTH({{1}}.[{{2}}]) > 1000000, '<![CDATA[NOTE:Contents of field are longer than 1MB; value-audit skipped]]>', '<![CDATA[' + ISNULL({{1}}.[{{2}}] COLLATE {auditRecordDetailsCollation}, '') + ']]>') + '</{{0}}Value>'+";
 							break;
 						}
 
 					case FieldTypeHelper.FieldType.File:
 						{
-							detail = $"<{{0}}Value>' + ISNULL(CONVERT(NVARCHAR(200), {{1}}.[{{2}}]) COLLATE {auditRecordDetailsCollation}, '') + '</{{0}}Value>";
+							detail = $"'<{{0}}Value>' + ISNULL(CONVERT(NVARCHAR(200), {{1}}.[{{2}}]) COLLATE {auditRecordDetailsCollation}, '') + '</{{0}}Value>'+";
 							break;
 						}
 
@@ -223,7 +221,6 @@ namespace Relativity.MassImport.Data
 			WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = {mappedField.ArtifactID} AND M1.IsNew = 1
 			FOR XML PATH (''), TYPE
 		) [{mappedField.GetColumnName()} IsNew]";
-
 							detail = $"			ISNULL(CAST(GM.[{mappedField.GetColumnName()} IsNew] AS NVARCHAR(MAX)) COLLATE {auditRecordDetailsCollation}, '') ";
 							if (!Helper.IsMergeOverlayBehavior(Settings.OverlayBehavior, mappedField.Type, ColumnDefinitionCache[mappedField.ArtifactID].OverlayMergeValues))
 							{
@@ -235,10 +232,8 @@ namespace Relativity.MassImport.Data
 			WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = {mappedField.ArtifactID} AND M1.IsNew = 0
 			FOR XML PATH (''), TYPE
 		) [{mappedField.GetColumnName()}]";
-								detail = $@"{detail}
-												+
-					ISNULL(CAST(GM.[{mappedField.GetColumnName()}] AS NVARCHAR(MAX)) COLLATE {auditRecordDetailsCollation}, '') ";
-
+								detail = $@"{detail} +
+			ISNULL(CAST(GM.[{mappedField.GetColumnName()}] AS NVARCHAR(MAX)) COLLATE {auditRecordDetailsCollation}, '') ";
 							}
 
 							break;
@@ -246,15 +241,10 @@ namespace Relativity.MassImport.Data
 
 					default:
 						{
-
-							detail = $"<{{0}}Value>' + ISNULL(CONVERT(NVARCHAR(MAX), {{1}}.[{{2}}]) COLLATE {auditRecordDetailsCollation}, '') + '</{{0}}Value>";
+							detail = $"'<{{0}}Value>' + ISNULL(CONVERT(NVARCHAR(MAX), {{1}}.[{{2}}]) COLLATE {auditRecordDetailsCollation}, '') + '</{{0}}Value>'+";
 							break;
 						}
-
-
 				}
-
-
 
 				switch (mappedField.Type)
 				{
@@ -262,10 +252,8 @@ namespace Relativity.MassImport.Data
 					case FieldTypeHelper.FieldType.MultiCode:
 						{
 							mapClause.Append(map);
-							detailsClause.AppendLine("' +");
 							detailsClause.Append(detail);
 							detailsClause.AppendLine(" +");
-							detailsClause.Append("'");
 							break;
 						}
 
@@ -283,17 +271,17 @@ namespace Relativity.MassImport.Data
 					case FieldTypeHelper.FieldType.Objects:
 						{
 							mapClause.Append(map);
-							detailsClause.AppendLine("' +");
+							//detailsClause.AppendLine("' +");
 							detailsClause.Append(detail);
 							detailsClause.AppendLine(" +");
-							detailsClause.Append("'");
+							//detailsClause.Append("'");
 							break;
 						}
 
 					default:
 						{
 							if (!mappedField.EnableDataGrid)
-							{
+									{
 								detailsClause.AppendLine("");
 								detailsClause.Append("			");
 								detailsClause.AppendFormat(detail, "old", " DELETED", mappedField.GetColumnName());
@@ -301,18 +289,19 @@ namespace Relativity.MassImport.Data
 								detailsClause.Append("			");
 								detailsClause.AppendFormat(detail, "new", "INSERTED", mappedField.GetColumnName());
 								detailsClause.AppendLine(" ");
-							}
+									}
 
 							break;
 						}
 				}
+				
 
-				detailsClause.Append("</field>");
+				detailsClause.Append("'</field>'+");
+
 				fieldClauseCollection.Add(detailsClause.ToString());
 			}
-
-
 		}
+
 
 
 		private string ReadAuditDetailsCollation()

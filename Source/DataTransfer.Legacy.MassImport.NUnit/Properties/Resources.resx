@@ -196,4 +196,10 @@
   <data name="AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AuditDetailsBuilderTests\AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+<data name="AuditDetailsBuilderTests_Objects_detailsClause_MergeAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AuditDetailsBuilderTests\AuditDetailsBuilderTests_Objects_detailsClause_MergeAll.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AuditDetailsBuilderTests\AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll.sql;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
 </root>

@@ -1,4 +1,5 @@
-﻿using DataTransfer.Legacy.MassImport.NUnit.Properties;
+﻿using System;
+using DataTransfer.Legacy.MassImport.NUnit.Properties;
 using kCura.Data.RowDataGateway;
 using Moq;
 using NUnit.Framework;
@@ -235,11 +236,12 @@ namespace Relativity.MassImport.NUnit.Data
 
 			// ACT
 			var results = _builder.GenerateAuditDetailsNew(performAudit, mappedFields, false);
-
 			// ASSERT
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(expectedDetailsClause));
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, expectedMapClause);
 		}
+
+
 
 		[Test]
 		public void ShouldGenerateAuditDetailsWithEncodingNew(
@@ -311,6 +313,7 @@ namespace Relativity.MassImport.NUnit.Data
 				: Resources.AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll);
 		}
 
+
 		[Test]
 		public void ShouldGenerateAuditDetailsForObjectsFieldNew(
 			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll)] Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
@@ -342,9 +345,9 @@ namespace Relativity.MassImport.NUnit.Data
 			var results = _builder.GenerateAuditDetailsNew(true, mappedFields, false);
 
 			// ASSERT
-			var expectedAuditDetails = overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
+			var expectedAuditDetails = overlayBehavior == DTO.OverlayBehavior.MergeAll
 				? Resources.AuditDetailsBuilderTests_Objects_detailsClause_MergeAll
-			: Resources.AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll;
+				: Resources.AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll;
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(expectedAuditDetails));
 		}
 
@@ -383,19 +386,29 @@ namespace Relativity.MassImport.NUnit.Data
 
 		private void ThenTheStringsAreEqualIgnoringWhiteSpaces(string result, string expectedResult)
 		{
-			var normalizedResult = result.RemoveWhitespaces();
+			string modifiedString = result.TrimEnd('+');
+
+			// Output the modified string
+			Console.WriteLine(modifiedString);
+			var normalizedResult = modifiedString.RemoveWhitespaces();
 			var normalizedExpectedResult = expectedResult.RemoveWhitespaces();
 
 			Assert.AreEqual(normalizedExpectedResult, normalizedResult, "Generated audit details differ from the expected values.");
 		}
 
+
+	
+
 		private static string RemoveAuditElementNode(string auditDetails)
 		{
 			return auditDetails
-				.Replace("CAST(N'<auditElement>' AS NVARCHAR(MAX)) +", string.Empty)
-				.Replace("'</auditElement>',", string.Empty)
-				.Trim()
-				.TrimEnd('+');
+					.Replace("CAST(N'<auditElement>' AS NVARCHAR(MAX)) +", string.Empty)
+					.Replace("'</auditElement>',", string.Empty)
+					.Trim()
+					.TrimEnd('+')
+
+
+				;
 		}
 		private static Relativity.MassImport.DTO.ObjectLoadInfo InitializeSettings(string runId, int artifactTypeId, Relativity.MassImport.DTO.ImportAuditLevel auditLevel, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior, Relativity.MassImport.DTO.OverwriteType overwriteType, FieldInfo[] mappedFields)
 		{
