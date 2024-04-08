@@ -133,14 +133,14 @@ function Invoke-Tests
         $ReportGenerator = Resolve-Path (Join-Path $BuildTools "reportgenerator.*\tools\net47\ReportGenerator.exe")
         $CoveragePath = Join-Path $LogsDir "Coverage.xml"
 
-        & $OpenCover -target:$NUnit -targetargs:"$Solution --where=`"$WhereClause`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[*DataTransfer.Legacy*]* -[*Tests*]* -[*NUnit*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode
+        & $OpenCover -target:$NUnit -targetargs:"$Solution --where="$WhereClause" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[*DataTransfer.Legacy*]* -[*Tests*]* -[*NUnit*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode
         & $ReportGenerator -reports:"$LogsDir\OpenCover.xml" -targetdir:$LogsDir -reporttypes:Cobertura
         Move-Item (Join-Path $LogsDir Cobertura.xml) $CoveragePath -Force
     }
     else
     {
          & $NUnit $Solution `
-            "--where=`"$WhereClause`"" `
+            "--where= $WhereClause" `
             "--noheader" `
             "--labels=On" `
             "--skipnontestassemblies" `
