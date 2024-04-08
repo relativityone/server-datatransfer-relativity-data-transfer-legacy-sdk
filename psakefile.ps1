@@ -5,36 +5,37 @@ properties {
     $Solution = ((Get-ChildItem -Path $SourceDir -Filter *.sln -File)[0].FullName)
     $ArtifactsDir = Join-Path $PSScriptRoot "Artifacts"
     $LogsDir = Join-Path $ArtifactsDir "Logs"
-    $LogFilePath = (Join-Path $LogsDir "buildsummary.log").Replace('\', '/')
-    $ErrorLogFilePath = (Join-Path $LogsDir "builderrors.log").Replace('\', '/')
+    $LogFilePath = Join-Path $LogsDir "buildsummary.log"
+    $ErrorLogFilePath = Join-Path $LogsDir "builderrors.log"
 }
 
-Task default -Depends Analyze, Compile, Test, Package -Description "Build and run unit tests. All the steps for a local build.";
+
+Task default -Depends Analyze, Compile, Test, Package -Description "Build and run unit tests. All the steps for a local build."
 
 Task Analyze -Description "Run build analysis" {
     # Leaving this blank until we are ready to add in analyzers later
 }
 
 Task NugetRestore -Description "Restore the packages needed for this build" {
-    exec { & $NugetExe @('restore', $Solution) }
+    exec { & $NugetExe restore $Solution }
 }
 
 Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
     Initialize-Folder $ArtifactsDir -Safe
     Initialize-Folder $LogsDir -Safe
 
-    exec { msbuild @($Solution,
-        ("/target:Build"),
-        ("/property:Configuration=$BuildConfig"),
-        ("/consoleloggerparameters:Summary"),
-        ("/property:PublishWebProjects=True"),
-        ("/nodeReuse:False"),
-        ("/maxcpucount"),
-        ("/nologo"),
-        ("/fileloggerparameters1:LogFile=$([System.IO.Path]::GetFullPath($LogFilePath))"),
-        ("/fileloggerparameters2:errorsonly;LogFile=$([System.IO.Path]::GetFullPath($ErrorLogFilePath))")
-    )
-    }
+    exec { msbuild @(
+        $Solution,
+        "/target:Build",
+        "/property:Configuration=$BuildConfig",
+        "/consoleloggerparameters:Summary",
+        "/property:PublishWebProjects=True",
+        "/nodeReuse:False",
+        "/maxcpucount",
+        "/nologo",
+        "/fileloggerparameters1:LogFile=$LogFilePath",
+        "/fileloggerparameters2:errorsonly;LogFile=$ErrorLogFilePath"
+    )}
 }
 
 Task Test -Description "Run tests that don't require a deployed environment." {
@@ -91,18 +92,19 @@ Task Rebuild -Description "Do a rebuild" {
     Initialize-Folder $ArtifactsDir
 
     Write-Host "Running Rebuild target on $Solution"
-    exec { msbuild @($Solution,
-        ("/target:Rebuild"),
-        ("/property:Configuration=$BuildConfig"),
-        ("/consoleloggerparameters:Summary"),
-        ("/property:PublishWebProjects=True"),
-        ("/nodeReuse:False"),
-        ("/maxcpucount"),
-        ("/nologo"),
-        ("/fileloggerparameters1:LogFile=$([System.IO.Path]::GetFullPath($LogFilePath))")
-        ("/fileloggerparameters2:errorsonly;LogFile=$([System.IO.Path]::GetFullPath($ErrorLogFilePath))")
-        )
-    }
+    exec { msbuild @(
+        $Solution,
+        "/target:Rebuild",
+        "/property:Configuration=$BuildConfig",
+        "/consoleloggerparameters:Summary",
+        "/property:PublishWebProjects=True",
+        "/nodeReuse:False",
+        "/maxcpucount",
+        "/nologo",
+        "/fileloggerparameters1:LogFile=$LogFilePath",
+        "/fileloggerparameters2:errorsonly;LogFile=$ErrorLogFilePath"
+    )}
+    
 }
 
 Task Help -Alias ? -Description "Display task information" {
