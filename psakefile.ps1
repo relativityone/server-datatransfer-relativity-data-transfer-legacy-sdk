@@ -40,12 +40,11 @@ Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
 
 Task Test -Description "Run tests that don't require a deployed environment." {
     $LogPath = Join-Path $LogsDir "UnitTestResults.xml"
-    Invoke-Tests -WhereClause "namespace !~ FunctionalTests && namespace !~ Integration" -OutputFile $LogPath -WithCoverage
-}
+    Invoke-Tests -WhereClause "!@('FunctionalTests','Integration')" -OutputFile $LogPath -WithCoverage:$true}
 
 Task FunctionalTest -Description "Run functional tests that require a deployed environment." {
     $LogPath = Join-Path $LogsDir "FunctionalTestResults.xml"
-    Invoke-Tests -WhereClause "namespace =~ FunctionalTests && TestExecutionCategory == CI || namespace =~ Integration" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings)
+    Invoke-Tests -WhereClause "@('FunctionalTests','Integration')" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings) -WithCoverage:$false
 }
 
 Task Sign -Description "Sign all files" {
@@ -130,17 +129,17 @@ function Invoke-Tests
     Initialize-Folder $LogsDir -Safe
     if($WithCoverage)
     {
-        $OpenCover = Join-Path $BuildToolsDir "opencover.*\tools\OpenCover.Console.exe"
-        $ReportGenerator = Join-Path $BuildToolsDir "reportgenerator.*\tools\net47\ReportGenerator.exe"
+        $OpenCover = Resolve-Path (Join-Path $BuildTools "opencover.*\tools\OpenCover.Console.exe")
+        $ReportGenerator = Resolve-Path (Join-Path $BuildTools "reportgenerator.*\tools\net47\ReportGenerator.exe")
         $CoveragePath = Join-Path $LogsDir "Coverage.xml"
 
-        exec { & $OpenCover -target:$NUnit -targetargs:"$Solution --where=\`"$WhereClause\`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[*DataTransfer.Legacy*]* -[*Tests*]* -[*NUnit*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode }
-        exec { & $ReportGenerator -reports:"$LogsDir\OpenCover.xml" -targetdir:$LogsDir -reporttypes:Cobertura }
+        & $OpenCover -target:$NUnit -targetargs:"$Solution --where=`"$WhereClause`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[*DataTransfer.Legacy*]* -[*Tests*]* -[*NUnit*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode
+        & $ReportGenerator -reports:"$LogsDir\OpenCover.xml" -targetdir:$LogsDir -reporttypes:Cobertura
         Move-Item (Join-Path $LogsDir Cobertura.xml) $CoveragePath -Force
     }
     else
     {
-        exec { & $NUnit $Solution `
+         & $NUnit $Solution `
             "--where=`"$WhereClause`"" `
             "--noheader" `
             "--labels=On" `
@@ -148,6 +147,6 @@ function Invoke-Tests
             "--result=$OutputFile" `
             "--result=Artifacts\Logs\testexecutionparser.log;format=testexecutionparser" `
             $settings
-        }
+        
     }
 }
