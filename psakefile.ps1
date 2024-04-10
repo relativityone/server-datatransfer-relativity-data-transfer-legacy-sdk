@@ -9,7 +9,6 @@ properties {
     $ErrorLogFilePath = Join-Path $LogsDir "builderrors.log"
 }
 
-
 Task default -Depends Analyze, Compile, Test, Package -Description "Build and run unit tests. All the steps for a local build.";
 
 Task Analyze -Description "Run build analysis" {
@@ -17,7 +16,7 @@ Task Analyze -Description "Run build analysis" {
 }
 
 Task NugetRestore -Description "Restore the packages needed for this build" {
-    exec { & $NugetExe restore $Solution }
+    exec { & $NugetExe @('restore', $Solution) }
 }
 
 Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
@@ -25,7 +24,6 @@ Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
     Initialize-Folder $LogsDir -Safe
 
     exec { msbuild @($Solution,
-				  
         ("/target:Build"),
         ("/property:Configuration=$BuildConfig"),
         ("/consoleloggerparameters:Summary"),
@@ -33,8 +31,8 @@ Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
         ("/nodeReuse:False"),
         ("/maxcpucount"),
         ("/nologo"),
-        ("/fileloggerparameters1:LogFile=$LogFilePath"),
-        ("/fileloggerparameters2:errorsonly;LogFile=$ErrorLogFilePath"))
+        ("/fileloggerparameters1:LogFile=`"$LogFilePath`""),
+        ("/fileloggerparameters2:errorsonly;LogFile=`"$ErrorLogFilePath`""))
     }
 }
 
@@ -45,7 +43,7 @@ Task Test -Description "Run tests that don't require a deployed environment." {
 
 Task FunctionalTest -Description "Run functional tests that require a deployed environment." {
     $LogPath = Join-Path $LogsDir "FunctionalTestResults.xml"
-    Invoke-Tests -WhereClause "!@('FunctionalTests','Integration')" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings) -WithCoverage:$false
+    Invoke-Tests -WhereClause "namespace =~ FunctionalTests && TestExecutionCategory == CI || namespace =~ Integration" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings)
 }
 
 Task Sign -Description "Sign all files" {
@@ -92,19 +90,17 @@ Task Rebuild -Description "Do a rebuild" {
     Initialize-Folder $ArtifactsDir
 
     Write-Host "Running Rebuild target on $Solution"
-    exec { msbuild @(
-        $Solution,
-        "/target:Rebuild",
-        "/property:Configuration=$BuildConfig",
-        "/consoleloggerparameters:Summary",
-        "/property:PublishWebProjects=True",
-        "/nodeReuse:False",
-        "/maxcpucount",
-        "/nologo",
-        "/fileloggerparameters1:LogFile=$LogFilePath",
-        "/fileloggerparameters2:errorsonly;LogFile=$ErrorLogFilePath"
-    )}
-    
+    exec { msbuild @($Solution,
+        ("/target:Rebuild"),
+        ("/property:Configuration=$BuildConfig"),
+        ("/consoleloggerparameters:Summary"),
+        ("/property:PublishWebProjects=True"),
+        ("/nodeReuse:False"),
+        ("/maxcpucount"),
+        ("/nologo"),
+        ("/fileloggerparameters1:LogFile=`"$LogFilePath`""),
+        ("/fileloggerparameters2:errorsonly;LogFile=`"$ErrorLogFilePath`""))
+    }
 }
 
 Task Help -Alias ? -Description "Display task information" {
@@ -130,18 +126,18 @@ function Invoke-Tests
     Initialize-Folder $LogsDir -Safe
     if($WithCoverage)
     {
-        $OpenCover = Resolve-Path (Join-Path $BuildTools "opencover.*\tools\OpenCover.Console.exe")
-        $ReportGenerator = Resolve-Path (Join-Path $BuildTools "reportgenerator.*\tools\net47\ReportGenerator.exe")
+        $OpenCover = Join-Path $BuildToolsDir "opencover.*\tools\OpenCover.Console.exe"
+        $ReportGenerator = Join-Path $BuildToolsDir "reportgenerator.*\tools\net47\ReportGenerator.exe"
         $CoveragePath = Join-Path $LogsDir "Coverage.xml"
 
-        exec { & $OpenCover -target:$NUnit -targetargs:"$Solution --where=`"$WhereClause`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[*DataTransfer.Legacy*]* -[*Tests*]* -[*NUnit*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode }
+        exec { & $OpenCover -target:$NUnit -targetargs:"$Solution --where=\`"$WhereClause\`" --noheader --labels=On --skipnontestassemblies --result=$OutputFile $settings" -register:user -filter:"+[*DataTransfer.Legacy*]* -[*Tests*]* -[*NUnit*]*" -hideskipped:All -output:"$LogsDir\OpenCover.xml" -returntargetcode }
         exec { & $ReportGenerator -reports:"$LogsDir\OpenCover.xml" -targetdir:$LogsDir -reporttypes:Cobertura }
         Move-Item (Join-Path $LogsDir Cobertura.xml) $CoveragePath -Force
     }
     else
     {
-        exec{   & $NUnit $Solution `
-            "--where= $WhereClause" `
+        exec { & $NUnit $Solution `
+            "--where=`"$WhereClause`"" `
             "--noheader" `
             "--labels=On" `
             "--skipnontestassemblies" `
