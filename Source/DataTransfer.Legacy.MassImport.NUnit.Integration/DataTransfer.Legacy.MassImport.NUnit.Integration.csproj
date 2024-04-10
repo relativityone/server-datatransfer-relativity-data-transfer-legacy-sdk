@@ -69,17 +69,16 @@
     <PackageReference Include="Relativity.Testing.Framework" />
     <PackageReference Include="Relativity.Toggles" />
     <PackageReference Include="System.ValueTuple" />
-
 	  <PackageReference Include="Relativity.Productions.SDK" />
 	  <PackageReference Include="Relativity.SecretCatalog" />
 	  <PackageReference Include="Relativity.Shared.SDK" />
 	  <PackageReference Include="StackExchange.Redis" />
 	  <PackageReference Include="kCura.EDDS.DocumentCompareGateway" />
-
 	  <PackageReference Include="Relativity.ApplicationBase.InvariantApi" />
 	  <PackageReference Include="kCura.Imaging" />
 	  <PackageReference Include="System.Wrapper" />
 	  <PackageReference Include="Relativity.AssistedReview.Utility" />
+    <PackageReference Include="FluentAssertions"/>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Web" />

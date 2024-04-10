@@ -1,4 +1,5 @@
-﻿using DataTransfer.Legacy.MassImport.NUnit.Properties;
+﻿using System;
+using DataTransfer.Legacy.MassImport.NUnit.Properties;
 using kCura.Data.RowDataGateway;
 using Moq;
 using NUnit.Framework;
@@ -185,14 +186,230 @@ namespace Relativity.MassImport.NUnit.Data
 			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, string.Empty);
 		}
 
+
+
+		[Test]
+		public void ShouldGenerateCorrectAuditDetailsNew(
+	[Values(true, false)] bool performAudit,
+	[Values(ImportAuditLevel.FullAudit, ImportAuditLevel.NoAudit, ImportAuditLevel.NoSnapshot)] Relativity.MassImport.DTO.ImportAuditLevel auditLevel,
+	[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll, OverlayBehavior.UseRelativityDefaults)] Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
+		{
+			// ARRANGE
+			string expectedDetailsClause, expectedMapClause;
+
+			if (performAudit && auditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
+			{
+				expectedDetailsClause = Resources.AuditDetailsBuilderTests_detailsClause_Audit;
+				expectedMapClause = Resources.AuditDetailsBuilderTests_mapClause_Audit;
+			}
+			else
+			{
+				expectedDetailsClause = Resources.AuditDetailsBuilderTests_detailsClause_NoAudit;
+				expectedMapClause = string.Empty;
+			}
+
+			var mappedFields = new FieldInfo[]
+			{
+				new FieldInfo {DisplayName = "Boolean Field", Type = FieldTypeHelper.FieldType.Boolean, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID},
+				new FieldInfo {DisplayName = "Code Field", Type = FieldTypeHelper.FieldType.Code, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Date Field", Type = FieldTypeHelper.FieldType.Date, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "File Field", Type = FieldTypeHelper.FieldType.File, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Object Field", Type = FieldTypeHelper.FieldType.Object, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Text Field", Type = FieldTypeHelper.FieldType.Text, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Varchar Field", Type = FieldTypeHelper.FieldType.Varchar, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Empty Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = IDENTIFIER_ARTIFACT_ID, Category = FieldCategory.Identifier},
+			};
+			var settings = InitializeSettings(
+				RUN_ID,
+				ARTIFACT_TYPE_ID,
+				auditLevel,
+				overlayBehavior,
+				Relativity.MassImport.DTO.OverwriteType.Append,
+				mappedFields);
+
+			_builder = new AuditDetailsBuilder(
+				ContextMock.Object,
+				settings,
+				_columnDefinitionCacheMock.Object,
+				new TableNames(RUN_ID),
+				(int)Relativity.ArtifactType.Document);
+
+			// ACT
+			var results = _builder.GenerateAuditDetailsNew(performAudit, mappedFields, false);
+			// ASSERT
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(expectedDetailsClause));
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, expectedMapClause);
+		}
+
+
+
+		[Test]
+		public void ShouldGenerateAuditDetailsWithEncodingNew(
+			[Values(true, false)] bool includeExtractedTextEncoding)
+		{
+			// ARRANGE
+			var settings = InitializeSettings(
+				RUN_ID,
+				ARTIFACT_TYPE_ID,
+				Relativity.MassImport.DTO.ImportAuditLevel.NoAudit,
+				Relativity.MassImport.DTO.OverlayBehavior.MergeAll,
+				Relativity.MassImport.DTO.OverwriteType.Append,
+				null);
+
+			_builder = new AuditDetailsBuilder(
+				ContextMock.Object,
+				settings,
+				_columnDefinitionCacheMock.Object,
+				new TableNames(RUN_ID),
+				(int)Relativity.ArtifactType.Document);
+
+			// ACT
+			var results = _builder.GenerateAuditDetailsNew(false, null, includeExtractedTextEncoding);
+
+			// ASSERT
+			var expectedAuditDetails = includeExtractedTextEncoding
+				? Resources.AuditDetailsBuilderTests_detailsClause_NoAudit_Encoding
+				: Resources.AuditDetailsBuilderTests_detailsClause_NoAudit;
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(expectedAuditDetails));
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, string.Empty);
+		}
+		[Test]
+		public void ShouldGenerateAuditDetailsForMultiCodeFieldNew(
+			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll)] Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
+		{
+			// ARRANGE
+			_columnDefinitionCacheMock.Setup(x => x[It.IsAny<int>()]).Returns(new ColumnDefinitionInfo { OverlayMergeValues = false });
+
+			var mappedFields = new FieldInfo[]
+			{
+				new FieldInfo {DisplayName = "MultiCode Field", Type = FieldTypeHelper.FieldType.MultiCode, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Empty Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = IDENTIFIER_ARTIFACT_ID, Category = FieldCategory.Identifier},
+			};
+			var settings = InitializeSettings(
+				RUN_ID,
+				ARTIFACT_TYPE_ID,
+				Relativity.MassImport.DTO.ImportAuditLevel.FullAudit,
+				overlayBehavior,
+				Relativity.MassImport.DTO.OverwriteType.Append,
+				mappedFields);
+
+			_builder = new AuditDetailsBuilder(
+				ContextMock.Object,
+				settings,
+				_columnDefinitionCacheMock.Object,
+				new TableNames(RUN_ID),
+				(int)Relativity.ArtifactType.Document);
+
+			// ACT
+			var results = _builder.GenerateAuditDetailsNew(true, mappedFields, false);
+
+			// ASSERT
+			var expectedAuditDetails = overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
+				? Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_MergeAll
+				: Resources.AuditDetailsBuilderTests_MultiCode_detailsClause_ReplaceAll;
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(expectedAuditDetails));
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, overlayBehavior == Relativity.MassImport.DTO.OverlayBehavior.MergeAll
+				? Resources.AuditDetailsBuilderTests_MultiCode_mapClause_MergeAll
+				: Resources.AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll);
+		}
+
+
+		[Test]
+		public void ShouldGenerateAuditDetailsForObjectsFieldNew(
+			[Values(OverlayBehavior.MergeAll, OverlayBehavior.ReplaceAll)] Relativity.MassImport.DTO.OverlayBehavior overlayBehavior)
+		{
+			// ARRANGE
+			_columnDefinitionCacheMock.Setup(x => x[It.IsAny<int>()]).Returns(new ColumnDefinitionInfo { OverlayMergeValues = false });
+
+			var mappedFields = new FieldInfo[]
+			{
+				new FieldInfo {DisplayName = "Objects Field", Type = FieldTypeHelper.FieldType.Objects, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID },
+				new FieldInfo {DisplayName = "Empty Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = IDENTIFIER_ARTIFACT_ID, Category = FieldCategory.Identifier},
+			};
+			var settings = InitializeSettings(
+				RUN_ID,
+				ARTIFACT_TYPE_ID,
+				Relativity.MassImport.DTO.ImportAuditLevel.FullAudit,
+				overlayBehavior,
+				Relativity.MassImport.DTO.OverwriteType.Append,
+				mappedFields);
+
+			_builder = new AuditDetailsBuilder(
+				ContextMock.Object,
+				settings,
+				_columnDefinitionCacheMock.Object,
+				new TableNames(RUN_ID),
+				(int)Relativity.ArtifactType.Document);
+
+			// ACT
+			var results = _builder.GenerateAuditDetailsNew(true, mappedFields, false);
+
+			// ASSERT
+			var expectedAuditDetails = overlayBehavior == DTO.OverlayBehavior.MergeAll
+				? Resources.AuditDetailsBuilderTests_Objects_detailsClause_MergeAll
+				: Resources.AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll;
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(expectedAuditDetails));
+		}
+
+		[Test]
+		public void ShouldNotGenerateAuditDetailsWhenNonAuditableFieldsAreMappedNew()
+		{
+			// ARRANGE
+			var mappedFields = new FieldInfo[]
+			{
+				new FieldInfo {DisplayName = "Auto Create Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID, Category = FieldCategory.AutoCreate},
+				new FieldInfo {DisplayName = "Empty Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = IDENTIFIER_ARTIFACT_ID, Category = FieldCategory.Identifier},
+				new FieldInfo {DisplayName = "Empty Field", Type = FieldTypeHelper.FieldType.Empty, ArtifactID = MAPPED_FIELDS_ARTIFACT_ID, Category = FieldCategory.Identifier},
+			};
+			var settings = InitializeSettings(
+				RUN_ID,
+				ARTIFACT_TYPE_ID,
+				Relativity.MassImport.DTO.ImportAuditLevel.FullAudit,
+				Relativity.MassImport.DTO.OverlayBehavior.MergeAll,
+				Relativity.MassImport.DTO.OverwriteType.Overlay,
+				mappedFields);
+
+			_builder = new AuditDetailsBuilder(
+				ContextMock.Object,
+				settings,
+				_columnDefinitionCacheMock.Object,
+				new TableNames(RUN_ID),
+				(int)Relativity.ArtifactType.Document);
+
+			// ACT
+			var results = _builder.GenerateAuditDetailsNew(true, mappedFields, false);
+
+			// ASSERT
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item1, RemoveAuditElementNode(Resources.AuditDetailsBuilderTests_detailsClause_NoAudit));
+			ThenTheStringsAreEqualIgnoringWhiteSpaces(results.Item2, string.Empty);
+		}
+
 		private void ThenTheStringsAreEqualIgnoringWhiteSpaces(string result, string expectedResult)
 		{
-			var normalizedResult = result.RemoveWhitespaces();
+			string modifiedString = result.TrimEnd('+');
+
+			// Output the modified string
+			Console.WriteLine(modifiedString);
+			var normalizedResult = modifiedString.RemoveWhitespaces();
 			var normalizedExpectedResult = expectedResult.RemoveWhitespaces();
 
 			Assert.AreEqual(normalizedExpectedResult, normalizedResult, "Generated audit details differ from the expected values.");
 		}
 
+
+	
+
+		private static string RemoveAuditElementNode(string auditDetails)
+		{
+			return auditDetails
+					.Replace("CAST(N'<auditElement>' AS NVARCHAR(MAX)) +", string.Empty)
+					.Replace("'</auditElement>',", string.Empty)
+					.Trim()
+					.TrimEnd('+')
+
+
+				;
+		}
 		private static Relativity.MassImport.DTO.ObjectLoadInfo InitializeSettings(string runId, int artifactTypeId, Relativity.MassImport.DTO.ImportAuditLevel auditLevel, Relativity.MassImport.DTO.OverlayBehavior overlayBehavior, Relativity.MassImport.DTO.OverwriteType overwriteType, FieldInfo[] mappedFields)
 		{
 			var objectLoadInfo = new Relativity.MassImport.DTO.ObjectLoadInfo

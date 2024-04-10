@@ -10,26 +10,13 @@ namespace MassImport.NUnit.Integration.Helpers
 {
 	public enum AuditAction
 	{
-		/// <summary>
-		/// Default, none audit action.
-		/// </summary>
+
 		None = 0,
-		/// <summary>
-		/// Create audit action.
-		/// </summary>
 		Create = 2,
-		/// <summary>
-		/// Move audit action.
-		/// </summary>
 		Move = 11,
-		/// <summary>
-		/// Import audit action.
-		/// </summary>
 		Import = 32,
-		/// <summary>
-		/// Export audit action.
-		/// </summary>
 		Export = 33,
+		Update_Import = 47, // Overlay
 	}
 
 	public class AuditHelper
@@ -40,7 +27,7 @@ namespace MassImport.NUnit.Integration.Helpers
 			int userId)
 		{
 			int auditId;
-			
+
 			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
 			{
 				connection.Open();
@@ -59,7 +46,26 @@ namespace MassImport.NUnit.Integration.Helpers
 
 			return auditId;
 		}
-		
+		public static Dictionary<int, string> GetAuditDetailsXmlAndRecordArtifactId(
+			TestWorkspace testWorkspace,
+			AuditAction action,
+			int largerThanThisAuditId,
+			int nrOfLastAuditsToTake,
+			int userId)
+		{
+			var audit = new Dictionary<int, string>();
+
+			void CollectAuditInfo(SqlDataReader reader)
+			{
+				var singleAudit = reader["Details"].ToString();
+				int auditArtifactId = Convert.ToInt32(reader["ArtifactID"]);
+
+				audit[auditArtifactId] = singleAudit;
+			}
+
+			GetAuditDetails(testWorkspace, action, largerThanThisAuditId, nrOfLastAuditsToTake, userId, CollectAuditInfo);
+			return audit;
+		}
 		public static IEnumerable<Dictionary<string, string>> GetAuditDetails(
 			TestWorkspace testWorkspace,
 			AuditAction action,
@@ -68,6 +74,27 @@ namespace MassImport.NUnit.Integration.Helpers
 			int userId)
 		{
 			List<Dictionary<string, string>> audit = new List<Dictionary<string, string>>();
+
+			void CollectAuditInfo(SqlDataReader reader)
+			{
+				var singleAudit = XmlToDictionary(action, reader["Details"].ToString());
+				singleAudit["ArtifactID"] = reader["ArtifactID"].ToString();
+
+				audit.Add(singleAudit);
+			}
+
+			GetAuditDetails(testWorkspace, action, largerThanThisAuditId, nrOfLastAuditsToTake, userId, CollectAuditInfo);
+			return audit;
+		}
+
+		private static void GetAuditDetails(
+			TestWorkspace testWorkspace,
+			AuditAction action,
+			int largerThanThisAuditId,
+			int nrOfLastAuditsToTake,
+			int userId,
+			Action<SqlDataReader> auditInfoCollector)
+		{
 			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
 			{
 				connection.Open();
@@ -79,23 +106,19 @@ namespace MassImport.NUnit.Integration.Helpers
 						 WHERE [Action] = '{(int)action}'AND [Details] <> '' AND [UserID] = '{userId}'
 						 AND [ID] > '{largerThanThisAuditId}'
 						 ORDER BY [TimeStamp] DESC";
-					
+
 					using (SqlDataReader reader = command.ExecuteReader())
 					{
 						while (reader.Read())
 						{
-							var singleAudit = XmlToDictionary(action, reader["Details"].ToString());
-							singleAudit["ArtifactID"] = reader["ArtifactID"].ToString();
-
-							audit.Add(singleAudit);
+							auditInfoCollector(reader);
 						}
 					}
 				}
 				connection.Close();
 			}
-			return audit;
 		}
-		
+
 		private static Dictionary<string, string> XmlToDictionary(AuditAction action, string data)
 		{
 			XElement rootElement = XElement.Parse(data);

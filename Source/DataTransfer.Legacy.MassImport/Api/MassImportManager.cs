@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Relativity.API;
 using Relativity.Core;
 using Relativity.Core.Service;
 using Relativity.Core.Service.MassImport;
@@ -25,13 +26,14 @@ namespace Relativity.MassImport.Api
 		private readonly IArtifactManager _artifactManager;
 		private readonly Relativity.Core.Service.MassImportManager _massImportManager;
 		private readonly BaseContext _context;
+		private readonly IHelper _helper;
 
-		public MassImportManager(ILog logger, IArtifactManager artifactManager, BaseContext context)
+		public MassImportManager(ILog logger, IArtifactManager artifactManager, BaseContext context,IHelper helper)
 		{
 			_logger = logger ?? Relativity.Logging.Log.Logger;
 			_artifactManager = artifactManager;
 			_context = context;
-
+			_helper = helper;
 			_massImportManager = new Relativity.Core.Service.MassImportManager(collectIDsOnCreate: true);
 		}
 

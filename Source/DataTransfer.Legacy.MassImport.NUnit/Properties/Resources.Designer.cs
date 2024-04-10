@@ -19,7 +19,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -67,7 +67,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///			&apos;&lt;newValue&gt;&apos; + CASE INSERTED.[BooleanField] WHEN 1 THEN &apos;True&apos; WHEN 0 THEN &apos;False&apos; ELSE &apos;&apos; END + &apos;&lt;/newValue&gt;&apos; +
         ///		&apos;&lt;/field&gt;&apos; +
         ///		&apos;&lt;field id=&quot;100123&quot; type=&quot;5&quot; name=&quot;Code Field&quot; formatstring=&quot;&quot;&gt;&apos; + 
-        ///			ISNULL(&apos;&lt;setChoice&gt;&apos; + NULLIF(N.[CodeField] COLLATE Test_Collation, &apos;&apos; [rest of string was truncated]&quot;;.
+        ///			ISNULL(&apos;&lt;setChoice&gt;&apos; + NULLIF(N.[CodeField] COLLATE Test_Collation, &apos;&apos;) + &apos;&lt; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AuditDetailsBuilderTests_detailsClause_Audit {
             get {
@@ -163,11 +163,41 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///				MappedArtifactID [unsetChoice]
         ///			FROM [Resource].[RELNATTMPMAP_AAD09DF6-A4C7-4DF0-B963-0050C7809000] M1
         ///			WHERE M1.ArtifactID = M.ArtifactID AND M1.FieldArtifactID = 100123 AND M1.IsNew = 0
-        ///			FOR XML PATH (&apos;&apos;), TY [rest of string was truncated]&quot;;.
+        ///			FOR XML PATH (&apos;&apos;), TYPE
+        ///		) [Multi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll {
             get {
                 return ResourceManager.GetString("AuditDetailsBuilderTests_MultiCode_mapClause_ReplaceAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 	CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+        ///&apos;
+        ///&lt;field id=&quot;100123&quot; type=&quot;13&quot; name=&quot;Objects Field&quot; formatstring=&quot;&quot;&gt;&apos; +
+        ///			ISNULL(CAST(GM.[ObjectsField IsNew] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;)  +
+        ///&apos;&lt;/field&gt;&apos; +
+        ///	&apos;&lt;/auditElement&gt;&apos;,.
+        /// </summary>
+        internal static string AuditDetailsBuilderTests_Objects_detailsClause_MergeAll {
+            get {
+                return ResourceManager.GetString("AuditDetailsBuilderTests_Objects_detailsClause_MergeAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 	CAST(N&apos;&lt;auditElement&gt;&apos; AS NVARCHAR(MAX)) +
+        ///&apos;
+        ///&lt;field id=&quot;100123&quot; type=&quot;13&quot; name=&quot;Objects Field&quot; formatstring=&quot;&quot;&gt;&apos; +
+        ///			ISNULL(CAST(GM.[ObjectsField IsNew] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;)  +
+        ///			ISNULL(CAST(GM.[ObjectsField] AS NVARCHAR(MAX)) COLLATE Test_Collation, &apos;&apos;)  +
+        ///&apos;&lt;/field&gt;&apos; +
+        ///	&apos;&lt;/auditElement&gt;&apos;,.
+        /// </summary>
+        internal static string AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll {
+            get {
+                return ResourceManager.GetString("AuditDetailsBuilderTests_Objects_detailsClause_ReplaceAll", resourceCulture);
             }
         }
         
@@ -197,7 +227,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT /* IncludeDistinctClause */
-        ///		N.A [rest of string was truncated]&quot;;.
+        ///		N.ArtifactID, C.CodeArtifact [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldExecuteQueryForMultiChoiceAppend {
             get {
@@ -231,7 +261,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT /* IncludeDistinctClause */
-        ///		N.A [rest of string was truncated]&quot;;.
+        ///		N.ArtifactID, C.CodeArtifact [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldExecuteQueryForMultiChoiceOverlayMerge {
             get {
@@ -268,7 +298,8 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	DELETED.[CodeArtifactID], 
         ///	2, 
         ///	0 
-        /// [rest of string was truncated]&quot;;.
+        ///INTO 
+        ///	[Resource].[RELNATTMP [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldExecuteQueryForMultiChoiceOverlayReplace {
             get {
@@ -302,7 +333,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT /* IncludeDistinctClause */
-        ///		N.A [rest of string was truncated]&quot;;.
+        ///		N.ArtifactID, C.CodeArtifact [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldExecuteQueryForSingleChoice {
             get {
@@ -336,7 +367,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT /* IncludeDistinctClause */
-        ///		N.A [rest of string was truncated]&quot;;.
+        ///		N.ArtifactID, C.CodeArtifact [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldExecuteQueryForTwoChoices {
             get {
@@ -370,7 +401,9 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///AS
         ///(
         ///	SELECT DISTINCT
-        ///		N.ArtifactID, C.CodeAr [rest of string was truncated]&quot;;.
+        ///		N.ArtifactID, C.CodeArtifactID
+        ///	FROM 
+        ///		[Resour [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ChoicesImportServiceTests_ShouldIncludeDistinctClause {
             get {
@@ -394,7 +427,9 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
+        ///
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NativeSqlQueryTest_ExpecteCreateAssociatedObjectsForSingleObjectFieldByName {
             get {
@@ -409,7 +444,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	SELECT
         ///		[ArtifactTypeID] = 10,
         ///		[ParentArtifactID] = [kCura_Import_ParentFolderID],
-        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7 [rest of string was truncated]&quot;;.
+        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7809038 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NativeSqlQueryTest_ExpectedCreateDocumentsSqlStatement {
             get {
@@ -424,7 +459,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	SELECT
         ///		[ArtifactTypeID] = 10,
         ///		[ParentArtifactID] = [kCura_Import_ParentFolderID],
-        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7 [rest of string was truncated]&quot;;.
+        ///		[AccessControlListID] = (SELECT [ParentAccessControlListID] FROM [Resource].[RELNATTMPPARENT_DCD09DF6-A4C7-4DF0-B963-0050C7809038 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string NativeSqlQueryTest_ExpectedCreateDocumentsSqlStatementWithExtractedText {
             get {
@@ -448,7 +483,9 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
+        ///
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateAssociatedObjectsForSelfReferencedSingleObjectFieldByName {
             get {
@@ -473,7 +510,9 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
+        ///
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateAssociatedObjectsForSingleObjectDocumentFieldByName {
             get {
@@ -498,7 +537,9 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///	FROM [Resource].[RELNATTMP_DCD09DF6-A4C7-4DF0-B963-0050C7809038] N
         ///	GROUP BY N.[SingleObjectFieldName]
         ///) N
-        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObje [rest of string was truncated]&quot;;.
+        ///JOIN [SingleObjectTableName] D ON D.[SingleObjectIdFieldColumnName] = N.[SingleObjectFieldName];
+        ///
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateAssociatedObjectsForSingleObjectFieldByName {
             get {
@@ -519,7 +560,7 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///		[LastModifiedOn] = @now,
         ///		[CreatedBy] = @auditUserID,
         ///		[LastModifiedBy] = @auditUserID,
-        ///		[TextIdentifier [rest of string was truncated]&quot;;.
+        ///		[TextIdentifier] = N.[KeyFi [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string ObjectsSqlQueryTest_ExpectedCreateObjectsSqlStatement {
             get {
@@ -545,7 +586,10 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 102
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 102 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 102 AND [ArtifactID] = [CodeArtifactID])
+        ///)
+        ///BEGIN
+        ///	RAISER [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldExecuteQueryForMultiChoice {
             get {
@@ -571,7 +615,10 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 101
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID])
+        ///)
+        ///BEGIN
+        ///	RAISER [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldExecuteQueryForSingleChoice {
             get {
@@ -597,7 +644,10 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 101
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID])
+        ///)
+        ///BEGIN
+        ///	RAISER [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldExecuteQueryForTwoChoices {
             get {
@@ -623,7 +673,10 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///IF EXISTS (
         ///    SELECT CodeArtifactID FROM [Resource].[RELNATTMPCOD_974a2b26_d665_4f42_8b3b_31949b335a01]
         ///    WHERE CodeTypeID = 101
-        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID] [rest of string was truncated]&quot;;.
+        ///    AND NOT EXISTS (SELECT 1 FROM [Code] WHERE [CodeTypeID] = 101 AND [ArtifactID] = [CodeArtifactID])
+        ///)
+        ///BEGIN
+        ///	RAISER [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string OldChoicesImportServiceTests_ShouldIncludeDistinctClause {
             get {
@@ -641,7 +694,8 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Properties {
         ///										-- NOTE: Purposely not using the CURRENT_TIMESTAMP for the date column, as it requires row update, and you may not have one
         ///
         ///											IF OBJECT_ID(&apos;[Resource].[NAT_FOLDER_100_CONFIG]&apos;,&apos;TABLE&apos;) IS NULL
-        ///												 [rest of string was truncated]&quot;;.
+        ///												BEGIN
+        ///			 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string UpdateBulkTableWithCreatedFoldersAndRetrieveFolderPathsToCreate_ToggleOff {
             get {

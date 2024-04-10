@@ -282,11 +282,11 @@ namespace Relativity.MassImport.Data
 
 			string statsSQL = $@"
 SELECT
-		DocumentIdentifierUnicodeMarker = CASE WHEN (SELECT UseUnicodeEncoding FROM [Field] WHERE { fieldWhereClause }) = 1 THEN 'N' ELSE '' END,
-		DocumentIdentifierFieldLength = (SELECT MaxLength FROM [Field] WHERE { fieldWhereClause }),
-		ExtractedTextUnicodeMarker = CASE WHEN (SELECT UseUnicodeEncoding FROM [Field] WHERE FieldCategoryID = { (int)FieldCategory.FullText } AND Field.FieldArtifactTypeID = { (int)ArtifactType.Document }) = 1 THEN 'N' ELSE '' END,
-		FullTextColumnCollation = (SELECT collation_name FROM sys.columns WHERE [object_id] = OBJECT_ID(N'eddsdbo.Document', N'U') AND CAST([name] AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT TOP 1 CAST(ColumnName AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS FROM [ArtifactViewField] INNER JOIN [Field] ON ArtifactViewField.ArtifactViewFieldID = Field.ArtifactViewFieldID AND Field.FieldCategoryID = { (int)FieldCategory.FullText } AND Field.FieldArtifactTypeID = { (int)ArtifactType.Document })),
-		DocumentIdentifierColumnCollation = (SELECT collation_name FROM sys.columns WHERE [object_id] = OBJECT_ID(N'eddsdbo.Document', N'U') AND CAST([name] AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT TOP 1 CAST(ColumnName AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS FROM [ArtifactViewField] INNER JOIN [Field] ON ArtifactViewField.ArtifactViewFieldID = Field.ArtifactViewFieldID AND { fieldWhereClause })),
+		DocumentIdentifierUnicodeMarker = CASE WHEN (SELECT UseUnicodeEncoding FROM [Field] WHERE {fieldWhereClause}) = 1 THEN 'N' ELSE '' END,
+		DocumentIdentifierFieldLength = (SELECT MaxLength FROM [Field] WHERE {fieldWhereClause}),
+		ExtractedTextUnicodeMarker = CASE WHEN (SELECT UseUnicodeEncoding FROM [Field] WHERE FieldCategoryID = {(int)FieldCategory.FullText} AND Field.FieldArtifactTypeID = {(int)ArtifactType.Document}) = 1 THEN 'N' ELSE '' END,
+		FullTextColumnCollation = (SELECT collation_name FROM sys.columns WHERE [object_id] = OBJECT_ID(N'eddsdbo.Document', N'U') AND CAST([name] AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT TOP 1 CAST(ColumnName AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS FROM [ArtifactViewField] INNER JOIN [Field] ON ArtifactViewField.ArtifactViewFieldID = Field.ArtifactViewFieldID AND Field.FieldCategoryID = {(int)FieldCategory.FullText} AND Field.FieldArtifactTypeID = {(int)ArtifactType.Document})),
+		DocumentIdentifierColumnCollation = (SELECT collation_name FROM sys.columns WHERE [object_id] = OBJECT_ID(N'eddsdbo.Document', N'U') AND CAST([name] AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS = (SELECT TOP 1 CAST(ColumnName AS NVARCHAR(4000)) COLLATE SQL_Latin1_General_CP1_CI_AS FROM [ArtifactViewField] INNER JOIN [Field] ON ArtifactViewField.ArtifactViewFieldID = Field.ArtifactViewFieldID AND {fieldWhereClause})),
 		FileIdentifierColumnCollation = (SELECT collation_name FROM sys.columns WHERE [object_id] = OBJECT_ID(N'eddsdbo.File', N'U') AND [name] = 'Identifier')
 ";
 			stats = _context.ExecuteSqlStatementAsDataTable(statsSQL, QueryTimeout).Rows[0];
@@ -417,7 +417,7 @@ SELECT
 			ImportMeasurements.StartMeasure();
 
 			long combinedStatus = (long)(Relativity.MassImport.DTO.ImportStatus.InvalidImageFormat | Relativity.MassImport.DTO.ImportStatus.FileSpecifiedDne | Relativity.MassImport.DTO.ImportStatus.IdentifierOverlap);
-			string sql = $"SELECT [Location] FROM [Resource].[{ this.TableNameImageTemp }] WHERE [Status] > 1 AND ([Status] & {combinedStatus} = 0)";
+			string sql = $"SELECT [Location] FROM [Resource].[{this.TableNameImageTemp}] WHERE [Status] > 1 AND ([Status] & {combinedStatus} = 0)";
 
 			var dt = _context.ExecuteSqlStatementAsDataTable(sql);
 
@@ -604,7 +604,7 @@ End
 		{
 			return $@"
 IF @HasPermissionToAdd = 0 BEGIN
-	UPDATE [Resource].[{{0}}] SET [Status] = [Status] + { (long)Relativity.MassImport.DTO.ImportStatus.SecurityAdd } WHERE NOT EXISTS(SELECT ArtifactID FROM [Document] (NOLOCK) WHERE [Document].[{{2}}] = [{{0}}].[DocumentIdentifier])
+	UPDATE [Resource].[{{0}}] SET [Status] = [Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityAdd} WHERE NOT EXISTS(SELECT ArtifactID FROM [Document] (NOLOCK) WHERE [Document].[{{2}}] = [{{0}}].[DocumentIdentifier])
 END
 ";
 		}

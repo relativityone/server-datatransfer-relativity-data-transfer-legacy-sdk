@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using Relativity.Logging;
+
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 
 namespace Relativity.MassImport.Data
@@ -63,7 +64,7 @@ namespace Relativity.MassImport.Data
 					writer = new ByteMeasuringWriter(actualWriter, _measurements);
 				}
 
-				IDataGridRecordBuilder recordBuilder = new FileSystemRecordBuilder(writer, Relativity.Data.Config.DataGridConfiguration.DataGridImportSmallFieldThreshold, Relativity.Data.Config.DataGridConfiguration.DataGridWriteParallelism);
+				FileSystemRecordBuilder recordBuilder = new FileSystemRecordBuilder(writer, Relativity.Data.Config.DataGridConfiguration.DataGridImportSmallFieldThreshold, Relativity.Data.Config.DataGridConfiguration.DataGridWriteParallelism);
 				var foundIdentifiers = new HashSet<string>();
 				try
 				{
@@ -73,8 +74,10 @@ namespace Relativity.MassImport.Data
 				{
 					throw new Exception($"Write to Data Grid failed: {ex.InnerExceptions.First().Message}", ex.InnerExceptions.First());
 				}
+				_measurements.SetCounter("DataGridTotalNumberOfTexts", recordBuilder.NumberOfTexts);
+				_measurements.SetCounter("DataGridNumberOfEmptyTexts", recordBuilder.NumberOfEmptyTexts);
 
-				correlationLogger.LogDebug("WriteToDataGrid for {totalCount} documents completed with {errorCount} errors and {validationCount} validation errors.", 
+				correlationLogger.LogDebug("WriteToDataGrid for {totalCount} documents completed with {errorCount} errors and {validationCount} validation errors.",
 					foundIdentifiers.Count, errorManager.ErrorMessages.Keys.Count(), errorManager.ValidationStatuses.Keys.Count());
 
 				// REL-108860: Something is happening where records don't end up in the data grid temp file.

@@ -6,7 +6,8 @@ namespace Relativity.MassImport.Data
 {
 	internal class NativeImportSql
 	{
-		public virtual InlineSqlQuery PopulatePartTable(TableNames tableNames, string documentTable, int topFieldArtifactID, string keyField)
+		public virtual InlineSqlQuery PopulatePartTable(TableNames tableNames, string documentTable,
+			int topFieldArtifactID, string keyField)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO [Resource].[{tableNames.Part}]
@@ -37,7 +38,8 @@ WHERE P.[ArtifactID] IS NULL;
 ");
 		}
 
-		public InlineSqlQuery PopulateAssociatedPartTable(TableNames tableNames, int fieldArtifactId, string associatedObjectTable, string textIdentifierColumn, string keyFieldColumn)
+		public InlineSqlQuery PopulateAssociatedPartTable(TableNames tableNames, int fieldArtifactId,
+			string associatedObjectTable, string textIdentifierColumn, string keyFieldColumn)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO [Resource].[{tableNames.Part}]
@@ -151,11 +153,11 @@ INSERT INTO ArtifactAncestry(
 		public SerialSqlQuery InsertAncestorsOfTopLevelObjects(TableNames tableNames)
 		{
 			var sql = new SerialSqlQuery();
-			
+
 			sql.Add(new InlineSqlQuery($@"
 DROP TABLE IF EXISTS [{tableNames.ParentAncestors}], [{tableNames.NewAncestors}];
 "));
-			
+
 			// add parent as the new record ancestor
 			sql.Add(new InlineSqlQuery($@"
 SELECT P.ArtifactID, PARENT.ParentArtifactID
@@ -188,11 +190,12 @@ SELECT ArtifactID, ParentArtifactID FROM [{tableNames.NewAncestors}]
 UNION ALL
 SELECT ArtifactID, AncestorArtifactID FROM [{tableNames.ParentAncestors}];
 "));
-		
+
 			return sql;
 		}
 
-		public InlineSqlQuery InsertAncestorsOfAssociateObjects(TableNames tableNames, string fieldArtifactId, string topLevelParentArtifactId)
+		public InlineSqlQuery InsertAncestorsOfAssociateObjects(TableNames tableNames, string fieldArtifactId,
+			string topLevelParentArtifactId)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO ArtifactAncestry(
@@ -206,7 +209,8 @@ INSERT INTO ArtifactAncestry(
 ");
 		}
 
-		public InlineSqlQuery CreateAuditClause(TableNames tableNames, int fieldArtifactId, string requestOrigination, string recordOrigination)
+		public InlineSqlQuery CreateAuditClause(TableNames tableNames, int fieldArtifactId, string requestOrigination,
+			string recordOrigination)
 		{
 			return new InlineSqlQuery($@"
 /*
@@ -259,7 +263,8 @@ INSERT INTO AuditRecord (
 ";
 		}
 
-		public string CreateMultipleAssociativeObjects(TableNames tableNames, string associatedObjectsTable, string associatedObjectsId, string keyFieldColumnName)
+		public string CreateMultipleAssociativeObjects(TableNames tableNames, string associatedObjectsTable,
+			string associatedObjectsId, string keyFieldColumnName)
 		{
 			return $@"/*
 	0: Objects Temp Table
@@ -356,7 +361,9 @@ INSERT INTO [ArtifactAncestry](
 		#InsertedArtifactIDsTable ";
 		}
 
-		public FormattableString ValidateReferencedObjectsAreNotDuplicated(TableNames tableNames, string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID)
+		public FormattableString ValidateReferencedObjectsAreNotDuplicated(TableNames tableNames,
+			string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn,
+			string associatedArtifactTypeID)
 		{
 			return $@"
 			;WITH DuplicatedObjects(ObjectName) AS
@@ -378,7 +385,8 @@ INSERT INTO [ArtifactAncestry](
 		";
 		}
 
-		public FormattableString SetArtifactIdForExistingMultiObjects(TableNames tableNames, string keyFieldColumnName, string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID)
+		public FormattableString SetArtifactIdForExistingMultiObjects(TableNames tableNames, string keyFieldColumnName,
+			string associatedObjectTable, string associatedObjectIdentifierColumn, string associatedArtifactTypeID)
 		{
 			return $@"
 			UPDATE O
@@ -439,7 +447,8 @@ INSERT INTO [ArtifactAncestry](
 		/*NativeImportAuditClause*/";
 		}
 
-		public InlineSqlQuery CreateAuditClauseWithEnabledExtractedText(TableNames tableNames, int fieldArtifactId, string details, string requestOrigination, string recordOrigination)
+		public InlineSqlQuery CreateAuditClauseWithEnabledExtractedText(TableNames tableNames, int fieldArtifactId,
+			string details, string requestOrigination, string recordOrigination)
 		{
 			return new InlineSqlQuery($@"
 /*
@@ -603,7 +612,8 @@ WHERE
 	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}";
 		}
 
-		public InlineSqlQuery InsertAssociatedObjects(TableNames tableNames, string associatedObjectTable, string idFieldColumnName, FieldInfo field)
+		public InlineSqlQuery InsertAssociatedObjects(TableNames tableNames, string associatedObjectTable,
+			string idFieldColumnName, FieldInfo field)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO [{associatedObjectTable}] (
@@ -634,7 +644,8 @@ INSERT INTO [DataGridRecordMapping] (
 ");
 		}
 
-		public InlineSqlQuery InsertDocuments(string documentTable, string selectClause, string setClause, TableNames tableNames, string topFieldArtifactID)
+		public InlineSqlQuery InsertDocuments(string documentTable, string selectClause, string setClause,
+			TableNames tableNames, string topFieldArtifactID)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO [{documentTable}] (
@@ -654,7 +665,8 @@ WHERE
 ");
 		}
 
-		public InlineSqlQuery InsertGenericObjects(string objectTableName, TableNames tableNames, string selectClause, string setClause, int fieldArtifactId)
+		public InlineSqlQuery InsertGenericObjects(string objectTableName, TableNames tableNames, string selectClause,
+			string setClause, int fieldArtifactId)
 		{
 			return new InlineSqlQuery($@"
 INSERT INTO [{objectTableName}] (
@@ -670,7 +682,8 @@ WHERE
 ");
 		}
 
-		public InlineSqlQuery InsertIntoCodeArtifactTableForDocImages(TableNames tableNames, string codeArtifactTableName, int fieldArtifactId)
+		public InlineSqlQuery InsertIntoCodeArtifactTableForDocImages(TableNames tableNames,
+			string codeArtifactTableName, int fieldArtifactId)
 		{
 			return new InlineSqlQuery($@"
 /*
@@ -909,17 +922,18 @@ BEGIN
   LEFT JOIN [{{0}}] AS [ExistingObjects] ON
 		[ExistingObjects].[{{1}}] = [{{5}}].[ArtifactID]
     AND
-    [ExistingObjects].[{{2}}] = [ObjectArtifactID]
+	[ExistingObjects].[{{{{2}}}}] = [ObjectArtifactID]
 	WHERE
 		FieldID = @fieldID AND [{{5}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
     AND
-    [ExistingObjects].[{{1}}] IS NULL
-    AND
-    [ExistingObjects].[{{2}}] IS NULL
+	[ExistingObjects].[{{{{1}}}}] IS NULL
+	AND
+	[ExistingObjects].[{{{{2}}}}] IS NULL
 END
 
 ";
 		}
+
 
 		public string TextIdentifierColumn()
 		{
@@ -966,6 +980,63 @@ WHERE
 ";
 		}
 
+
+
+
+		public string UpdateAuditClauseInsertNew(string nativeTable, int action, string auditDetailsClause, bool useTempTable)
+		{
+			auditDetailsClause = auditDetailsClause != string.Empty ? auditDetailsClause : "''";
+
+			if (useTempTable)
+			{
+				return $@"
+INSERT INTO #TempAudit (
+	[ArtifactID],
+	[Details]
+) SELECT
+	N.ArtifactID,
+	{auditDetailsClause}
+FROM
+	[Resource].[{nativeTable}] N
+/* FileFieldAuditJoin */
+/* MapFieldsAuditJoin */
+WHERE
+	N.[kCura_Import_IsNew] = 0
+	AND
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending};
+";
+			}
+			else
+			{
+				return $@"
+INSERT INTO AuditRecord_PrimaryPartition (
+	[ArtifactID],
+	[Action],
+	[Details],
+	[UserID],
+	[TimeStamp],
+	[RequestOrigination],
+	[RecordOrigination]
+) SELECT
+	N.ArtifactID,
+	{action},
+	CAST(N'<auditElement>' AS NVARCHAR(MAX)) + {auditDetailsClause} + '</auditElement>',
+	@auditUserID,
+	GETUTCDATE(),
+	@requestOrig,
+	@recordOrig
+FROM
+	[Resource].[{nativeTable}] N
+/* FileFieldAuditJoin */
+/* MapFieldsAuditJoin */
+WHERE
+	N.[kCura_Import_IsNew] = 0
+	AND
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending};
+";
+			}
+		}
+
 		public string UpdateAuditClauseMerge(int action, string auditDetailsClause)
 		{
 			return $@"
@@ -982,6 +1053,40 @@ OUTPUT
 INTO
 	AuditRecord_PrimaryPartition
 ";
+		}
+
+		public string UpdateAuditClauseMergeNew(int action, string auditDetailsClause, bool useTempTable)
+		{
+			auditDetailsClause = auditDetailsClause != string.Empty ? auditDetailsClause : "''";
+
+			if (useTempTable)
+			{
+				return $@"
+OUTPUT
+	N.ArtifactID,
+	{auditDetailsClause}
+INTO
+	#TempAudit
+";
+			}
+			else
+			{
+				return $@"
+OUTPUT
+	N.ArtifactID,
+	{action},
+	CAST(N'<auditElement>' AS NVARCHAR(MAX)) + {auditDetailsClause} + '</auditElement>',
+	@auditUserID,
+	GETUTCDATE(),
+	@requestOrig,
+	@recordOrig,
+	NULL,
+	NULL
+INTO
+	AuditRecord_PrimaryPartition
+";
+
+			}
 		}
 
 		public string UpdateMetadata()
@@ -1030,6 +1135,109 @@ WHERE
 SELECT @@ROWCOUNT
 				   ";
 		}
+
+
+
+		public string UpdateMetadataNew()
+		{
+			return $@"/*
+	Parameters:
+	-----------
+	@userID
+	@auditUserID
+	@requestOrig
+	@recordOrig
+
+	Format replace:
+	---------------
+	0: native temp table
+	1: set clause
+	2: audit details clause
+	3: artifact type table name
+*/
+
+/* UpdateAuditRecordsInsert */
+
+/* UpdateObjectOrDocTable */
+
+SELECT @@ROWCOUNT";
+		}
+
+		public string UpdateArtifactTableForOverlaidRecords(string nativeTempTableName, string updateTextIdentifierValue)
+		{
+			return $@"/*
+	Parameters:
+	-----------
+	@auditUserID
+*/
+
+UPDATE
+	A
+SET
+	[LastModifiedOn] = GETUTCDATE(),
+	[LastModifiedBy] = @auditUserID,
+	[ParentArtifactID] = CASE
+		WHEN N.[kCura_Import_ParentFolderID] = -1 OR A.[ArtifactTypeID] = {(int)ArtifactType.Document} THEN [ParentArtifactID]
+		ELSE N.[kCura_Import_ParentFolderID]
+	END
+	{updateTextIdentifierValue}
+FROM
+	[Artifact] A
+INNER JOIN [Resource].[{nativeTempTableName}] N ON
+	A.[ArtifactID] = N.[ArtifactID]
+WHERE
+	N.[kCura_Import_IsNew] = 0
+	AND
+	N.[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+
+
+		SELECT @@ROWCOUNT";
+		}
+
+		public string CreateTempTableForOverlayAudit()
+		{
+			return @"
+CREATE TABLE #TempAudit(
+	[ID] [bigint] IDENTITY(1,1) NOT NULL,
+	[ArtifactID] [int] NOT NULL,
+	[Details] [nvarchar](max) NOT NULL
+
+	INDEX IX_ArtifactID_ID CLUSTERED 
+	(
+		[ArtifactID] ASC,
+		[ID] ASC
+	)
+)";
+		}
+
+		public string CopyRecordsFromTempAuditToAudit(int action)
+		{
+			return $@"
+/*
+	Parameters:
+	-----------
+	@auditUserID
+	@requestOrig
+	@recordOrig
+*/
+
+INSERT INTO AuditRecord_PrimaryPartition
+SELECT
+	[ArtifactID],
+	{action},
+	CAST(N'<auditElement>' AS NVARCHAR(MAX)) + STRING_AGG([Details], '') WITHIN GROUP(ORDER BY ID ASC) + '</auditElement>',
+	@auditUserID,
+	GETUTCDATE(),
+	@requestOrig,
+	@recordOrig,
+	NULL,
+	NULL
+FROM #TempAudit
+GROUP BY [ArtifactID]
+
+SELECT @@ROWCOUNT";
+		}
+
 
 		public string UpdateObjectOrDocTable()
 		{
