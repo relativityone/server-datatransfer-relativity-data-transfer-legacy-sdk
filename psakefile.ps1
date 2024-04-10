@@ -39,8 +39,11 @@ Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
 }
 
 Task Test -Description "Run tests that don't require a deployed environment." {
-    $LogPath = Join-Path $LogsDir "UnitTestResults.xml"
-    Invoke-Tests -WhereClause "!@('FunctionalTests','Integration')" -OutputFile $LogPath -WithCoverage:$true
+
+$LogsDir = Join-Path $ArtifactsDir "Logs"
+$LogPath = Join-Path $LogsDir "UnitTestResults.xml"
+Invoke-Tests -WhereClause "!@('FunctionalTests','Integration')" -OutputFile $LogPath -WithCoverage:$true
+
 }
 
 Task FunctionalTest -Description "Run functional tests that require a deployed environment." {
