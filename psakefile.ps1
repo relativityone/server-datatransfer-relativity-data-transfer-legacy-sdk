@@ -10,7 +10,7 @@ properties {
 }
 
 
-Task default -Depends Analyze, Compile, Test, Package -Description "Build and run unit tests. All the steps for a local build."
+Task default -Depends Analyze, Compile, Test, Package -Description "Build and run unit tests. All the steps for a local build.";
 
 Task Analyze -Description "Run build analysis" {
     # Leaving this blank until we are ready to add in analyzers later
@@ -24,23 +24,23 @@ Task Compile -Depends NugetRestore -Description "Compile code for this repo" {
     Initialize-Folder $ArtifactsDir -Safe
     Initialize-Folder $LogsDir -Safe
 
-    exec { msbuild @(
-        $Solution,
-        "/target:Build",
-        "/property:Configuration=$BuildConfig",
-        "/consoleloggerparameters:Summary",
-        "/property:PublishWebProjects=True",
-        "/nodeReuse:False",
-        "/maxcpucount",
-        "/nologo",
-        "/fileloggerparameters1:LogFile=$LogFilePath",
-        "/fileloggerparameters2:errorsonly;LogFile=$ErrorLogFilePath"
-    )}
+    exec { msbuild @($Solution,
+				  
+        ("/target:Build"),
+        ("/property:Configuration=$BuildConfig"),
+        ("/consoleloggerparameters:Summary"),
+        ("/property:PublishWebProjects=True"),
+        ("/nodeReuse:False"),
+        ("/maxcpucount"),
+        ("/nologo"),
+        ("/fileloggerparameters1:LogFile=$LogFilePath"),
+        ("/fileloggerparameters2:errorsonly;LogFile=$ErrorLogFilePath"))
+    }
 }
 
 Task Test -Description "Run tests that don't require a deployed environment." {
     $LogPath = Join-Path $LogsDir "UnitTestResults.xml"
-    Invoke-Tests -WhereClause "namespace !~ FunctionalTests -and namespace !~ Integration" -OutputFile $LogPath -WithCoverage -Path $SourceDir
+    Invoke-Tests -WhereClause "namespace !~ FunctionalTests && namespace !~ Integration" -OutputFile $LogPath -WithCoverage
 }
 
 Task FunctionalTest -Description "Run functional tests that require a deployed environment." {
