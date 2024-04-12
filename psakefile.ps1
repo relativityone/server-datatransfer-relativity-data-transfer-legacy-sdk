@@ -47,7 +47,7 @@ Task FunctionalTest -Description "Run functional tests that require a deployed e
 }
 
 Task NightlyTest -Alias Nightly -Description "Run Nightly functional tests that require a deployed environment." {
-    $LogPath = Join-Path $LogsDir "FunctionalTestResults.xml"
+    $LogPath = Join-Path $LogsDir "NightlyTestResults.xml"
     Invoke-Tests -WhereClause "namespace =~ FunctionalTests && TestExecutionCategory == CI || namespace =~ Integration" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings)
 }
 
