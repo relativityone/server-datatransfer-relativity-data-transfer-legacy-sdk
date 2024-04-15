@@ -17,11 +17,14 @@ using Relativity.MassImport.Data.DataGridWriteStrategy;
 using Relativity.MassImport.Data.SqlFramework;
 using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
+using Array = System.Array;
+using Relativity.MassImport.Api;
 
 namespace Relativity.MassImport.Data
 {
 	internal abstract class ObjectBase : IObjectBase, IDataGridInputReaderProvider
 	{
+		protected const int FieldsBatchSize = 255;
 		private readonly kCura.Data.RowDataGateway.BaseContext _context;
 		public TableNames _tableNames;
 		private string _auditRecordCollation = "";
@@ -75,7 +78,7 @@ namespace Relativity.MassImport.Data
 				var dgfsSqlReader = new SqlBackend(Relativity.Data.Config.DataGridConfiguration, dgSqlFactory);
 				DataGridBufferPool dataGridBufferPool = null;
 				DataGridContextBase dataGridContextBase = new FileSystemContext("document", ref dataGridBufferPool, Relativity.Data.Config.DataGridConfiguration, DGRelativityRepository, _dataGridMappings, DGFieldInformationLookupFactory, fml, dgfsSqlReader);
-				
+
 				_dgContext = new Relativity.Data.DataGridContext(dataGridContextBase);
 				_dgImportHelper = new DataGridImportHelper(_dgContext, Context, ImportMeasurements, new Relativity.Data.TextMigrationVerifier(Context));
 			}
@@ -199,7 +202,7 @@ namespace Relativity.MassImport.Data
 			using (new QueryMetricsCollector(Context, ImportMeasurements))
 			{
 				Context.ExecuteNonQuerySQLStatement(sql.BuildQuery(), QueryTimeout);
-			}	
+			}
 		}
 
 		public void SqlInfoMessageEventHandler(object sender, SqlInfoMessageEventArgs args)
@@ -302,11 +305,11 @@ namespace Relativity.MassImport.Data
 
 			var parameters = new[]
 			{
-				new SqlParameter("@userID", userID), 
-				new SqlParameter("@artifactType", artifactTypeID), 
-				new SqlParameter("@fieldID", field.ArtifactID), 
-				new SqlParameter("@auditUserID", userID), 
-				new SqlParameter("@parentId", parentId), 
+				new SqlParameter("@userID", userID),
+				new SqlParameter("@artifactType", artifactTypeID),
+				new SqlParameter("@fieldID", field.ArtifactID),
+				new SqlParameter("@auditUserID", userID),
+				new SqlParameter("@parentId", parentId),
 				new SqlParameter("@parentAccessControlListId", parentAccessControlListId)
 			};
 			ExecuteNonQuerySQLStatement(sql, parameters);
@@ -328,10 +331,10 @@ namespace Relativity.MassImport.Data
 		{
 			int associatedParentId = ColumnDefinitionCache[fieldArtifactId].AssociatedParentID;
 
-			if (associatedParentId != (int) ArtifactType.Case)
+			if (associatedParentId != (int)ArtifactType.Case)
 			{
 				// Child object! WHOA
-				long errorStatusCode = (long)(artifactTypeID == (int) ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild);
+				long errorStatusCode = (long)(artifactTypeID == (int)ArtifactType.Document ? Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsDocument : Relativity.MassImport.DTO.ImportStatus.ErrorAssociatedObjectIsChild);
 				string childObjectCreations = string.Format("SELECT DISTINCT [DocumentIdentifier] FROM [Resource].[{0}] WHERE [ObjectTypeID] = @artifactTypeID AND [ObjectArtifactID] = -1", _tableNames.Objects);
 				string produceLineErrors = string.Format("UPDATE [Resource].[{0}] SET [kCura_Import_Status] = [kCura_Import_Status] | {1}, [kCura_Import_ErrorData] = @fieldName WHERE [{2}] in ({3})",
 					_tableNames.Native, (object)errorStatusCode, IdentifierField.GetColumnName(), childObjectCreations);
@@ -433,19 +436,19 @@ namespace Relativity.MassImport.Data
 		private void CopyBulkLoadedFullText()
 		{
 			string updateSql = $@"UPDATE
-	[{ ArtifactTypeTableName }]
+	[{ArtifactTypeTableName}]
 SET
-	[{ ArtifactTypeTableName }].[{ FullTextFieldColumnName }] = [{ _tableNames.FullText }].[{ FullTextFieldColumnName }]
+	[{ArtifactTypeTableName}].[{FullTextFieldColumnName}] = [{_tableNames.FullText}].[{FullTextFieldColumnName}]
 FROM
-	[{ ArtifactTypeTableName }]
+	[{ArtifactTypeTableName}]
 	LEFT JOIN
-	[Resource].[{ _tableNames.Native }]
-		ON [{ ArtifactTypeTableName }].[ArtifactID] = [{ _tableNames.Native }].[ArtifactID]
+	[Resource].[{_tableNames.Native}]
+		ON [{ArtifactTypeTableName}].[ArtifactID] = [{_tableNames.Native}].[ArtifactID]
 	LEFT JOIN
-	[Resource].[{ _tableNames.FullText }]
-		ON [{ _tableNames.Native }].[kCura_Import_ID] = [{ _tableNames.FullText }].[kCura_Import_ID]
+	[Resource].[{_tableNames.FullText}]
+		ON [{_tableNames.Native}].[kCura_Import_ID] = [{_tableNames.FullText}].[kCura_Import_ID]
 WHERE
-	[{ _tableNames.Native }].[ArtifactID] IS NOT NULL
+	[{_tableNames.Native}].[ArtifactID] IS NOT NULL
 ";
 			ExecuteNonQuerySQLStatement(updateSql);
 		}
@@ -465,7 +468,7 @@ WHERE
 			if (LoadImportedFullTextFromServer)
 			{
 				ImportMeasurements.StartMeasure();
-				var filePathResults = ExecuteSqlStatementAsDataTable(string.Format("SELECT [kCura_Import_ID], [{0}] FROM [Resource].[{1}] WHERE [kCura_Import_Status] = {2} AND [{0}] IS NOT NULL", 
+				var filePathResults = ExecuteSqlStatementAsDataTable(string.Format("SELECT [kCura_Import_ID], [{0}] FROM [Resource].[{1}] WHERE [kCura_Import_Status] = {2} AND [{0}] IS NOT NULL",
 					FullTextFieldColumnName, _tableNames.Native, (object)(long)Relativity.MassImport.DTO.ImportStatus.Pending));
 				var reader = new FullTextFileImportDataReader(filePathResults);
 				var parameters = new kCura.Data.RowDataGateway.SqlBulkCopyParameters() { EnableStreaming = true, DestinationTableName = $"[Resource].[{_tableNames.FullText}]" };
@@ -503,16 +506,16 @@ WHERE
 					string fieldOverlayExpression = Helper.GetFieldOverlaySwitchStatement(Settings, field.Type, ColumnDefinitionCache[field.ArtifactID].OverlayMergeValues);
 
 					string queryToRun = string.Format(
-						sql, 
-						objectsFieldTable, 
-						containingObjectField, 
-						newObjectField, 
-						containingObjectIdentifierColumn, 
-						_tableNames.Objects, 
-						_tableNames.Native, 
-						fieldOverlayExpression, 
+						sql,
+						objectsFieldTable,
+						containingObjectField,
+						newObjectField,
+						containingObjectIdentifierColumn,
+						_tableNames.Objects,
+						_tableNames.Native,
+						fieldOverlayExpression,
 						_tableNames.Map);
-					
+
 					var sqlParameters = new[]
 					{
 						new SqlParameter("@fieldID", field.ArtifactID)
@@ -526,6 +529,47 @@ WHERE
 
 		protected int ImportUpdateAuditAction { get; private set; }
 
+
+		protected List<List<FieldInfo>> BatchFields(IEnumerable<FieldInfo> mappedFields)
+		{
+			List<List<FieldInfo>> fieldsBatches = mappedFields.Batch(FieldsBatchSize).ToList();
+			ImportMeasurements.SetCounter("NumberOfFieldsBatches", fieldsBatches.Count);
+
+			return fieldsBatches;
+		}
+
+		protected int UpdateArtifactTableForOverlaidRecords(int? auditUserID, string updateTextIdentifierValue)
+		{
+			var sqlParameters = new[]
+			{
+				new SqlParameter("@auditUserID", auditUserID),
+			};
+
+			var updateArtifactTableQuery = this.ImportSql.UpdateArtifactTableForOverlaidRecords(this._tableNames.Native, updateTextIdentifierValue);
+			return this.QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(updateArtifactTableQuery, sqlParameters, QueryTimeout);
+		}
+
+		protected void CreateTempTableForOverlayAudit()
+		{
+			var createTempTableAudit = ImportSql.CreateTempTableForOverlayAudit();
+			ExecuteNonQuerySQLStatement(createTempTableAudit);
+		}
+
+		protected void CopyRecordsFromTempAuditToAudit(int? auditUserID, string reqOrig, string recOrig)
+		{
+			var sqlParameters = new[]
+			{
+				new SqlParameter("@auditUserID", auditUserID),
+				new SqlParameter("@requestOrig", reqOrig),
+				new SqlParameter("@recordOrig", recOrig)
+			};
+
+			var copyAuditRecords = ImportSql.CopyRecordsFromTempAuditToAudit(this.ImportUpdateAuditAction);
+			int numberOfCopiedAuditRecords = QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(copyAuditRecords, sqlParameters, QueryTimeout);
+			ImportMeasurements.SetCounter("AuditsCopiedFromTempTable", numberOfCopiedAuditRecords);
+
+		}
+
 		#region DataGrid
 		public IDataReader CreateDataGridMappingDataReader()
 		{
@@ -534,9 +578,9 @@ WHERE
 										  select field.GetColumnName()).First();
 			string tempTableName = SqlNameHelper.GetSqlFriendlyName(_tableNames.Native);
 			string sql = $@"
-															SELECT [kCura_Import_ID], [{ tempTableName }].[{ identifierFieldName }], NULL, [kCura_Import_ID]
-															FROM [Resource].[{ tempTableName }]
-															WHERE [kCura_Import_Status] = { (long)Relativity.MassImport.DTO.ImportStatus.Pending }
+															SELECT [kCura_Import_ID], [{tempTableName}].[{identifierFieldName}], NULL, [kCura_Import_ID]
+															FROM [Resource].[{tempTableName}]
+															WHERE [kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 ";
 			return ExecuteSQLStatementAsReader(sql);
 		}

@@ -57,6 +57,13 @@ namespace Relativity.MassImport.Data
 				_counters[counterName] = _counters[counterName] + 1;
 			}
 		}
+		public void SetCounter(string counterName, int value)
+		{
+			if (counterName is object)
+			{
+				_counters[counterName] = value;
+			}
+		}
 
 		public void StopMeasure([System.Runtime.CompilerServices.CallerMemberName] string measureName = null)
 		{
