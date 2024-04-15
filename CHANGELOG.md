@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.3] - 29-March-2024
+
+### Changed
+ 
+- [REL-925106](https://jira.kcura.com/browse/REL-925106) Added Nightly pipeline jobs for MassImport.
+
 ## [24000.0.2] - 11-29-2023
 
 ### Changed
