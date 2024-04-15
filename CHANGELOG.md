@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Changed
  
-- [REL-925106](https://jira.kcura.com/browse/REL-925106) Verify Nightly pipeline jobs for MassImport migrated repo.
+- [REL-925106](https://jira.kcura.com/browse/REL-925106) Added Nightly pipeline jobs for MassImport.
 
 ## [24000.0.2] - 11-29-2023
 
