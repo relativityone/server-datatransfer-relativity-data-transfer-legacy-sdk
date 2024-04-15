@@ -46,6 +46,11 @@ Task FunctionalTest -Description "Run functional tests that require a deployed e
     Invoke-Tests -WhereClause "namespace =~ FunctionalTests && TestExecutionCategory == CI || namespace =~ Integration" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings)
 }
 
+Task NightlyTest -Alias Nightly -Description "Run Nightly functional tests that require a deployed environment." {
+    $LogPath = Join-Path $LogsDir "NightlyTestResults.xml"
+    Invoke-Tests -WhereClause "namespace =~ FunctionalTests && TestExecutionCategory == CI || namespace =~ Integration" -OutputFile $LogPath -TestSettings (Join-Path $PSScriptRoot FunctionalTestSettings)
+}
+
 Task Sign -Description "Sign all files" {
     Get-ChildItem $SourceDir -recurse | Where-Object {$_.Directory.Name -eq "bin" -and @(".dll",".msi",".exe") -contains $_.Extension} | Select-Object -expand FullName | Set-DigitalSignature -ErrorAction Stop
 }
