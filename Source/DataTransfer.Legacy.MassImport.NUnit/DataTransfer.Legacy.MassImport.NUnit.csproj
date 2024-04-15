@@ -62,6 +62,9 @@
     <PackageReference Include="Relativity.Logging.Interfaces" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\..\..\..\..\..\Users\sameer.khan\.nuget\packages-server\fluentassertions\5.10.3\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
     <Reference Include="System.ServiceModel" Private="True" />
     <Reference Include="System.Web" Private="True" />
   </ItemGroup>

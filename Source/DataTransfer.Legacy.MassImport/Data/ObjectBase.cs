@@ -532,7 +532,7 @@ WHERE
 
 		protected List<List<FieldInfo>> BatchFields(IEnumerable<FieldInfo> mappedFields)
 		{
-			List<List<FieldInfo>> fieldsBatches = mappedFields.Batch(FieldsBatchSize).ToList();
+			List<List<FieldInfo>> fieldsBatches = mappedFields.Batch(FieldsBatchSize).Select(b => b.ToList()).ToList();
 			ImportMeasurements.SetCounter("NumberOfFieldsBatches", fieldsBatches.Count);
 
 			return fieldsBatches;
