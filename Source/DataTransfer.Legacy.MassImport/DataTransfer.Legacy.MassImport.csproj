@@ -30,6 +30,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" />
+	<PackageReference Include="Castle.Windsor" />
     <PackageReference Include="kCura" />
     <PackageReference Include="kCura.DataGrid.Services.Interfaces" />
     <PackageReference Include="Newtonsoft.Json" />
@@ -45,9 +46,6 @@
     <PackageReference Include="System.Threading.Tasks.Dataflow" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Castle.Windsor">
-      <HintPath>..\..\..\..\..\..\Users\sameer.khan\.nuget\packages-server\castle.windsor\4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
