@@ -46,7 +46,7 @@
     <RelativitySecretCatalog>1.0.20</RelativitySecretCatalog>
     <RelativitySecureTokenServiceInterfaces>1.6.6</RelativitySecureTokenServiceInterfaces>
     <RelativityServicesLayoutInterfaces>1.1.46</RelativityServicesLayoutInterfaces>
-    <RelativityServicesSDK>13.5.1</RelativityServicesSDK>
+    <RelativityServicesSDK>24000.0.0</RelativityServicesSDK>
     <RelativityServicesSDKPrivate>14.0.2</RelativityServicesSDKPrivate>
     <RelativityServicesInterfacesSDK>13.3.0</RelativityServicesInterfacesSDK>
     <RelativitySDK>17.4.2</RelativitySDK>
@@ -105,7 +105,7 @@
     <PackageVersion Include="Relativity" Version="$(RelativityCore)" />
     <PackageVersion Include="Relativity.AmbientData" Version="$(AmbientData)" />
     <PackageVersion Include="Relativity.Analytics.CAATRestWrapper.ForRelativityCore" Version="$(AnalyticsCAATRestWrapper)" />
-    <PackageVersion Include="Relativity.API" Version="$(RelativitySDK)" />
+    <PackageVersion Include="Relativity.API" Version="17.11.2" />
     <PackageVersion Include="Relativity.Audit.SDK" Version="$(RelativityAuditSDK)" />
     <PackageVersion Include="Relativity.Authentication" Version="$(RelativityAuthentication)" />
     <PackageVersion Include="Relativity.Authentication.Interfaces" Version="$(RelativityAuthentication)" />
@@ -129,6 +129,8 @@
     <PackageVersion Include="Relativity.Services.Interfaces.Private" Version="$(RelativityServicesSDKPrivate)" />
     <PackageVersion Include="Relativity.Services.Interfaces.SDK" Version="$(RelativityServicesInterfacesSDK)" />
     <PackageVersion Include="Relativity.Services.Layout.Interfaces" Version="$(RelativityServicesLayoutInterfaces)" />
+    <PackageVersion Include="Relativity.Storage" Version="1.7.3" />
+    <PackageVersion Include="Relativity.Storage.Extensions" Version="1.6.0" />
     <PackageVersion Include="Relativity.Telemetry.APM" Version="$(TelemetryAPM)" />
     <PackageVersion Include="Relativity.Telemetry.DataContracts.Shared" Version="$(TelemetryMetricsCollectionClient)" />
     <PackageVersion Include="Relativity.Testing.Framework" Version="$(RelativityTestingFramework)" />

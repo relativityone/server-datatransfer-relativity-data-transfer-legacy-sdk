@@ -28,6 +28,7 @@
     <PackageReference Include="Analytics.ActiveLearning.Services.Interfaces.Legacy" />
     <PackageReference Include="Castle.Core" VersionOverride="$(CastleCoreOverride)" />
     <PackageReference Include="Castle.Windsor" VersionOverride="$(CastleWindsorOverride)" />
+    <PackageReference Include="FluentAssertions" />
     
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Mono.Cecil" />

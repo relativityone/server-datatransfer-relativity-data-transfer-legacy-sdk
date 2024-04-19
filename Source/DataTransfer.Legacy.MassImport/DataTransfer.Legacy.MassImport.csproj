@@ -38,6 +38,8 @@
     <PackageReference Include="Relativity.Core" />
     <PackageReference Include="Relativity.DataGrid" />
     <PackageReference Include="Relativity.Logging.Interfaces" />
+    <PackageReference Include="Relativity.Storage" />
+    <PackageReference Include="Relativity.Storage.Extensions" />
     <PackageReference Include="Relativity.Telemetry.APM" />
     <PackageReference Include="Relativity.Toggles" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" />

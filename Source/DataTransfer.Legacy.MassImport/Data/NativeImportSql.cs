@@ -909,13 +909,13 @@ BEGIN
   LEFT JOIN [{{0}}] AS [ExistingObjects] ON
 		[ExistingObjects].[{{1}}] = [{{5}}].[ArtifactID]
     AND
-	[ExistingObjects].[{{{{2}}}}] = [ObjectArtifactID]
+	[ExistingObjects].[{{2}}] = [ObjectArtifactID]
 	WHERE
 		FieldID = @fieldID AND [{{5}}].[kCura_Import_Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
     AND
-	[ExistingObjects].[{{{{1}}}}] IS NULL
+	[ExistingObjects].[{{1}}] IS NULL
 	AND
-	[ExistingObjects].[{{{{2}}}}] IS NULL
+	[ExistingObjects].[{{2}}] IS NULL
 END
 
 ";
@@ -1045,7 +1045,7 @@ INTO
 		public string UpdateAuditClauseMergeNew(int action, string auditDetailsClause, bool useTempTable)
 		{
 			auditDetailsClause = auditDetailsClause != string.Empty ? auditDetailsClause : "''";
-
+			auditDetailsClause = auditDetailsClause.Remove(auditDetailsClause.Length - 1);
 			if (useTempTable)
 			{
 				return $@"
