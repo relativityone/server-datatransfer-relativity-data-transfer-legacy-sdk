@@ -53,6 +53,7 @@
     <RelativityTestingFramework>10.1.0</RelativityTestingFramework>
     <RelativityTestingIdentification>3.12.0</RelativityTestingIdentification>
     <ServiceBus>5.3.0</ServiceBus>
+    <SystemValueTuple>4.5.0</SystemValueTuple>
     <TelemetryAPM>2019.10.9</TelemetryAPM>
     <TelemetryMetricsCollectionClient>3003.1.1</TelemetryMetricsCollectionClient>
     <Toggles>1.10.8</Toggles>
@@ -139,7 +140,7 @@
     <PackageVersion Include="Relativity.Testing.Identification" Version="$(RelativityTestingIdentification)" />
     <PackageVersion Include="Relativity.Toggles" Version="$(Toggles)" />
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.7.0" />
-    <PackageVersion Include="System.ValueTuple" Version="4.5.0" />
+    <PackageVersion Include="System.ValueTuple" Version="$(SystemValueTuple)" />
     <PackageVersion Include="Tdd-Toolkit" Version="2.0.1" />
     <PackageVersion Include="kCura.Assembly.Analysis" Version="$(kCuraAssemblyAnalysis)" />
     <PackageVersion Include="Relativity.Telemetry.MetricsCollection" Version="$(RelativityTelemetryMetricsCollection)" />
