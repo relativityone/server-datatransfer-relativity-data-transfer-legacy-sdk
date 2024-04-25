@@ -19,7 +19,7 @@
     <kCuraDbUpgrader>1.0.115</kCuraDbUpgrader>
     <kCuraHTMLSanitizer>1.0.6</kCuraHTMLSanitizer>
     <kCuraLongPath>2.5.0</kCuraLongPath>
-    <KeplerVersion>2.15.5</KeplerVersion>
+    <KeplerVersion>5000.0.0</KeplerVersion>
     <Invariant>7.2.160.4</Invariant>
     <MicrosoftDotNetTestSdk>17.5.0</MicrosoftDotNetTestSdk>
     <MonoCecil>0.9.6.1</MonoCecil>
@@ -60,7 +60,7 @@
     <RelativityTelemetryMetricsCollection>3005.0.0</RelativityTelemetryMetricsCollection>
 	<RelativityProductionsSDK>12.1.13</RelativityProductionsSDK>
 	  <RelativitySecretCatalog>1.0.19</RelativitySecretCatalog>
-	  <RelativitySharedSDK>1.7.0</RelativitySharedSDK>
+	  <RelativitySharedSDK>5000.0.0</RelativitySharedSDK>
 	  
 	  <StackExchangeRedis>1.0.328</StackExchangeRedis>
 	  <kCuraEDDSDocumentCompareGateway>11.3.1.22</kCuraEDDSDocumentCompareGateway>

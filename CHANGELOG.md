@@ -2,6 +2,12 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.4] - 25-Apr-2024
+
+### Changed
+ 
+- [REL-942356](https://jira.kcura.com/browse/REL-942356) Backtracked Kepler version from 24000 to 5000 due to leadership decisions. 24000 is removed from Artifactory.
+
 ## [24000.0.3] - 29-March-2024
 
 ### Changed
