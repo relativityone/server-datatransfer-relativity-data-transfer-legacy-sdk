@@ -60,7 +60,7 @@
     <RelativityTelemetryMetricsCollection>3005.0.0</RelativityTelemetryMetricsCollection>
 	<RelativityProductionsSDK>12.1.13</RelativityProductionsSDK>
 	  <RelativitySecretCatalog>1.0.19</RelativitySecretCatalog>
-	  <RelativitySharedSDK>1.7.0</RelativitySharedSDK>
+	  <RelativitySharedSDK>5000.0.0</RelativitySharedSDK>
 	  
 	  <StackExchangeRedis>1.0.328</StackExchangeRedis>
 	  <kCuraEDDSDocumentCompareGateway>11.3.1.22</kCuraEDDSDocumentCompareGateway>
