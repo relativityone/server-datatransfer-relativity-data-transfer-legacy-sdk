@@ -31,7 +31,7 @@ namespace Relativity.MassImport.Data
 			_sqlTempReader = sqlTempReader;
 		}
 
-		public async Task ReadDataGridDocumentsFromDataReader(IDataGridRecordBuilder builder, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, HashSet<string> foundIdentifiers)
+		public async Task ReadDataGridDocumentsFromDataReader(IDataGridRecordBuilder builder, Relativity.Data.DataGridMappingMultiDictionary dataGridMappings, HashSet<string> foundIdentifiers, HashSet<string> skippedIdentifiers)
 		{
 			// Do change the value initialized to methodName variable if the method name is changed else the logs will have a different method name in them.
 			string methodName = "ReadDataGridDocumentsFromDataReader";
@@ -68,7 +68,11 @@ namespace Relativity.MassImport.Data
 					if (!dataGridMappings.ContainsByDocumentIdentifier(identifier))
 					{
 						logger.LogDebug("Skipping unmapped record: {identifier}", identifier);
-						continue; // skip unmapped records
+                        if (!string.IsNullOrEmpty(identifier))
+                        {
+                            skippedIdentifiers.Add(identifier);
+                        }
+                        continue; // skip unmapped records
 					}
 
 					// Check off the items when we see them

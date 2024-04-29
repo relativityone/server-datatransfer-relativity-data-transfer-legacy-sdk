@@ -30,7 +30,8 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" />
-    <PackageReference Include="kCura"/>
+	<PackageReference Include="Castle.Windsor" />
+    <PackageReference Include="kCura" />
     <PackageReference Include="kCura.DataGrid.Services.Interfaces" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="Polly" />
@@ -38,6 +39,8 @@
     <PackageReference Include="Relativity.Core" />
     <PackageReference Include="Relativity.DataGrid" />
     <PackageReference Include="Relativity.Logging.Interfaces" />
+    <PackageReference Include="Relativity.Storage" />
+    <PackageReference Include="Relativity.Storage.Extensions" />
     <PackageReference Include="Relativity.Telemetry.APM" />
     <PackageReference Include="Relativity.Toggles" />
     <PackageReference Include="System.Threading.Tasks.Dataflow" />

@@ -139,13 +139,14 @@ namespace Relativity.MassImport.Data
 			{
 				selectClause.Append($",{Environment.NewLine}\t[{field.GetColumnName()}]");
 			}
-			foreach (FieldInfo field in this.Settings.MappedFields){
+			foreach (FieldInfo field in this.Settings.MappedFields)
 			{
 				if (this.FieldIsOnObjectTable(field))
 				{
 					selectClause.Append($",{Environment.NewLine}\t[{field.GetColumnName()}]");
 				}
-			}}
+			}
+			
 
 			if (this.Settings.UploadFiles)
 			{
@@ -262,6 +263,18 @@ namespace Relativity.MassImport.Data
 		}
 
 		public int UpdateDocumentMetadata(int userID, int? auditUserID, string reqOrig, string recOrig, bool performAudit, bool includeExtractedTextEncoding)
+		{
+			if (ToggleProvider.Current.IsEnabled<EnableUpdateMetadataOptimization>())
+			{
+				return UpdateDocumentMetadataNew(userID, auditUserID, reqOrig, recOrig, performAudit, includeExtractedTextEncoding);
+			}
+			else
+			{
+				return UpdateDocumentMetadataOld(userID, auditUserID, reqOrig, recOrig, performAudit, includeExtractedTextEncoding);
+			}
+		}
+
+		private int UpdateDocumentMetadataOld(int userID, int? auditUserID, string reqOrig, string recOrig, bool performAudit, bool includeExtractedTextEncoding)
 		{
 			this.ImportMeasurements.StartMeasure();
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
@@ -425,6 +438,190 @@ namespace Relativity.MassImport.Data
 			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
 
 			return updateDocumentsCount;
+		}
+
+		private int UpdateDocumentMetadataNew(int userID, int? auditUserID, string reqOrig, string recOrig, bool performAudit, bool includeExtractedTextEncoding)
+		{
+			this.ImportMeasurements.StartMeasure();
+			this.ImportMeasurements.PrimaryArtifactCreationTime.Start();
+			if (!auditUserID.HasValue)
+			{
+				auditUserID = userID;
+			}
+
+			bool isFirstBatch = true;
+			List<List<FieldInfo>> fieldsBatches = BatchFields(this.Settings.MappedFields);
+			bool hasMoreThanOneBatch = fieldsBatches.Count > 1;
+
+			if (hasMoreThanOneBatch)
+			{
+				CreateTempTableForOverlayAudit();
+			}
+
+			foreach (var fieldsBatch in fieldsBatches)
+			{
+				UpdateDocumentFields(
+					userID,
+					auditUserID.Value,
+					reqOrig,
+					recOrig,
+					performAudit,
+					includeExtractedTextEncoding: includeExtractedTextEncoding && isFirstBatch,
+					updateFileIcon: isFirstBatch,
+					fieldsBatch,
+					hasMoreThanOneBatch);
+				isFirstBatch = false;
+			}
+
+			if (hasMoreThanOneBatch)
+			{
+				CopyRecordsFromTempAuditToAudit(auditUserID, reqOrig, recOrig);
+			}
+
+			UpdateMismatchedDataGridFields();
+			int updateDocumentsCount = UpdateArtifactTableForOverlaidRecords(auditUserID, "/* Do not update text identifier for Documents */");
+
+			this.ImportMeasurements.StopMeasure();
+			this.ImportMeasurements.PrimaryArtifactCreationTime.Stop();
+
+			return updateDocumentsCount;
+		}
+
+		public int UpdateDocumentFields(
+			int userID,
+			int auditUserID,
+			string reqOrig,
+			string recOrig,
+			bool performAudit,
+			bool includeExtractedTextEncoding,
+			bool updateFileIcon,
+			List<FieldInfo> fields,
+			bool useTempTableForAudit)
+		{
+			string updateDocumentsQuery = this.ImportSql.UpdateMetadataNew();
+			var keyField = this.GetKeyField();
+
+			var setClause = new StringBuilder();
+			foreach (FieldInfo mappedField in fields)
+			{
+				if (this.FieldIsOnObjectTable(mappedField))
+				{
+					if (mappedField.Category != FieldCategory.Identifier)
+					{
+						switch (mappedField.Category)
+						{
+							case FieldCategory.Relational:
+								{
+									if ((int?)mappedField.ImportBehavior == (int?)FieldInfo.ImportBehaviorChoice.ReplaceBlankValuesWithIdentifier == true)
+									{
+										setClause.AppendFormat("	D.[{0}] = CASE WHEN N.[{0}] IS NULL THEN N.[{1}] COLLATE {2} WHEN N.[{0}] = '' THEN N.[{1}] COLLATE {2} ELSE N.[{0}] END,", mappedField.GetColumnName(), keyField.GetColumnName(), this.ColumnDefinitionCache[mappedField.ArtifactID].CollationName);
+										setClause.AppendLine();
+									}
+									else
+									{
+										setClause.AppendFormat("	D.[{0}] = N.[{0}],", mappedField.GetColumnName());
+										setClause.AppendLine();
+									}
+
+									break;
+								}
+
+							case FieldCategory.AutoCreate:
+								{
+									if (this.Settings.UploadFiles)
+									{
+										setClause.AppendFormat("	D.[{0}] = N.[{0}],", mappedField.GetColumnName());
+										setClause.AppendLine();
+									}
+
+									break;
+								}
+
+							default:
+								{
+									if (this.Settings.LoadImportedFullTextFromServer && mappedField.Category == FieldCategory.FullText)
+									{
+									}
+									// if we are reading the file paths directly from their share location, skip the update clause for the text field and insead update the text afterward
+									else
+									{
+										setClause.AppendFormat("	D.[{0}] = N.[{0}],", mappedField.GetColumnName());
+										setClause.AppendLine();
+									}
+
+									break;
+								}
+						}
+					}
+				}
+			}
+
+			if (this.Settings.UploadFiles && updateFileIcon)
+			{
+				setClause.AppendLine("	D.[FileIcon] = N.[kCura_Import_Filename],");
+			}
+
+			var auditBuilder = new AuditDetailsBuilder(this.Context, this.Settings, this.ColumnDefinitionCache, _tableNames, base.ArtifactTypeID);
+			var auditClauses = auditBuilder.GenerateAuditDetailsNew(performAudit, fields, includeExtractedTextEncoding);
+			string auditDetailsClause = auditClauses.Item1;
+			string auditMapClause = auditClauses.Item2;
+
+			// Check if the object table has to change
+			if (setClause.Length > 0)
+			{
+				// Add UPDATE statement
+				updateDocumentsQuery = updateDocumentsQuery.Replace("/* UpdateObjectOrDocTable */", this.ImportSql.UpdateObjectOrDocTable());
+				// Insert to AuditRecord using OUTPUT INTO
+				if (performAudit)
+				{
+					if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
+					{
+						var updateAuditRecordsMergeValue = this.ImportSql.UpdateAuditClauseMergeNew(this.ImportUpdateAuditAction, auditDetailsClause, useTempTableForAudit);
+						updateDocumentsQuery = updateDocumentsQuery.Replace("/* UpdateAuditRecordsMerge */", updateAuditRecordsMergeValue);
+					}
+
+					if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
+					{
+						updateDocumentsQuery = updateDocumentsQuery.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
+					}
+				}
+			}
+			// Insert to AuditRecord using regular INSERT
+			else if (performAudit)
+			{
+				if (this.Settings.AuditLevel != Relativity.MassImport.DTO.ImportAuditLevel.NoAudit)
+				{
+					var updateAuditRecordsInsert = this.ImportSql.UpdateAuditClauseInsertNew(this._tableNames.Native, this.ImportUpdateAuditAction, auditDetailsClause, useTempTableForAudit);
+					updateDocumentsQuery = updateDocumentsQuery.Replace("/* UpdateAuditRecordsInsert */", updateAuditRecordsInsert);
+				}
+
+				if (this.Settings.AuditLevel == Relativity.MassImport.DTO.ImportAuditLevel.FullAudit)
+				{
+					updateDocumentsQuery = updateDocumentsQuery.Replace("/* MapFieldsAuditJoin */", this.ImportSql.MapFieldsAuditJoin(auditMapClause, this._tableNames.Map));
+				}
+			}
+
+			updateDocumentsQuery = string.Format(
+				updateDocumentsQuery,
+				_tableNames.Native,
+				setClause.Length == 0 ? string.Empty : setClause.ToString(0, setClause.Length - (",".Length + Environment.NewLine.Length)),
+				auditDetailsClause,
+				ArtifactTypeTableName,
+				_tableNames.Part,
+				TopFieldArtifactID,
+				ImportUpdateAuditAction,
+				_tableNames.Map,
+				auditMapClause);
+
+			var sqlParameters = new[]
+			{
+				new SqlParameter("@userID", userID),
+				new SqlParameter("@auditUserID", auditUserID),
+				new SqlParameter("@requestOrig", reqOrig),
+				new SqlParameter("@recordOrig", recOrig)
+			};
+
+			return this.QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(updateDocumentsQuery, sqlParameters, this.QueryTimeout);
 		}
 
 		protected override void UpdateSynclockSensitiveMultiObjectArtifacts(FieldInfo field, int userID, string associatedObjectTable, string idFieldColumnName, int artifactTypeID, string requestOrigination, string recordOrigination, bool performAudit)
@@ -593,6 +790,42 @@ WHERE
 		{
 			string sql = Relativity.MassImport.Data.Helper.ErrorSql(context, runID, keyFieldID);
 			return context.ExecuteSQLStatementAsReader(sql);
+		}
+
+		private void UpdateMismatchedDataGridFields()
+		{
+			if (MismatchedDataGridFields.Any())
+			{
+				// If there is a mismatched field, then the field was switch to DG in the middle of an import by Text Migration
+				// If the column hasn't been dropped yet, then we need to update the field in SQL to prevent verification errors in Text Migration
+				var mismatchedStringUpdate = new StringBuilder();
+				bool prependComma = false;
+				string columnNames = string.Join(",", MismatchedDataGridFields.Select(field => $"'{field.GetColumnName()}'"));
+				var columnExistParameters = new[]
+					{ new SqlParameter("@columnNames", SqlDbType.VarChar) { Value = columnNames } };
+				var columnsThatExist = this.Context.ExecuteSqlStatementAsList<string>(
+					this.ImportSql.DoesColumnExistOnDocumentTable(), reader => reader.GetString(0), columnExistParameters);
+				foreach (FieldInfo mismatchedField in MismatchedDataGridFields.Where(field =>
+					         columnsThatExist.Contains(field.GetColumnName())))
+				{
+					if (prependComma)
+					{
+						mismatchedStringUpdate.Append(", ");
+					}
+
+					mismatchedStringUpdate.AppendFormat("[Document].[{0}] = tmp.[{0}]", mismatchedField.GetColumnName());
+					prependComma = true;
+				}
+
+				if (mismatchedStringUpdate.Length > 0)
+				{
+					string updateSql =
+						string.Format(this.ImportSql.UpdateMismatchedDataGridFields(this._tableNames.Native,
+							mismatchedStringUpdate.ToString()));
+					this.QueryExecutor.ExecuteBatchOfSqlStatementsAsScalar<int>(updateSql, Array.Empty<SqlParameter>(),
+						this.QueryTimeout);
+				}
+			}
 		}
 	}
 }

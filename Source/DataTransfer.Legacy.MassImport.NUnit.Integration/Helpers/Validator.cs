@@ -31,7 +31,7 @@ namespace MassImport.NUnit.Integration.Helpers
 		public static void ThenTheFoldersHaveCorrectValues(TestWorkspace testWorkspace, string[] expectedFolders)
 		{
 			string query = @" SELECT [Name] FROM [Folder] WHERE [ArtifactID] != 1003697";
-			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+			using (SqlConnection connection = new SqlConnection(testWorkspace.EddsConnectionString))
 			using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
 			{
 				DataTable result = new DataTable();
@@ -56,7 +56,7 @@ namespace MassImport.NUnit.Integration.Helpers
 			{
 				DataTable result = new DataTable();
 
-				using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+				using (SqlConnection connection = new SqlConnection(testWorkspace.EddsConnectionString))
 				using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
 				{
 					dataAdapter.Fill(result);
@@ -77,7 +77,7 @@ namespace MassImport.NUnit.Integration.Helpers
 		public static void ThenImportStatusAndErrorDataIsSetInNativeTempTable(TestWorkspace testWorkspace, string runId, string[] expectedResult)
 		{
 			string query = $"SELECT [ControlNumber], [kCura_Import_Status], [kCura_Import_ErrorData] FROM [EDDS{testWorkspace.WorkspaceId}].[Resource].[RELNATTMP_{runId}]";
-			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+			using (SqlConnection connection = new SqlConnection(testWorkspace.EddsConnectionString))
 			using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
 			{
 				DataTable result = new DataTable();
@@ -97,7 +97,7 @@ namespace MassImport.NUnit.Integration.Helpers
 		private static DataTable GetActualFieldValues(TestWorkspace testWorkspace, List<string> fieldNames, string objectTypeName)
 		{
 			string query = BuildDocumentQuery(fieldNames, objectTypeName);
-			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+			using (SqlConnection connection = new SqlConnection(testWorkspace.EddsConnectionString))
 			using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
 			{
 				DataTable result = new DataTable();

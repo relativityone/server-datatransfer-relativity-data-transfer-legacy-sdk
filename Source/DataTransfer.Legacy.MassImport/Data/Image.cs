@@ -13,6 +13,7 @@ using Relativity.DataGrid.Implementations.DGFS.ReadBackend;
 using Relativity.MassImport.Data.DataGrid;
 using Relativity.MassImport.Data.DataGridWriteStrategy;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
+using DGRelativityRepository = Relativity.MassImport.Data.DataGrid.DGRelativityRepository;
 using ILog = Relativity.Logging.ILog;
 
 namespace Relativity.MassImport.Data
@@ -769,55 +770,71 @@ WHERE
 			return loader;
 		}
 
-		public void UpdateDgFieldMappingRecords(IEnumerable<DGImportFileInfo> dgImportFileInfoList, ILog correlationLogger)
-		{
-			if (dgImportFileInfoList.Any())
-			{
-				ImportMeasurements.StartMeasure();
-				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status");
+        public void UpdateDgFieldMappingRecords(DGImportFileInfo[] dgImportFileInfoList, ILog correlationLogger)
+        {
+            if (dgImportFileInfoList.Any())
+            {
+                ImportMeasurements.StartMeasure();
 
-				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
-				sqlParam.SqlDbType = SqlDbType.Structured;
-				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
+                var toProcessCount = dgImportFileInfoList.Length;
+                var withEmptyTextCount = dgImportFileInfoList.Count(x => string.IsNullOrEmpty(x.FileLocation) || x.FileSize == 0);
+               
+                ImportMeasurements.SetCounter("DataGridItemsToProcess", toProcessCount);
+                ImportMeasurements.SetCounter("DataGridItemsWithEmptyText", withEmptyTextCount);
 
-				var filter = new HashSet<int>();
+                string createTableStatement = DGRelativityRepository.CreateDgFieldMappingTempTableSql();
+                bool hasLinkedTextColumn = _context.ExecuteSqlStatementAsScalar<int>(createTableStatement) == 1;
 
-				using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
-				{
-					while (reader.Read())
-					{
-						filter.Add(Convert.ToInt32(reader[0]));
-					}
-				}
+                string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Image, "Status", hasLinkedTextColumn);
 
-				var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
-				foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))
-				{
-					string indexName = perIndexName.Key;
-					foreach (var perFieldName in perIndexName.GroupBy(g => $"{g.FieldNamespace}.{g.FieldName}"))
-					{
-						string fieldName = perFieldName.Key;
-						try
-						{
-							DGFieldInformationLookupFactory.DeleteList = perFieldName;
-							var artifactIDs = perFieldName.Select(x => x.ImportId);
-							_dgContext.BaseDataGridContext.TryDeleteBulk(artifactIDs, Enumerable.Repeat(fieldName, 1), indexName);
-						}
-						catch (Exception)
-						{
-							correlationLogger.LogWarning("Cleanup of extracted text that failed to import failed for index {indexName} and field {fieldName}", indexName, fieldName);
-						}
-						finally
-						{
-							DGFieldInformationLookupFactory.DeleteList = null;
-						}
-					}
-				}
-				ImportMeasurements.StopMeasure();
-			}
-		}
+                IDataReader dgImportFileInfoReader = dgImportFileInfoList.GetDgImportFileInfoAsDataReader();
+                SqlBulkCopyParameters bulkCopyParameters = DGRelativityRepository.GetDgFieldMappingTempTableBulkCopyParameters();
+                _context.ExecuteBulkCopy(dgImportFileInfoReader, bulkCopyParameters);
 
-		private bool AreRowsInSqlFile()
+                int itemsPendingCount = _context.ExecuteSqlStatementAsScalar<int>(DGRelativityRepository.CountDgRowsPendingTableSql(_tableNames.Image, "Status"));
+               
+                ImportMeasurements.SetCounter("DataGridItemsPendingTableCount", itemsPendingCount);
+
+                var filter = new HashSet<int>();
+                using (var reader = _context.ExecuteSQLStatementAsReader(sqlStatement, QueryTimeout))
+                {
+                    while (reader.Read())
+                    {
+                        ImportMeasurements.IncrementCounter("DataGridItemsProcessed");
+                        filter.Add(Convert.ToInt32(reader[0]));
+                        var action = reader[1].ToString();
+                        ImportMeasurements.IncrementCounter($"DataGridItemsAction{action}");
+                    }
+                }
+
+                var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
+                foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))
+                {
+                    string indexName = perIndexName.Key;
+                    foreach (var perFieldName in perIndexName.GroupBy(g => $"{g.FieldNamespace}.{g.FieldName}"))
+                    {
+                        string fieldName = perFieldName.Key;
+                        try
+                        {
+                            DGFieldInformationLookupFactory.DeleteList = perFieldName;
+                            var artifactIDs = perFieldName.Select(x => x.ImportId);
+                            _dgContext.BaseDataGridContext.TryDeleteBulk(artifactIDs, Enumerable.Repeat(fieldName, 1), indexName);
+                        }
+                        catch (Exception)
+                        {
+                            correlationLogger.LogWarning("Cleanup of extracted text that failed to import failed for index {indexName} and field {fieldName}", indexName, fieldName);
+                        }
+                        finally
+                        {
+                            DGFieldInformationLookupFactory.DeleteList = null;
+                        }
+                    }
+                }
+                ImportMeasurements.StopMeasure();
+            }
+        }
+
+        private bool AreRowsInSqlFile()
 		{
 			string sql = $"SELECT COUNT(*) FROM [Resource].[{TableNameImageTemp}]";
 			int numberOfRows = _context.ExecuteSqlStatementAsScalar<int>(sql);
@@ -853,8 +870,6 @@ WHERE
 					string indexName = DataGridHelper.GetWriteIndexName(appID, (int)Relativity.ArtifactType.Document, Relativity.Data.Config.DataGridConfiguration.DataGridIndexPrefix);
 					_dataGridMappings.LoadCacheForImport(mappingReader, indexName, appID);
 				}
-
-				_dgImportHelper.WriteToDataGrid((int)Relativity.ArtifactType.Document, appID, _tableNames.RunId, loader, false, true, _dataGridMappings, correlationLogger);
 			}
 			finally
 			{

@@ -40,6 +40,13 @@ namespace MassImport.NUnit.Integration
 			this.SetupConfigMock();
 		}
 
+		protected async Task CreateNewTestWorkspace()
+		{
+			await AssemblySetup.OneTimeTearDownAsync().ConfigureAwait(false);
+			AssemblySetup.OneTimeSetUp();
+			await OneTimeBaseSetupAsync().ConfigureAwait(false);
+		}
+
 		protected void ThenTheImportWasSuccessful(MassImportManagerBase.MassImportResults result, int expectedArtifactsCreated, int expectedArtifactsUpdated)
 		{
 			Assert.IsNull(result.ExceptionDetail, $"An error occurred when running import: {result.ExceptionDetail?.ExceptionMessage}");
@@ -74,7 +81,7 @@ namespace MassImport.NUnit.Integration
 
 		private void SetupCoreContextMock()
 		{
-			Context = new Context(this.TestWorkspace.ConnectionString);
+			Context = new Context(this.TestWorkspace.EddsConnectionString);
 			Mock<BaseContext> baseContextMock = new Mock<BaseContext>();
 			Mock<IAuditRepository> auditRepositoryMock = new Mock<IAuditRepository>();
 			auditRepositoryMock.Setup(x => x.BeginTransaction()).Callback(() => Context.BeginTransaction());
@@ -95,7 +102,7 @@ namespace MassImport.NUnit.Integration
 
 		private void SetupConfigMock()
 		{
-			kCura.Data.RowDataGateway.Config.SetConnectionString(this.TestWorkspace.ConnectionString);
+			kCura.Data.RowDataGateway.Config.SetConnectionString(this.TestWorkspace.EddsConnectionString);
 		}
 	}
 }

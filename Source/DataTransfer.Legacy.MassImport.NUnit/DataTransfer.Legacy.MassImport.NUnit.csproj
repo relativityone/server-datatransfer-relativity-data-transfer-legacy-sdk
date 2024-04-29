@@ -31,6 +31,7 @@
     <PackageReference Include="Combinatorics" />
     <PackageReference Include="CompareNETObjects" />
     <PackageReference Include="Coverlet.msbuild" />
+    <PackageReference Include="FluentAssertions" />
     <PackageReference Include="FluentValidation" />
     <!--TODO Delete these once we fix the Relativity.SDK.Services.Query nuget package to include these. -->
     <PackageReference Include="FSharp.Core" />

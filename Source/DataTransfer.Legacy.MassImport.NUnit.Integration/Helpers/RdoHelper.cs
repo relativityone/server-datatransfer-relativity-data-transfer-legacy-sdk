@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Relativity.Services.Interfaces.ObjectType;
 using Relativity.Services.Interfaces.ObjectType.Models;
 using Relativity.Services.Interfaces.Shared;
@@ -70,7 +71,7 @@ namespace MassImport.NUnit.Integration.Helpers
 		{
 			var query = new QueryRequest
 			{
-				ObjectType = new ObjectTypeRef { ArtifactTypeID = WellKnownFields.DocumentArtifactTypeId},
+				ObjectType = new ObjectTypeRef { ArtifactTypeID = WellKnownFields.DocumentArtifactTypeId },
 				Fields = fieldNames.Select(x => new FieldRef { Name = x }).ToArray()
 			};
 
@@ -133,6 +134,18 @@ namespace MassImport.NUnit.Integration.Helpers
 						{
 							fields[fieldNames[i]] = valueAsMultiChoice.Select(x => x.ArtifactID).ToArray();
 						}
+						else if (value is RelativityObjectValue valueAsObject)
+						{
+							fields[fieldNames[i]] = valueAsObject.Name;
+						}
+						else if (value is List<RelativityObjectValue> valuesAsObject)
+						{
+							fields[fieldNames[i]] = valuesAsObject.Select(x => x.ArtifactID).ToArray();
+						}
+						else
+						{
+							fields[fieldNames[i]] = value;
+						}
 					}
 
 					fields[ParentArtifactId] = rdo.ParentObject.ArtifactID;
@@ -173,6 +186,37 @@ namespace MassImport.NUnit.Integration.Helpers
 
 				ObjectTypeResponse objectTypeResponse = await objectManager.ReadAsync(testWorkspace.WorkspaceId, newObjectId).ConfigureAwait(false);
 				return objectTypeResponse.ArtifactTypeID;
+			}
+		}
+
+		
+		public static async Task<Dictionary<string, int>> CreateObjectsAsync(
+			IntegrationTestParameters parameters,
+			TestWorkspace testWorkspace,
+			int artifactTypeId,
+			List<string> objectsNames)
+		{
+			var request = new MassCreateRequest
+			{
+				Fields = new List<FieldRef>
+				{
+					new FieldRef { Name = "Name" },
+				},
+				ObjectType = new ObjectTypeRef()
+				{
+					ArtifactTypeID = artifactTypeId,
+				},
+				ValueLists = objectsNames.Select(x => new List<object> { x }).ToList(),
+			};
+
+			using (var objectManager = ServiceHelper.GetServiceProxy<IObjectManager>(parameters))
+			{
+				var response = await objectManager.CreateAsync(testWorkspace.WorkspaceId, request).ConfigureAwait(false);
+				response.Success.Should().BeTrue("because it should create RDOs");
+
+				return response.Objects
+					.Zip(objectsNames, (relativityObject, name) => (name, relativityObject.ArtifactID))
+					.ToDictionary(x => x.name, x => x.ArtifactID);
 			}
 		}
 	}
