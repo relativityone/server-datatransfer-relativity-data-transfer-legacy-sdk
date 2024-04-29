@@ -72,6 +72,7 @@
 
 	  <PackageReference Include="Relativity.Productions.SDK" />
 	  <PackageReference Include="Relativity.SecretCatalog" />
+	  <PackageReference Include="Relativity.Shared.SDK" />
 	  <PackageReference Include="StackExchange.Redis" />
 	  <PackageReference Include="kCura.EDDS.DocumentCompareGateway" />
 
