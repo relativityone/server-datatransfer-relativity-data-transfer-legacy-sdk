@@ -19,6 +19,7 @@ using Relativity.MassImport.Extensions;
 using DGImportFileInfo = Relativity.MassImport.Data.DataGrid.DGImportFileInfo;
 using Array = System.Array;
 using Relativity.MassImport.Api;
+using kCura.Data.RowDataGateway;
 
 namespace Relativity.MassImport.Data
 {
@@ -654,8 +655,6 @@ WHERE
 					string indexName = DataGridHelper.GetWriteIndexName(appID, _artifactTypeID, Relativity.Data.Config.DataGridConfiguration.DataGridIndexPrefix);
 					_dataGridMappings.LoadCacheForImport(mappingReader, indexName, appID);
 				}
-
-				_dgImportHelper.WriteToDataGrid(ArtifactTypeID, appID, _tableNames.RunId, loader, Settings.LinkDataGridRecords, Settings.HaveDataGridFields, _dataGridMappings, correlationLogger);
 			}
 			finally
 			{
@@ -718,56 +717,78 @@ WHERE
 			return output;
 		}
 
-		public void UpdateDgFieldMappingRecords(IEnumerable<DGImportFileInfo> dgImportFileInfoList, ILog correlationLogger)
-		{
-			if (dgImportFileInfoList.Any())
-			{
-				ImportMeasurements.StartMeasure();
-				string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Native, "kCura_Import_Status");
-				var sqlParam = new SqlParameter("@dgImportFileInfo", dgImportFileInfoList.GetDgImportFileInfoAsDataRecord());
-				sqlParam.SqlDbType = SqlDbType.Structured;
-				sqlParam.TypeName = "EDDSDBO.DgImportFileInfoType";
-				var filter = new HashSet<int>();
-				using (var reader = Context.ExecuteSQLStatementAsReader(sqlStatement, Enumerable.Repeat(sqlParam, 1), QueryTimeout))
-				{
-					while (reader.Read())
-					{
-						filter.Add(Convert.ToInt32(reader[0]));
-					}
-				}
+        public void UpdateDgFieldMappingRecords(DGImportFileInfo[] dgImportFileInfoList, ILog correlationLogger)
+        {
+            if (dgImportFileInfoList.Any())
+            {
+                ImportMeasurements.StartMeasure();
 
-				var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
-				foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))
-				{
-					string indexName = perIndexName.Key;
-					foreach (var perFieldName in perIndexName.GroupBy(g => $"{g.FieldNamespace}.{g.FieldName}"))
-					{
-						string fieldName = perFieldName.Key;
-						try
-						{
-							DGFieldInformationLookupFactory.DeleteList = perFieldName;
-							var artifactIDs = perFieldName.Select(x => x.ImportId);
-							_dgContext.BaseDataGridContext.TryDeleteBulk(artifactIDs, Enumerable.Repeat(fieldName, 1), indexName);
-						}
-						catch (Exception)
-						{
-							correlationLogger.LogWarning("Cleanup of extracted text that failed to import failed for index {indexName} and field {fieldName}", indexName, fieldName);
-						}
-						finally
-						{
-							DGFieldInformationLookupFactory.DeleteList = null;
-						}
-					}
-				}
+                var toProcessCount = dgImportFileInfoList.Length;
+                var withEmptyTextCount = dgImportFileInfoList.Count(x => string.IsNullOrEmpty(x.FileLocation) || x.FileSize == 0);
 
-				ImportMeasurements.StopMeasure();
-			}
-		}
-		#endregion
+                ImportMeasurements.SetCounter("DataGridItemsToProcess", toProcessCount);
+                ImportMeasurements.SetCounter("DataGridItemsWithEmptyText", withEmptyTextCount);
 
-		#region Utility
-		#region Retries
-		public static T ExecuteWithRetry<T>(Func<T> action)
+                string createTableStatement = DGRelativityRepository.CreateDgFieldMappingTempTableSql();
+                bool hasLinkedTextColumn = _context.ExecuteSqlStatementAsScalar<int>(createTableStatement) == 1;
+
+                string sqlStatement = DGRelativityRepository.UpdateDgFieldMappingRecordsSql(_tableNames.Native, "kCura_Import_Status", hasLinkedTextColumn);
+
+                IDataReader dgImportFileInfoReader = dgImportFileInfoList.GetDgImportFileInfoAsDataReader();
+                SqlBulkCopyParameters bulkCopyParameters = DGRelativityRepository.GetDgFieldMappingTempTableBulkCopyParameters();
+                _context.ExecuteBulkCopy(dgImportFileInfoReader, bulkCopyParameters);
+
+                int itemsPendingCount = _context.ExecuteSqlStatementAsScalar<int>(DGRelativityRepository.CountDgRowsPendingTableSql(_tableNames.Native, "kCura_Import_Status"));
+
+                ImportMeasurements.SetCounter("DataGridItemsPendingTableCount", itemsPendingCount);
+
+                var filter = new HashSet<int>();
+                using (var reader = Context.ExecuteSQLStatementAsReader(sqlStatement, QueryTimeout))
+                {
+                    while (reader.Read())
+                    {
+                        ImportMeasurements.IncrementCounter("DataGridItemsProcessed");
+                        filter.Add(Convert.ToInt32(reader[0]));
+                        var action = reader[1].ToString();
+                        ImportMeasurements.IncrementCounter($"DataGridItemsAction{action}");
+                    }
+                }
+
+                var dgFilesToDelete = dgImportFileInfoList.Where(info => info.FileLocation != null && !filter.Contains(info.ImportId));
+                foreach (var perIndexName in dgFilesToDelete.GroupBy(g => g.IndexName))
+                {
+                    string indexName = perIndexName.Key;
+                    correlationLogger.LogDebug("DG try to remove for index: {indexName} count: {count}", indexName, perIndexName.Count());
+                    foreach (var perFieldName in perIndexName.GroupBy(g => $"{g.FieldNamespace}.{g.FieldName}"))
+                    {
+                        string fieldName = perFieldName.Key;
+
+                        correlationLogger.LogDebug("DG try to remove for: {fieldName} count: {count}", fieldName, perFieldName.Count());
+                        try
+                        {
+                            DGFieldInformationLookupFactory.DeleteList = perFieldName;
+                            var artifactIDs = perFieldName.Select(x => x.ImportId);
+                            _dgContext.BaseDataGridContext.TryDeleteBulk(artifactIDs, Enumerable.Repeat(fieldName, 1), indexName);
+                        }
+                        catch (Exception ex)
+                        {
+                            correlationLogger.LogWarning(ex, "Cleanup of extracted text that failed to import failed for index {indexName} and field {fieldName}", indexName, fieldName);
+                        }
+                        finally
+                        {
+                            DGFieldInformationLookupFactory.DeleteList = null;
+                        }
+                    }
+                }
+
+                ImportMeasurements.StopMeasure();
+            }
+        }
+        #endregion
+
+        #region Utility
+        #region Retries
+        public static T ExecuteWithRetry<T>(Func<T> action)
 		{
 			Policy policy = Policy.Handle<Exception>().WaitAndRetry(_retryCount, i => TimeSpan.FromMilliseconds(_retrySleepDurationMilliseconds));
 			return policy.Execute(action);

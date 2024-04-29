@@ -81,7 +81,7 @@ namespace MassImport.NUnit.Integration
 
 		private void SetupCoreContextMock()
 		{
-			Context = new Context(this.TestWorkspace.ConnectionString);
+			Context = new Context(this.TestWorkspace.EddsConnectionString);
 			Mock<BaseContext> baseContextMock = new Mock<BaseContext>();
 			Mock<IAuditRepository> auditRepositoryMock = new Mock<IAuditRepository>();
 			auditRepositoryMock.Setup(x => x.BeginTransaction()).Callback(() => Context.BeginTransaction());

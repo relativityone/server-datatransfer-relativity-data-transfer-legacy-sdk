@@ -6,6 +6,7 @@ using Relativity.MassImport.Data;
 using Relativity.MassImport.Data.Choices;
 using Relativity.MassImport.Data.DataGrid;
 using Relativity.MassImport.Data.SqlFramework;
+using System.Linq;
 
 namespace Relativity.MassImport.Core.Command
 {
@@ -241,7 +242,7 @@ namespace Relativity.MassImport.Core.Command
 			{
 				if (Settings.HasDataGridWorkToDo)
 				{
-					this.Execute(() => Native.UpdateDgFieldMappingRecords(Input.DGImportFileInfo, this.CorrelationLogger), nameof(WriteDataGridInformation));
+					this.Execute(() => Native.UpdateDgFieldMappingRecords(Input.DGImportFileInfo.ToArray(), this.CorrelationLogger), nameof(WriteDataGridInformation));
 				}
 			}
 		}

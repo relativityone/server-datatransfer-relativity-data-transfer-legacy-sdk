@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Threading.Tasks.Dataflow;
 using kCura.Utility.Streaming;
@@ -11,11 +12,15 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 		private string _type;
 		private int _artifactID;
 		private string _batchID;
-		private readonly IDataGridWriter _writer;
+        private int _numberOfTexts;
+        private int _numberOfEmptyTexts;
+        private readonly IDataGridWriter _writer;
 		private readonly byte[] _shortcutBuffer;
 		private readonly ActionBlock<StorageRequest> _storageQueue;
+        public int NumberOfEmptyTexts => _numberOfEmptyTexts;
+        public int NumberOfTexts => _numberOfTexts;
 
-		private class StorageRequest
+        private class StorageRequest
 		{
 			public DataGridRecord Record { get; set; }
 			public DataGridFieldInfo Field { get; set; }
@@ -83,14 +88,20 @@ namespace Relativity.MassImport.Data.DataGridWriteStrategy
 
 		public async Task AddField(DataGridFieldInfo field, string fieldValue, bool isFileLink)
 		{
-			bool validLink = isFileLink && !string.IsNullOrEmpty(fieldValue);
+            Interlocked.Increment(ref _numberOfTexts);
+            bool validLink = isFileLink && !string.IsNullOrEmpty(fieldValue);
 			long byteSize = 0L;
 			if (!validLink && fieldValue != null)
 			{
 				byteSize = System.Text.Encoding.Unicode.GetByteCount(fieldValue);
 			}
 
-			var fieldInfo = new Relativity.DataGrid.FieldInfo()
+            if (byteSize == 0 && !validLink)
+            {
+                Interlocked.Increment(ref _numberOfEmptyTexts);
+            }
+
+            var fieldInfo = new Relativity.DataGrid.FieldInfo()
 			{
 				Value = fieldValue,
 				IsValueAFileLink = validLink,

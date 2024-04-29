@@ -42,7 +42,7 @@ namespace MassImport.NUnit.Integration.Helpers
 		{
 			int auditId;
 			
-			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+			using (SqlConnection connection = new SqlConnection(testWorkspace.EddsConnectionString))
 			{
 				connection.Open();
 				using (SqlCommand command = connection.CreateCommand())
@@ -111,7 +111,7 @@ namespace MassImport.NUnit.Integration.Helpers
             int userId,
             Action<SqlDataReader> auditInfoCollector)
         {
-            using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+            using (SqlConnection connection = new SqlConnection(testWorkspace.EddsConnectionString))
             {
                 connection.Open();
                 using (SqlCommand command = connection.CreateCommand())

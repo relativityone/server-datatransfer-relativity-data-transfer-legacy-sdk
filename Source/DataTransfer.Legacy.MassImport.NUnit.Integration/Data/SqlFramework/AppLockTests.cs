@@ -154,7 +154,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 
 		private void RunSynchronizedQuery(string task, Action onGet, string resourceName)
 		{
-			Context context = new Context(this.TestWorkspace.ConnectionString);
+			Context context = new Context(this.TestWorkspace.EddsConnectionString);
 			context.BeginTransaction();
 			AddMessage($"{task} begin");
 
@@ -178,7 +178,7 @@ namespace MassImport.NUnit.Integration.Data.SqlFramework
 
 		private void RunSynchronizedQueryWithDoubleApplock(string task, Action onGet, string resourceName1, string resourceName2)
 		{
-			Context context = new Context(this.TestWorkspace.ConnectionString);
+			Context context = new Context(this.TestWorkspace.EddsConnectionString);
 			context.BeginTransaction();
 			AddMessage($"{task} begin {resourceName1}");
 
