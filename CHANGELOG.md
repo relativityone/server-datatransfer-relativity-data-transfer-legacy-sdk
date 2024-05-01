@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [23000.19.1004] - 01-APR-2024
+
+### Changed
+
+- Propogating patch1 changes to server release 2023
+- [REL-931516](https://jira.kcura.com/browse/REL-931516) Server 2023 Patch 2 - Update RAPCI repos to upgrade hopper with hotfix/patch.
+
 ## [23000.19.1003] - 12-04-2023
 
 ### Changed
