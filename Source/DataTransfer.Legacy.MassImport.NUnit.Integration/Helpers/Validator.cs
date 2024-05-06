@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -24,6 +25,72 @@ namespace MassImport.NUnit.Integration.Helpers
 					.FirstOrDefault(row => row[identifierFieldName].ToString() == identifierValue);
 				Assert.IsNotNull(actualRow, $"Could not find {objectTypeName} with identifier: {identifierValue}");
 				ThenTheRowHasCorrectValues(fieldNames, expectedRow, actualRow);
+			}
+		}
+
+		public static void ThenTheFoldersHaveCorrectValues(TestWorkspace testWorkspace, string[] expectedFolders)
+		{
+			string query = @" SELECT [Name] FROM [Folder] WHERE [ArtifactID] != 1003697";
+			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+			using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
+			{
+				DataTable result = new DataTable();
+				dataAdapter.Fill(result);
+
+				Assert.That(result.Rows.Count, Is.EqualTo(expectedFolders.Length));
+
+				for (var i = 0; i < result.Rows.Count; i++)
+				{
+					var row = result.Rows[i];
+					var actualValue = row[0].ToString();
+					Assert.That(actualValue, Is.EqualTo(expectedFolders[i]));
+				}
+			}
+		}
+
+		public static void ThenTableIsNotCreated(TestWorkspace testWorkspace, string tableName)
+		{
+			string query = $"SELECT * FROM [EDDS{testWorkspace.WorkspaceId}].[EDDSDBO].[{tableName}]";
+			string exceptionMessage = "";
+			try
+			{
+				DataTable result = new DataTable();
+
+				using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+				using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
+				{
+					dataAdapter.Fill(result);
+				}
+			}
+			catch (Exception ex)
+			{
+				exceptionMessage = ex.Message;
+			}
+			finally
+			{
+				Assert.AreEqual(exceptionMessage,
+					$"Invalid object name 'EDDS{testWorkspace.WorkspaceId}.EDDSDBO.{tableName}'.");
+			}
+
+		}
+
+		public static void ThenImportStatusAndErrorDataIsSetInNativeTempTable(TestWorkspace testWorkspace, string runId, string[] expectedResult)
+		{
+			string query = $"SELECT [ControlNumber], [kCura_Import_Status], [kCura_Import_ErrorData] FROM [EDDS{testWorkspace.WorkspaceId}].[Resource].[RELNATTMP_{runId}]";
+			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
+			using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
+			{
+				DataTable result = new DataTable();
+				dataAdapter.Fill(result);
+
+				Assert.That(result.Rows.Count, Is.EqualTo(expectedResult.Length));
+
+				for (var i = 0; i < result.Rows.Count; i++)
+				{
+					var row = result.Rows[i];
+					var actualValue = $"{row[0]}||{row[1]}||{row[2]}";
+					Assert.That(actualValue, Is.EqualTo(expectedResult[i]));
+				}
 			}
 		}
 
@@ -58,26 +125,6 @@ namespace MassImport.NUnit.Integration.Helpers
 				}
 
 				Assert.AreEqual(expectedValue, actualValue, $"Incorrect value in {columnName} field");
-			}
-		}
-
-		public static void ThenTheFoldersHaveCorrectValues(TestWorkspace testWorkspace, string[] expectedFolders)
-		{
-			string query = @" SELECT [Name] FROM [Folder] WHERE [ArtifactID] != 1003697";
-			using (SqlConnection connection = new SqlConnection(testWorkspace.ConnectionString))
-			using (SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection))
-			{
-				DataTable result = new DataTable();
-				dataAdapter.Fill(result);
-
-				Assert.That(result.Rows.Count, Is.EqualTo(expectedFolders.Length));
-
-				for (var i = 0; i < result.Rows.Count; i++)
-				{
-					var row = result.Rows[i];
-					var actualValue = row[0].ToString();
-					Assert.That(actualValue, Is.EqualTo(expectedFolders[i]));
-				}
 			}
 		}
 	}
