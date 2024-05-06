@@ -19,7 +19,7 @@
     <kCuraDbUpgrader>1.0.115</kCuraDbUpgrader>
     <kCuraHTMLSanitizer>1.0.6</kCuraHTMLSanitizer>
     <kCuraLongPath>2.5.0</kCuraLongPath>
-    <KeplerVersion>2.15.5</KeplerVersion>
+    <RelativityKepler>5000.0.0</RelativityKepler>
     <Invariant>7.2.160.4</Invariant>
     <MicrosoftDotNetTestSdk>17.5.0</MicrosoftDotNetTestSdk>
     <MonoCecil>0.9.6.1</MonoCecil>
@@ -53,19 +53,18 @@
     <RelativityTestingFramework>10.1.0</RelativityTestingFramework>
     <RelativityTestingIdentification>3.12.0</RelativityTestingIdentification>
     <ServiceBus>5.3.0</ServiceBus>
+    <SystemValueTuple>4.5.0</SystemValueTuple>
     <TelemetryAPM>2019.10.9</TelemetryAPM>
     <TelemetryMetricsCollectionClient>3003.1.1</TelemetryMetricsCollectionClient>
     <Toggles>1.10.8</Toggles>
     <kCuraAssemblyAnalysis>48.2.26</kCuraAssemblyAnalysis>
     <RelativityTelemetryMetricsCollection>3005.0.0</RelativityTelemetryMetricsCollection>
-	<RelativityProductionsSDK>12.1.13</RelativityProductionsSDK>
+	  <RelativityProductionsSDK>12.1.13</RelativityProductionsSDK>
 	  <RelativitySecretCatalog>1.0.19</RelativitySecretCatalog>
-	  <RelativitySharedSDK>1.7.0</RelativitySharedSDK>
-	  
+	  <RelativitySharedSDK>5000.0.0</RelativitySharedSDK>	  
 	  <StackExchangeRedis>1.0.328</StackExchangeRedis>
 	  <kCuraEDDSDocumentCompareGateway>11.3.1.22</kCuraEDDSDocumentCompareGateway>
 	  <RelativityApplicationBaseInvariantApi>11.3.1.22</RelativityApplicationBaseInvariantApi>
-
 	  <SystemWrapper>11.3.1.22</SystemWrapper>
 	  <RelativityAssistedReviewUtility>11.3.1.22</RelativityAssistedReviewUtility>
 	  <kCuraImaging>11.3.1.22</kCuraImaging>
@@ -116,8 +115,8 @@
     <PackageVersion Include="Relativity.DataGrid" Version="$(RelativityDataGrid)" />
     <PackageVersion Include="Relativity.Eca" Version="$(Processing)" />
     <PackageVersion Include="Relativity.EventHandler" Version="$(RelativityEventHandler)" />
-    <PackageVersion Include="Relativity.Kepler" Version="$(KeplerVersion)" />
-    <PackageVersion Include="Relativity.Kepler.Client" Version="$(KeplerVersion)" />
+    <PackageVersion Include="Relativity.Kepler" Version="$(RelativityKepler)" />
+    <PackageVersion Include="Relativity.Kepler.Client" Version="$(RelativityKepler)" />
     <PackageVersion Include="Relativity.Logging" Version="$(RelativityLogging)" />
     <PackageVersion Include="Relativity.Logging.Interfaces" Version="$(RelativityLogging)" />
     <PackageVersion Include="Relativity.MassImport" Version="$(RelativityCore)" />
@@ -139,11 +138,11 @@
     <PackageVersion Include="Relativity.Testing.Identification" Version="$(RelativityTestingIdentification)" />
     <PackageVersion Include="Relativity.Toggles" Version="$(Toggles)" />
     <PackageVersion Include="System.Threading.Tasks.Dataflow" Version="4.7.0" />
-    <PackageVersion Include="System.ValueTuple" Version="4.5.0" />
+    <PackageVersion Include="System.ValueTuple" Version="$(SystemValueTuple)" />
     <PackageVersion Include="Tdd-Toolkit" Version="2.0.1" />
     <PackageVersion Include="kCura.Assembly.Analysis" Version="$(kCuraAssemblyAnalysis)" />
     <PackageVersion Include="Relativity.Telemetry.MetricsCollection" Version="$(RelativityTelemetryMetricsCollection)" />
-	<PackageVersion Include="Relativity.Productions.SDK" Version="$(RelativityProductionsSDK)" />
+	  <PackageVersion Include="Relativity.Productions.SDK" Version="$(RelativityProductionsSDK)" />
 	  <PackageVersion Include="Relativity.SecretCatalog" Version="$(RelativitySecretCatalog)" />
 	  <PackageVersion Include="Relativity.Shared.SDK" Version="$(RelativitySharedSDK)" />
 	  <PackageVersion Include="StackExchange.Redis" Version="$(StackExchangeRedis)" />
