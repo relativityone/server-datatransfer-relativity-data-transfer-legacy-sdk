@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [23000.19.1004] - 01-MAY-2024
+
+### Changed
+
+- Propogating patch1 changes to server release 2023
+- [REL-931516](https://jira.kcura.com/browse/REL-931516) Server 2023 Patch 2 - Update RAPCI repos to upgrade hopper with hotfix/patch.
+
 ## [24000.0.4] - 29-April-2024
 
 ### Changed
@@ -14,18 +21,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
  
 - [REL-925106](https://jira.kcura.com/browse/REL-925106) Added Nightly pipeline jobs for MassImport.
 
+## [23000.19.1003] - 12-04-2023
+
+### Changed
+
+- [REL-891063](https://jira.kcura.com/browse/REL-891063) Cloned repo from BitBucket to GitHub and created pipeline in AzDO.
+
+## [23000.19.2] - 11-30-2023
+
+### Changed
+
+- [REL-891063](https://jira.kcura.com/browse/REL-891063) Cloned repo from BitBucket to GitHub and created pipeline in AzDO.
+
 ## [24000.0.2] - 11-29-2023
 
 ### Changed
  
 - [REL-891063](https://jira.kcura.com/browse/REL-891063) Cloned repo from BitBucket to GitHub and created pipeline in AzDO.
-
-## [24000.0.0] - 10-18-2023
-
-### Changed
- 
-- Prepared branch for the next official Relativity 2024 release.
-- Used the latest SUT release image.
 
 ## [23000.19.1002] - 11-20-2023
 
@@ -33,12 +45,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - [REL-886074](https://jira.kcura.com/browse/REL-886074) Revoked expected result changes, that are not required for the backport.
 
-
 ## [23000.19.1001] - 11-14-2023
 
 ### Changed
 
 - [REL-886074](https://jira.kcura.com/browse/REL-886074) - SQLi vulnerability in Import if a field display name is maliciously crafted - Backported [REL-878172](https://jira.kcura.com/browse/REL-878172) ticket from server 2022 release
+
+## [24000.0.0] - 10-18-2023
+
+### Changed
+ 
+- Prepared branch for the next official Relativity 2024 release.
+- Used the latest SUT release image.
 
 ## [23000.19.1] - 09-08-2023
 

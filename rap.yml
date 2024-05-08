@@ -20,6 +20,7 @@ stages:
   parameters:
     RelativityBranch: ''
     TemplateName: 'aio-server-2023-ga'
+    DeployHotfixOrPatch: true
     buildSteps:
       - checkout: self
       - checkout: azdo_templates
