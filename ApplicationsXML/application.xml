@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<DeploymentTarget>Server</DeploymentTarget>
-	<ArtifactViewFields />
+  <DeploymentTarget>Server</DeploymentTarget>
+  <ArtifactViewFields />
   <Assemblies>
       <Assembly>
       <Keywords />
