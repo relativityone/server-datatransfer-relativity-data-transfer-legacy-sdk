@@ -2,10 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
-## [5000.0.0] 08-May-2024
+## [5000.0.0] - 08-May-2024
 
 ### Changed
 - [REL-942846](https://jira.kcura.com/browse/REL-942846) -Publish Relativity.Server.DataTransfer.SDK
+- Prepared branch for the next official Relativity Server 2024 release.
 
 ## [23000.19.1004] - 01-MAY-2024
 
