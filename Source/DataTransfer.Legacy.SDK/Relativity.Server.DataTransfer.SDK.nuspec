@@ -23,6 +23,6 @@
   <files>
     <file src="..\..\relativity-nuget-logo.png" target="\" />
     <file src="..\..\LICENSE.txt" target="\" />
-    <file src="..\Source\DataTransfer.Legacy.SDK\bin\Relativity.DataTransfer.Legacy.SDK.dll" target="lib\net462" />
+    <file src="bin\Relativity.DataTransfer.Legacy.SDK.dll" target="lib\net462" />
   </files>
 </package>
