@@ -1,19 +1,22 @@
 <?xml version="1.0"?>
-<package >
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>Relativity.DataTransfer.Legacy.SDK</id>
     <version>$version$</version>
-    <authors>Relativity ODA LLC</authors>
+    <title>Relativity.DataTransfer.Legacy.SDK</title>
+    <authors>Relativity</authors>
     <owners>Relativity ODA LLC</owners>
-    <iconUrl>https://www.relativity.com/images/relativity-nuget-logo.png</iconUrl>
+    <icon>relativity-nuget-logo.png</icon>
     <license type="file">LICENSE.txt</license>
-    <projectUrl>https://einstein.kcura.com/display/DTV/IAPI+2.0</projectUrl>
+    <projectUrl>https://platform.relativity.com</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>Models for communication in migrated WebAPI - the package is for internal Relativity development only.</description>
-    <releaseNotes>https://git.kcura.com/projects/DTX/repos/relativity-data-transfer-legacy-sdk/browse/CHANGELOG.md</releaseNotes>
-    <copyright>(c) Relativity</copyright>
+    <description>The Relativity Server Data Transfer SDK .NET package provides import and transfer endpoints.</description>
+    <releaseNotes>https://platform.relativity.com</releaseNotes>
+    <copyright>Copyright (c) Relativity</copyright>
+    <tags>Relativity DataTransfer Legacy SDK $release$</tags>
   </metadata>
   <files>
+    <file src="..\..\relativity-nuget-logo.png" target="\" />
     <file src="..\LICENSE.txt" target="" />
     <file src="..\Source\DataTransfer.Legacy.SDK\bin\Relativity.DataTransfer.Legacy.SDK.dll" target="lib\net462" />
   </files>

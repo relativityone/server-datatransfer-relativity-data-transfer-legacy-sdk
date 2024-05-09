@@ -2,12 +2,18 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [5000.0.0] 08-May-2024
+
+### Changed
+- [REL-942846](https://jira.kcura.com/browse/REL-942846) -Publish Relativity.Server.DataTransfer.SDK
+
 ## [23000.19.1004] - 01-MAY-2024
 
 ### Changed
 
 - Propogating patch1 changes to server release 2023
-- [REL-931516](https://jira.kcura.com/browse/REL-931516) Server 2023 Patch 2 - Update RAPCI repos to upgrade hopper with hotfix/patch.
+- [REL-931516](https://jira.kcura.com/browse/REL-931516) Server 2023 Patch 2
+- Update RAPCI repos to upgrade hopper with hotfix/patch.
 
 ## [24000.0.4] - 29-April-2024
 
