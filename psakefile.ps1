@@ -75,12 +75,12 @@ Task Package -Description "Package up the build artifacts" {
         exec { & $NugetExe pack $_.FullName -OutputDirectory (Join-Path $ArtifactsDir "NuGet") -Version $PackageVersion }
     }
     # Search for nuspec files in the source directory and package them
-    Get-ChildItem -Path $SourceDir -Recurse -Filter *.nuspec |
-    Where-Object { $_.FullName -inotmatch 'obj' } |
-    ForEach-Object {
-        Write-Host "Packaging: $($_.FullName)"
-        exec { & $NugetExe pack $_.FullName -OutputDirectory (Join-Path $ArtifactsDir "NuGet") -Version $PackageVersion -Verbosity detailed -Properties release=$ReleaseTag }
-    }
+    # Get-ChildItem -Path $SourceDir -Recurse -Filter *.nuspec |
+    # Where-Object { $_.FullName -inotmatch 'obj' } |
+    # ForEach-Object {
+    #     Write-Host "Packaging: $($_.FullName)"
+    #     exec { & $NugetExe pack $_.FullName -OutputDirectory (Join-Path $ArtifactsDir "NuGet") -Version $PackageVersion -Verbosity detailed -Properties release=$ReleaseTag }
+    # }
 
     Save-PDBs -SourceDir $SourceDir -ArtifactsDir $ArtifactsDir
 }
