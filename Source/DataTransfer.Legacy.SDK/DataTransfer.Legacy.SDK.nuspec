@@ -6,8 +6,7 @@
     <title>Relativity.DataTransfer.Legacy.SDK</title>
     <authors>Relativity</authors>
     <owners>Relativity ODA LLC</owners>
-     <iconUrl>https://www.relativity.com/images/relativity-nuget-logo.png</iconUrl>
-    <!-- <icon>relativity-nuget-logo.png</icon> -->
+    <icon>relativity-nuget-logo.png</icon>
     <license type="file">LICENSE.txt</license>
     <projectUrl>https://platform.relativity.com</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
@@ -21,8 +20,8 @@
     </dependencies>
   </metadata>
   <files>
-    <!-- <file src="..\..\relativity-nuget-logo.png" target="\" /> -->
-    <file src="..\LICENSE.txt" target="" />
-    <file src="..\Source\DataTransfer.Legacy.SDK\bin\Relativity.DataTransfer.Legacy.SDK.dll" target="lib\net462" />
+    <file src="..\..\relativity-nuget-logo.png" target="\" />
+    <file src="..\..\LICENSE.txt" target="\" />
+    <file src="bin\Relativity.DataTransfer.Legacy.SDK.dll" target="lib\net462" />
   </files>
 </package>
