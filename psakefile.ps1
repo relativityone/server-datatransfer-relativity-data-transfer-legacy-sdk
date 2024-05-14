@@ -70,13 +70,7 @@ Task Package -Description "Package up the build artifacts" {
         "--version" "$RAPVersion"
     }
 
-    # Get-ChildItem -Path $ArtifactsDir -Filter *.nuspec |
-    # ForEach-Object {
-    #     exec { & $NugetExe pack $_.FullName -OutputDirectory (Join-Path $ArtifactsDir "NuGet") -Version $PackageVersion }
-    # }
-
-    Get-ChildItem -Path $SourceDir -Recurse -Filter *.nuspec |
-    Where-Object { $_.FullName -inotmatch 'obj' } |
+    Get-ChildItem -Path $ArtifactsDir -Filter *.nuspec |
     ForEach-Object {
         Write-Host "Packaging: $($_.FullName)"
         exec { & $NugetExe pack $_.FullName -OutputDirectory (Join-Path $ArtifactsDir "NuGet") -Version $PackageVersion -Verbosity detailed -Properties release=$ReleaseTag }
