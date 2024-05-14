@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 - [REL-942846](https://jira.kcura.com/browse/REL-942846) -Publish Relativity.Server.DataTransfer.SDK
 - Prepared branch for the next official Relativity Server 2024 release.
 
+## [24000.0.5] - 08-May-2024
+
+### Changed
+
+- [REL-942148](https://jira.kcura.com/browse/REL-942148) - [Server 2024] RAP Schema Update.
+
 ## [23000.19.1004] - 01-MAY-2024
 
 ### Changed
