@@ -40,7 +40,7 @@
     <RelativityDataGrid>16.9.1</RelativityDataGrid>
     <RelativityEventHandler>17.0.2</RelativityEventHandler>
     <!-- This package is a dependency of RTF and must be aligned.  -->
-    <RelativityDataExchangeClientSDK>1.15.103</RelativityDataExchangeClientSDK>
+    <RelativityDataExchangeClientSDK>3.0.4</RelativityDataExchangeClientSDK>
     <RelativityLogging>3000.4.1</RelativityLogging>
     <RelativityReviewServicesInterfaces>2020.0.9</RelativityReviewServicesInterfaces>
     <RelativitySecretCatalog>1.0.20</RelativitySecretCatalog>
