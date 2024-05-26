@@ -25,5 +25,6 @@
   </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
     <Exec Command="COPY /Y $(ProjectDir)DataTransfer.Legacy.SDK.nuspec $(SolutionDir)..\Artifacts" />
+    <Exec Command="COPY /Y $(ProjectDir)Relativity.Server.DataTransfer.SDK.nuspec $(SolutionDir)..\Artifacts" />
   </Target>
 </Project>

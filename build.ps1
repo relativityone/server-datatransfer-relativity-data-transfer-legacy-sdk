@@ -39,13 +39,19 @@ param(
 	[String]$RAPVersion = "1.0.0.0",
 
 	[Parameter(Mandatory=$False)]
-	[String]$PackageVersion = "1.0.0",
+	[String]$PackageVersion,
 	
 	[Parameter(Mandatory=$False)]
 	[ValidateSet("Debug","Release")]
 	[string]$Configuration = "Debug"
 	)
 	
+$SemanticVersion = Get-Content (Join-Path $PSScriptRoot version.txt) -first 1
+if ([string]::IsNullOrWhiteSpace($PackageVersion))
+{
+	$PackageVersion = $SemanticVersion
+}
+
 Set-StrictMode -Version 2.0
 . $profile
 
