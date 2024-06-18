@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.8] - 18-June-2024
+
+### Changed
+
+- [REL-970979](https://jira.kcura.com/browse/REL-970979) - Increase the code coverage - Mass Import
+-Added Nunit test case file
+
 ## [24000.0.7] - 22-May-2024
 
 ### Changed
