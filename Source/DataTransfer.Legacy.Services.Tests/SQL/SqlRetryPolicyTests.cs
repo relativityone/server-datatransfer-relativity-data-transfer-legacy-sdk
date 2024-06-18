@@ -3,9 +3,6 @@ using NUnit.Framework;
 using Relativity.API;
 using Relativity.DataTransfer.Legacy.Services.SQL;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.SQL
@@ -26,44 +23,63 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.SQL
 		[Test]
 		public async Task ExecuteAsync_FuncTaskT_ExecutesFunction()
 		{
+			// Arrange
 			var function = new Func<Task<int>>(() => Task.FromResult(1));
-			var result = await _sqlRetryPolicy.ExecuteAsync(function);
+			int expected = 1;
 
-			Assert.AreEqual(1, result);
+			// Act
+			int result = await _sqlRetryPolicy.ExecuteAsync(function);
+
+			// Assert
+			Assert.AreEqual(expected, result);
 		}
+
 		[Test]
 		public async Task ExecuteAsync_FuncTask_ExecutesFunction()
 		{
-			var functionCalled = false;
+			// Arrange
+			bool functionCalled = false;
 			var function = new Func<Task>(() =>
 			{
 				functionCalled = true;
 				return Task.CompletedTask;
 			});
 
+			// Act
 			await _sqlRetryPolicy.ExecuteAsync(function);
 
+			// Assert
 			Assert.IsTrue(functionCalled);
 		}
 
 		[Test]
 		public void Execute_Action_ExecutesFunction()
 		{
-			var functionCalled = false;
+			// Arrange
+			bool functionCalled = false;
 			var function = new Action(() => functionCalled = true);
 
+			// Act
 			_sqlRetryPolicy.Execute(function);
 
+			// Assert
 			Assert.IsTrue(functionCalled);
 		}
+
 		[Test]
 		public void Execute_FuncT_ExecutesFunction()
 		{
+			// Arrange
 			var function = new Func<int>(() => 1);
-			var result = _sqlRetryPolicy.Execute(function);
+			int expected = 1;
 
-			Assert.AreEqual(1, result);
+			// Act
+			int result = _sqlRetryPolicy.Execute(function);
+
+			// Assert
+			Assert.AreEqual(expected, result);
 		}
+
 		[Test]
 		public void ExponentialRetryTime_ReturnsCorrectTimeSpan()
 		{

@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Relativity.DataTransfer.Legacy.Services.Tests.SQL
 {
@@ -32,22 +29,40 @@ namespace Relativity.DataTransfer.Legacy.Services.Tests.SQL
 		[Test]
 		public void ExecuteNonQuerySQLStatement_WithoutParameters_ReturnsExpectedValue()
 		{
-			var result = _sqlExecutorMock.Object.ExecuteNonQuerySQLStatement(TestWorkspaceId, TestQuery);
-			Assert.AreEqual(1, result);
+			// Arrange
+			int expected = 1;
+
+			// Act
+			int result = _sqlExecutorMock.Object.ExecuteNonQuerySQLStatement(TestWorkspaceId, TestQuery);
+
+			// Assert
+			Assert.AreEqual(expected, result);
 		}
 
 		[Test]
 		public void ExecuteNonQuerySQLStatement_WithParameters_ReturnsExpectedValue()
 		{
-			var result = _sqlExecutorMock.Object.ExecuteNonQuerySQLStatement(TestWorkspaceId, TestQuery, TestParameters);
-			Assert.AreEqual(1, result);
+			// Arrange
+			int expected = 1;
+
+			// Act
+			int result = _sqlExecutorMock.Object.ExecuteNonQuerySQLStatement(TestWorkspaceId, TestQuery, TestParameters);
+
+			// Assert
+			Assert.AreEqual(expected, result);
 		}
 
 		[Test]
 		public void ExecuteReader_ReturnsExpectedValue()
 		{
-			var result = _sqlExecutorMock.Object.ExecuteReader(TestWorkspaceId, TestQuery, TestParameters, record => (int)record[0]);
-			Assert.AreEqual(1, result[0]);
+			// Arrange
+			List<int> expected = new List<int> { 1 };
+
+			// Act
+			List<int> result = _sqlExecutorMock.Object.ExecuteReader(TestWorkspaceId, TestQuery, TestParameters, record => (int)record[0]);
+
+			// Assert
+			Assert.AreEqual(expected[0], result[0]);
 		}
 	}
 }

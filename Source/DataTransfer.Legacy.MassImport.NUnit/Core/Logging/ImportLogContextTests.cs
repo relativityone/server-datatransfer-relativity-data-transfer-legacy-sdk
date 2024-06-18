@@ -37,15 +37,20 @@ namespace DataTransfer.Legacy.MassImport.NUnit.Core.Logging
 		[Test]
 		public void Properties_ShouldBeReadOnly()
 		{
-			//Assert
-			// Using reflection to check if the setters are private
+			// Arrange
 			var runIdProperty = typeof(ImportLogContext).GetProperty(nameof(ImportLogContext.RunId));
 			var typeProperty = typeof(ImportLogContext).GetProperty(nameof(ImportLogContext.Type));
 			var workspaceIdProperty = typeof(ImportLogContext).GetProperty(nameof(ImportLogContext.WorkspaceId));
 
-			Assert.IsTrue(runIdProperty.GetSetMethod(true).IsPrivate, "RunId setter is not private");
-			Assert.IsTrue(typeProperty.GetSetMethod(true).IsPrivate, "Type setter is not private");
-			Assert.IsTrue(workspaceIdProperty.GetSetMethod(true).IsPrivate, "WorkspaceId setter is not private");
+			// Act
+			var runIdSetterIsPrivate = runIdProperty.GetSetMethod(true).IsPrivate;
+			var typeSetterIsPrivate = typeProperty.GetSetMethod(true).IsPrivate;
+			var workspaceIdSetterIsPrivate = workspaceIdProperty.GetSetMethod(true).IsPrivate;
+
+			// Assert
+			Assert.IsTrue(runIdSetterIsPrivate, "RunId setter is not private");
+			Assert.IsTrue(typeSetterIsPrivate, "Type setter is not private");
+			Assert.IsTrue(workspaceIdSetterIsPrivate, "WorkspaceId setter is not private");
 		}
 	}
 }
