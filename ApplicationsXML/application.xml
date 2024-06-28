@@ -59,10 +59,10 @@
       <Notes />
     </Assembly>
     <Assembly>
-        <ArtifactId>1329220</ArtifactId>
-        <Keywords />
-        <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
-        <Notes />
+      <ArtifactId>1329220</ArtifactId>
+      <Keywords />
+      <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
+      <Notes />
     </Assembly>
 	  <Assembly>
       <Keywords />
