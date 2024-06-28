@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.0.8] - 28-June-2024
+
+### Changed
+- [REL-974405](https://jira.kcura.com/browse/REL-974405) - Removed OTEL assemblies from the MassImport RAP
+
 ## [24000.0.7] - 22-May-2024
 
 ### Changed
