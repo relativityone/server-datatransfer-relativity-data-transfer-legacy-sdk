@@ -58,13 +58,13 @@
       <Name>Relativity.DistributedJobs.Data.dll</Name>
       <Notes />
     </Assembly>
-	<Assembly>
-      <ArtifactId>1329220</ArtifactId>
-      <Keywords />
-      <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
-      <Notes />
-	</Assembly>
-	<Assembly>
+    <Assembly>
+        <ArtifactId>1329220</ArtifactId>
+        <Keywords />
+        <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
+        <Notes />
+    </Assembly>
+	  <Assembly>
       <Keywords />
       <Name>DataTransfer.Legacy.MassImport.dll</Name>
       <Notes />
