@@ -540,7 +540,7 @@ CREATE CLUSTERED INDEX [IX_LookupFast] ON [Resource].[{{0}}_ExistingFile]
 	LEFT JOIN [EDDSDBO].[Document] Document ON
 		Document.ArtifactID = EF.[DocumentArtifactID] 
 	WHERE
-		NOT [Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
+		NOT [Resource].[{{0}}].[Status] = {(long)Relativity.MassImport.DTO.ImportStatus.Pending}
 	ORDER BY
 		[OriginalLineNumber]
 
@@ -971,7 +971,7 @@ WHERE
 UPDATE
 	[Resource].[{{0}}]
 SET
-	[Status] = [Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
+	[Status] = [{{0}}].[Status] + {(long)Relativity.MassImport.DTO.ImportStatus.SecurityUpdate}
 FROM
 	[Resource].[{{0}}]
 LEFT JOIN [Document]
