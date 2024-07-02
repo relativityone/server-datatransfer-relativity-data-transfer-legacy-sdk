@@ -59,17 +59,12 @@
       <Notes />
     </Assembly>
     <Assembly>
-      <Keywords />
-      <Name>System.ValueTuple.dll</Name>
-      <Notes />
-    </Assembly>
-	<Assembly>
       <ArtifactId>1329220</ArtifactId>
       <Keywords />
       <Name>DataTransfer.Legacy.PostInstallEventHandler.dll</Name>
       <Notes />
-	</Assembly>
-	<Assembly>
+    </Assembly>
+	  <Assembly>
       <Keywords />
       <Name>DataTransfer.Legacy.MassImport.dll</Name>
       <Notes />

@@ -2,10 +2,16 @@
 All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## [24000.1.0] - 28-June-2024
+
+### Changed
+- [REL-974405](https://jira.kcura.com/browse/REL-974405) - Removed OTEL assemblies from the MassImport RAP
+
 ## [24000.0.8] - 19-Jun-2024
 
 ### Changed
 - [REL-931575](https://jira.kcura.com/browse/REL-931575) -correct SQL statement to avoid :Ambiguous column name 'Status' error - Backported [REL-851763](https://jira.kcura.com/browse/REL-851763) ticket
+
 
 ## [24000.0.7] - 22-May-2024
 
